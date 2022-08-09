@@ -59,6 +59,8 @@ namespace VaoClientApp
          if (status != null)
          {
             AddMessage(status);
+            FillSelectCameraButtonList();
+            //moVaoClient.GetVaoStatusMessages(10);
          }
          else
          {
@@ -136,55 +138,35 @@ namespace VaoClientApp
       {
          AddMessage(e.ToString());
       }
-
-      private void button1_Click(object sender, EventArgs e)
+      
+      private void OnSelectCameraClicked(object sender, EventArgs e)
       {
-         SelectCamera(1);
-      }
-      private void button2_Click(object sender, EventArgs e)
-      {
-         SelectCamera(2);
-      }
-
-      private void button3_Click(object sender, EventArgs e)
-      {
-         SelectCamera(3);
-
+         if (sender is Button button)
+         {
+            if (button.Tag is Camera camera)
+            {
+               SelectCamera(camera.CameraNumber, 1);
+            }
+         }
       }
 
-      private void button6_Click(object sender, EventArgs e)
+      private void FillSelectCameraButtonList()
       {
-         SelectCamera(4);
-      }
-
-      private void button5_Click(object sender, EventArgs e)
-      {
-         SelectCamera(5);
-      }
-
-      private void button4_Click(object sender, EventArgs e)
-      {
-         SelectCamera(6);
-      }
-
-      private void button9_Click(object sender, EventArgs e)
-      {
-         SelectCamera(7);
-      }
-
-      private void button8_Click(object sender, EventArgs e)
-      {
-         SelectCamera(8);
-      }
-
-      private void button7_Click(object sender, EventArgs e)
-      {
-         SelectCamera(9);
-      }
-
-      private void label3_Click(object sender, EventArgs e)
-      {
-
+         var cameraList = moVaoClient.GetVaoCameras();
+         if (cameraList != null)
+         {
+            flowLayoutPanel1.Controls.Clear();
+            foreach (var camera in cameraList)
+            {
+               Button oButton = new Button();
+               oButton.Text = "Cam " + camera.CameraNumber;
+               oButton.Height = 30;
+               oButton.Width = 60;
+               oButton.Tag = camera;
+               oButton.Click += OnSelectCameraClicked;
+               flowLayoutPanel1.Controls.Add(oButton);
+            }
+         }
       }
    }
 }

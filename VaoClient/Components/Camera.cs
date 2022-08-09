@@ -1,4 +1,5 @@
-﻿using VaoClient.Contracts;
+﻿using System.Collections.Generic;
+using VaoClient.Contracts;
 using Json.Net;
 using RestSharp;
 
@@ -10,21 +11,39 @@ namespace VaoClient.Components
       private int mCameraNumber = 0;
       private VaoClient mVaoClient;
 
-      public Camera(int cameraNumber, string jsonData, VaoClient vaoClient)
+      internal Camera(int cameraNumber, JsonCameraObject camera, VaoClient vaoClient)
       {
          mCameraNumber = cameraNumber;
          mVaoClient = vaoClient;
-
-         Parse(jsonData);
+         mCameraName = camera.name;
       }
 
-      public void Parse(string strJson)
+      public static List<Camera> ParseCameraList(string strJson, VaoClient vaoClient)
+      {
+         if (!string.IsNullOrEmpty(strJson))
+         {
+            List<JsonCameraObject> list = JsonNet.Deserialize<List<JsonCameraObject>>(strJson);
+            List<Camera> returnList = new List<Camera>();
+            foreach (JsonCameraObject camera in list)
+            {
+               returnList.Add(new Camera(camera.inputId, camera, vaoClient));
+            }
+
+            return returnList;
+         }
+
+         return null;
+      }
+
+      public static Camera ParseSingleCamera(string strJson, VaoClient vaoClient)
       {
          if (!string.IsNullOrEmpty(strJson))
          {
             JsonCameraObject oCameraObject = JsonNet.Deserialize<JsonCameraObject>(strJson);
-            mCameraName = oCameraObject.name;
+            return new Camera(oCameraObject.inputId, oCameraObject, vaoClient);
          }
+
+         return null;
       }
       public string Name
       {
