@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32413.511
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VaoClientApp", "VaoClientApp\VaoClientApp.csproj", "{B4C301CD-1124-4768-BDD6-E3D98EA2D0B8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VaoClient", "VaoClient\VaoClient.csproj", "{87492D4C-B82A-4A9B-8412-EC49F9CA7EA1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{D45DF555-817F-46FE-ADA0-437D09218328}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B4C301CD-1124-4768-BDD6-E3D98EA2D0B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4C301CD-1124-4768-BDD6-E3D98EA2D0B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4C301CD-1124-4768-BDD6-E3D98EA2D0B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4C301CD-1124-4768-BDD6-E3D98EA2D0B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87492D4C-B82A-4A9B-8412-EC49F9CA7EA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87492D4C-B82A-4A9B-8412-EC49F9CA7EA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87492D4C-B82A-4A9B-8412-EC49F9CA7EA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87492D4C-B82A-4A9B-8412-EC49F9CA7EA1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{87492D4C-B82A-4A9B-8412-EC49F9CA7EA1} = {D45DF555-817F-46FE-ADA0-437D09218328}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C79CF4B0-B956-4C61-B912-764D881DD5E0}
+	EndGlobalSection
+EndGlobal
