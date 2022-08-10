@@ -1,5 +1,5 @@
 ﻿
-namespace VaoClientApp
+namespace Vao.Sample
 {
    partial class MainWindow
    {

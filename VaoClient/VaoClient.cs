@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using RestSharp;
 using RestSharp.Authenticators;
-using VaoClient.Components;
+using Vao.Client.Components;
 
-namespace VaoClient
+namespace Vao.Client
 {
    public class VaoClient
    {

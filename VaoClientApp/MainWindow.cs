@@ -1,17 +1,19 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
-using VaoClient;
-using VaoClient.Components;
+using Vao.Client;
+using Vao.Client.Components;
 using Vlc.DotNet.Core;
+using Vlc.DotNet.Forms;
 
-namespace VaoClientApp
+namespace Vao.Sample
 {
    public partial class MainWindow : Form
    {
       private bool mIsStared = false;
-      private VaoClient.VaoClient moVaoClient;
-      private Vlc.DotNet.Forms.VlcControl mVideoControl;
+      private VaoClient moVaoClient;
+      private VlcControl mVideoControl;
       public bool IsStared
       {
          get { return mIsStared; }
@@ -42,10 +44,10 @@ namespace VaoClientApp
          chkSecure.Enabled = !IsStared; 
       }
 
-      private void btnStart_Click(object sender, System.EventArgs e)
+      private void btnStart_Click(object sender, EventArgs e)
       {
          IsStared = true;
-         moVaoClient = new VaoClient.VaoClient
+         moVaoClient = new VaoClient
          {
             Host = txtHost.Text,
             Port = txtPort.Text,
@@ -60,7 +62,6 @@ namespace VaoClientApp
          {
             AddMessage(status);
             FillSelectCameraButtonList();
-            //moVaoClient.GetVaoStatusMessages(10);
          }
          else
          {
@@ -81,20 +82,20 @@ namespace VaoClientApp
          }
          else
          {
-            var lvi = new ListViewItem(DateTime.Now.ToString());
+            var lvi = new ListViewItem(DateTime.Now.ToString(CultureInfo.InvariantCulture));
             lvi.SubItems.Add(strMessage);
             lstMessages.Items.Add(lvi);
          }
       }
 
-      private void btnStop_Click(object sender, System.EventArgs e)
+      private void btnStop_Click(object sender, EventArgs e)
       {
          IsStared = false;
          moVaoClient.StopClient();
          moVaoClient = null;
       }
 
-      private void SelectCamera(int cameraNo, int streamNo = 1)
+      private void SelectCamera(int cameraNo, int streamNo)
       {
          Camera camera = moVaoClient.GetVaoCamera(cameraNo);
          string url = camera.GetCameraLiveStreamUrl(streamNo);
@@ -104,7 +105,7 @@ namespace VaoClientApp
 
             if (mVideoControl == null)
             {
-               var libVlc = new Vlc.DotNet.Forms.VlcControl();
+               var libVlc = new VlcControl();
 
                libVlc.BeginInit();
                {
@@ -158,11 +159,14 @@ namespace VaoClientApp
             flowLayoutPanel1.Controls.Clear();
             foreach (var camera in cameraList)
             {
-               Button oButton = new Button();
-               oButton.Text = "Cam " + camera.CameraNumber;
-               oButton.Height = 30;
-               oButton.Width = 60;
-               oButton.Tag = camera;
+               Button oButton = new Button()
+               {
+                  // ReSharper disable once LocalizableElement
+                  Text = "Cam " + camera.CameraNumber,
+                  Height = 30,
+                  Width = 60,
+                  Tag = camera
+               };
                oButton.Click += OnSelectCameraClicked;
                flowLayoutPanel1.Controls.Add(oButton);
             }

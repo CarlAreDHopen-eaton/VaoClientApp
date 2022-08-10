@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace VaoClient
+namespace Vao.Client
 {
    public class ConnectEventArgs : EventArgs
    {

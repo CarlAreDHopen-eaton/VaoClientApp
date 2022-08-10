@@ -1,6 +1,6 @@
 ﻿// ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Global
-namespace VaoClient.Contracts
+namespace Vao.Client.Contracts
 {
    class JsonCameraObject
    {
