@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Json.Net;
 using RestSharp;
 using Vao.Client.Contracts;
@@ -53,6 +54,19 @@ namespace Vao.Client.Components
                return oCameraObject.stream2url;
          }
          return "";
+      }
+
+      public void PanLeft()
+      {
+         RestResponse response = mVaoClient.PanStart(CameraNumber, -1);
+      }
+      public void PanRight()
+      {
+         RestResponse response = mVaoClient.PanStart(CameraNumber, 1);
+      }
+      public void PanStop()
+      {
+         RestResponse response = mVaoClient.PanStop(CameraNumber);         
       }
    }
 }

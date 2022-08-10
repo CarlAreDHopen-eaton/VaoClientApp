@@ -49,11 +49,28 @@ namespace Vao.Sample
          this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
          this.grpConnection = new System.Windows.Forms.GroupBox();
          this.grpMessages = new System.Windows.Forms.GroupBox();
-         this.groupBox4 = new System.Windows.Forms.GroupBox();
+         this.grpVideoControl = new System.Windows.Forms.GroupBox();
+         this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+         this.grpCameraControl = new System.Windows.Forms.GroupBox();
+         this.btnPanRight = new System.Windows.Forms.Button();
+         this.btHome = new System.Windows.Forms.Button();
+         this.btnPanLeft = new System.Windows.Forms.Button();
+         this.btnTiltDown = new System.Windows.Forms.Button();
+         this.btnTiltUp = new System.Windows.Forms.Button();
+         this.splitContainer2 = new System.Windows.Forms.SplitContainer();
          this.grpCameraSelection.SuspendLayout();
          this.grpConnection.SuspendLayout();
          this.grpMessages.SuspendLayout();
-         this.groupBox4.SuspendLayout();
+         this.grpVideoControl.SuspendLayout();
+         ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+         this.splitContainer1.Panel1.SuspendLayout();
+         this.splitContainer1.Panel2.SuspendLayout();
+         this.splitContainer1.SuspendLayout();
+         this.grpCameraControl.SuspendLayout();
+         ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
+         this.splitContainer2.Panel1.SuspendLayout();
+         this.splitContainer2.Panel2.SuspendLayout();
+         this.splitContainer2.SuspendLayout();
          this.SuspendLayout();
          // 
          // btnStart
@@ -99,16 +116,20 @@ namespace Vao.Sample
          // 
          // txtHost
          // 
+         this.txtHost.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
          this.txtHost.Location = new System.Drawing.Point(103, 19);
          this.txtHost.Name = "txtHost";
-         this.txtHost.Size = new System.Drawing.Size(159, 20);
+         this.txtHost.Size = new System.Drawing.Size(110, 20);
          this.txtHost.TabIndex = 4;
          // 
          // txtPort
          // 
+         this.txtPort.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
          this.txtPort.Location = new System.Drawing.Point(103, 45);
          this.txtPort.Name = "txtPort";
-         this.txtPort.Size = new System.Drawing.Size(159, 20);
+         this.txtPort.Size = new System.Drawing.Size(110, 20);
          this.txtPort.TabIndex = 6;
          this.txtPort.Text = "444";
          // 
@@ -129,7 +150,7 @@ namespace Vao.Sample
          this.pnlVideo.BackColor = System.Drawing.Color.Black;
          this.pnlVideo.Location = new System.Drawing.Point(6, 19);
          this.pnlVideo.Name = "pnlVideo";
-         this.pnlVideo.Size = new System.Drawing.Size(396, 194);
+         this.pnlVideo.Size = new System.Drawing.Size(838, 339);
          this.pnlVideo.TabIndex = 7;
          // 
          // lstMessages
@@ -141,7 +162,7 @@ namespace Vao.Sample
          this.lstMessages.HideSelection = false;
          this.lstMessages.Location = new System.Drawing.Point(3, 16);
          this.lstMessages.Name = "lstMessages";
-         this.lstMessages.Size = new System.Drawing.Size(402, 116);
+         this.lstMessages.Size = new System.Drawing.Size(844, 231);
          this.lstMessages.TabIndex = 8;
          this.lstMessages.UseCompatibleStateImageBehavior = false;
          this.lstMessages.View = System.Windows.Forms.View.Details;
@@ -158,9 +179,11 @@ namespace Vao.Sample
          // 
          // txtUser
          // 
+         this.txtUser.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
          this.txtUser.Location = new System.Drawing.Point(103, 71);
          this.txtUser.Name = "txtUser";
-         this.txtUser.Size = new System.Drawing.Size(159, 20);
+         this.txtUser.Size = new System.Drawing.Size(110, 20);
          this.txtUser.TabIndex = 11;
          // 
          // label4
@@ -174,10 +197,12 @@ namespace Vao.Sample
          // 
          // txtPassword
          // 
+         this.txtPassword.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
          this.txtPassword.Location = new System.Drawing.Point(103, 97);
          this.txtPassword.Name = "txtPassword";
          this.txtPassword.PasswordChar = '*';
-         this.txtPassword.Size = new System.Drawing.Size(159, 20);
+         this.txtPassword.Size = new System.Drawing.Size(110, 20);
          this.txtPassword.TabIndex = 13;
          // 
          // label5
@@ -194,19 +219,20 @@ namespace Vao.Sample
          this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
          this.textBox1.Enabled = false;
-         this.textBox1.Location = new System.Drawing.Point(6, 219);
+         this.textBox1.Location = new System.Drawing.Point(6, 364);
          this.textBox1.Name = "textBox1";
-         this.textBox1.Size = new System.Drawing.Size(396, 20);
+         this.textBox1.Size = new System.Drawing.Size(838, 20);
          this.textBox1.TabIndex = 15;
          // 
          // grpCameraSelection
          // 
-         this.grpCameraSelection.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+         this.grpCameraSelection.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
          this.grpCameraSelection.Controls.Add(this.flowLayoutPanel1);
-         this.grpCameraSelection.Location = new System.Drawing.Point(7, 199);
+         this.grpCameraSelection.Location = new System.Drawing.Point(6, 333);
          this.grpCameraSelection.Name = "grpCameraSelection";
-         this.grpCameraSelection.Size = new System.Drawing.Size(273, 188);
+         this.grpCameraSelection.Size = new System.Drawing.Size(224, 308);
          this.grpCameraSelection.TabIndex = 25;
          this.grpCameraSelection.TabStop = false;
          this.grpCameraSelection.Text = "Camera Selection";
@@ -216,11 +242,13 @@ namespace Vao.Sample
          this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
          this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 16);
          this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-         this.flowLayoutPanel1.Size = new System.Drawing.Size(267, 169);
+         this.flowLayoutPanel1.Size = new System.Drawing.Size(218, 289);
          this.flowLayoutPanel1.TabIndex = 25;
          // 
          // grpConnection
          // 
+         this.grpConnection.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
          this.grpConnection.Controls.Add(this.label1);
          this.grpConnection.Controls.Add(this.chkSecure);
          this.grpConnection.Controls.Add(this.txtHost);
@@ -232,56 +260,167 @@ namespace Vao.Sample
          this.grpConnection.Controls.Add(this.label4);
          this.grpConnection.Controls.Add(this.btnStart);
          this.grpConnection.Controls.Add(this.txtUser);
-         this.grpConnection.Location = new System.Drawing.Point(7, 4);
+         this.grpConnection.Location = new System.Drawing.Point(6, 3);
          this.grpConnection.Name = "grpConnection";
-         this.grpConnection.Size = new System.Drawing.Size(273, 189);
+         this.grpConnection.Size = new System.Drawing.Size(224, 189);
          this.grpConnection.TabIndex = 26;
          this.grpConnection.TabStop = false;
          this.grpConnection.Text = "Connection";
          // 
          // grpMessages
          // 
-         this.grpMessages.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
          this.grpMessages.Controls.Add(this.lstMessages);
-         this.grpMessages.Location = new System.Drawing.Point(286, 255);
+         this.grpMessages.Dock = System.Windows.Forms.DockStyle.Fill;
+         this.grpMessages.Location = new System.Drawing.Point(0, 0);
          this.grpMessages.Name = "grpMessages";
-         this.grpMessages.Size = new System.Drawing.Size(408, 135);
+         this.grpMessages.Size = new System.Drawing.Size(850, 250);
          this.grpMessages.TabIndex = 27;
          this.grpMessages.TabStop = false;
          this.grpMessages.Text = "Messages";
          // 
-         // groupBox4
+         // grpVideoControl
          // 
-         this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+         this.grpVideoControl.Controls.Add(this.pnlVideo);
+         this.grpVideoControl.Controls.Add(this.textBox1);
+         this.grpVideoControl.Dock = System.Windows.Forms.DockStyle.Fill;
+         this.grpVideoControl.Location = new System.Drawing.Point(0, 0);
+         this.grpVideoControl.Name = "grpVideoControl";
+         this.grpVideoControl.Size = new System.Drawing.Size(850, 390);
+         this.grpVideoControl.TabIndex = 28;
+         this.grpVideoControl.TabStop = false;
+         this.grpVideoControl.Text = "VLC Video Control";
+         // 
+         // splitContainer1
+         // 
+         this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+         this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+         this.splitContainer1.Name = "splitContainer1";
+         // 
+         // splitContainer1.Panel1
+         // 
+         this.splitContainer1.Panel1.BackColor = System.Drawing.Color.White;
+         this.splitContainer1.Panel1.Controls.Add(this.grpCameraControl);
+         this.splitContainer1.Panel1.Controls.Add(this.grpConnection);
+         this.splitContainer1.Panel1.Controls.Add(this.grpCameraSelection);
+         this.splitContainer1.Panel1MinSize = 200;
+         // 
+         // splitContainer1.Panel2
+         // 
+         this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
+         this.splitContainer1.Size = new System.Drawing.Size(1087, 644);
+         this.splitContainer1.SplitterDistance = 233;
+         this.splitContainer1.TabIndex = 29;
+         // 
+         // grpCameraControl
+         // 
+         this.grpCameraControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-         this.groupBox4.Controls.Add(this.pnlVideo);
-         this.groupBox4.Controls.Add(this.textBox1);
-         this.groupBox4.Location = new System.Drawing.Point(286, 4);
-         this.groupBox4.Name = "groupBox4";
-         this.groupBox4.Size = new System.Drawing.Size(408, 245);
-         this.groupBox4.TabIndex = 28;
-         this.groupBox4.TabStop = false;
-         this.groupBox4.Text = "VLC Video Control";
+         this.grpCameraControl.Controls.Add(this.btnPanRight);
+         this.grpCameraControl.Controls.Add(this.btHome);
+         this.grpCameraControl.Controls.Add(this.btnPanLeft);
+         this.grpCameraControl.Controls.Add(this.btnTiltDown);
+         this.grpCameraControl.Controls.Add(this.btnTiltUp);
+         this.grpCameraControl.Location = new System.Drawing.Point(6, 198);
+         this.grpCameraControl.Name = "grpCameraControl";
+         this.grpCameraControl.Size = new System.Drawing.Size(224, 129);
+         this.grpCameraControl.TabIndex = 27;
+         this.grpCameraControl.TabStop = false;
+         this.grpCameraControl.Text = "Camera Control";
+         // 
+         // btnPanRight
+         // 
+         this.btnPanRight.Location = new System.Drawing.Point(129, 53);
+         this.btnPanRight.Name = "btnPanRight";
+         this.btnPanRight.Size = new System.Drawing.Size(29, 32);
+         this.btnPanRight.TabIndex = 4;
+         this.btnPanRight.Text = "Ri";
+         this.btnPanRight.UseVisualStyleBackColor = true;
+         this.btnPanRight.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
+         this.btnPanRight.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
+         // 
+         // btHome
+         // 
+         this.btHome.Location = new System.Drawing.Point(94, 53);
+         this.btHome.Name = "btHome";
+         this.btHome.Size = new System.Drawing.Size(29, 32);
+         this.btHome.TabIndex = 3;
+         this.btHome.Text = "Ho";
+         this.btHome.UseVisualStyleBackColor = true;
+         // 
+         // btnPanLeft
+         // 
+         this.btnPanLeft.Location = new System.Drawing.Point(63, 53);
+         this.btnPanLeft.Name = "btnPanLeft";
+         this.btnPanLeft.Size = new System.Drawing.Size(29, 32);
+         this.btnPanLeft.TabIndex = 2;
+         this.btnPanLeft.Text = "Le";
+         this.btnPanLeft.UseVisualStyleBackColor = true;
+         this.btnPanLeft.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
+         this.btnPanLeft.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
+         // 
+         // btnTiltDown
+         // 
+         this.btnTiltDown.Location = new System.Drawing.Point(94, 91);
+         this.btnTiltDown.Name = "btnTiltDown";
+         this.btnTiltDown.Size = new System.Drawing.Size(29, 32);
+         this.btnTiltDown.TabIndex = 1;
+         this.btnTiltDown.Text = "Do";
+         this.btnTiltDown.UseVisualStyleBackColor = true;
+         this.btnTiltDown.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
+         this.btnTiltDown.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
+         // 
+         // btnTiltUp
+         // 
+         this.btnTiltUp.Location = new System.Drawing.Point(94, 15);
+         this.btnTiltUp.Name = "btnTiltUp";
+         this.btnTiltUp.Size = new System.Drawing.Size(29, 32);
+         this.btnTiltUp.TabIndex = 0;
+         this.btnTiltUp.Text = "Up";
+         this.btnTiltUp.UseVisualStyleBackColor = true;
+         this.btnTiltUp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
+         this.btnTiltUp.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
+         // 
+         // splitContainer2
+         // 
+         this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+         this.splitContainer2.Location = new System.Drawing.Point(0, 0);
+         this.splitContainer2.Name = "splitContainer2";
+         this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
+         // 
+         // splitContainer2.Panel1
+         // 
+         this.splitContainer2.Panel1.Controls.Add(this.grpVideoControl);
+         // 
+         // splitContainer2.Panel2
+         // 
+         this.splitContainer2.Panel2.Controls.Add(this.grpMessages);
+         this.splitContainer2.Size = new System.Drawing.Size(850, 644);
+         this.splitContainer2.SplitterDistance = 390;
+         this.splitContainer2.TabIndex = 0;
          // 
          // MainWindow
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-         this.ClientSize = new System.Drawing.Size(706, 402);
-         this.Controls.Add(this.groupBox4);
-         this.Controls.Add(this.grpMessages);
-         this.Controls.Add(this.grpConnection);
-         this.Controls.Add(this.grpCameraSelection);
+         this.ClientSize = new System.Drawing.Size(1087, 644);
+         this.Controls.Add(this.splitContainer1);
          this.Name = "MainWindow";
          this.Text = "VAO Demo Client";
          this.grpCameraSelection.ResumeLayout(false);
          this.grpConnection.ResumeLayout(false);
          this.grpConnection.PerformLayout();
          this.grpMessages.ResumeLayout(false);
-         this.groupBox4.ResumeLayout(false);
-         this.groupBox4.PerformLayout();
+         this.grpVideoControl.ResumeLayout(false);
+         this.grpVideoControl.PerformLayout();
+         this.splitContainer1.Panel1.ResumeLayout(false);
+         this.splitContainer1.Panel2.ResumeLayout(false);
+         ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+         this.splitContainer1.ResumeLayout(false);
+         this.grpCameraControl.ResumeLayout(false);
+         this.splitContainer2.Panel1.ResumeLayout(false);
+         this.splitContainer2.Panel2.ResumeLayout(false);
+         ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
+         this.splitContainer2.ResumeLayout(false);
          this.ResumeLayout(false);
 
       }
@@ -307,8 +446,16 @@ namespace Vao.Sample
       private System.Windows.Forms.GroupBox grpCameraSelection;
       private System.Windows.Forms.GroupBox grpConnection;
       private System.Windows.Forms.GroupBox grpMessages;
-      private System.Windows.Forms.GroupBox groupBox4;
+      private System.Windows.Forms.GroupBox grpVideoControl;
       private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+      private System.Windows.Forms.SplitContainer splitContainer1;
+      private System.Windows.Forms.SplitContainer splitContainer2;
+      private System.Windows.Forms.GroupBox grpCameraControl;
+      private System.Windows.Forms.Button btnPanRight;
+      private System.Windows.Forms.Button btHome;
+      private System.Windows.Forms.Button btnPanLeft;
+      private System.Windows.Forms.Button btnTiltDown;
+      private System.Windows.Forms.Button btnTiltUp;
    }
 }
 

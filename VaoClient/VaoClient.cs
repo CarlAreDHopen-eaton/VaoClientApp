@@ -69,6 +69,35 @@ namespace Vao.Client
          return JsonParser.ParseCameraList(strResponse, this);
       }
 
+      internal RestResponse PanStart(int cameraNumber, int speed)
+      {
+         RestClient client = GetRestClient();
+         // ReSharper disable once RedundantArgumentDefaultValue
+         RestRequest request = new RestRequest($"inputs/{cameraNumber}/MoveTarget", Method.Post);
+
+         
+         Contracts.JsonMoveTagetBody jsonMoveTaget = new Contracts.JsonMoveTagetBody();
+         if (speed < 0)
+            jsonMoveTaget.pan = -100;
+         else
+            jsonMoveTaget.pan = 100;
+         var strBody = Json.Net.JsonNet.Serialize(jsonMoveTaget);
+         request.AddJsonBody(strBody);
+
+         RestResponse response = client.Execute(request);
+         return response;
+      }
+
+      internal RestResponse PanStop(int cameraNumber)
+      {
+         RestClient client = GetRestClient();
+         // ReSharper disable once RedundantArgumentDefaultValue
+         RestRequest request = new RestRequest($"inputs/{cameraNumber}/MoveTarget", Method.Delete);        
+         
+         RestResponse response = client.Execute(request);
+         return response;
+      }
+
       internal RestResponse GetVaoCameraInternal(int iCameraNo)
       {
          RestClient client = GetRestClient();

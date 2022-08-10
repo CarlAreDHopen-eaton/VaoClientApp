@@ -14,6 +14,9 @@ namespace Vao.Sample
       private bool mIsStared = false;
       private VaoClient moVaoClient;
       private VlcControl mVideoControl;
+      private Camera mCurrentCamera;
+
+
       public bool IsStared
       {
          get { return mIsStared; }
@@ -27,8 +30,36 @@ namespace Vao.Sample
       public MainWindow()
       {
          InitializeComponent();
-         
+
          UpdateEnabled();
+      }
+
+      protected override void OnActivated(EventArgs e)
+      {
+         LoadSettings();
+         base.OnActivated(e);
+      }
+
+      /// <summary>
+      /// Loads the configuration settings into the UI.
+      /// </summary>
+      private void LoadSettings()
+      {
+         if (!string.IsNullOrEmpty(Properties.Settings.Default.Host1))
+            txtHost.Text = Properties.Settings.Default.Host1;
+
+         if (!string.IsNullOrEmpty(Properties.Settings.Default.User))
+            txtUser.Text = Properties.Settings.Default.User;
+
+         if (!string.IsNullOrEmpty(Properties.Settings.Default.ApiPort))
+            txtPort.Text = Properties.Settings.Default.ApiPort;
+      }
+
+      private void SaveSettings()
+      {
+         Properties.Settings.Default.Host1 = txtHost.Text;
+         Properties.Settings.Default.User = txtUser.Text;
+         Properties.Settings.Default.ApiPort = txtPort.Text;
       }
 
       public void UpdateEnabled()
@@ -36,16 +67,19 @@ namespace Vao.Sample
          btnStop.Enabled = IsStared;
          grpCameraSelection.Enabled = IsStared;
 
+         grpCameraControl.Enabled = IsStared && CurrentCamera != null;
+
          btnStart.Enabled = !IsStared;
          txtHost.Enabled = !IsStared;
          txtPassword.Enabled = !IsStared;
          txtPort.Enabled = !IsStared;
          txtUser.Enabled = !IsStared;
-         chkSecure.Enabled = !IsStared; 
+         chkSecure.Enabled = !IsStared;
       }
 
       private void btnStart_Click(object sender, EventArgs e)
       {
+         SaveSettings();
          IsStared = true;
          moVaoClient = new VaoClient
          {
@@ -65,7 +99,8 @@ namespace Vao.Sample
          }
          else
          {
-            AddMessage("Some error.");
+            AddMessage("Unable to start.");
+            btnStop_Click(sender, e);
          }
       }
 
@@ -91,13 +126,35 @@ namespace Vao.Sample
       private void btnStop_Click(object sender, EventArgs e)
       {
          IsStared = false;
-         moVaoClient.StopClient();
-         moVaoClient = null;
+         if (moVaoClient != null)
+         {
+            moVaoClient.StopClient();
+            moVaoClient = null;
+         }
+         if (mVideoControl != null)
+         {
+            mVideoControl.Stop();
+         }
+         CurrentCamera = null;
+      }
+
+      private Camera CurrentCamera 
+      {
+         get
+         {
+            return mCurrentCamera;
+         }
+         set
+         {
+            mCurrentCamera = value;
+            UpdateEnabled();
+         }
       }
 
       private void SelectCamera(int cameraNo, int streamNo)
       {
          Camera camera = moVaoClient.GetVaoCamera(cameraNo);
+         CurrentCamera = camera;
          string url = camera.GetCameraLiveStreamUrl(streamNo);
          if (!string.IsNullOrEmpty(url))
          {
@@ -139,7 +196,7 @@ namespace Vao.Sample
       {
          AddMessage(e.ToString());
       }
-      
+
       private void OnSelectCameraClicked(object sender, EventArgs e)
       {
          if (sender is Button button)
@@ -170,6 +227,26 @@ namespace Vao.Sample
                oButton.Click += OnSelectCameraClicked;
                flowLayoutPanel1.Controls.Add(oButton);
             }
+         }
+      }
+
+      private void OnControlCameraMouseDown(object sender, MouseEventArgs e)
+      {
+         var currentCamera = CurrentCamera;
+         if (currentCamera != null)
+         {
+            if (sender == btnPanLeft)
+               currentCamera.PanLeft();
+         }
+      }
+
+      private void OnControlCameraMouseUp(object sender, MouseEventArgs e)
+      {
+         var currentCamera = CurrentCamera;
+         if (currentCamera != null)
+         {
+            if (sender == btnPanLeft)
+               currentCamera.PanStop();
          }
       }
    }
