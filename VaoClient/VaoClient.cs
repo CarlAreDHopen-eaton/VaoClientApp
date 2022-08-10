@@ -4,6 +4,7 @@ using System.Globalization;
 using RestSharp;
 using RestSharp.Authenticators;
 using Vao.Client.Components;
+using Vao.Client.Utility;
 
 namespace Vao.Client
 {
@@ -24,7 +25,7 @@ namespace Vao.Client
       public string GetVaoStatusMessages(int iMinutesBeforeNow = 1)
       {
          var client = GetRestClient();
-         RestRequest request = new RestRequest("status", Method.Get);
+         RestRequest request = new RestRequest("status");
          request.AddHeader("If-Modified-Since", DateTime.Now.AddMinutes(-iMinutesBeforeNow).ToString(CultureInfo.InvariantCulture));
          RestResponse response = client.Execute(request);
 
@@ -47,17 +48,15 @@ namespace Vao.Client
          RestResponse response = GetVaoCameraInternal(iCameraNo);
          if (response == null)
             return null;
-         return Camera.ParseSingleCamera(response.Content, this);
+         return JsonParser.ParseSingleCamera(response.Content, this);
       }
 
       public List<Camera> GetVaoCameras()
       {
-         var cameras = new List<Camera>();
-
          RestClient client = GetRestClient();
 
          // ReSharper disable once RedundantArgumentDefaultValue
-         RestRequest request = new RestRequest($"inputs", Method.Get);
+         RestRequest request = new RestRequest("inputs", Method.Get);
          RestResponse response = client.Execute(request);
 
          string strResponse = ValidateResponseContent(response);
@@ -67,7 +66,7 @@ namespace Vao.Client
             return null;
          }
 
-         return Camera.ParseCameraList(strResponse, this);
+         return JsonParser.ParseCameraList(strResponse, this);
       }
 
       internal RestResponse GetVaoCameraInternal(int iCameraNo)

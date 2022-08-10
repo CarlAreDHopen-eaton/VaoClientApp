@@ -7,7 +7,8 @@ namespace Vao.Client.Components
 {
    public class Camera
    {
-      private string mCameraName = "";
+      // ReSharper disable once MemberInitializerValueIgnored
+      private string mCameraName = string.Empty;
       private int mCameraNumber = 0;
       private VaoClient mVaoClient;
 
@@ -16,34 +17,6 @@ namespace Vao.Client.Components
          mCameraNumber = cameraNumber;
          mVaoClient = vaoClient;
          mCameraName = camera.name;
-      }
-
-      internal static List<Camera> ParseCameraList(string strJson, VaoClient vaoClient)
-      {
-         if (!string.IsNullOrEmpty(strJson))
-         {
-            List<JsonCameraObject> list = JsonNet.Deserialize<List<JsonCameraObject>>(strJson);
-            List<Camera> returnList = new List<Camera>();
-            foreach (JsonCameraObject camera in list)
-            {
-               returnList.Add(new Camera(camera.inputId, camera, vaoClient));
-            }
-
-            return returnList;
-         }
-
-         return null;
-      }
-
-      internal static Camera ParseSingleCamera(string strJson, VaoClient vaoClient)
-      {
-         if (!string.IsNullOrEmpty(strJson))
-         {
-            JsonCameraObject oCameraObject = JsonNet.Deserialize<JsonCameraObject>(strJson);
-            return new Camera(oCameraObject.inputId, oCameraObject, vaoClient);
-         }
-
-         return null;
       }
 
       /// <summary>
