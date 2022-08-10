@@ -103,7 +103,6 @@ namespace Vao.Sample
          this.txtHost.Name = "txtHost";
          this.txtHost.Size = new System.Drawing.Size(159, 20);
          this.txtHost.TabIndex = 4;
-         this.txtHost.Text = "192.168.101.150";
          // 
          // txtPort
          // 
@@ -111,7 +110,7 @@ namespace Vao.Sample
          this.txtPort.Name = "txtPort";
          this.txtPort.Size = new System.Drawing.Size(159, 20);
          this.txtPort.TabIndex = 6;
-         this.txtPort.Text = "4444";
+         this.txtPort.Text = "444";
          // 
          // label2
          // 
@@ -163,7 +162,6 @@ namespace Vao.Sample
          this.txtUser.Name = "txtUser";
          this.txtUser.Size = new System.Drawing.Size(159, 20);
          this.txtUser.TabIndex = 11;
-         this.txtUser.Text = "Service";
          // 
          // label4
          // 
@@ -178,9 +176,9 @@ namespace Vao.Sample
          // 
          this.txtPassword.Location = new System.Drawing.Point(103, 97);
          this.txtPassword.Name = "txtPassword";
+         this.txtPassword.PasswordChar = '*';
          this.txtPassword.Size = new System.Drawing.Size(159, 20);
          this.txtPassword.TabIndex = 13;
-         this.txtPassword.Text = "Default333";
          // 
          // label5
          // 
