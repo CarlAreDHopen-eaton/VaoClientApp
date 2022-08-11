@@ -58,15 +58,23 @@ namespace Vao.Client.Components
 
       public void PanLeft()
       {
-         RestResponse response = mVaoClient.PanStart(CameraNumber, -1);
+         RestResponse response = mVaoClient.PanTiltStart(CameraNumber, -1, 0);
       }
       public void PanRight()
       {
-         RestResponse response = mVaoClient.PanStart(CameraNumber, 1);
+         RestResponse response = mVaoClient.PanTiltStart(CameraNumber, 1, 0);
       }
-      public void PanStop()
+      public void PanTiltStop()
       {
-         RestResponse response = mVaoClient.PanStop(CameraNumber);         
+         RestResponse response = mVaoClient.PanTiltStop(CameraNumber);         
+      }
+      public void TiltUp()
+      {
+         RestResponse response = mVaoClient.PanTiltStart(CameraNumber, 0, 1);
+      }
+      public void TiltDown()
+      {
+         RestResponse response = mVaoClient.PanTiltStart(CameraNumber, 0, -1);
       }
    }
 }

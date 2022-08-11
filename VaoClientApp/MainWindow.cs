@@ -239,18 +239,20 @@ namespace Vao.Sample
                currentCamera.PanLeft();
             if (sender == btnPanRight)
                currentCamera.PanRight();
+            if (sender == btnTiltUp)
+               currentCamera.TiltUp();
+            if (sender == btnTiltDown)
+               currentCamera.TiltDown();
          }
       }
 
       private void OnControlCameraMouseUp(object sender, MouseEventArgs e)
       {
          var currentCamera = CurrentCamera;
-         if (currentCamera != null)
+         if (currentCamera != null && sender is Button)
          {
-            if (sender == btnPanLeft)
-               currentCamera.PanStop();
-            if (sender == btnPanRight)
-               currentCamera.PanStop();
+            if ((sender == btnPanLeft) || (sender == btnPanRight) || (sender == btnTiltUp) || (sender == btnTiltDown))
+                currentCamera.PanTiltStop();
          }
       }
    }
