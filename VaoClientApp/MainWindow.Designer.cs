@@ -77,7 +77,7 @@ namespace Vao.Sample
          this.btnStart.Location = new System.Drawing.Point(21, 146);
          this.btnStart.Name = "btnStart";
          this.btnStart.Size = new System.Drawing.Size(88, 32);
-         this.btnStart.TabIndex = 0;
+         this.btnStart.TabIndex = 9;
          this.btnStart.Text = "Start";
          this.btnStart.UseVisualStyleBackColor = true;
          this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
@@ -87,7 +87,7 @@ namespace Vao.Sample
          this.btnStop.Location = new System.Drawing.Point(115, 146);
          this.btnStop.Name = "btnStop";
          this.btnStop.Size = new System.Drawing.Size(88, 32);
-         this.btnStop.TabIndex = 1;
+         this.btnStop.TabIndex = 10;
          this.btnStop.Text = "Stop";
          this.btnStop.UseVisualStyleBackColor = true;
          this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
@@ -100,7 +100,7 @@ namespace Vao.Sample
          this.chkSecure.Location = new System.Drawing.Point(21, 124);
          this.chkSecure.Name = "chkSecure";
          this.chkSecure.Size = new System.Drawing.Size(60, 17);
-         this.chkSecure.TabIndex = 2;
+         this.chkSecure.TabIndex = 8;
          this.chkSecure.Text = "Secure";
          this.chkSecure.UseVisualStyleBackColor = true;
          // 
@@ -110,7 +110,7 @@ namespace Vao.Sample
          this.lblHost.Location = new System.Drawing.Point(18, 22);
          this.lblHost.Name = "lblHost";
          this.lblHost.Size = new System.Drawing.Size(29, 13);
-         this.lblHost.TabIndex = 3;
+         this.lblHost.TabIndex = 0;
          this.lblHost.Text = "Host";
          // 
          // txtHost
@@ -120,7 +120,7 @@ namespace Vao.Sample
          this.txtHost.Location = new System.Drawing.Point(103, 19);
          this.txtHost.Name = "txtHost";
          this.txtHost.Size = new System.Drawing.Size(110, 20);
-         this.txtHost.TabIndex = 4;
+         this.txtHost.TabIndex = 1;
          // 
          // txtPort
          // 
@@ -129,7 +129,7 @@ namespace Vao.Sample
          this.txtPort.Location = new System.Drawing.Point(103, 45);
          this.txtPort.Name = "txtPort";
          this.txtPort.Size = new System.Drawing.Size(110, 20);
-         this.txtPort.TabIndex = 6;
+         this.txtPort.TabIndex = 3;
          this.txtPort.Text = "444";
          // 
          // lblPort
@@ -138,7 +138,7 @@ namespace Vao.Sample
          this.lblPort.Location = new System.Drawing.Point(18, 48);
          this.lblPort.Name = "lblPort";
          this.lblPort.Size = new System.Drawing.Size(26, 13);
-         this.lblPort.TabIndex = 5;
+         this.lblPort.TabIndex = 2;
          this.lblPort.Text = "Port";
          // 
          // pnlVideo
@@ -150,7 +150,7 @@ namespace Vao.Sample
          this.pnlVideo.Location = new System.Drawing.Point(6, 19);
          this.pnlVideo.Name = "pnlVideo";
          this.pnlVideo.Size = new System.Drawing.Size(838, 339);
-         this.pnlVideo.TabIndex = 7;
+         this.pnlVideo.TabIndex = 0;
          // 
          // lstMessages
          // 
@@ -162,7 +162,7 @@ namespace Vao.Sample
          this.lstMessages.Location = new System.Drawing.Point(3, 16);
          this.lstMessages.Name = "lstMessages";
          this.lstMessages.Size = new System.Drawing.Size(844, 231);
-         this.lstMessages.TabIndex = 8;
+         this.lstMessages.TabIndex = 0;
          this.lstMessages.UseCompatibleStateImageBehavior = false;
          this.lstMessages.View = System.Windows.Forms.View.Details;
          // 
@@ -183,7 +183,7 @@ namespace Vao.Sample
          this.txtUser.Location = new System.Drawing.Point(103, 71);
          this.txtUser.Name = "txtUser";
          this.txtUser.Size = new System.Drawing.Size(110, 20);
-         this.txtUser.TabIndex = 11;
+         this.txtUser.TabIndex = 5;
          // 
          // lblUser
          // 
@@ -191,7 +191,7 @@ namespace Vao.Sample
          this.lblUser.Location = new System.Drawing.Point(18, 74);
          this.lblUser.Name = "lblUser";
          this.lblUser.Size = new System.Drawing.Size(29, 13);
-         this.lblUser.TabIndex = 10;
+         this.lblUser.TabIndex = 4;
          this.lblUser.Text = "User";
          // 
          // txtPassword
@@ -202,7 +202,7 @@ namespace Vao.Sample
          this.txtPassword.Name = "txtPassword";
          this.txtPassword.PasswordChar = '*';
          this.txtPassword.Size = new System.Drawing.Size(110, 20);
-         this.txtPassword.TabIndex = 13;
+         this.txtPassword.TabIndex = 7;
          // 
          // lblPassword
          // 
@@ -210,7 +210,7 @@ namespace Vao.Sample
          this.lblPassword.Location = new System.Drawing.Point(18, 100);
          this.lblPassword.Name = "lblPassword";
          this.lblPassword.Size = new System.Drawing.Size(53, 13);
-         this.lblPassword.TabIndex = 12;
+         this.lblPassword.TabIndex = 6;
          this.lblPassword.Text = "Password";
          // 
          // txtCurrentRtspUrl
@@ -221,7 +221,7 @@ namespace Vao.Sample
          this.txtCurrentRtspUrl.Location = new System.Drawing.Point(6, 364);
          this.txtCurrentRtspUrl.Name = "txtCurrentRtspUrl";
          this.txtCurrentRtspUrl.Size = new System.Drawing.Size(838, 20);
-         this.txtCurrentRtspUrl.TabIndex = 15;
+         this.txtCurrentRtspUrl.TabIndex = 1;
          // 
          // grpCameraSelection
          // 
@@ -232,7 +232,7 @@ namespace Vao.Sample
          this.grpCameraSelection.Location = new System.Drawing.Point(6, 333);
          this.grpCameraSelection.Name = "grpCameraSelection";
          this.grpCameraSelection.Size = new System.Drawing.Size(224, 308);
-         this.grpCameraSelection.TabIndex = 25;
+         this.grpCameraSelection.TabIndex = 2;
          this.grpCameraSelection.TabStop = false;
          this.grpCameraSelection.Text = "Camera Selection";
          // 
@@ -242,7 +242,7 @@ namespace Vao.Sample
          this.pnlCameraSelectFlowPanel.Location = new System.Drawing.Point(3, 16);
          this.pnlCameraSelectFlowPanel.Name = "pnlCameraSelectFlowPanel";
          this.pnlCameraSelectFlowPanel.Size = new System.Drawing.Size(218, 289);
-         this.pnlCameraSelectFlowPanel.TabIndex = 25;
+         this.pnlCameraSelectFlowPanel.TabIndex = 0;
          // 
          // grpConnection
          // 
@@ -262,7 +262,7 @@ namespace Vao.Sample
          this.grpConnection.Location = new System.Drawing.Point(6, 3);
          this.grpConnection.Name = "grpConnection";
          this.grpConnection.Size = new System.Drawing.Size(224, 189);
-         this.grpConnection.TabIndex = 26;
+         this.grpConnection.TabIndex = 0;
          this.grpConnection.TabStop = false;
          this.grpConnection.Text = "Connection";
          // 
@@ -273,7 +273,7 @@ namespace Vao.Sample
          this.grpMessages.Location = new System.Drawing.Point(0, 0);
          this.grpMessages.Name = "grpMessages";
          this.grpMessages.Size = new System.Drawing.Size(850, 250);
-         this.grpMessages.TabIndex = 27;
+         this.grpMessages.TabIndex = 0;
          this.grpMessages.TabStop = false;
          this.grpMessages.Text = "Messages";
          // 
@@ -285,7 +285,7 @@ namespace Vao.Sample
          this.grpVideoControl.Location = new System.Drawing.Point(0, 0);
          this.grpVideoControl.Name = "grpVideoControl";
          this.grpVideoControl.Size = new System.Drawing.Size(850, 390);
-         this.grpVideoControl.TabIndex = 28;
+         this.grpVideoControl.TabIndex = 0;
          this.grpVideoControl.TabStop = false;
          this.grpVideoControl.Text = "VLC Video Control";
          // 
@@ -308,7 +308,7 @@ namespace Vao.Sample
          this.splitMainVerticalSplit.Panel2.Controls.Add(this.splitHorizontalVideoAndMessageSplit);
          this.splitMainVerticalSplit.Size = new System.Drawing.Size(1087, 644);
          this.splitMainVerticalSplit.SplitterDistance = 233;
-         this.splitMainVerticalSplit.TabIndex = 29;
+         this.splitMainVerticalSplit.TabIndex = 0;
          // 
          // grpCameraControl
          // 
@@ -321,7 +321,7 @@ namespace Vao.Sample
          this.grpCameraControl.Location = new System.Drawing.Point(6, 198);
          this.grpCameraControl.Name = "grpCameraControl";
          this.grpCameraControl.Size = new System.Drawing.Size(224, 129);
-         this.grpCameraControl.TabIndex = 27;
+         this.grpCameraControl.TabIndex = 1;
          this.grpCameraControl.TabStop = false;
          this.grpCameraControl.Text = "Camera Control";
          // 
@@ -330,7 +330,7 @@ namespace Vao.Sample
          this.btnPanRight.Location = new System.Drawing.Point(129, 53);
          this.btnPanRight.Name = "btnPanRight";
          this.btnPanRight.Size = new System.Drawing.Size(29, 32);
-         this.btnPanRight.TabIndex = 4;
+         this.btnPanRight.TabIndex = 2;
          this.btnPanRight.Text = "Ri";
          this.btnPanRight.UseVisualStyleBackColor = true;
          this.btnPanRight.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
@@ -341,7 +341,7 @@ namespace Vao.Sample
          this.btnPanLeft.Location = new System.Drawing.Point(59, 53);
          this.btnPanLeft.Name = "btnPanLeft";
          this.btnPanLeft.Size = new System.Drawing.Size(29, 32);
-         this.btnPanLeft.TabIndex = 2;
+         this.btnPanLeft.TabIndex = 1;
          this.btnPanLeft.Text = "Le";
          this.btnPanLeft.UseVisualStyleBackColor = true;
          this.btnPanLeft.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
@@ -352,7 +352,7 @@ namespace Vao.Sample
          this.btnTiltDown.Location = new System.Drawing.Point(94, 91);
          this.btnTiltDown.Name = "btnTiltDown";
          this.btnTiltDown.Size = new System.Drawing.Size(29, 32);
-         this.btnTiltDown.TabIndex = 1;
+         this.btnTiltDown.TabIndex = 3;
          this.btnTiltDown.Text = "Do";
          this.btnTiltDown.UseVisualStyleBackColor = true;
          this.btnTiltDown.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
