@@ -4,6 +4,7 @@ using System.IO;
 using System.Windows.Forms;
 using Vao.Client;
 using Vao.Client.Components;
+using Vao.Sample.Properties;
 using Vlc.DotNet.Core;
 using Vlc.DotNet.Forms;
 
@@ -31,13 +32,8 @@ namespace Vao.Sample
       {
          InitializeComponent();
 
-         UpdateEnabled();
-      }
-
-      protected override void OnActivated(EventArgs e)
-      {
          LoadSettings();
-         base.OnActivated(e);
+         UpdateEnabled();
       }
 
       /// <summary>
@@ -45,21 +41,22 @@ namespace Vao.Sample
       /// </summary>
       private void LoadSettings()
       {
-         if (!string.IsNullOrEmpty(Properties.Settings.Default.Host1))
-            txtHost.Text = Properties.Settings.Default.Host1;
+         if (!string.IsNullOrEmpty(Settings.Default.Host1))
+            txtHost.Text = Settings.Default.Host1;
 
-         if (!string.IsNullOrEmpty(Properties.Settings.Default.User))
-            txtUser.Text = Properties.Settings.Default.User;
+         if (!string.IsNullOrEmpty(Settings.Default.User))
+            txtUser.Text = Settings.Default.User;
 
-         if (!string.IsNullOrEmpty(Properties.Settings.Default.ApiPort))
-            txtPort.Text = Properties.Settings.Default.ApiPort;
+         if (!string.IsNullOrEmpty(Settings.Default.ApiPort))
+            txtPort.Text = Settings.Default.ApiPort;
       }
 
       private void SaveSettings()
       {
-         Properties.Settings.Default.Host1 = txtHost.Text;
-         Properties.Settings.Default.User = txtUser.Text;
-         Properties.Settings.Default.ApiPort = txtPort.Text;
+         Settings.Default.Host1 = txtHost.Text;
+         Settings.Default.User = txtUser.Text;
+         Settings.Default.ApiPort = txtPort.Text;
+         Settings.Default.Save();
       }
 
       public void UpdateEnabled()
@@ -168,7 +165,7 @@ namespace Vao.Sample
                {
                   DirectoryInfo vlcLibDirectory = new DirectoryInfo(Path.Combine(Directory.GetCurrentDirectory(), "libvlc", IntPtr.Size == 4 ? "win-x86" : "win-x64"));
                   libVlc.VlcLibDirectory = vlcLibDirectory;
-                  libVlc.VlcMediaplayerOptions = new[] { "-vv" };
+                  libVlc.VlcMediaplayerOptions = new[] { "-vv", "--rtsp-timeout=300", "--network-caching=300" };
                   libVlc.Opening += LibVlcOnOpening;
                   libVlc.EncounteredError += LibVlcOnEncounteredError;
 
@@ -183,18 +180,21 @@ namespace Vao.Sample
 
             //mVideoControl.SetMedia(new Uri(url));
             var uri = new Uri(url);
+            if (mVideoControl.IsPlaying)
+               mVideoControl.Stop();
+            mVideoControl.ResetMedia();
             mVideoControl.Play(uri);
          }
       }
 
       private void LibVlcOnEncounteredError(object sender, VlcMediaPlayerEncounteredErrorEventArgs e)
       {
-         AddMessage(e.ToString());
+         AddMessage("LibVLC error encountered.");
       }
 
       private void LibVlcOnOpening(object sender, VlcMediaPlayerOpeningEventArgs e)
       {
-         AddMessage(e.ToString());
+         AddMessage("LibVLC opening");
       }
 
       private void OnSelectCameraClicked(object sender, EventArgs e)
@@ -237,6 +237,8 @@ namespace Vao.Sample
          {
             if (sender == btnPanLeft)
                currentCamera.PanLeft();
+            if (sender == btnPanRight)
+               currentCamera.PanRight();
          }
       }
 
@@ -246,6 +248,8 @@ namespace Vao.Sample
          if (currentCamera != null)
          {
             if (sender == btnPanLeft)
+               currentCamera.PanStop();
+            if (sender == btnPanRight)
                currentCamera.PanStop();
          }
       }
