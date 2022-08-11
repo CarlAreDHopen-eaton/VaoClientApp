@@ -155,7 +155,7 @@ namespace Vao.Sample
          string url = camera.GetCameraLiveStreamUrl(streamNo);
          if (!string.IsNullOrEmpty(url))
          {
-            textBox1.Text = url;
+            txtCurrentRtspUrl.Text = url;
 
             if (mVideoControl == null)
             {
@@ -213,7 +213,7 @@ namespace Vao.Sample
          var cameraList = moVaoClient.GetVaoCameras();
          if (cameraList != null)
          {
-            flowLayoutPanel1.Controls.Clear();
+            pnlCameraSelectFlowPanel.Controls.Clear();
             foreach (var camera in cameraList)
             {
                Button oButton = new Button()
@@ -225,7 +225,7 @@ namespace Vao.Sample
                   Tag = camera
                };
                oButton.Click += OnSelectCameraClicked;
-               flowLayoutPanel1.Controls.Add(oButton);
+               pnlCameraSelectFlowPanel.Controls.Add(oButton);
             }
          }
       }
