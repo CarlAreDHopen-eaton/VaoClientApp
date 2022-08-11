@@ -1,6 +1,7 @@
-﻿namespace Vao.Client.Contracts
+﻿// ReSharper disable InconsistentNaming
+namespace Vao.Client.Contracts
 {
-   internal class JsonMoveTagetBody
+   internal class JsonMoveTargetBody
    {
       /// <summary>
       /// -100 to 100

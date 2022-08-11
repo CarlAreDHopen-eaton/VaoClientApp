@@ -75,16 +75,16 @@ namespace Vao.Client
          // ReSharper disable once RedundantArgumentDefaultValue
          RestRequest request = new RestRequest($"inputs/{cameraNumber}/MoveTarget", Method.Post);
 
-         Contracts.JsonMoveTagetBody jsonMoveTaget = new Contracts.JsonMoveTagetBody();
+         Contracts.JsonMoveTargetBody jsonMoveTarget = new Contracts.JsonMoveTargetBody();
          // Set pan speed.
          if (panSpeed != 0)
-            jsonMoveTaget.pan = (panSpeed > 0) ? 100 : -100;
+            jsonMoveTarget.pan = (panSpeed > 0) ? 100 : -100;
          // Set tilt speed.
          if (tiltSpeed != 0)
-            jsonMoveTaget.tilt = (tiltSpeed > 0) ? 100 : -100;
+            jsonMoveTarget.tilt = (tiltSpeed > 0) ? 100 : -100;
 
-         var strBody = Json.Net.JsonNet.Serialize(jsonMoveTaget);
-         request.AddJsonBody(strBody);
+         string serializedJsonMoveTarget = Json.Net.JsonNet.Serialize(jsonMoveTarget);
+         request.AddJsonBody(serializedJsonMoveTarget);
 
          RestResponse response = client.Execute(request);
          return response;
@@ -114,7 +114,6 @@ namespace Vao.Client
          }
          return response;
       }
-
       private RestClient GetRestClient()
       {
          if (mRestClient != null)
