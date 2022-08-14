@@ -22,6 +22,21 @@ namespace Vao.Client.Utility
          return null;
       }
 
+      internal static List<StatusMessage> ParseStatusMessages(string strJson, VaoClient vaoClient)
+      {
+         if (!string.IsNullOrEmpty(strJson))
+         {
+            List<JsonStatusMessage> list = JsonNet.Deserialize<List<JsonStatusMessage>>(strJson);
+            List<StatusMessage> returnList = new List<StatusMessage>();
+            foreach (JsonStatusMessage statusMessage in list)
+            {
+               returnList.Add(new StatusMessage(statusMessage, vaoClient));
+            }
+            return returnList;
+         }
+         return null; 
+      }
+
       internal static Camera ParseSingleCamera(string strJson, VaoClient vaoClient)
       {
          if (!string.IsNullOrEmpty(strJson))

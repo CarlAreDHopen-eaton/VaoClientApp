@@ -12,6 +12,7 @@ namespace Vao.Client
    {
       public event EventHandler<ConnectEventArgs> OnError;
       private RestClient mRestClient;
+      private FeedbackHandler mFeedbackHandler;
 
       public string GetVaoStatus()
       {
@@ -27,6 +28,15 @@ namespace Vao.Client
          var client = GetRestClient();
          RestRequest request = new RestRequest("status");
          request.AddHeader("If-Modified-Since", DateTime.Now.AddMinutes(-iMinutesBeforeNow).ToString(CultureInfo.InvariantCulture));
+         RestResponse response = client.Execute(request);
+
+         return ValidateResponseContent(response);
+      }
+      public string GetVaoStatusMessages(DateTime dateTime)
+      {
+         var client = GetRestClient();
+         RestRequest request = new RestRequest("status");
+         request.AddHeader("If-Modified-Since", dateTime.ToString(CultureInfo.InvariantCulture));
          RestResponse response = client.Execute(request);
 
          return ValidateResponseContent(response);
@@ -67,6 +77,12 @@ namespace Vao.Client
          }
 
          return JsonParser.ParseCameraList(strResponse, this);
+      }
+
+      public void StartStatusThread()
+      {
+         mFeedbackHandler = new FeedbackHandler(this);
+         mFeedbackHandler.Start(); 
       }
 
       internal RestResponse PanTiltStart(int cameraNumber, int panSpeed, int tiltSpeed)
@@ -142,6 +158,11 @@ namespace Vao.Client
 
       public void StopClient()
       {
+         if (mFeedbackHandler != null)
+         {
+            mFeedbackHandler.Stop();
+            mFeedbackHandler = null;
+         }
          mRestClient = null;
       }
 

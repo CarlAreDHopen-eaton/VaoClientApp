@@ -93,6 +93,8 @@ namespace Vao.Sample
          {
             AddMessage(status);
             FillSelectCameraButtonList();
+            //TODO Finish this.
+            //moVaoClient.StartStatusThread();
          }
          else
          {
