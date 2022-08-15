@@ -32,6 +32,19 @@ namespace Vao.Client
          while (!mStopStatusCheckThread.WaitOne(1000))
          {
             string rawMessages = mClient.GetVaoStatusMessages(lastCheck);
+            if (!string.IsNullOrEmpty(rawMessages))
+            {
+               var statusMessages = Utility.JsonParser.ParseStatusMessages(rawMessages, mClient);
+               if (statusMessages != null && statusMessages.Count > 0)
+               {
+                  foreach (var message in statusMessages)
+                  {
+                     string strMessage = $"{message.Timestamp} : [{message.StatusType}] {message.Message}";
+                     mClient.RaiseOnMessage(message.StatusType, strMessage);
+                  }
+               }
+            }
+
             lastCheck = DateTime.Now;
          }
       }

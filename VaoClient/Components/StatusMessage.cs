@@ -1,4 +1,6 @@
-﻿using Vao.Client.Contracts;
+﻿using System;
+using Vao.Client.Contracts;
+using Vao.Client.Enum;
 
 namespace Vao.Client.Components
 {
@@ -14,11 +16,18 @@ namespace Vao.Client.Components
 
       public VaoClient VaoClient { get; }
 
-      public string StatusType
+      public MessageType StatusType
       { 
          get
-         { 
-            return mStatusMessage.type;
+         {
+            if (mStatusMessage.type.Equals("debug", StringComparison.InvariantCultureIgnoreCase))
+               return MessageType.Debug;
+            if (mStatusMessage.type.Equals("error", StringComparison.InvariantCultureIgnoreCase))
+               return MessageType.Error;
+            if (mStatusMessage.type.Equals("info", StringComparison.InvariantCultureIgnoreCase))
+               return MessageType.Info;
+
+            return MessageType.Info;
          }
       }
 
@@ -26,7 +35,7 @@ namespace Vao.Client.Components
       { 
          get 
          { 
-            return mStatusMessage.status; 
+            return mStatusMessage.description; 
          } 
       }
 

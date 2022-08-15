@@ -87,14 +87,13 @@ namespace Vao.Sample
             UseHttps = chkSecure.Checked,
             IgnoreCertificateErrors = true
          };
-         moVaoClient.OnError += OnVaoClientError;
+         moVaoClient.OnMessage += OnVaoClientError;
          var status = moVaoClient.GetVaoStatus();
          if (status != null)
          {
             AddMessage(status);
             FillSelectCameraButtonList();
-            //TODO Finish this.
-            //moVaoClient.StartStatusThread();
+            moVaoClient.StartStatusThread();
          }
          else
          {
@@ -103,7 +102,7 @@ namespace Vao.Sample
          }
       }
 
-      private void OnVaoClientError(object sender, ConnectEventArgs e)
+      private void OnVaoClientError(object sender, MessageEventArgs e)
       {
          AddMessage(e.Message);
       }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Json.Net;
 using Vao.Client.Components;
 using Vao.Client.Contracts;
@@ -30,6 +31,9 @@ namespace Vao.Client.Utility
             List<StatusMessage> returnList = new List<StatusMessage>();
             foreach (JsonStatusMessage statusMessage in list)
             {
+               if (statusMessage.description.Equals("no entries", StringComparison.InvariantCultureIgnoreCase))
+                  continue;
+               
                returnList.Add(new StatusMessage(statusMessage, vaoClient));
             }
             return returnList;

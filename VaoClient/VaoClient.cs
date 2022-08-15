@@ -4,15 +4,27 @@ using System.Globalization;
 using RestSharp;
 using RestSharp.Authenticators;
 using Vao.Client.Components;
+using Vao.Client.Enum;
 using Vao.Client.Utility;
 
 namespace Vao.Client
 {
    public class VaoClient
    {
-      public event EventHandler<ConnectEventArgs> OnError;
+      #region Private Members
+
       private RestClient mRestClient;
       private FeedbackHandler mFeedbackHandler;
+
+      #endregion
+
+      #region Public Events
+
+      public event EventHandler<MessageEventArgs> OnMessage;
+
+      #endregion
+
+      #region Public Methods
 
       public string GetVaoStatus()
       {
@@ -32,6 +44,7 @@ namespace Vao.Client
 
          return ValidateResponseContent(response);
       }
+
       public string GetVaoStatusMessages(DateTime dateTime)
       {
          var client = GetRestClient();
@@ -47,7 +60,7 @@ namespace Vao.Client
          if (!response.IsSuccessful)
          {
             string strMessage = response.ErrorException?.ToString() ?? response.ErrorMessage ?? $"Unknown connection error {response.StatusCode}";
-            OnError?.Invoke(this, new ConnectEventArgs(strMessage));
+            RaiseOnMessage(MessageType.Error, strMessage);
             return null;
          }
          return response.Content;
@@ -84,6 +97,20 @@ namespace Vao.Client
          mFeedbackHandler = new FeedbackHandler(this);
          mFeedbackHandler.Start(); 
       }
+
+      public void StopClient()
+      {
+         if (mFeedbackHandler != null)
+         {
+            mFeedbackHandler.Stop();
+            mFeedbackHandler = null;
+         }
+         mRestClient = null;
+      }
+
+      #endregion
+
+      #region Internal Methods
 
       internal RestResponse PanTiltStart(int cameraNumber, int panSpeed, int tiltSpeed)
       {
@@ -130,6 +157,16 @@ namespace Vao.Client
          }
          return response;
       }
+
+      internal void RaiseOnMessage(MessageType messageType, string message)
+      {
+         OnMessage?.Invoke(this, new MessageEventArgs(messageType, message));
+      }
+
+      #endregion
+
+      #region Private Methods
+
       private RestClient GetRestClient()
       {
          if (mRestClient != null)
@@ -156,15 +193,9 @@ namespace Vao.Client
          return client;
       }
 
-      public void StopClient()
-      {
-         if (mFeedbackHandler != null)
-         {
-            mFeedbackHandler.Stop();
-            mFeedbackHandler = null;
-         }
-         mRestClient = null;
-      }
+      #endregion
+
+      #region Public Properties
 
       public string Password { get; set; }
 
@@ -177,5 +208,7 @@ namespace Vao.Client
       public string Port { get; set; }
 
       public bool UseHttps { get; set; }
+
+      #endregion
    }
 }
