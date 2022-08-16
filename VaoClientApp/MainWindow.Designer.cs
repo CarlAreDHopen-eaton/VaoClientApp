@@ -158,6 +158,7 @@ namespace Vao.Sample
             this.colTime,
             this.colMessage});
          this.lstMessages.Dock = System.Windows.Forms.DockStyle.Fill;
+         this.lstMessages.FullRowSelect = true;
          this.lstMessages.HideSelection = false;
          this.lstMessages.Location = new System.Drawing.Point(3, 16);
          this.lstMessages.Name = "lstMessages";

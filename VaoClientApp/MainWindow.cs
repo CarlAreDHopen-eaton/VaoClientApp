@@ -2,11 +2,11 @@
 using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
+using LibVLCSharp.Shared;
+using LibVLCSharp.WinForms;
 using Vao.Client;
 using Vao.Client.Components;
 using Vao.Sample.Properties;
-using Vlc.DotNet.Core;
-using Vlc.DotNet.Forms;
 
 namespace Vao.Sample
 {
@@ -14,11 +14,12 @@ namespace Vao.Sample
    {
       private bool mIsStared = false;
       private VaoClient moVaoClient;
-      private VlcControl mVideoControl;
+      private VideoView mVideoControl;
       private Camera mCurrentCamera;
+      private LibVLC mLibVlc;
 
 
-      public bool IsStared
+   public bool IsStared
       {
          get { return mIsStared; }
          set
@@ -32,8 +33,31 @@ namespace Vao.Sample
       {
          InitializeComponent();
 
+         StartInitializeVlc();
+
          LoadSettings();
          UpdateEnabled();
+      }
+
+      private void StartInitializeVlc()
+      {
+         AddMessage("LibVLC", "Loading VLC");
+         var options = new[] { "-vv", "--rtsp-timeout=300", "--network-caching=300" };
+         mLibVlc = new LibVLC(true, options);
+         mLibVlc.Log += LibVlc_Log;
+
+         //TODO Check if not needed anymore.
+         //DirectoryInfo vlcLibDirectory = new DirectoryInfo(Path.Combine(Directory.GetCurrentDirectory(), "libvlc", IntPtr.Size == 4 ? "win-x86" : "win-x64"));
+         //libVlc.VlcLibDirectory = vlcLibDirectory;
+      }
+
+      private void LibVlc_Log(object sender, LogEventArgs e)
+      {
+         // Ignore debug log.
+         if (e.Level == LogLevel.Debug)
+            return;
+
+         AddMessage("LibVLC", e.FormattedLog);
       }
 
       /// <summary>
@@ -91,32 +115,32 @@ namespace Vao.Sample
          var status = moVaoClient.GetVaoStatus();
          if (status != null)
          {
-            AddMessage(status);
+            AddMessage("VaoAPI", status);
             FillSelectCameraButtonList();
             moVaoClient.StartStatusThread();
          }
          else
          {
-            AddMessage("Unable to start.");
+            AddMessage("VaoAPI", "Unable to start.");
             btnStop_Click(sender, e);
          }
       }
 
       private void OnVaoClientError(object sender, MessageEventArgs e)
       {
-         AddMessage(e.Message);
+         AddMessage("LibVLC", e.Message);
       }
 
-      private void AddMessage(string strMessage)
+      private void AddMessage(string strSource, string strMessage)
       {
          if (InvokeRequired)
          {
-            Invoke(new MethodInvoker(() => AddMessage(strMessage)));
+            BeginInvoke(new MethodInvoker(() => AddMessage(strSource, strMessage)));
          }
          else
          {
             var lvi = new ListViewItem(DateTime.Now.ToString(CultureInfo.InvariantCulture));
-            lvi.SubItems.Add(strMessage);
+            lvi.SubItems.Add($"{strSource} - {strMessage}");
             lstMessages.Items.Add(lvi);
          }
       }
@@ -129,11 +153,16 @@ namespace Vao.Sample
             moVaoClient.StopClient();
             moVaoClient = null;
          }
-         if (mVideoControl != null)
-         {
-            mVideoControl.Stop();
-         }
+         StopRtspStream();
          CurrentCamera = null;
+      }
+
+      private void StopRtspStream()
+      {
+         if (mVideoControl?.MediaPlayer != null)
+         {
+            mVideoControl.MediaPlayer.Stop();
+         }
       }
 
       private Camera CurrentCamera 
@@ -158,44 +187,50 @@ namespace Vao.Sample
          {
             txtCurrentRtspUrl.Text = url;
 
-            if (mVideoControl == null)
-            {
-               var libVlc = new VlcControl();
-
-               libVlc.BeginInit();
-               {
-                  DirectoryInfo vlcLibDirectory = new DirectoryInfo(Path.Combine(Directory.GetCurrentDirectory(), "libvlc", IntPtr.Size == 4 ? "win-x86" : "win-x64"));
-                  libVlc.VlcLibDirectory = vlcLibDirectory;
-                  libVlc.VlcMediaplayerOptions = new[] { "-vv", "--rtsp-timeout=300", "--network-caching=300" };
-                  libVlc.Opening += LibVlcOnOpening;
-                  libVlc.EncounteredError += LibVlcOnEncounteredError;
-
-                  pnlVideo.Controls.Add(libVlc);
-
-                  libVlc.Dock = DockStyle.Fill;
-                  libVlc.BringToFront();
-               }
-               libVlc.EndInit();
-               mVideoControl = libVlc;
-            }
-
-            //mVideoControl.SetMedia(new Uri(url));
-            var uri = new Uri(url);
-            if (mVideoControl.IsPlaying)
-               mVideoControl.Stop();
-            mVideoControl.ResetMedia();
-            mVideoControl.Play(uri);
+            StartRtspStream(url);
          }
       }
 
-      private void LibVlcOnEncounteredError(object sender, VlcMediaPlayerEncounteredErrorEventArgs e)
+      private void StartRtspStream(string rtspUrl)
       {
-         AddMessage("LibVLC error encountered.");
+         // Add the control to the WinForm.
+         if (mVideoControl == null)
+         {
+            var libVlc = new VideoView();
+            pnlVideo.Controls.Add(libVlc);
+            libVlc.Dock = DockStyle.Fill;
+            libVlc.BringToFront();
+            mVideoControl = libVlc;
+         }
+
+         // Stop the stream if active.
+         StopRtspStream();
+
+         // Start the stream.
+         var uri = new Uri(rtspUrl);
+         if (mVideoControl.MediaPlayer == null)
+         {
+            var media = new Media(mLibVlc, uri);
+            mVideoControl.MediaPlayer = new MediaPlayer(media);
+            mVideoControl.MediaPlayer.EncounteredError += MediaPlayer_EncounteredError;
+            mVideoControl.MediaPlayer.Opening += MediaPlayer_Opening;
+            mVideoControl.MediaPlayer.Play();
+         }
+         else
+         {
+            var media = new Media(mLibVlc, uri);
+            mVideoControl.MediaPlayer.Play(media);
+         }
       }
 
-      private void LibVlcOnOpening(object sender, VlcMediaPlayerOpeningEventArgs e)
+      private void MediaPlayer_EncounteredError(object sender, EventArgs e)
       {
-         AddMessage("LibVLC opening");
+         AddMessage("LibVLC", "LibVLC error encountered.");
+      }
+
+      private void MediaPlayer_Opening(object sender, EventArgs e)
+      {
+         AddMessage("LibVLC", "LibVLC opening");
       }
 
       private void OnSelectCameraClicked(object sender, EventArgs e)
