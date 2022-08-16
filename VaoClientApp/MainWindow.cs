@@ -41,7 +41,7 @@ namespace Vao.Sample
 
       private void StartInitializeVlc()
       {
-         AddMessage("LibVLC", "Loading VLC");
+         WriteMessageLog("LibVLC", "Loading VLC");
          var options = new[] { "-vv", "--rtsp-timeout=300", "--network-caching=300" };
          mLibVlc = new LibVLC(true, options);
          mLibVlc.Log += LibVlc_Log;
@@ -57,7 +57,7 @@ namespace Vao.Sample
          if (e.Level == LogLevel.Debug)
             return;
 
-         AddMessage("LibVLC", e.FormattedLog);
+         WriteMessageLog("LibVLC", e.FormattedLog);
       }
 
       /// <summary>
@@ -114,31 +114,37 @@ namespace Vao.Sample
             UseHttps = chkSecure.Checked,
             IgnoreCertificateErrors = true
          };
-         moVaoClient.OnMessage += OnVaoClientError;
+         moVaoClient.OnMessage += OnVaoClientMessage;
          var status = moVaoClient.GetVaoStatus();
          if (status != null)
          {
-            AddMessage("VaoAPI", status);
+            WriteMessageLog("VaoAPI", status);
             FillSelectCameraButtonList();
             moVaoClient.StartStatusThread();
          }
          else
          {
-            AddMessage("VaoAPI", "Unable to start.");
+            WriteMessageLog("VaoAPI", "Unable to start.");
             btnStop_Click(sender, e);
          }
       }
 
-      private void OnVaoClientError(object sender, MessageEventArgs e)
+      /// <summary>
+      /// Event handler for the VAO client.
+      /// Receives a message from the REST API and updates the message log control.
+      /// </summary>
+      /// <param name="sender"></param>
+      /// <param name="e"></param>
+      private void OnVaoClientMessage(object sender, MessageEventArgs e)
       {
-         AddMessage("LibVLC", e.Message);
+         WriteMessageLog("VaoAPI", e.Message);
       }
 
-      private void AddMessage(string strSource, string strMessage)
+      private void WriteMessageLog(string strSource, string strMessage)
       {
          if (InvokeRequired)
          {
-            BeginInvoke(new MethodInvoker(() => AddMessage(strSource, strMessage)));
+            BeginInvoke(new MethodInvoker(() => WriteMessageLog(strSource, strMessage)));
          }
          else
          {
@@ -228,12 +234,13 @@ namespace Vao.Sample
 
       private void MediaPlayer_EncounteredError(object sender, EventArgs e)
       {
-         AddMessage("LibVLC", "LibVLC error encountered.");
+         WriteMessageLog("LibVLC", "LibVLC error encountered.");
       }
 
       private void MediaPlayer_Opening(object sender, EventArgs e)
       {
-         AddMessage("LibVLC", "LibVLC opening");
+         string mrl = mVideoControl?.MediaPlayer?.Media?.Mrl ?? "";
+         WriteMessageLog("LibVLC", $"LibVLC opening {mrl}");
       }
 
       private void OnSelectCameraClicked(object sender, EventArgs e)
