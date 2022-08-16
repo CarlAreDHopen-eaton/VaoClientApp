@@ -73,6 +73,9 @@ namespace Vao.Sample
 
          if (!string.IsNullOrEmpty(Settings.Default.ApiPort))
             txtPort.Text = Settings.Default.ApiPort;
+
+         // Select password input control after loading settings.
+         txtPassword.Select();
       }
 
       private void SaveSettings()
