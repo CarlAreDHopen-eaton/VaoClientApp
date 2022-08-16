@@ -50,6 +50,7 @@ namespace Vao.Sample
          this.grpConnection = new System.Windows.Forms.GroupBox();
          this.grpMessages = new System.Windows.Forms.GroupBox();
          this.grpVideoControl = new System.Windows.Forms.GroupBox();
+         this.chkPreferSubChannel = new System.Windows.Forms.CheckBox();
          this.splitMainVerticalSplit = new System.Windows.Forms.SplitContainer();
          this.grpCameraControl = new System.Windows.Forms.GroupBox();
          this.btnPanRight = new System.Windows.Forms.Button();
@@ -221,7 +222,7 @@ namespace Vao.Sample
          this.txtCurrentRtspUrl.Enabled = false;
          this.txtCurrentRtspUrl.Location = new System.Drawing.Point(6, 364);
          this.txtCurrentRtspUrl.Name = "txtCurrentRtspUrl";
-         this.txtCurrentRtspUrl.Size = new System.Drawing.Size(838, 20);
+         this.txtCurrentRtspUrl.Size = new System.Drawing.Size(708, 20);
          this.txtCurrentRtspUrl.TabIndex = 1;
          // 
          // grpCameraSelection
@@ -280,6 +281,7 @@ namespace Vao.Sample
          // 
          // grpVideoControl
          // 
+         this.grpVideoControl.Controls.Add(this.chkPreferSubChannel);
          this.grpVideoControl.Controls.Add(this.pnlVideo);
          this.grpVideoControl.Controls.Add(this.txtCurrentRtspUrl);
          this.grpVideoControl.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -289,6 +291,18 @@ namespace Vao.Sample
          this.grpVideoControl.TabIndex = 0;
          this.grpVideoControl.TabStop = false;
          this.grpVideoControl.Text = "VLC Video Control";
+         // 
+         // chkPreferSubChannel
+         // 
+         this.chkPreferSubChannel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+         this.chkPreferSubChannel.AutoSize = true;
+         this.chkPreferSubChannel.Location = new System.Drawing.Point(729, 366);
+         this.chkPreferSubChannel.Name = "chkPreferSubChannel";
+         this.chkPreferSubChannel.Size = new System.Drawing.Size(118, 17);
+         this.chkPreferSubChannel.TabIndex = 9;
+         this.chkPreferSubChannel.Text = "Prefer Sub Channel";
+         this.chkPreferSubChannel.UseVisualStyleBackColor = true;
+         this.chkPreferSubChannel.CheckedChanged += new System.EventHandler(this.chkPreferSubChannel_CheckedChanged);
          // 
          // splitMainVerticalSplit
          // 
@@ -446,6 +460,7 @@ namespace Vao.Sample
       private System.Windows.Forms.Button btnPanLeft;
       private System.Windows.Forms.Button btnTiltDown;
       private System.Windows.Forms.Button btnTiltUp;
+      private System.Windows.Forms.CheckBox chkPreferSubChannel;
    }
 }
 

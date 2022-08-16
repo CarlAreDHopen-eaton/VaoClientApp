@@ -49,9 +49,17 @@ namespace Vao.Client.Components
          {
             JsonCameraObject oCameraObject = JsonNet.Deserialize<JsonCameraObject>(response.Content);
             if (iStream == 1)
+            {
                return oCameraObject.stream1url;
+            }
             if (iStream == 2)
+            {
+               // If the 2nd stream is available we revert back to stream 1.
+               if (string.IsNullOrEmpty(oCameraObject.stream2url))
+                  return oCameraObject.stream1url;
+
                return oCameraObject.stream2url;
+            }
          }
          return "";
       }

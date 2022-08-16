@@ -90,6 +90,7 @@ namespace Vao.Sample
       {
          btnStop.Enabled = IsStared;
          grpCameraSelection.Enabled = IsStared;
+         chkPreferSubChannel.Enabled = IsStared;
 
          grpCameraControl.Enabled = IsStared && CurrentCamera != null;
 
@@ -249,7 +250,7 @@ namespace Vao.Sample
          {
             if (button.Tag is Camera camera)
             {
-               SelectCamera(camera.CameraNumber, 1);
+               SelectCamera(camera.CameraNumber, chkPreferSubChannel.Checked ? 2 : 1);
             }
          }
       }
@@ -299,6 +300,17 @@ namespace Vao.Sample
          {
             if ((sender == btnPanLeft) || (sender == btnPanRight) || (sender == btnTiltUp) || (sender == btnTiltDown))
                 currentCamera.PanTiltStop();
+         }
+      }
+
+      private void chkPreferSubChannel_CheckedChanged(object sender, EventArgs e)
+      {
+         if (IsStared)
+         {
+            if (CurrentCamera != null)
+            {
+               SelectCamera(CurrentCamera.CameraNumber, chkPreferSubChannel.Checked ? 2 : 1);
+            }
          }
       }
    }
