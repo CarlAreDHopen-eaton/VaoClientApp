@@ -49,7 +49,7 @@ namespace Vao.Client
       {
          var client = GetRestClient();
          RestRequest request = new RestRequest("status");
-         request.AddHeader("If-Modified-Since", dateTime.ToString(CultureInfo.InvariantCulture));
+         request.AddHeader("If-Modified-Since", dateTime.ToString("r"));
          RestResponse response = client.Execute(request);
 
          return ValidateResponseContent(response);
