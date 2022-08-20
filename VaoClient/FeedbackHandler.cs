@@ -28,7 +28,7 @@ namespace Vao.Client
 
       private void StatusCheckThread(object obj)
       {
-         DateTime lastCheck = DateTime.Now;
+         DateTime lastCheck = DateTime.Now.AddDays(-1);
          while (!mStopStatusCheckThread.WaitOne(1000))
          {
             string rawMessages = mClient.GetVaoStatusMessages(lastCheck);
