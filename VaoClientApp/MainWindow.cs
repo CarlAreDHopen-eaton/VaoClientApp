@@ -116,6 +116,8 @@ namespace Vao.Sample
             IgnoreCertificateErrors = true
          };
          moVaoClient.OnMessage += OnVaoClientMessage;
+         moVaoClient.StartClient();
+
          var status = moVaoClient.GetVaoStatus();
          if (status != null)
          {

@@ -15,6 +15,7 @@ namespace Vao.Client
 
       private RestClient mRestClient;
       private FeedbackHandler mFeedbackHandler;
+      private Dictionary<int, Camera> mCameraList = new Dictionary<int, Camera>();
 
       #endregion
 
@@ -71,7 +72,21 @@ namespace Vao.Client
          RestResponse response = GetVaoCameraInternal(iCameraNo);
          if (response == null)
             return null;
-         return JsonParser.ParseSingleCamera(response.Content, this);
+         var camera = JsonParser.ParseSingleCamera(response.Content, this);
+         if (camera != null)
+            AddOrUpdateCamera(camera);
+         return camera;
+      }
+
+      private void AddOrUpdateCamera(Camera camera)
+      {
+         if (!mCameraList.ContainsKey(camera.CameraNumber))
+            mCameraList.Add(camera.CameraNumber, camera);
+         else
+         {
+            mCameraList[camera.CameraNumber].Name = camera.Name;
+         }
+
       }
 
       public List<Camera> GetVaoCameras()
@@ -98,6 +113,11 @@ namespace Vao.Client
          mFeedbackHandler.Start(); 
       }
 
+      public void StartClient()
+      {
+         
+      }
+
       public void StopClient()
       {
          if (mFeedbackHandler != null)
@@ -105,6 +125,9 @@ namespace Vao.Client
             mFeedbackHandler.Stop();
             mFeedbackHandler = null;
          }
+         
+         mCameraList.Clear();
+
          mRestClient = null;
       }
 

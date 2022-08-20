@@ -39,13 +39,31 @@ namespace Vao.Client
                {
                   foreach (var message in statusMessages)
                   {
-                     string strMessage = $"{message.Timestamp} : [{message.StatusType}] {message.Message}";
-                     mClient.RaiseOnMessage(message.StatusType, strMessage);
+                     HandleMessage(message);
+                     RaiseOnMessageEvents(message);
                   }
                }
             }
 
             lastCheck = DateTime.Now;
+         }
+      }
+
+      private void HandleMessage(Components.StatusMessage message)
+      {
+         // TODO Parse message to see if is a status message.         
+      }
+
+      private void RaiseOnMessageEvents(Components.StatusMessage message)
+      {
+         try
+         {
+            string strMessage = $"{message.Timestamp} : [{message.StatusType}] {message.Message}";
+            mClient.RaiseOnMessage(message.StatusType, strMessage);
+         }
+         catch
+         {
+            // Catch errors in case the event handler causes an exception.
          }
       }
 

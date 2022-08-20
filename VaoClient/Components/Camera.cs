@@ -12,6 +12,9 @@ namespace Vao.Client.Components
       private string mCameraName = string.Empty;
       private int mCameraNumber = 0;
       private VaoClient mVaoClient;
+      private bool? mCameraVideoStream1Ok;
+      private bool? mCameraVideoStream2Ok;
+      private bool mCameraDataOk;
 
       internal Camera(int cameraNumber, JsonCameraObject camera, VaoClient vaoClient)
       {
@@ -26,6 +29,7 @@ namespace Vao.Client.Components
       public string Name
       {
          get { return mCameraName; }
+         internal set { mCameraName = value; }
       }
 
       /// <summary>
@@ -35,7 +39,22 @@ namespace Vao.Client.Components
       {
          get { return mCameraNumber; }
       }
-      
+
+      /// <summary>
+      /// Get the camera data status for this camera.
+      /// </summary>
+      public bool? CameraDataOk { get { return mCameraDataOk; } }
+
+      /// <summary>
+      /// Get the camera video status for stream 1 for this camera.
+      /// </summary>
+      public bool? CameraVideoStream1Ok { get { return mCameraVideoStream1Ok; } }
+
+      /// <summary>
+      /// Get the camera video status for stream 2 for this camera.
+      /// </summary>
+      public bool? CameraVideoStream2Ok { get { return mCameraVideoStream2Ok; } }
+
       /// <summary>
       /// Gets the live stream RTSP url for the camera.
       /// Note, always call this method before connecting to the camera as the URL may change between calls.
@@ -64,25 +83,44 @@ namespace Vao.Client.Components
          return "";
       }
 
+      /// <summary>
+      /// Starts panning the camera to the left.
+      /// </summary>
       public void PanLeft()
       {
          RestResponse response = mVaoClient.PanTiltStart(CameraNumber, -1, 0);
       }
+
+      /// <summary>
+      /// Starts panning the camnera to the right.
+      /// </summary>
       public void PanRight()
       {
          RestResponse response = mVaoClient.PanTiltStart(CameraNumber, 1, 0);
       }
+
+      /// <summary>
+      /// Stops the Pan/Tilt operation.
+      /// </summary>
       public void PanTiltStop()
       {
          RestResponse response = mVaoClient.PanTiltStop(CameraNumber);         
       }
+
+      /// <summary>
+      /// Tilts the camera up.
+      /// </summary>
       public void TiltUp()
       {
          RestResponse response = mVaoClient.PanTiltStart(CameraNumber, 0, 1);
       }
+
+      /// <summary>
+      /// Tilts the camera down.
+      /// </summary>
       public void TiltDown()
       {
          RestResponse response = mVaoClient.PanTiltStart(CameraNumber, 0, -1);
-      }
+      }      
    }
 }
