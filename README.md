@@ -6,8 +6,16 @@ This ia basic demo application that is using the VAO REST API (https://vao.docs.
 # Current Features
 - Secure and Insecure connections
 - Camera Selection
-- Camera Pan/Til
+- Camera Pan/Tilt
 - Video Streaming
+
+# In progress
+- Camera Zoom
+- Feedback processing
+- Camera Names
+
+# Todo
+- Camera Renaming
 
 # Build
 Built using Visual Studio 2019
