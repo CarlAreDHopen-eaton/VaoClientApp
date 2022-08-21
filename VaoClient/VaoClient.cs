@@ -135,19 +135,20 @@ namespace Vao.Client
 
       #region Internal Methods
 
-      internal RestResponse PanTiltStart(int cameraNumber, int panSpeed, int tiltSpeed)
+      internal RestResponse MoveTargetStart(int cameraNumber, int panSpeed, int tiltSpeed, int zoomSpeed)
       {
          RestClient client = GetRestClient();
          // ReSharper disable once RedundantArgumentDefaultValue
          RestRequest request = new RestRequest($"inputs/{cameraNumber}/MoveTarget", Method.Post);
 
          Contracts.JsonMoveTargetBody jsonMoveTarget = new Contracts.JsonMoveTargetBody();
+
          // Set pan speed.
-         if (panSpeed != 0)
-            jsonMoveTarget.pan = (panSpeed > 0) ? 100 : -100;
+         jsonMoveTarget.pan = panSpeed;
          // Set tilt speed.
-         if (tiltSpeed != 0)
-            jsonMoveTarget.tilt = (tiltSpeed > 0) ? 100 : -100;
+         jsonMoveTarget.tilt = tiltSpeed;
+         // Set zoom speed.
+         jsonMoveTarget.zoom = zoomSpeed;
 
          string serializedJsonMoveTarget = Json.Net.JsonNet.Serialize(jsonMoveTarget);
          request.AddJsonBody(serializedJsonMoveTarget);
@@ -156,7 +157,7 @@ namespace Vao.Client
          return response;
       }
 
-      internal RestResponse PanTiltStop(int cameraNumber)
+      internal RestResponse MoveTargetStop(int cameraNumber)
       {
          RestClient client = GetRestClient();
          // ReSharper disable once RedundantArgumentDefaultValue

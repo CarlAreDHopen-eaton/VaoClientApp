@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Json.Net;
+﻿using Json.Net;
 using RestSharp;
 using Vao.Client.Contracts;
+using Vao.Client.Utility;
 
 namespace Vao.Client.Components
 {
@@ -15,6 +14,9 @@ namespace Vao.Client.Components
       private bool? mCameraVideoStream1Ok;
       private bool? mCameraVideoStream2Ok;
       private bool mCameraDataOk;
+      private int mCurrentZoomSpeed;
+      private int mCurrentPanSpeed;
+      private int mCurrentTiltSpeed;
 
       internal Camera(int cameraNumber, JsonCameraObject camera, VaoClient vaoClient)
       {
@@ -86,17 +88,19 @@ namespace Vao.Client.Components
       /// <summary>
       /// Starts panning the camera to the left.
       /// </summary>
-      public void PanLeft()
+      public void PanLeft(int speed)
       {
-         RestResponse response = mVaoClient.PanTiltStart(CameraNumber, -1, 0);
+         mCurrentPanSpeed = -MathHelper.Clamp(speed, 0, 100);
+         MoveTargetStart();
       }
 
       /// <summary>
       /// Starts panning the camnera to the right.
       /// </summary>
-      public void PanRight()
+      public void PanRight(int speed)
       {
-         RestResponse response = mVaoClient.PanTiltStart(CameraNumber, 1, 0);
+         mCurrentPanSpeed = MathHelper.Clamp(speed, 0, 100);
+         MoveTargetStart();
       }
 
       /// <summary>
@@ -104,23 +108,61 @@ namespace Vao.Client.Components
       /// </summary>
       public void PanTiltStop()
       {
-         RestResponse response = mVaoClient.PanTiltStop(CameraNumber);         
+         mCurrentTiltSpeed = 0;
+         mCurrentPanSpeed = 0;
+         mCurrentZoomSpeed = 0;
+         RestResponse response = mVaoClient.MoveTargetStop(CameraNumber);         
+      }
+
+      /// <summary>
+      /// Stops the Pan/Tilt operation.
+      /// </summary>
+      public void PanStop(int speed)
+      {
+         mCurrentPanSpeed = MathHelper.Clamp(speed, 0, 100);
+         MoveTargetStart();
       }
 
       /// <summary>
       /// Tilts the camera up.
       /// </summary>
-      public void TiltUp()
+      public void TiltUp(int speed)
       {
-         RestResponse response = mVaoClient.PanTiltStart(CameraNumber, 0, 1);
+         mCurrentTiltSpeed = MathHelper.Clamp(speed, 0, 100);
+         MoveTargetStart();
       }
 
       /// <summary>
       /// Tilts the camera down.
       /// </summary>
-      public void TiltDown()
+      public void TiltDown(int speed)
       {
-         RestResponse response = mVaoClient.PanTiltStart(CameraNumber, 0, -1);
-      }      
+         mCurrentTiltSpeed = -MathHelper.Clamp(speed, 0, 100);
+         MoveTargetStart();
+      }
+
+      /// <summary>
+      /// Start the camera zoom operation.
+      /// </summary>
+      public void ZoomIn(int speed)
+      {
+         mCurrentZoomSpeed = MathHelper.Clamp(speed, 0, 100);
+         MoveTargetStart();
+      }
+
+
+      /// <summary>
+      /// Start the camera zoom operation.
+      /// </summary>
+      public void ZoomOut(int speed)
+      {
+         mCurrentZoomSpeed = MathHelper.Clamp(speed, 0, 100);
+         MoveTargetStart();
+      }
+
+      private RestResponse MoveTargetStart()
+      {
+         return mVaoClient.MoveTargetStart(CameraNumber, mCurrentPanSpeed, mCurrentTiltSpeed, mCurrentZoomSpeed);
+      }
    }
 }

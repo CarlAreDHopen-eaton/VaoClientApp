@@ -285,13 +285,13 @@ namespace Vao.Sample
          if (currentCamera != null)
          {
             if (sender == btnPanLeft)
-               currentCamera.PanLeft();
+               currentCamera.PanLeft(80);
             if (sender == btnPanRight)
-               currentCamera.PanRight();
+               currentCamera.PanRight(80);
             if (sender == btnTiltUp)
-               currentCamera.TiltUp();
+               currentCamera.TiltUp(80);
             if (sender == btnTiltDown)
-               currentCamera.TiltDown();
+               currentCamera.TiltDown(80);
          }
       }
 
