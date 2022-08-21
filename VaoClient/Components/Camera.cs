@@ -25,6 +25,8 @@ namespace Vao.Client.Components
          mCameraName = camera.name;
       }
 
+      #region Public Properties
+
       /// <summary>
       /// The name of the camera in the VMS system.
       /// </summary>
@@ -56,6 +58,10 @@ namespace Vao.Client.Components
       /// Get the camera video status for stream 2 for this camera.
       /// </summary>
       public bool? CameraVideoStream2Ok { get { return mCameraVideoStream2Ok; } }
+
+      #endregion
+
+      #region Public Methods
 
       /// <summary>
       /// Gets the live stream RTSP url for the camera.
@@ -106,7 +112,7 @@ namespace Vao.Client.Components
       /// <summary>
       /// Stops the Pan/Tilt operation.
       /// </summary>
-      public void PanTiltStop()
+      public void PanTiltZoomStop()
       {
          mCurrentTiltSpeed = 0;
          mCurrentPanSpeed = 0;
@@ -150,7 +156,6 @@ namespace Vao.Client.Components
          MoveTargetStart();
       }
 
-
       /// <summary>
       /// Start the camera zoom operation.
       /// </summary>
@@ -160,9 +165,19 @@ namespace Vao.Client.Components
          MoveTargetStart();
       }
 
+      #endregion
+
+      #region Private Methods
+
+      /// <summary>
+      /// Starts move target operation
+      /// </summary>
+      /// <returns></returns>
       private RestResponse MoveTargetStart()
       {
          return mVaoClient.MoveTargetStart(CameraNumber, mCurrentPanSpeed, mCurrentTiltSpeed, mCurrentZoomSpeed);
       }
+
+      #endregion
    }
 }

@@ -60,6 +60,7 @@ namespace Vao.Sample
          this.btnTiltDown = new System.Windows.Forms.Button();
          this.btnTiltUp = new System.Windows.Forms.Button();
          this.splitHorizontalVideoAndMessageSplit = new System.Windows.Forms.SplitContainer();
+         this.lblCurrentCamera = new System.Windows.Forms.Label();
          this.grpCameraSelection.SuspendLayout();
          this.grpConnection.SuspendLayout();
          this.grpMessages.SuspendLayout();
@@ -233,9 +234,9 @@ namespace Vao.Sample
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
          this.grpCameraSelection.Controls.Add(this.pnlCameraSelectFlowPanel);
-         this.grpCameraSelection.Location = new System.Drawing.Point(6, 333);
+         this.grpCameraSelection.Location = new System.Drawing.Point(6, 358);
          this.grpCameraSelection.Name = "grpCameraSelection";
-         this.grpCameraSelection.Size = new System.Drawing.Size(224, 308);
+         this.grpCameraSelection.Size = new System.Drawing.Size(224, 283);
          this.grpCameraSelection.TabIndex = 2;
          this.grpCameraSelection.TabStop = false;
          this.grpCameraSelection.Text = "Camera Selection";
@@ -245,7 +246,7 @@ namespace Vao.Sample
          this.pnlCameraSelectFlowPanel.Dock = System.Windows.Forms.DockStyle.Fill;
          this.pnlCameraSelectFlowPanel.Location = new System.Drawing.Point(3, 16);
          this.pnlCameraSelectFlowPanel.Name = "pnlCameraSelectFlowPanel";
-         this.pnlCameraSelectFlowPanel.Size = new System.Drawing.Size(218, 289);
+         this.pnlCameraSelectFlowPanel.Size = new System.Drawing.Size(218, 264);
          this.pnlCameraSelectFlowPanel.TabIndex = 0;
          // 
          // grpConnection
@@ -331,6 +332,7 @@ namespace Vao.Sample
          // 
          this.grpCameraControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+         this.grpCameraControl.Controls.Add(this.lblCurrentCamera);
          this.grpCameraControl.Controls.Add(this.btnZoomOut);
          this.grpCameraControl.Controls.Add(this.btnZoomIn);
          this.grpCameraControl.Controls.Add(this.btnPanRight);
@@ -339,14 +341,14 @@ namespace Vao.Sample
          this.grpCameraControl.Controls.Add(this.btnTiltUp);
          this.grpCameraControl.Location = new System.Drawing.Point(6, 198);
          this.grpCameraControl.Name = "grpCameraControl";
-         this.grpCameraControl.Size = new System.Drawing.Size(224, 129);
+         this.grpCameraControl.Size = new System.Drawing.Size(224, 154);
          this.grpCameraControl.TabIndex = 1;
          this.grpCameraControl.TabStop = false;
          this.grpCameraControl.Text = "Camera Control";
          // 
          // btnZoomOut
          // 
-         this.btnZoomOut.Location = new System.Drawing.Point(184, 53);
+         this.btnZoomOut.Location = new System.Drawing.Point(133, 90);
          this.btnZoomOut.Name = "btnZoomOut";
          this.btnZoomOut.Size = new System.Drawing.Size(29, 32);
          this.btnZoomOut.TabIndex = 5;
@@ -357,7 +359,7 @@ namespace Vao.Sample
          // 
          // btnZoomIn
          // 
-         this.btnZoomIn.Location = new System.Drawing.Point(184, 15);
+         this.btnZoomIn.Location = new System.Drawing.Point(133, 14);
          this.btnZoomIn.Name = "btnZoomIn";
          this.btnZoomIn.Size = new System.Drawing.Size(29, 32);
          this.btnZoomIn.TabIndex = 4;
@@ -368,45 +370,49 @@ namespace Vao.Sample
          // 
          // btnPanRight
          // 
-         this.btnPanRight.Location = new System.Drawing.Point(129, 53);
+         this.btnPanRight.BackColor = System.Drawing.Color.Linen;
+         this.btnPanRight.Location = new System.Drawing.Point(133, 52);
          this.btnPanRight.Name = "btnPanRight";
          this.btnPanRight.Size = new System.Drawing.Size(29, 32);
          this.btnPanRight.TabIndex = 2;
          this.btnPanRight.Text = "Ri";
-         this.btnPanRight.UseVisualStyleBackColor = true;
+         this.btnPanRight.UseVisualStyleBackColor = false;
          this.btnPanRight.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
          this.btnPanRight.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
          // 
          // btnPanLeft
          // 
-         this.btnPanLeft.Location = new System.Drawing.Point(59, 53);
+         this.btnPanLeft.BackColor = System.Drawing.Color.Linen;
+         this.btnPanLeft.Location = new System.Drawing.Point(63, 52);
          this.btnPanLeft.Name = "btnPanLeft";
          this.btnPanLeft.Size = new System.Drawing.Size(29, 32);
          this.btnPanLeft.TabIndex = 1;
          this.btnPanLeft.Text = "Le";
-         this.btnPanLeft.UseVisualStyleBackColor = true;
+         this.btnPanLeft.UseVisualStyleBackColor = false;
          this.btnPanLeft.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
          this.btnPanLeft.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
          // 
          // btnTiltDown
          // 
-         this.btnTiltDown.Location = new System.Drawing.Point(94, 91);
+         this.btnTiltDown.BackColor = System.Drawing.Color.Linen;
+         this.btnTiltDown.Location = new System.Drawing.Point(98, 90);
          this.btnTiltDown.Name = "btnTiltDown";
          this.btnTiltDown.Size = new System.Drawing.Size(29, 32);
          this.btnTiltDown.TabIndex = 3;
          this.btnTiltDown.Text = "Do";
-         this.btnTiltDown.UseVisualStyleBackColor = true;
+         this.btnTiltDown.UseVisualStyleBackColor = false;
          this.btnTiltDown.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
          this.btnTiltDown.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
          // 
          // btnTiltUp
          // 
-         this.btnTiltUp.Location = new System.Drawing.Point(94, 15);
+         this.btnTiltUp.BackColor = System.Drawing.Color.Linen;
+         this.btnTiltUp.Location = new System.Drawing.Point(98, 14);
          this.btnTiltUp.Name = "btnTiltUp";
          this.btnTiltUp.Size = new System.Drawing.Size(29, 32);
          this.btnTiltUp.TabIndex = 0;
          this.btnTiltUp.Text = "Up";
-         this.btnTiltUp.UseVisualStyleBackColor = true;
+         this.btnTiltUp.UseVisualStyleBackColor = false;
          this.btnTiltUp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
          this.btnTiltUp.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
          // 
@@ -428,6 +434,15 @@ namespace Vao.Sample
          this.splitHorizontalVideoAndMessageSplit.SplitterDistance = 390;
          this.splitHorizontalVideoAndMessageSplit.TabIndex = 0;
          // 
+         // label1
+         // 
+         this.lblCurrentCamera.AutoSize = true;
+         this.lblCurrentCamera.Location = new System.Drawing.Point(6, 129);
+         this.lblCurrentCamera.Name = "label1";
+         this.lblCurrentCamera.Size = new System.Drawing.Size(156, 13);
+         this.lblCurrentCamera.TabIndex = 11;
+         this.lblCurrentCamera.Text = "Camera : (No Camera Selected)";
+         // 
          // MainWindow
          // 
          this.AcceptButton = this.btnStart;
@@ -448,6 +463,7 @@ namespace Vao.Sample
          ((System.ComponentModel.ISupportInitialize)(this.splitMainVerticalSplit)).EndInit();
          this.splitMainVerticalSplit.ResumeLayout(false);
          this.grpCameraControl.ResumeLayout(false);
+         this.grpCameraControl.PerformLayout();
          this.splitHorizontalVideoAndMessageSplit.Panel1.ResumeLayout(false);
          this.splitHorizontalVideoAndMessageSplit.Panel2.ResumeLayout(false);
          ((System.ComponentModel.ISupportInitialize)(this.splitHorizontalVideoAndMessageSplit)).EndInit();
@@ -489,6 +505,7 @@ namespace Vao.Sample
       private System.Windows.Forms.CheckBox chkPreferSubChannel;
       private System.Windows.Forms.Button btnZoomOut;
       private System.Windows.Forms.Button btnZoomIn;
+      private System.Windows.Forms.Label lblCurrentCamera;
    }
 }
 

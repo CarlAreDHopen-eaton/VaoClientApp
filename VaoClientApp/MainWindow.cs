@@ -17,7 +17,7 @@ namespace Vao.Sample
       private VideoView mVideoControl;
       private Camera mCurrentCamera;
       private LibVLC mLibVlc;
-
+      private ToolTip moToolTip;
 
    public bool IsStared
       {
@@ -37,6 +37,15 @@ namespace Vao.Sample
 
          LoadSettings();
          UpdateEnabled();
+
+         moToolTip = new ToolTip();
+         moToolTip.SetToolTip(btnPanLeft, "Pan Left");
+         moToolTip.SetToolTip(btnPanRight, "Pan Right");
+         moToolTip.SetToolTip(btnTiltUp, "Tilt Up");
+         moToolTip.SetToolTip(btnTiltDown, "Tilt Down");
+         moToolTip.SetToolTip(btnZoomIn, "Zoom In");
+         moToolTip.SetToolTip(btnZoomOut, "Zoom Out");
+
       }
 
       private void StartInitializeVlc()
@@ -130,6 +139,7 @@ namespace Vao.Sample
             WriteMessageLog("VaoAPI", "Unable to start.");
             btnStop_Click(sender, e);
          }
+         UpdateEnabled();
       }
 
       /// <summary>
@@ -186,6 +196,10 @@ namespace Vao.Sample
          set
          {
             mCurrentCamera = value;
+            if (mCurrentCamera != null)
+               lblCurrentCamera.Text = $"Camera : {mCurrentCamera.Name}";
+            else
+               lblCurrentCamera.Text = $"Camera : (No camera selected)";
             UpdateEnabled();
          }
       }
@@ -274,6 +288,7 @@ namespace Vao.Sample
                   Tag = camera
                };
                oButton.Click += OnSelectCameraClicked;
+               moToolTip.SetToolTip(oButton, camera.Name);
                pnlCameraSelectFlowPanel.Controls.Add(oButton);
             }
          }
@@ -292,6 +307,11 @@ namespace Vao.Sample
                currentCamera.TiltUp(80);
             if (sender == btnTiltDown)
                currentCamera.TiltDown(80);
+            if (sender == btnZoomIn)
+               currentCamera.ZoomIn(80);
+            if (sender == btnZoomOut)
+               currentCamera.ZoomOut(80);
+
          }
       }
 
@@ -300,8 +320,8 @@ namespace Vao.Sample
          var currentCamera = CurrentCamera;
          if (currentCamera != null && sender is Button)
          {
-            if ((sender == btnPanLeft) || (sender == btnPanRight) || (sender == btnTiltUp) || (sender == btnTiltDown))
-                currentCamera.PanTiltStop();
+            if ((sender == btnPanLeft) || (sender == btnPanRight) || (sender == btnTiltUp) || (sender == btnTiltDown) || (sender == btnZoomIn) || (sender == btnZoomOut))
+                currentCamera.PanTiltZoomStop();
          }
       }
 
