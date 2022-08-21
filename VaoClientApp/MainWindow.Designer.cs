@@ -53,6 +53,8 @@ namespace Vao.Sample
          this.chkPreferSubChannel = new System.Windows.Forms.CheckBox();
          this.splitMainVerticalSplit = new System.Windows.Forms.SplitContainer();
          this.grpCameraControl = new System.Windows.Forms.GroupBox();
+         this.btnZoomOut = new System.Windows.Forms.Button();
+         this.btnZoomIn = new System.Windows.Forms.Button();
          this.btnPanRight = new System.Windows.Forms.Button();
          this.btnPanLeft = new System.Windows.Forms.Button();
          this.btnTiltDown = new System.Windows.Forms.Button();
@@ -329,6 +331,8 @@ namespace Vao.Sample
          // 
          this.grpCameraControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+         this.grpCameraControl.Controls.Add(this.btnZoomOut);
+         this.grpCameraControl.Controls.Add(this.btnZoomIn);
          this.grpCameraControl.Controls.Add(this.btnPanRight);
          this.grpCameraControl.Controls.Add(this.btnPanLeft);
          this.grpCameraControl.Controls.Add(this.btnTiltDown);
@@ -339,6 +343,28 @@ namespace Vao.Sample
          this.grpCameraControl.TabIndex = 1;
          this.grpCameraControl.TabStop = false;
          this.grpCameraControl.Text = "Camera Control";
+         // 
+         // btnZoomOut
+         // 
+         this.btnZoomOut.Location = new System.Drawing.Point(184, 53);
+         this.btnZoomOut.Name = "btnZoomOut";
+         this.btnZoomOut.Size = new System.Drawing.Size(29, 32);
+         this.btnZoomOut.TabIndex = 5;
+         this.btnZoomOut.Text = "-";
+         this.btnZoomOut.UseVisualStyleBackColor = true;
+         this.btnZoomOut.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
+         this.btnZoomOut.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
+         // 
+         // btnZoomIn
+         // 
+         this.btnZoomIn.Location = new System.Drawing.Point(184, 15);
+         this.btnZoomIn.Name = "btnZoomIn";
+         this.btnZoomIn.Size = new System.Drawing.Size(29, 32);
+         this.btnZoomIn.TabIndex = 4;
+         this.btnZoomIn.Text = "+";
+         this.btnZoomIn.UseVisualStyleBackColor = true;
+         this.btnZoomIn.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
+         this.btnZoomIn.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
          // 
          // btnPanRight
          // 
@@ -461,6 +487,8 @@ namespace Vao.Sample
       private System.Windows.Forms.Button btnTiltDown;
       private System.Windows.Forms.Button btnTiltUp;
       private System.Windows.Forms.CheckBox chkPreferSubChannel;
+      private System.Windows.Forms.Button btnZoomOut;
+      private System.Windows.Forms.Button btnZoomIn;
    }
 }
 
