@@ -58,7 +58,7 @@ namespace Vao.Client
       {
          try
          {
-            string strMessage = $"{message.Timestamp} : [{message.StatusType}] {message.Message}";
+            string strMessage = $"{message.Timestamp} : [{message.StatusType}][{message.MessageId}] {message.Message}";
             mClient.RaiseOnMessage(message.StatusType, strMessage);
          }
          catch

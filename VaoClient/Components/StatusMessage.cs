@@ -30,6 +30,20 @@ namespace Vao.Client.Components
             return MessageType.Info;
          }
       }
+         
+      public MessageId MessageId
+      {
+         get
+         {
+            if (Message.Contains("REST Session started"))
+               return MessageId.SesionStart;
+            if (Message.Contains("Session logon success"))
+               return MessageId.SesionLogonSuccess;
+            //TODO Add further classification
+            return MessageId.Unknown;
+         }
+      }
+
 
       public string Message 
       { 
