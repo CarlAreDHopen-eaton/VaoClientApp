@@ -6,18 +6,29 @@ namespace Vao.Client.Components
 {
    internal class StatusMessage
    {
+      #region Private Members
+      
       private JsonStatusMessage mStatusMessage;
+
+      #endregion
+
+      #region Constructors
 
       /// <summary>
       /// Constructor for the message.
       /// </summary>
-      /// <param name="statusMessage"></param>
-      /// <param name="vaoClient"></param>
-      public StatusMessage(JsonStatusMessage statusMessage, VaoClient vaoClient)
+      /// <param name="statusMessage">The messages desrialzed to JSON</param>
+      /// <param name="vaoClient">The client that received the message</param>
+      internal StatusMessage(JsonStatusMessage statusMessage, VaoClient vaoClient)
       {
+         ReceivedTime = DateTime.Now;
          mStatusMessage = statusMessage;
          VaoClient = vaoClient;
       }
+
+      #endregion
+
+      #region Public Properties
 
       /// <summary>
       /// The client that received this message.
@@ -43,7 +54,7 @@ namespace Vao.Client.Components
       }
          
       /// <summary>
-      /// The type of message.
+      /// The type of message.      
       /// </summary>
       public MessageType Type
       {
@@ -78,7 +89,9 @@ namespace Vao.Client.Components
          }
       }
 
-
+      /// <summary>
+      /// The message text received from the VMS system.
+      /// </summary>
       public string Message 
       { 
          get 
@@ -87,6 +100,10 @@ namespace Vao.Client.Components
          } 
       }
 
+      /// <summary>
+      /// The message timestamp when the VMS system created this message.      
+      /// Note: The time the message was received by the clinet is in <see cref="ReceivedTime"/>
+      /// </summary>
       public string Timestamp
       { 
          get 
@@ -94,5 +111,12 @@ namespace Vao.Client.Components
             return mStatusMessage.timestamp; 
          }
       }
+
+      /// <summary>
+      /// The time the message was received.
+      /// </summary>
+      public DateTime ReceivedTime { get; }
+
+      #endregion
    }
 }
