@@ -54,7 +54,7 @@ namespace Vao.Client
 
       private void HandleMessage(Components.StatusMessage message)
       {
-         switch (message.MessageId)
+         switch (message.Type)
          {
             case MessageId.CameraDataLost:
             case MessageId.CameraDataRestored:
@@ -85,8 +85,8 @@ namespace Vao.Client
       {
          try
          {
-            string strMessage = $"{message.Timestamp} : [{message.StatusType}][{message.MessageId}] {message.Message}";
-            mClient.RaiseOnMessage(message.StatusType, strMessage);
+            string strMessage = $"{message.Timestamp} : [{message.Level}][{message.Type}] {message.Message}";
+            mClient.RaiseOnMessage(message.Level, strMessage);
          }
          catch
          {

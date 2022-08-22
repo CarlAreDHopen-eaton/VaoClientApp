@@ -62,7 +62,7 @@ namespace Vao.Client
          if (!response.IsSuccessful)
          {
             string strMessage = response.ErrorException?.ToString() ?? response.ErrorMessage ?? $"Unknown connection error {response.StatusCode}";
-            RaiseOnMessage(MessageType.Error, strMessage);
+            RaiseOnMessage(MessageLevel.Error, strMessage);
             return null;
          }
          return response.Content;
@@ -204,7 +204,7 @@ namespace Vao.Client
          return response;
       }
 
-      internal void RaiseOnMessage(MessageType messageType, string message)
+      internal void RaiseOnMessage(MessageLevel messageType, string message)
       {
          OnMessage?.Invoke(this, new MessageEventArgs(messageType, message));
       }

@@ -5,7 +5,7 @@ namespace Vao.Client
 {
    public class MessageEventArgs : EventArgs
    {
-      public MessageEventArgs(MessageType type, string message)
+      public MessageEventArgs(MessageLevel type, string message)
       {
          Type = type;
          Message = message;
@@ -13,6 +13,6 @@ namespace Vao.Client
 
       public string Message { get; set; }
 
-      public MessageType Type { get; set; }
+      public MessageLevel Type { get; set; }
    }
 }

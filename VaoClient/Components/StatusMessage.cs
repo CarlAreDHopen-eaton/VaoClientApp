@@ -16,22 +16,22 @@ namespace Vao.Client.Components
 
       public VaoClient VaoClient { get; }
 
-      public MessageType StatusType
+      public MessageLevel Level
       { 
          get
          {
             if (mStatusMessage.type.Equals("debug", StringComparison.InvariantCultureIgnoreCase))
-               return MessageType.Debug;
+               return MessageLevel.Debug;
             if (mStatusMessage.type.Equals("error", StringComparison.InvariantCultureIgnoreCase))
-               return MessageType.Error;
+               return MessageLevel.Error;
             if (mStatusMessage.type.Equals("info", StringComparison.InvariantCultureIgnoreCase))
-               return MessageType.Info;
+               return MessageLevel.Info;
 
-            return MessageType.Info;
+            return MessageLevel.Info;
          }
       }
          
-      public MessageId MessageId
+      public MessageId Type
       {
          get
          {
@@ -40,6 +40,8 @@ namespace Vao.Client.Components
                return MessageId.SessionStart;
             if (Message.Contains("Session logon success"))
                return MessageId.SessionLogonSuccess;
+            if (Message.Contains("Session logon failed"))
+               return MessageId.SessionLogonFail;
 
             // Camera main stream (Stream 1)
             if (Message.Contains("Camera video connection lost"))

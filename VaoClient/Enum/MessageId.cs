@@ -18,6 +18,10 @@
       /// </summary>
       SessionLogonSuccess,
       /// <summary>
+      /// Logon success.
+      /// </summary>
+      SessionLogonFail,
+      /// <summary>
       /// Video stream 1 from the camera into the VMS system is lost.
       /// </summary>
       CameraVideoStream1Lost,

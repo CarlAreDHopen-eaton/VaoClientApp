@@ -214,7 +214,7 @@ namespace Vao.Client.Components
 
       internal void HandleStatusMessage(StatusMessage message)
       {
-         switch (message.MessageId)
+         switch (message.Type)
          {
             case MessageId.CameraVideoStream1Lost:
                CameraVideoStream1Ok = false;
