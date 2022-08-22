@@ -36,9 +36,15 @@ namespace Vao.Client.Components
          get
          {
             if (Message.Contains("REST Session started"))
-               return MessageId.SesionStart;
+               return MessageId.SessionStart;
             if (Message.Contains("Session logon success"))
-               return MessageId.SesionLogonSuccess;
+               return MessageId.SessionLogonSuccess;
+            if (Message.Contains("Camera video connection lost"))
+               return MessageId.CameraVideoStream1Lost;
+            if (Message.Contains("Camera video sub stream connection lost"))
+               return MessageId.CameraVideoStream2Lost;
+            if (Message.Contains("Camera data connection lost"))
+               return MessageId.CameraDataLost;
             //TODO Add further classification
             return MessageId.Unknown;
          }

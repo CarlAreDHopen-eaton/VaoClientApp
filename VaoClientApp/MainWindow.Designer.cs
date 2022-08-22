@@ -53,14 +53,15 @@ namespace Vao.Sample
          this.chkPreferSubChannel = new System.Windows.Forms.CheckBox();
          this.splitMainVerticalSplit = new System.Windows.Forms.SplitContainer();
          this.grpCameraControl = new System.Windows.Forms.GroupBox();
+         this.lblCurrentCamera = new System.Windows.Forms.Label();
          this.btnZoomOut = new System.Windows.Forms.Button();
-         this.btnZoomIn = new System.Windows.Forms.Button();
          this.btnPanRight = new System.Windows.Forms.Button();
          this.btnPanLeft = new System.Windows.Forms.Button();
          this.btnTiltDown = new System.Windows.Forms.Button();
          this.btnTiltUp = new System.Windows.Forms.Button();
          this.splitHorizontalVideoAndMessageSplit = new System.Windows.Forms.SplitContainer();
-         this.lblCurrentCamera = new System.Windows.Forms.Label();
+         this.pictureBox1 = new System.Windows.Forms.PictureBox();
+         this.btnZoomIn = new System.Windows.Forms.Button();
          this.grpCameraSelection.SuspendLayout();
          this.grpConnection.SuspendLayout();
          this.grpMessages.SuspendLayout();
@@ -74,6 +75,7 @@ namespace Vao.Sample
          this.splitHorizontalVideoAndMessageSplit.Panel1.SuspendLayout();
          this.splitHorizontalVideoAndMessageSplit.Panel2.SuspendLayout();
          this.splitHorizontalVideoAndMessageSplit.SuspendLayout();
+         ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
          this.SuspendLayout();
          // 
          // btnStart
@@ -332,6 +334,7 @@ namespace Vao.Sample
          // 
          this.grpCameraControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+         this.grpCameraControl.Controls.Add(this.pictureBox1);
          this.grpCameraControl.Controls.Add(this.lblCurrentCamera);
          this.grpCameraControl.Controls.Add(this.btnZoomOut);
          this.grpCameraControl.Controls.Add(this.btnZoomIn);
@@ -346,27 +349,25 @@ namespace Vao.Sample
          this.grpCameraControl.TabStop = false;
          this.grpCameraControl.Text = "Camera Control";
          // 
+         // lblCurrentCamera
+         // 
+         this.lblCurrentCamera.AutoSize = true;
+         this.lblCurrentCamera.Location = new System.Drawing.Point(6, 129);
+         this.lblCurrentCamera.Name = "lblCurrentCamera";
+         this.lblCurrentCamera.Size = new System.Drawing.Size(156, 13);
+         this.lblCurrentCamera.TabIndex = 11;
+         this.lblCurrentCamera.Text = "Camera : (No Camera Selected)";
+         // 
          // btnZoomOut
          // 
+         this.btnZoomOut.Image = global::Vao.Sample.Properties.Resources.zoom_out_black_24dp;
          this.btnZoomOut.Location = new System.Drawing.Point(133, 90);
          this.btnZoomOut.Name = "btnZoomOut";
          this.btnZoomOut.Size = new System.Drawing.Size(29, 32);
          this.btnZoomOut.TabIndex = 5;
-         this.btnZoomOut.Text = "-";
          this.btnZoomOut.UseVisualStyleBackColor = true;
          this.btnZoomOut.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
          this.btnZoomOut.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
-         // 
-         // btnZoomIn
-         // 
-         this.btnZoomIn.Location = new System.Drawing.Point(133, 14);
-         this.btnZoomIn.Name = "btnZoomIn";
-         this.btnZoomIn.Size = new System.Drawing.Size(29, 32);
-         this.btnZoomIn.TabIndex = 4;
-         this.btnZoomIn.Text = "+";
-         this.btnZoomIn.UseVisualStyleBackColor = true;
-         this.btnZoomIn.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
-         this.btnZoomIn.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
          // 
          // btnPanRight
          // 
@@ -434,14 +435,26 @@ namespace Vao.Sample
          this.splitHorizontalVideoAndMessageSplit.SplitterDistance = 390;
          this.splitHorizontalVideoAndMessageSplit.TabIndex = 0;
          // 
-         // label1
+         // pictureBox1
          // 
-         this.lblCurrentCamera.AutoSize = true;
-         this.lblCurrentCamera.Location = new System.Drawing.Point(6, 129);
-         this.lblCurrentCamera.Name = "label1";
-         this.lblCurrentCamera.Size = new System.Drawing.Size(156, 13);
-         this.lblCurrentCamera.TabIndex = 11;
-         this.lblCurrentCamera.Text = "Camera : (No Camera Selected)";
+         this.pictureBox1.Image = global::Vao.Sample.Properties.Resources.control_camera_black_24dp;
+         this.pictureBox1.Location = new System.Drawing.Point(98, 52);
+         this.pictureBox1.Name = "pictureBox1";
+         this.pictureBox1.Size = new System.Drawing.Size(29, 32);
+         this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+         this.pictureBox1.TabIndex = 12;
+         this.pictureBox1.TabStop = false;
+         // 
+         // btnZoomIn
+         // 
+         this.btnZoomIn.Image = global::Vao.Sample.Properties.Resources.zoom_in_black_24dp;
+         this.btnZoomIn.Location = new System.Drawing.Point(133, 14);
+         this.btnZoomIn.Name = "btnZoomIn";
+         this.btnZoomIn.Size = new System.Drawing.Size(29, 32);
+         this.btnZoomIn.TabIndex = 4;
+         this.btnZoomIn.UseVisualStyleBackColor = true;
+         this.btnZoomIn.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
+         this.btnZoomIn.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
          // 
          // MainWindow
          // 
@@ -468,6 +481,7 @@ namespace Vao.Sample
          this.splitHorizontalVideoAndMessageSplit.Panel2.ResumeLayout(false);
          ((System.ComponentModel.ISupportInitialize)(this.splitHorizontalVideoAndMessageSplit)).EndInit();
          this.splitHorizontalVideoAndMessageSplit.ResumeLayout(false);
+         ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
          this.ResumeLayout(false);
 
       }
@@ -506,6 +520,7 @@ namespace Vao.Sample
       private System.Windows.Forms.Button btnZoomOut;
       private System.Windows.Forms.Button btnZoomIn;
       private System.Windows.Forms.Label lblCurrentCamera;
+      private System.Windows.Forms.PictureBox pictureBox1;
    }
 }
 

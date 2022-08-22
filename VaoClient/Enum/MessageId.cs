@@ -1,7 +1,7 @@
 ﻿namespace Vao.Client.Enum
 {
    /// <summary>
-   /// Identifiest the type of message.
+   /// Identifies the type of message.
    /// </summary>
    public enum MessageId
    {
@@ -12,18 +12,34 @@
       /// <summary>
       /// Session started.
       /// </summary>
-      SesionStart,
+      SessionStart,
       /// <summary>
       /// Logon success.
       /// </summary>
-      SesionLogonSuccess,
+      SessionLogonSuccess,
       /// <summary>
-      /// Status of video stream from the camera into the VMS system.
+      /// Video stream 1 from the camera into the VMS system is lost.
       /// </summary>
-      CameraVideoStatus,
+      CameraVideoStream1Lost,
       /// <summary>
-      /// Status of the data commnication between the VMS system and the camera.
+      /// Video stream 1 from the camera into the VMS system is restored.
       /// </summary>
-      CameraDataStatus,
+      CameraVideoStream1Restored,
+      /// <summary>
+      /// Video stream 2 from the camera into the VMS system is lost.
+      /// </summary>
+      CameraVideoStream2Lost,
+      /// <summary>
+      /// Video stream 2 from the camera into the VMS system is restored.
+      /// </summary>
+      CameraVideoStream2Restored,
+      /// <summary>
+      /// Lost the data communication between the VMS system and the camera.
+      /// </summary>
+      CameraDataLost,
+      /// <summary>
+      /// Restored the data communication between the VMS system and the camera.
+      /// </summary>
+      CameraDataRestored,
    }
 }

@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
+using Vao.Client.Components;
+using Vao.Client.Enum;
 
 namespace Vao.Client
 {
@@ -51,7 +54,31 @@ namespace Vao.Client
 
       private void HandleMessage(Components.StatusMessage message)
       {
-         // TODO Parse message to see if is a status message.         
+         switch (message.MessageId)
+         {
+            case MessageId.CameraDataLost:
+            case MessageId.CameraDataRestored:
+            case MessageId.CameraVideoStream1Lost:
+            case MessageId.CameraVideoStream1Restored:
+            case MessageId.CameraVideoStream2Lost:
+            case MessageId.CameraVideoStream2Restored:
+               List<Camera> cameras = message.VaoClient.GetVaoCameras();
+               Camera foundCamera = null;
+               foreach (var camera in cameras)
+               {
+                  if (message.Message.Contains(camera.Name))
+                  {
+                     foundCamera = camera;
+                     break;
+                  }
+               }
+
+               if (foundCamera != null)
+               {
+                  foundCamera.HandleStatusMessage(message);
+               }
+               break;
+         }
       }
 
       private void RaiseOnMessageEvents(Components.StatusMessage message)

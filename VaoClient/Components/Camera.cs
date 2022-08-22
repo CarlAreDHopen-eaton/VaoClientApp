@@ -1,19 +1,23 @@
-﻿using Json.Net;
+﻿using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using Json.Net;
 using RestSharp;
 using Vao.Client.Contracts;
+using Vao.Client.Enum;
 using Vao.Client.Utility;
 
 namespace Vao.Client.Components
 {
-   public class Camera
+   public class Camera : INotifyPropertyChanged
    {
       // ReSharper disable once MemberInitializerValueIgnored
       private string mCameraName = string.Empty;
       private int mCameraNumber = 0;
       private VaoClient mVaoClient;
-      private bool? mCameraVideoStream1Ok;
-      private bool? mCameraVideoStream2Ok;
-      private bool mCameraDataOk;
+      private bool mCameraVideoStream1Ok = true;
+      private bool mCameraVideoStream2Ok = true;
+      private bool mCameraDataOk = true;
       private int mCurrentZoomSpeed;
       private int mCurrentPanSpeed;
       private int mCurrentTiltSpeed;
@@ -24,6 +28,12 @@ namespace Vao.Client.Components
          mVaoClient = vaoClient;
          mCameraName = camera.name;
       }
+
+      #region Public Events
+
+      public event PropertyChangedEventHandler PropertyChanged;
+
+      #endregion
 
       #region Public Properties
 
@@ -47,17 +57,50 @@ namespace Vao.Client.Components
       /// <summary>
       /// Get the camera data status for this camera.
       /// </summary>
-      public bool? CameraDataOk { get { return mCameraDataOk; } }
+      public bool CameraDataOk
+      {
+         get { return mCameraDataOk; }
+         internal set
+         {
+            if (mCameraDataOk != value)
+            {
+               mCameraDataOk = value;
+               NotifyPropertyChanged();
+            }
+         }
+      }
 
       /// <summary>
       /// Get the camera video status for stream 1 for this camera.
       /// </summary>
-      public bool? CameraVideoStream1Ok { get { return mCameraVideoStream1Ok; } }
+      public bool CameraVideoStream1Ok
+      {
+         get { return mCameraVideoStream1Ok; }
+         internal set
+         {
+            if (mCameraVideoStream1Ok != value)
+            {
+               mCameraVideoStream1Ok = value;
+               NotifyPropertyChanged();
+            }
+         }
+      }
 
       /// <summary>
       /// Get the camera video status for stream 2 for this camera.
       /// </summary>
-      public bool? CameraVideoStream2Ok { get { return mCameraVideoStream2Ok; } }
+      public bool CameraVideoStream2Ok
+      {
+         get { return mCameraVideoStream2Ok; }
+         internal set
+         {
+            if (mCameraVideoStream2Ok != value)
+            {
+               mCameraVideoStream2Ok = value;
+               NotifyPropertyChanged();
+            }
+         }
+      }
 
       #endregion
 
@@ -101,7 +144,7 @@ namespace Vao.Client.Components
       }
 
       /// <summary>
-      /// Starts panning the camnera to the right.
+      /// Starts panning the camera to the right.
       /// </summary>
       public void PanRight(int speed)
       {
@@ -161,8 +204,37 @@ namespace Vao.Client.Components
       /// </summary>
       public void ZoomOut(int speed)
       {
-         mCurrentZoomSpeed = MathHelper.Clamp(speed, 0, 100);
+         mCurrentZoomSpeed = -MathHelper.Clamp(speed, 0, 100);
          MoveTargetStart();
+      }
+
+      #endregion
+
+      #region Internal Methods
+
+      internal void HandleStatusMessage(StatusMessage message)
+      {
+         switch (message.MessageId)
+         {
+            case MessageId.CameraVideoStream1Lost:
+               CameraVideoStream1Ok = false;
+               break;
+            case MessageId.CameraVideoStream1Restored:
+               CameraVideoStream1Ok = true;
+               break;
+            case MessageId.CameraVideoStream2Lost:
+               CameraVideoStream2Ok = false;
+               break;
+            case MessageId.CameraVideoStream2Restored:
+               CameraVideoStream2Ok = true;
+               break;
+            case MessageId.CameraDataLost:
+               CameraDataOk = false;
+               break;
+            case MessageId.CameraDataRestored:
+               CameraDataOk = true;
+               break;
+         }
       }
 
       #endregion
@@ -178,6 +250,13 @@ namespace Vao.Client.Components
          return mVaoClient.MoveTargetStart(CameraNumber, mCurrentPanSpeed, mCurrentTiltSpeed, mCurrentZoomSpeed);
       }
 
+      // This method is called by the Set accessor of each property.  
+      // The CallerMemberName attribute that is applied to the optional propertyName  
+      // parameter causes the property name of the caller to be substituted as an argument.  
+      private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+      {
+         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+      }
       #endregion
    }
 }
