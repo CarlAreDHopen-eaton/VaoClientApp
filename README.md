@@ -1,7 +1,8 @@
 # VaoClientApp
-This ia basic demo application that is using the VAO REST API (https://vao.docs.apiary.io) to communicate with the VMS System. The application allows the user to select cameras and view the video by using a VLC video control.
+This is a basic demo application that is using the VAO REST API (https://vao.docs.apiary.io) to communicate with the VMS System. 
+The application allows the user to select cameras and view the camera video streams by using the VLC video control.
 
-![image](https://user-images.githubusercontent.com/14876765/184110374-43378688-da5c-4f01-998a-e29d0659bcf9.png)
+![image](https://user-images.githubusercontent.com/14876765/186030122-35416658-3c92-4057-8f99-578b019ba4e9.png)
 
 # Current Features
 - Secure and Insecure connections
@@ -9,13 +10,14 @@ This ia basic demo application that is using the VAO REST API (https://vao.docs.
 - Camera Pan/Tilt
 - Camera Zoom
 - Video Streaming
-
-# In progress
-- Feedback processing
+- Feedback processing and message log
 - Camera Names
 
 # Todo
 - Camera Renaming
+- Preset Positions
+- Focus
+- Wipe / WipeWash
 
 # Build
 Built using Visual Studio 2019
