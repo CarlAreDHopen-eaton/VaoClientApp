@@ -7,10 +7,10 @@ This ia basic demo application that is using the VAO REST API (https://vao.docs.
 - Secure and Insecure connections
 - Camera Selection
 - Camera Pan/Tilt
+- Camera Zoom
 - Video Streaming
 
 # In progress
-- Camera Zoom
 - Feedback processing
 - Camera Names
 
