@@ -206,13 +206,16 @@ namespace Vao.Sample
       private void SelectCamera(int cameraNo, int streamNo)
       {
          Camera camera = moVaoClient.GetVaoCamera(cameraNo);
-         CurrentCamera = camera;
-         string url = camera.GetCameraLiveStreamUrl(streamNo);
-         if (!string.IsNullOrEmpty(url))
+         if (camera != null)
          {
-            txtCurrentRtspUrl.Text = url;
+            CurrentCamera = camera;
+            string url = camera.GetCameraLiveStreamUrl(streamNo);
+            if (!string.IsNullOrEmpty(url))
+            {
+               txtCurrentRtspUrl.Text = url;
 
-            StartRtspStream(url);
+               StartRtspStream(url);
+            }
          }
       }
 
