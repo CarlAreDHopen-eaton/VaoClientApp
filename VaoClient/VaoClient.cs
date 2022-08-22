@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using RestSharp;
 using RestSharp.Authenticators;
 using Vao.Client.Components;
@@ -67,9 +68,19 @@ namespace Vao.Client
          return response.Content;
       }
 
-      public Camera GetVaoCamera(int iCameraNo)
+      /// <summary>
+      /// Gets a camera object.
+      /// NOTE: The <see cref="VaoClient"/> caches cameras to limit requests to the API.
+      /// </summary>
+      /// <param name="cameraNo">The camera number to get</param>
+      /// <param name="forceRequest">If true a request will be sent to the API even if the camera is already available.</param>
+      /// <returns></returns>
+      public Camera GetVaoCamera(int cameraNo, bool forceRequest = false)
       {
-         RestResponse response = GetVaoCameraInternal(iCameraNo);
+         if (mCameraList.ContainsKey(cameraNo))
+            return mCameraList[cameraNo];
+
+         RestResponse response = GetVaoCameraInternal(cameraNo);
          if (response == null)
             return null;
          var camera = JsonParser.ParseSingleCamera(response.Content, this);
@@ -91,6 +102,11 @@ namespace Vao.Client
 
       public List<Camera> GetVaoCameras()
       {
+         if (mCameraList != null && mCameraList.Count > 0)
+         {
+            return mCameraList.Values.ToList();
+         }
+
          RestClient client = GetRestClient();
 
          // ReSharper disable once RedundantArgumentDefaultValue
@@ -104,7 +120,13 @@ namespace Vao.Client
             return null;
          }
 
-         return JsonParser.ParseCameraList(strResponse, this);
+         List<Camera> cameras = JsonParser.ParseCameraList(strResponse, this);
+         foreach (var camera in cameras)
+         {
+            AddOrUpdateCamera(camera);
+         }
+
+         return cameras;
       }
 
       public void StartStatusThread()

@@ -35,17 +35,29 @@ namespace Vao.Client.Components
       {
          get
          {
+            // Session
             if (Message.Contains("REST Session started"))
                return MessageId.SessionStart;
             if (Message.Contains("Session logon success"))
                return MessageId.SessionLogonSuccess;
+
+            // Camera main stream (Stream 1)
             if (Message.Contains("Camera video connection lost"))
                return MessageId.CameraVideoStream1Lost;
+            if (Message.Contains("Camera video connection restored"))
+               return MessageId.CameraVideoStream1Restored;
+
+            // Camera sub stream (Stream 2)
             if (Message.Contains("Camera video sub stream connection lost"))
                return MessageId.CameraVideoStream2Lost;
+            if (Message.Contains("Camera video sub stream connection restored"))
+               return MessageId.CameraVideoStream2Restored;
+
+            // Camera data
             if (Message.Contains("Camera data connection lost"))
                return MessageId.CameraDataLost;
-            //TODO Add further classification
+
+            // Unknown messages.
             return MessageId.Unknown;
          }
       }

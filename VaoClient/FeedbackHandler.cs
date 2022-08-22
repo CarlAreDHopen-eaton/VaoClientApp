@@ -64,7 +64,7 @@ namespace Vao.Client
             case MessageId.CameraVideoStream2Restored:
                List<Camera> cameras = message.VaoClient.GetVaoCameras();
                Camera foundCamera = null;
-               foreach (var camera in cameras)
+               foreach (Camera camera in cameras)
                {
                   if (message.Message.Contains(camera.Name))
                   {
