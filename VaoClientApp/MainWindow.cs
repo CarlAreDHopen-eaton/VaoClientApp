@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Globalization;
 using System.Windows.Forms;
 using LibVLCSharp.Shared;
@@ -15,10 +16,11 @@ namespace Vao.Sample
       private VaoClient moVaoClient;
       private VideoView mVideoControl;
       private Camera mCurrentCamera;
+      private Button mCurrentCameraButton;
       private LibVLC mLibVlc;
       private ToolTip moToolTip;
 
-   public bool IsStared
+      public bool IsStared
       {
          get { return mIsStared; }
          set
@@ -53,10 +55,6 @@ namespace Vao.Sample
          var options = new[] { "-vv", "--rtsp-timeout=300", "--network-caching=300" };
          mLibVlc = new LibVLC(true, options);
          mLibVlc.Log += LibVlc_Log;
-
-         //TODO Check if not needed anymore.
-         //DirectoryInfo vlcLibDirectory = new DirectoryInfo(Path.Combine(Directory.GetCurrentDirectory(), "libvlc", IntPtr.Size == 4 ? "win-x86" : "win-x64"));
-         //libVlc.VlcLibDirectory = vlcLibDirectory;
       }
 
       private void LibVlc_Log(object sender, LogEventArgs e)
@@ -194,13 +192,30 @@ namespace Vao.Sample
          }
          set
          {
+            if (mCurrentCameraButton != null)
+               mCurrentCameraButton.BackColor = Color.White;
             mCurrentCamera = value;
+            mCurrentCameraButton = GetCameraButton(mCurrentCamera);
+            if (mCurrentCameraButton != null)
+               mCurrentCameraButton.BackColor = Color.Goldenrod;
+
             if (mCurrentCamera != null)
                lblCurrentCamera.Text = $"Camera : {mCurrentCamera.Name}";
             else
                lblCurrentCamera.Text = $"Camera : (No camera selected)";
+
             UpdateEnabled();
          }
+      }
+
+      private Button GetCameraButton(Camera camera)
+      {
+         foreach (Button button in pnlCameraSelectFlowPanel.Controls)
+         { 
+            if (button.Tag == camera)
+               return button;
+         }
+         return null;
       }
 
       private void SelectCamera(int cameraNo, int streamNo)
