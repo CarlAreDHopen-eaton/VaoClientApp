@@ -227,7 +227,10 @@ namespace Vao.Sample
             string url = camera.GetCameraLiveStreamUrl(streamNo);
             if (!string.IsNullOrEmpty(url))
             {
-               txtCurrentRtspUrl.Text = url;
+               UriBuilder maskedUri = new UriBuilder(url);
+               maskedUri.Password = "******";
+               maskedUri.UserName = "******";
+               txtCurrentRtspUrl.Text = maskedUri.ToString();
 
                StartRtspStream(url);
             }
@@ -351,6 +354,11 @@ namespace Vao.Sample
                SelectCamera(CurrentCamera.CameraNumber, chkPreferSubChannel.Checked ? 2 : 1);
             }
          }
+      }
+
+      private void btnClearMessages_Click(object sender, EventArgs e)
+      {
+         lstMessages.Items.Clear();
       }
    }
 }

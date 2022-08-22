@@ -62,6 +62,7 @@ namespace Vao.Sample
          this.btnTiltDown = new System.Windows.Forms.Button();
          this.btnTiltUp = new System.Windows.Forms.Button();
          this.splitHorizontalVideoAndMessageSplit = new System.Windows.Forms.SplitContainer();
+         this.btnClearMessages = new System.Windows.Forms.Button();
          this.grpCameraSelection.SuspendLayout();
          this.grpConnection.SuspendLayout();
          this.grpMessages.SuspendLayout();
@@ -160,15 +161,17 @@ namespace Vao.Sample
          // 
          // lstMessages
          // 
+         this.lstMessages.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
          this.lstMessages.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.colTime,
             this.colMessage});
-         this.lstMessages.Dock = System.Windows.Forms.DockStyle.Fill;
          this.lstMessages.FullRowSelect = true;
          this.lstMessages.HideSelection = false;
          this.lstMessages.Location = new System.Drawing.Point(3, 16);
          this.lstMessages.Name = "lstMessages";
-         this.lstMessages.Size = new System.Drawing.Size(844, 231);
+         this.lstMessages.Size = new System.Drawing.Size(844, 196);
          this.lstMessages.TabIndex = 0;
          this.lstMessages.UseCompatibleStateImageBehavior = false;
          this.lstMessages.View = System.Windows.Forms.View.Details;
@@ -275,6 +278,7 @@ namespace Vao.Sample
          // 
          // grpMessages
          // 
+         this.grpMessages.Controls.Add(this.btnClearMessages);
          this.grpMessages.Controls.Add(this.lstMessages);
          this.grpMessages.Dock = System.Windows.Forms.DockStyle.Fill;
          this.grpMessages.Location = new System.Drawing.Point(0, 0);
@@ -312,6 +316,7 @@ namespace Vao.Sample
          // splitMainVerticalSplit
          // 
          this.splitMainVerticalSplit.Dock = System.Windows.Forms.DockStyle.Fill;
+         this.splitMainVerticalSplit.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
          this.splitMainVerticalSplit.Location = new System.Drawing.Point(0, 0);
          this.splitMainVerticalSplit.Name = "splitMainVerticalSplit";
          // 
@@ -373,7 +378,7 @@ namespace Vao.Sample
          this.btnZoomOut.Image = global::Vao.Sample.Properties.Resources.zoom_out_black_24dp;
          this.btnZoomOut.Location = new System.Drawing.Point(133, 90);
          this.btnZoomOut.Name = "btnZoomOut";
-         this.btnZoomOut.Size = new System.Drawing.Size(29, 32);
+         this.btnZoomOut.Size = new System.Drawing.Size(32, 32);
          this.btnZoomOut.TabIndex = 5;
          this.btnZoomOut.UseVisualStyleBackColor = true;
          this.btnZoomOut.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
@@ -384,7 +389,7 @@ namespace Vao.Sample
          this.btnZoomIn.Image = global::Vao.Sample.Properties.Resources.zoom_in_black_24dp;
          this.btnZoomIn.Location = new System.Drawing.Point(133, 14);
          this.btnZoomIn.Name = "btnZoomIn";
-         this.btnZoomIn.Size = new System.Drawing.Size(29, 32);
+         this.btnZoomIn.Size = new System.Drawing.Size(32, 32);
          this.btnZoomIn.TabIndex = 4;
          this.btnZoomIn.UseVisualStyleBackColor = true;
          this.btnZoomIn.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
@@ -395,7 +400,7 @@ namespace Vao.Sample
          this.btnPanRight.BackColor = System.Drawing.Color.Linen;
          this.btnPanRight.Location = new System.Drawing.Point(133, 52);
          this.btnPanRight.Name = "btnPanRight";
-         this.btnPanRight.Size = new System.Drawing.Size(29, 32);
+         this.btnPanRight.Size = new System.Drawing.Size(32, 32);
          this.btnPanRight.TabIndex = 2;
          this.btnPanRight.Text = "Ri";
          this.btnPanRight.UseVisualStyleBackColor = false;
@@ -407,7 +412,7 @@ namespace Vao.Sample
          this.btnPanLeft.BackColor = System.Drawing.Color.Linen;
          this.btnPanLeft.Location = new System.Drawing.Point(63, 52);
          this.btnPanLeft.Name = "btnPanLeft";
-         this.btnPanLeft.Size = new System.Drawing.Size(29, 32);
+         this.btnPanLeft.Size = new System.Drawing.Size(32, 32);
          this.btnPanLeft.TabIndex = 1;
          this.btnPanLeft.Text = "Le";
          this.btnPanLeft.UseVisualStyleBackColor = false;
@@ -419,7 +424,7 @@ namespace Vao.Sample
          this.btnTiltDown.BackColor = System.Drawing.Color.Linen;
          this.btnTiltDown.Location = new System.Drawing.Point(98, 90);
          this.btnTiltDown.Name = "btnTiltDown";
-         this.btnTiltDown.Size = new System.Drawing.Size(29, 32);
+         this.btnTiltDown.Size = new System.Drawing.Size(32, 32);
          this.btnTiltDown.TabIndex = 3;
          this.btnTiltDown.Text = "Do";
          this.btnTiltDown.UseVisualStyleBackColor = false;
@@ -431,7 +436,7 @@ namespace Vao.Sample
          this.btnTiltUp.BackColor = System.Drawing.Color.Linen;
          this.btnTiltUp.Location = new System.Drawing.Point(98, 14);
          this.btnTiltUp.Name = "btnTiltUp";
-         this.btnTiltUp.Size = new System.Drawing.Size(29, 32);
+         this.btnTiltUp.Size = new System.Drawing.Size(32, 32);
          this.btnTiltUp.TabIndex = 0;
          this.btnTiltUp.Text = "Up";
          this.btnTiltUp.UseVisualStyleBackColor = false;
@@ -456,6 +461,17 @@ namespace Vao.Sample
          this.splitHorizontalVideoAndMessageSplit.SplitterDistance = 390;
          this.splitHorizontalVideoAndMessageSplit.TabIndex = 0;
          // 
+         // btnClearMessages
+         // 
+         this.btnClearMessages.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+         this.btnClearMessages.Location = new System.Drawing.Point(759, 215);
+         this.btnClearMessages.Name = "btnClearMessages";
+         this.btnClearMessages.Size = new System.Drawing.Size(88, 32);
+         this.btnClearMessages.TabIndex = 11;
+         this.btnClearMessages.Text = "Clear";
+         this.btnClearMessages.UseVisualStyleBackColor = true;
+         this.btnClearMessages.Click += new System.EventHandler(this.btnClearMessages_Click);
+         // 
          // MainWindow
          // 
          this.AcceptButton = this.btnStart;
@@ -463,6 +479,7 @@ namespace Vao.Sample
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
          this.ClientSize = new System.Drawing.Size(1087, 644);
          this.Controls.Add(this.splitMainVerticalSplit);
+         this.MinimumSize = new System.Drawing.Size(400, 200);
          this.Name = "MainWindow";
          this.Text = "VAO Demo Client";
          this.grpCameraSelection.ResumeLayout(false);
@@ -521,6 +538,7 @@ namespace Vao.Sample
       private System.Windows.Forms.Button btnZoomIn;
       private System.Windows.Forms.Label lblCurrentCamera;
       private System.Windows.Forms.PictureBox pictureBox1;
+      private System.Windows.Forms.Button btnClearMessages;
    }
 }
 
