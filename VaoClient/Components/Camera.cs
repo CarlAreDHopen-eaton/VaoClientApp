@@ -216,22 +216,22 @@ namespace Vao.Client.Components
       {
          switch (message.Type)
          {
-            case MessageId.CameraVideoStream1Lost:
+            case MessageType.CameraVideoStream1Lost:
                CameraVideoStream1Ok = false;
                break;
-            case MessageId.CameraVideoStream1Restored:
+            case MessageType.CameraVideoStream1Restored:
                CameraVideoStream1Ok = true;
                break;
-            case MessageId.CameraVideoStream2Lost:
+            case MessageType.CameraVideoStream2Lost:
                CameraVideoStream2Ok = false;
                break;
-            case MessageId.CameraVideoStream2Restored:
+            case MessageType.CameraVideoStream2Restored:
                CameraVideoStream2Ok = true;
                break;
-            case MessageId.CameraDataLost:
+            case MessageType.CameraDataLost:
                CameraDataOk = false;
                break;
-            case MessageId.CameraDataRestored:
+            case MessageType.CameraDataRestored:
                CameraDataOk = true;
                break;
          }

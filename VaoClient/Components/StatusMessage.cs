@@ -6,16 +6,27 @@ namespace Vao.Client.Components
 {
    internal class StatusMessage
    {
-      private JsonStatusMessage mStatusMessage { get; }
+      private JsonStatusMessage mStatusMessage;
 
+      /// <summary>
+      /// Constructor for the message.
+      /// </summary>
+      /// <param name="statusMessage"></param>
+      /// <param name="vaoClient"></param>
       public StatusMessage(JsonStatusMessage statusMessage, VaoClient vaoClient)
       {
          mStatusMessage = statusMessage;
          VaoClient = vaoClient;
       }
 
+      /// <summary>
+      /// The client that received this message.
+      /// </summary>
       public VaoClient VaoClient { get; }
 
+      /// <summary>
+      /// The level of the message.
+      /// </summary>
       public MessageLevel Level
       { 
          get
@@ -31,36 +42,39 @@ namespace Vao.Client.Components
          }
       }
          
-      public MessageId Type
+      /// <summary>
+      /// The type of message.
+      /// </summary>
+      public MessageType Type
       {
          get
          {
             // Session
             if (Message.Contains("REST Session started"))
-               return MessageId.SessionStart;
+               return MessageType.SessionStart;
             if (Message.Contains("Session logon success"))
-               return MessageId.SessionLogonSuccess;
+               return MessageType.SessionLogonSuccess;
             if (Message.Contains("Session logon failed"))
-               return MessageId.SessionLogonFail;
+               return MessageType.SessionLogonFail;
 
             // Camera main stream (Stream 1)
             if (Message.Contains("Camera video connection lost"))
-               return MessageId.CameraVideoStream1Lost;
+               return MessageType.CameraVideoStream1Lost;
             if (Message.Contains("Camera video connection restored"))
-               return MessageId.CameraVideoStream1Restored;
+               return MessageType.CameraVideoStream1Restored;
 
             // Camera sub stream (Stream 2)
             if (Message.Contains("Camera video sub stream connection lost"))
-               return MessageId.CameraVideoStream2Lost;
+               return MessageType.CameraVideoStream2Lost;
             if (Message.Contains("Camera video sub stream connection restored"))
-               return MessageId.CameraVideoStream2Restored;
+               return MessageType.CameraVideoStream2Restored;
 
             // Camera data
             if (Message.Contains("Camera data connection lost"))
-               return MessageId.CameraDataLost;
+               return MessageType.CameraDataLost;
 
             // Unknown messages.
-            return MessageId.Unknown;
+            return MessageType.Unknown;
          }
       }
 

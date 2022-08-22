@@ -3,7 +3,7 @@
    /// <summary>
    /// Identifies the type of message.
    /// </summary>
-   public enum MessageId
+   public enum MessageType
    {
       /// <summary>
       /// Unknown message.
