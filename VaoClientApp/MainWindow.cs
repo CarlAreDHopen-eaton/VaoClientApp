@@ -51,7 +51,7 @@ namespace Vao.Sample
 
       private void StartInitializeVlc()
       {
-         WriteMessageLog("LibVLC", "Loading VLC");
+         WriteMessageLog("LibVLC", "Loading VLC", LogLevel.Notice);
          var options = new[] { "-vv", "--rtsp-timeout=300", "--network-caching=300" };
          mLibVlc = new LibVLC(true, options);
          mLibVlc.Log += LibVlc_Log;
@@ -63,7 +63,7 @@ namespace Vao.Sample
          if (e.Level == LogLevel.Debug)
             return;
 
-         WriteMessageLog("LibVLC", e.FormattedLog);
+         WriteMessageLog("LibVLC", e.FormattedLog, e.Level);
       }
 
       /// <summary>
@@ -127,13 +127,13 @@ namespace Vao.Sample
          var status = moVaoClient.GetVaoStatus();
          if (status != null)
          {
-            WriteMessageLog("VaoAPI", status);
+            WriteMessageLog("VaoAPI", status, LogLevel.Notice);
             FillSelectCameraButtonList();
             moVaoClient.StartStatusThread();
          }
          else
          {
-            WriteMessageLog("VaoAPI", "Unable to start.");
+            WriteMessageLog("VaoAPI", "Unable to start.", LogLevel.Error);
             btnStop_Click(sender, e);
          }
          UpdateEnabled();
@@ -147,18 +147,19 @@ namespace Vao.Sample
       /// <param name="e"></param>
       private void OnVaoClientMessage(object sender, MessageEventArgs e)
       {
-         WriteMessageLog("VaoAPI", e.Message);
+         WriteMessageLog("VaoAPI", e.Message, LogLevel.Notice);
       }
 
-      private void WriteMessageLog(string strSource, string strMessage)
+      private void WriteMessageLog(string strSource, string strMessage, LogLevel level)
       {
          if (InvokeRequired)
          {
-            BeginInvoke(new MethodInvoker(() => WriteMessageLog(strSource, strMessage)));
+            BeginInvoke(new MethodInvoker(() => WriteMessageLog(strSource, strMessage, level)));
          }
          else
          {
             var lvi = new ListViewItem(DateTime.Now.ToString(CultureInfo.InvariantCulture));
+            lvi.SubItems.Add(level.ToString());
             lvi.SubItems.Add($"{strSource} - {strMessage}");
             lstMessages.Items.Add(lvi);
          }
@@ -227,14 +228,19 @@ namespace Vao.Sample
             string url = camera.GetCameraLiveStreamUrl(streamNo);
             if (!string.IsNullOrEmpty(url))
             {
-               UriBuilder maskedUri = new UriBuilder(url);
-               maskedUri.Password = "******";
-               maskedUri.UserName = "******";
-               txtCurrentRtspUrl.Text = maskedUri.ToString();
-
+               txtCurrentRtspUrl.Text = GetMaskedUrl(url);
                StartRtspStream(url);
             }
          }
+      }
+
+      private static string GetMaskedUrl(string url)
+      {
+         UriBuilder maskedUri = new UriBuilder(url);
+         maskedUri.Password = "******";
+         maskedUri.UserName = "******";
+         maskedUri.ToString();
+         return maskedUri.ToString();         
       }
 
       private void StartRtspStream(string rtspUrl)
@@ -271,13 +277,13 @@ namespace Vao.Sample
 
       private void MediaPlayer_EncounteredError(object sender, EventArgs e)
       {
-         WriteMessageLog("LibVLC", "LibVLC error encountered.");
+         WriteMessageLog("LibVLC", "LibVLC error encountered.", LogLevel.Error);
       }
 
       private void MediaPlayer_Opening(object sender, EventArgs e)
       {
          string mrl = mVideoControl?.MediaPlayer?.Media?.Mrl ?? "";
-         WriteMessageLog("LibVLC", $"LibVLC opening {mrl}");
+         WriteMessageLog("LibVLC", $"LibVLC opening {GetMaskedUrl(mrl)}", LogLevel.Notice);
       }
 
       private void OnSelectCameraClicked(object sender, EventArgs e)

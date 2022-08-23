@@ -139,6 +139,27 @@
   <ItemGroup>
     <None Include="Resources\zoom_out_black_24dp.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arrow_upward_black_24dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\flip_to_back_black_24dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\flip_to_front_black_24dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arrow_forward_black_24dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\videocam_black_24dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arrow_back_black_24dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arrow_downward_black_24dp.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\VideoLAN.LibVLC.Windows.3.0.17.4\build\VideoLAN.LibVLC.Windows.targets" Condition="Exists('..\packages\VideoLAN.LibVLC.Windows.3.0.17.4\build\VideoLAN.LibVLC.Windows.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

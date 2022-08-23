@@ -29,6 +29,7 @@ namespace Vao.Sample
       /// </summary>
       private void InitializeComponent()
       {
+         System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
          this.btnStart = new System.Windows.Forms.Button();
          this.btnStop = new System.Windows.Forms.Button();
          this.chkSecure = new System.Windows.Forms.CheckBox();
@@ -49,20 +50,23 @@ namespace Vao.Sample
          this.pnlCameraSelectFlowPanel = new System.Windows.Forms.FlowLayoutPanel();
          this.grpConnection = new System.Windows.Forms.GroupBox();
          this.grpMessages = new System.Windows.Forms.GroupBox();
+         this.btnClearMessages = new System.Windows.Forms.Button();
          this.grpVideoControl = new System.Windows.Forms.GroupBox();
          this.chkPreferSubChannel = new System.Windows.Forms.CheckBox();
          this.splitMainVerticalSplit = new System.Windows.Forms.SplitContainer();
          this.grpCameraControl = new System.Windows.Forms.GroupBox();
-         this.pictureBox1 = new System.Windows.Forms.PictureBox();
          this.lblCurrentCamera = new System.Windows.Forms.Label();
+         this.splitHorizontalVideoAndMessageSplit = new System.Windows.Forms.SplitContainer();
+         this.btnFocusFar = new System.Windows.Forms.Button();
+         this.btnFocusNear = new System.Windows.Forms.Button();
+         this.pictureBox1 = new System.Windows.Forms.PictureBox();
          this.btnZoomOut = new System.Windows.Forms.Button();
          this.btnZoomIn = new System.Windows.Forms.Button();
          this.btnPanRight = new System.Windows.Forms.Button();
          this.btnPanLeft = new System.Windows.Forms.Button();
          this.btnTiltDown = new System.Windows.Forms.Button();
          this.btnTiltUp = new System.Windows.Forms.Button();
-         this.splitHorizontalVideoAndMessageSplit = new System.Windows.Forms.SplitContainer();
-         this.btnClearMessages = new System.Windows.Forms.Button();
+         this.colLevel = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
          this.grpCameraSelection.SuspendLayout();
          this.grpConnection.SuspendLayout();
          this.grpMessages.SuspendLayout();
@@ -72,11 +76,11 @@ namespace Vao.Sample
          this.splitMainVerticalSplit.Panel2.SuspendLayout();
          this.splitMainVerticalSplit.SuspendLayout();
          this.grpCameraControl.SuspendLayout();
-         ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.splitHorizontalVideoAndMessageSplit)).BeginInit();
          this.splitHorizontalVideoAndMessageSplit.Panel1.SuspendLayout();
          this.splitHorizontalVideoAndMessageSplit.Panel2.SuspendLayout();
          this.splitHorizontalVideoAndMessageSplit.SuspendLayout();
+         ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
          this.SuspendLayout();
          // 
          // btnStart
@@ -166,6 +170,7 @@ namespace Vao.Sample
             | System.Windows.Forms.AnchorStyles.Right)));
          this.lstMessages.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.colTime,
+            this.colLevel,
             this.colMessage});
          this.lstMessages.FullRowSelect = true;
          this.lstMessages.HideSelection = false;
@@ -288,6 +293,17 @@ namespace Vao.Sample
          this.grpMessages.TabStop = false;
          this.grpMessages.Text = "Messages";
          // 
+         // btnClearMessages
+         // 
+         this.btnClearMessages.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+         this.btnClearMessages.Location = new System.Drawing.Point(759, 215);
+         this.btnClearMessages.Name = "btnClearMessages";
+         this.btnClearMessages.Size = new System.Drawing.Size(88, 32);
+         this.btnClearMessages.TabIndex = 11;
+         this.btnClearMessages.Text = "Clear";
+         this.btnClearMessages.UseVisualStyleBackColor = true;
+         this.btnClearMessages.Click += new System.EventHandler(this.btnClearMessages_Click);
+         // 
          // grpVideoControl
          // 
          this.grpVideoControl.Controls.Add(this.chkPreferSubChannel);
@@ -339,6 +355,8 @@ namespace Vao.Sample
          // 
          this.grpCameraControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+         this.grpCameraControl.Controls.Add(this.btnFocusFar);
+         this.grpCameraControl.Controls.Add(this.btnFocusNear);
          this.grpCameraControl.Controls.Add(this.pictureBox1);
          this.grpCameraControl.Controls.Add(this.lblCurrentCamera);
          this.grpCameraControl.Controls.Add(this.btnZoomOut);
@@ -354,16 +372,6 @@ namespace Vao.Sample
          this.grpCameraControl.TabStop = false;
          this.grpCameraControl.Text = "Camera Control";
          // 
-         // pictureBox1
-         // 
-         this.pictureBox1.Image = global::Vao.Sample.Properties.Resources.control_camera_black_24dp;
-         this.pictureBox1.Location = new System.Drawing.Point(98, 52);
-         this.pictureBox1.Name = "pictureBox1";
-         this.pictureBox1.Size = new System.Drawing.Size(29, 32);
-         this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-         this.pictureBox1.TabIndex = 12;
-         this.pictureBox1.TabStop = false;
-         // 
          // lblCurrentCamera
          // 
          this.lblCurrentCamera.AutoSize = true;
@@ -372,6 +380,52 @@ namespace Vao.Sample
          this.lblCurrentCamera.Size = new System.Drawing.Size(156, 13);
          this.lblCurrentCamera.TabIndex = 11;
          this.lblCurrentCamera.Text = "Camera : (No Camera Selected)";
+         // 
+         // splitHorizontalVideoAndMessageSplit
+         // 
+         this.splitHorizontalVideoAndMessageSplit.Dock = System.Windows.Forms.DockStyle.Fill;
+         this.splitHorizontalVideoAndMessageSplit.Location = new System.Drawing.Point(0, 0);
+         this.splitHorizontalVideoAndMessageSplit.Name = "splitHorizontalVideoAndMessageSplit";
+         this.splitHorizontalVideoAndMessageSplit.Orientation = System.Windows.Forms.Orientation.Horizontal;
+         // 
+         // splitHorizontalVideoAndMessageSplit.Panel1
+         // 
+         this.splitHorizontalVideoAndMessageSplit.Panel1.Controls.Add(this.grpVideoControl);
+         // 
+         // splitHorizontalVideoAndMessageSplit.Panel2
+         // 
+         this.splitHorizontalVideoAndMessageSplit.Panel2.Controls.Add(this.grpMessages);
+         this.splitHorizontalVideoAndMessageSplit.Size = new System.Drawing.Size(850, 644);
+         this.splitHorizontalVideoAndMessageSplit.SplitterDistance = 390;
+         this.splitHorizontalVideoAndMessageSplit.TabIndex = 0;
+         // 
+         // btnFocusFar
+         // 
+         this.btnFocusFar.Image = global::Vao.Sample.Properties.Resources.flip_to_back_black_24dp;
+         this.btnFocusFar.Location = new System.Drawing.Point(62, 90);
+         this.btnFocusFar.Name = "btnFocusFar";
+         this.btnFocusFar.Size = new System.Drawing.Size(32, 32);
+         this.btnFocusFar.TabIndex = 14;
+         this.btnFocusFar.UseVisualStyleBackColor = false;
+         // 
+         // btnFocusNear
+         // 
+         this.btnFocusNear.Image = global::Vao.Sample.Properties.Resources.flip_to_front_black_24dp;
+         this.btnFocusNear.Location = new System.Drawing.Point(62, 14);
+         this.btnFocusNear.Name = "btnFocusNear";
+         this.btnFocusNear.Size = new System.Drawing.Size(32, 32);
+         this.btnFocusNear.TabIndex = 13;
+         this.btnFocusNear.UseVisualStyleBackColor = false;
+         // 
+         // pictureBox1
+         // 
+         this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+         this.pictureBox1.Location = new System.Drawing.Point(98, 52);
+         this.pictureBox1.Name = "pictureBox1";
+         this.pictureBox1.Size = new System.Drawing.Size(29, 32);
+         this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+         this.pictureBox1.TabIndex = 12;
+         this.pictureBox1.TabStop = false;
          // 
          // btnZoomOut
          // 
@@ -397,80 +451,52 @@ namespace Vao.Sample
          // 
          // btnPanRight
          // 
-         this.btnPanRight.BackColor = System.Drawing.Color.Linen;
+         this.btnPanRight.Image = global::Vao.Sample.Properties.Resources.arrow_forward_black_24dp;
          this.btnPanRight.Location = new System.Drawing.Point(133, 52);
          this.btnPanRight.Name = "btnPanRight";
          this.btnPanRight.Size = new System.Drawing.Size(32, 32);
          this.btnPanRight.TabIndex = 2;
-         this.btnPanRight.Text = "Ri";
          this.btnPanRight.UseVisualStyleBackColor = false;
          this.btnPanRight.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
          this.btnPanRight.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
          // 
          // btnPanLeft
          // 
-         this.btnPanLeft.BackColor = System.Drawing.Color.Linen;
-         this.btnPanLeft.Location = new System.Drawing.Point(63, 52);
+         this.btnPanLeft.Image = global::Vao.Sample.Properties.Resources.arrow_back_black_24dp;
+         this.btnPanLeft.Location = new System.Drawing.Point(62, 52);
          this.btnPanLeft.Name = "btnPanLeft";
          this.btnPanLeft.Size = new System.Drawing.Size(32, 32);
          this.btnPanLeft.TabIndex = 1;
-         this.btnPanLeft.Text = "Le";
          this.btnPanLeft.UseVisualStyleBackColor = false;
          this.btnPanLeft.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
          this.btnPanLeft.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
          // 
          // btnTiltDown
          // 
-         this.btnTiltDown.BackColor = System.Drawing.Color.Linen;
+         this.btnTiltDown.Image = global::Vao.Sample.Properties.Resources.arrow_downward_black_24dp;
          this.btnTiltDown.Location = new System.Drawing.Point(98, 90);
          this.btnTiltDown.Name = "btnTiltDown";
          this.btnTiltDown.Size = new System.Drawing.Size(32, 32);
          this.btnTiltDown.TabIndex = 3;
-         this.btnTiltDown.Text = "Do";
          this.btnTiltDown.UseVisualStyleBackColor = false;
          this.btnTiltDown.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
          this.btnTiltDown.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
          // 
          // btnTiltUp
          // 
-         this.btnTiltUp.BackColor = System.Drawing.Color.Linen;
+         this.btnTiltUp.Image = global::Vao.Sample.Properties.Resources.arrow_upward_black_24dp;
          this.btnTiltUp.Location = new System.Drawing.Point(98, 14);
          this.btnTiltUp.Name = "btnTiltUp";
          this.btnTiltUp.Size = new System.Drawing.Size(32, 32);
          this.btnTiltUp.TabIndex = 0;
-         this.btnTiltUp.Text = "Up";
          this.btnTiltUp.UseVisualStyleBackColor = false;
          this.btnTiltUp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
          this.btnTiltUp.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
          // 
-         // splitHorizontalVideoAndMessageSplit
+         // colLevel
          // 
-         this.splitHorizontalVideoAndMessageSplit.Dock = System.Windows.Forms.DockStyle.Fill;
-         this.splitHorizontalVideoAndMessageSplit.Location = new System.Drawing.Point(0, 0);
-         this.splitHorizontalVideoAndMessageSplit.Name = "splitHorizontalVideoAndMessageSplit";
-         this.splitHorizontalVideoAndMessageSplit.Orientation = System.Windows.Forms.Orientation.Horizontal;
-         // 
-         // splitHorizontalVideoAndMessageSplit.Panel1
-         // 
-         this.splitHorizontalVideoAndMessageSplit.Panel1.Controls.Add(this.grpVideoControl);
-         // 
-         // splitHorizontalVideoAndMessageSplit.Panel2
-         // 
-         this.splitHorizontalVideoAndMessageSplit.Panel2.Controls.Add(this.grpMessages);
-         this.splitHorizontalVideoAndMessageSplit.Size = new System.Drawing.Size(850, 644);
-         this.splitHorizontalVideoAndMessageSplit.SplitterDistance = 390;
-         this.splitHorizontalVideoAndMessageSplit.TabIndex = 0;
-         // 
-         // btnClearMessages
-         // 
-         this.btnClearMessages.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-         this.btnClearMessages.Location = new System.Drawing.Point(759, 215);
-         this.btnClearMessages.Name = "btnClearMessages";
-         this.btnClearMessages.Size = new System.Drawing.Size(88, 32);
-         this.btnClearMessages.TabIndex = 11;
-         this.btnClearMessages.Text = "Clear";
-         this.btnClearMessages.UseVisualStyleBackColor = true;
-         this.btnClearMessages.Click += new System.EventHandler(this.btnClearMessages_Click);
+         this.colLevel.Text = "Level";
+         this.colLevel.Width = 116;
          // 
          // MainWindow
          // 
@@ -494,11 +520,11 @@ namespace Vao.Sample
          this.splitMainVerticalSplit.ResumeLayout(false);
          this.grpCameraControl.ResumeLayout(false);
          this.grpCameraControl.PerformLayout();
-         ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
          this.splitHorizontalVideoAndMessageSplit.Panel1.ResumeLayout(false);
          this.splitHorizontalVideoAndMessageSplit.Panel2.ResumeLayout(false);
          ((System.ComponentModel.ISupportInitialize)(this.splitHorizontalVideoAndMessageSplit)).EndInit();
          this.splitHorizontalVideoAndMessageSplit.ResumeLayout(false);
+         ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
          this.ResumeLayout(false);
 
       }
@@ -539,6 +565,9 @@ namespace Vao.Sample
       private System.Windows.Forms.Label lblCurrentCamera;
       private System.Windows.Forms.PictureBox pictureBox1;
       private System.Windows.Forms.Button btnClearMessages;
+      private System.Windows.Forms.Button btnFocusFar;
+      private System.Windows.Forms.Button btnFocusNear;
+      private System.Windows.Forms.ColumnHeader colLevel;
    }
 }
 
