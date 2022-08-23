@@ -14,6 +14,7 @@ The application allows the user to select cameras and view the camera video stre
 - Camera Names
 
 # Todo
+- Support for multiple API servers (alernate between servers)
 - Camera Renaming
 - Preset Positions
 - Focus
