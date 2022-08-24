@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Json.Net;
@@ -101,6 +102,11 @@ namespace Vao.Client.Components
             }
          }
       }
+
+      /// <summary>
+      /// List of preset positions on the camera.
+      /// </summary>
+      public List<Preset> PresetList { get; set; }
 
       #endregion
 
@@ -207,6 +213,18 @@ namespace Vao.Client.Components
          mCurrentZoomSpeed = -MathHelper.Clamp(speed, 0, 100);
          MoveTargetStart();
       }
+
+      /// <summary>
+      /// Move focus near.
+      /// </summary>
+      public void FocusNear()
+      { }
+
+      /// <summary>
+      /// Move focus far.
+      /// </summary>
+      public void FocusFar()
+      { }
 
       #endregion
 

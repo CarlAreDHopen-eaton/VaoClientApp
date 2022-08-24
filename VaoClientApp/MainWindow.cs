@@ -327,17 +327,20 @@ namespace Vao.Sample
          {
             if (sender == btnPanLeft)
                currentCamera.PanLeft(80);
-            if (sender == btnPanRight)
+            else if (sender == btnPanRight)
                currentCamera.PanRight(80);
-            if (sender == btnTiltUp)
+            else if (sender == btnTiltUp)
                currentCamera.TiltUp(80);
-            if (sender == btnTiltDown)
+            else if (sender == btnTiltDown)
                currentCamera.TiltDown(80);
-            if (sender == btnZoomIn)
+            else if (sender == btnZoomIn)
                currentCamera.ZoomIn(80);
-            if (sender == btnZoomOut)
+            else if (sender == btnZoomOut)
                currentCamera.ZoomOut(80);
-
+            else if (sender == btnFocusFar)
+               currentCamera.FocusFar();
+            else if (sender == btnFocusNear)
+               currentCamera.FocusNear();
          }
       }
 
