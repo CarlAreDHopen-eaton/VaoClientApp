@@ -1,6 +1,6 @@
 # VaoClientApp
-This is a basic demo application that is using the VAO REST API (https://vao.docs.apiary.io) to communicate with the VMS System. 
-The application allows the user to select cameras and view the camera video streams by using the VLC video control.
+This is a Demo Application that is using the VAO REST API (https://vao.docs.apiary.io) to communicate with a VMS System such as the HERNIS FLEX System.
+The application allows the user to select and control cameras. The videostreams from the cameras is decoded and displayed in the VLC video control.
 
 ![image](https://user-images.githubusercontent.com/14876765/186030122-35416658-3c92-4057-8f99-578b019ba4e9.png)
 
