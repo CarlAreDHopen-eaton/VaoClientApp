@@ -206,6 +206,21 @@ namespace Vao.Client
          return response;
       }
 
+      internal RestResponse MoveCameraToPreset(int iCameraNo, int iPresetNumber)
+      {
+         RestClient client = GetRestClient();
+         // ReSharper disable once RedundantArgumentDefaultValue
+         RestRequest request = new RestRequest($"inputs/{iCameraNo}/presets/{iPresetNumber}", Method.Post);
+         RestResponse response = client.Execute(request);
+
+         string strResponse = ValidateResponseContent(response);
+         if (strResponse == null)
+         {
+            return null;
+         }
+         return response;
+      }
+
       internal void RaiseOnMessage(MessageLevel messageType, string message)
       {
          OnMessage?.Invoke(this, new MessageEventArgs(messageType, message));

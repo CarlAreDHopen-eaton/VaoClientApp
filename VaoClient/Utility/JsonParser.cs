@@ -51,5 +51,20 @@ namespace Vao.Client.Utility
 
          return null;
       }
+
+      internal static List<Preset> ParsePresetList(string strJson, VaoClient vaoClient)
+      {
+         if (!string.IsNullOrEmpty(strJson))
+         {
+            List<JsonPresetObject> list = JsonNet.Deserialize<List<JsonPresetObject>>(strJson);
+            List<Preset> returnList = new List<Preset>();
+            foreach (JsonPresetObject preset in list)
+            {
+               returnList.Add(new Preset(preset.presetId, preset, vaoClient));
+            }
+            return returnList;
+         }
+         return null;
+      }
    }
 }
