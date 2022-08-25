@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Windows.Forms;
@@ -206,11 +207,29 @@ namespace Vao.Sample
                mCurrentCameraButton.BackColor = Color.Goldenrod;
 
             if (mCurrentCamera != null)
+            {
                lblCurrentCamera.Text = $"Camera : {mCurrentCamera.Name}";
+               FillSelectPresetList();
+            }
             else
+            {
                lblCurrentCamera.Text = $"Camera : (No camera selected)";
+               selPreset.Items.Clear();
+               selPreset.Items.Add("No Preset");
+            }
 
+            
             UpdateEnabled();
+         }
+      }
+
+      private void FillSelectPresetList()
+      {
+         List<Preset> presets = CurrentCamera?.PresetList;
+         if (presets != null && presets.Count > 0)
+         {
+            selPreset.DataSource = presets;
+            selPreset.DisplayMember = nameof(Preset.Name);
          }
       }
 
@@ -373,6 +392,14 @@ namespace Vao.Sample
       private void btnClearMessages_Click(object sender, EventArgs e)
       {
          lstMessages.Items.Clear();
+      }
+
+      private void btnGotoPreset_Click(object sender, EventArgs e)
+      {
+         if (selPreset.SelectedItem is Preset preset)
+         {
+            preset.GotoPreset();
+         }
       }
    }
 }

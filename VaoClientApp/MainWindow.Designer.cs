@@ -67,6 +67,9 @@ namespace Vao.Sample
          this.btnTiltDown = new System.Windows.Forms.Button();
          this.btnTiltUp = new System.Windows.Forms.Button();
          this.splitHorizontalVideoAndMessageSplit = new System.Windows.Forms.SplitContainer();
+         this.grpSelectPreset = new System.Windows.Forms.GroupBox();
+         this.btnGotoPreset = new System.Windows.Forms.Button();
+         this.selPreset = new System.Windows.Forms.ComboBox();
          this.grpCameraSelection.SuspendLayout();
          this.grpConnection.SuspendLayout();
          this.grpMessages.SuspendLayout();
@@ -81,6 +84,7 @@ namespace Vao.Sample
          this.splitHorizontalVideoAndMessageSplit.Panel1.SuspendLayout();
          this.splitHorizontalVideoAndMessageSplit.Panel2.SuspendLayout();
          this.splitHorizontalVideoAndMessageSplit.SuspendLayout();
+         this.grpSelectPreset.SuspendLayout();
          this.SuspendLayout();
          // 
          // btnStart
@@ -249,9 +253,9 @@ namespace Vao.Sample
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
          this.grpCameraSelection.Controls.Add(this.pnlCameraSelectFlowPanel);
-         this.grpCameraSelection.Location = new System.Drawing.Point(6, 358);
+         this.grpCameraSelection.Location = new System.Drawing.Point(6, 425);
          this.grpCameraSelection.Name = "grpCameraSelection";
-         this.grpCameraSelection.Size = new System.Drawing.Size(224, 283);
+         this.grpCameraSelection.Size = new System.Drawing.Size(224, 216);
          this.grpCameraSelection.TabIndex = 2;
          this.grpCameraSelection.TabStop = false;
          this.grpCameraSelection.Text = "Camera Selection";
@@ -261,7 +265,7 @@ namespace Vao.Sample
          this.pnlCameraSelectFlowPanel.Dock = System.Windows.Forms.DockStyle.Fill;
          this.pnlCameraSelectFlowPanel.Location = new System.Drawing.Point(3, 16);
          this.pnlCameraSelectFlowPanel.Name = "pnlCameraSelectFlowPanel";
-         this.pnlCameraSelectFlowPanel.Size = new System.Drawing.Size(218, 264);
+         this.pnlCameraSelectFlowPanel.Size = new System.Drawing.Size(218, 197);
          this.pnlCameraSelectFlowPanel.TabIndex = 0;
          // 
          // grpConnection
@@ -344,6 +348,7 @@ namespace Vao.Sample
          // splitMainVerticalSplit.Panel1
          // 
          this.splitMainVerticalSplit.Panel1.BackColor = System.Drawing.Color.White;
+         this.splitMainVerticalSplit.Panel1.Controls.Add(this.grpSelectPreset);
          this.splitMainVerticalSplit.Panel1.Controls.Add(this.grpCameraControl);
          this.splitMainVerticalSplit.Panel1.Controls.Add(this.grpConnection);
          this.splitMainVerticalSplit.Panel1.Controls.Add(this.grpCameraSelection);
@@ -502,6 +507,41 @@ namespace Vao.Sample
          this.splitHorizontalVideoAndMessageSplit.SplitterDistance = 390;
          this.splitHorizontalVideoAndMessageSplit.TabIndex = 0;
          // 
+         // grpSelectPreset
+         // 
+         this.grpSelectPreset.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+         this.grpSelectPreset.Controls.Add(this.selPreset);
+         this.grpSelectPreset.Controls.Add(this.btnGotoPreset);
+         this.grpSelectPreset.Location = new System.Drawing.Point(6, 358);
+         this.grpSelectPreset.Name = "grpSelectPreset";
+         this.grpSelectPreset.Size = new System.Drawing.Size(221, 61);
+         this.grpSelectPreset.TabIndex = 3;
+         this.grpSelectPreset.TabStop = false;
+         this.grpSelectPreset.Text = "Preset Selection";
+         // 
+         // btnGotoPreset
+         // 
+         this.btnGotoPreset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+         this.btnGotoPreset.Location = new System.Drawing.Point(172, 19);
+         this.btnGotoPreset.Name = "btnGotoPreset";
+         this.btnGotoPreset.Size = new System.Drawing.Size(43, 32);
+         this.btnGotoPreset.TabIndex = 10;
+         this.btnGotoPreset.Text = "Go";
+         this.btnGotoPreset.UseVisualStyleBackColor = true;
+         this.btnGotoPreset.Click += new System.EventHandler(this.btnGotoPreset_Click);
+         // 
+         // selPreset
+         // 
+         this.selPreset.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+         this.selPreset.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+         this.selPreset.FormattingEnabled = true;
+         this.selPreset.Location = new System.Drawing.Point(9, 26);
+         this.selPreset.Name = "selPreset";
+         this.selPreset.Size = new System.Drawing.Size(157, 21);
+         this.selPreset.TabIndex = 11;
+         // 
          // MainWindow
          // 
          this.AcceptButton = this.btnStart;
@@ -529,6 +569,7 @@ namespace Vao.Sample
          this.splitHorizontalVideoAndMessageSplit.Panel2.ResumeLayout(false);
          ((System.ComponentModel.ISupportInitialize)(this.splitHorizontalVideoAndMessageSplit)).EndInit();
          this.splitHorizontalVideoAndMessageSplit.ResumeLayout(false);
+         this.grpSelectPreset.ResumeLayout(false);
          this.ResumeLayout(false);
 
       }
@@ -572,6 +613,9 @@ namespace Vao.Sample
       private System.Windows.Forms.Button btnFocusFar;
       private System.Windows.Forms.Button btnFocusNear;
       private System.Windows.Forms.ColumnHeader colLevel;
+      private System.Windows.Forms.GroupBox grpSelectPreset;
+      private System.Windows.Forms.ComboBox selPreset;
+      private System.Windows.Forms.Button btnGotoPreset;
    }
 }
 
