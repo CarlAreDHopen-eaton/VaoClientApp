@@ -40,6 +40,7 @@ namespace Vao.Sample
          this.pnlVideo = new System.Windows.Forms.Panel();
          this.lstMessages = new System.Windows.Forms.ListView();
          this.colTime = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+         this.colLevel = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
          this.colMessage = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
          this.txtUser = new System.Windows.Forms.TextBox();
          this.lblUser = new System.Windows.Forms.Label();
@@ -55,18 +56,17 @@ namespace Vao.Sample
          this.chkPreferSubChannel = new System.Windows.Forms.CheckBox();
          this.splitMainVerticalSplit = new System.Windows.Forms.SplitContainer();
          this.grpCameraControl = new System.Windows.Forms.GroupBox();
-         this.lblCurrentCamera = new System.Windows.Forms.Label();
-         this.splitHorizontalVideoAndMessageSplit = new System.Windows.Forms.SplitContainer();
          this.btnFocusFar = new System.Windows.Forms.Button();
          this.btnFocusNear = new System.Windows.Forms.Button();
          this.pictureBox1 = new System.Windows.Forms.PictureBox();
+         this.lblCurrentCamera = new System.Windows.Forms.Label();
          this.btnZoomOut = new System.Windows.Forms.Button();
          this.btnZoomIn = new System.Windows.Forms.Button();
          this.btnPanRight = new System.Windows.Forms.Button();
          this.btnPanLeft = new System.Windows.Forms.Button();
          this.btnTiltDown = new System.Windows.Forms.Button();
          this.btnTiltUp = new System.Windows.Forms.Button();
-         this.colLevel = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+         this.splitHorizontalVideoAndMessageSplit = new System.Windows.Forms.SplitContainer();
          this.grpCameraSelection.SuspendLayout();
          this.grpConnection.SuspendLayout();
          this.grpMessages.SuspendLayout();
@@ -76,11 +76,11 @@ namespace Vao.Sample
          this.splitMainVerticalSplit.Panel2.SuspendLayout();
          this.splitMainVerticalSplit.SuspendLayout();
          this.grpCameraControl.SuspendLayout();
+         ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.splitHorizontalVideoAndMessageSplit)).BeginInit();
          this.splitHorizontalVideoAndMessageSplit.Panel1.SuspendLayout();
          this.splitHorizontalVideoAndMessageSplit.Panel2.SuspendLayout();
          this.splitHorizontalVideoAndMessageSplit.SuspendLayout();
-         ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
          this.SuspendLayout();
          // 
          // btnStart
@@ -185,6 +185,11 @@ namespace Vao.Sample
          // 
          this.colTime.Text = "Time";
          this.colTime.Width = 119;
+         // 
+         // colLevel
+         // 
+         this.colLevel.Text = "Level";
+         this.colLevel.Width = 116;
          // 
          // colMessage
          // 
@@ -372,33 +377,6 @@ namespace Vao.Sample
          this.grpCameraControl.TabStop = false;
          this.grpCameraControl.Text = "Camera Control";
          // 
-         // lblCurrentCamera
-         // 
-         this.lblCurrentCamera.AutoSize = true;
-         this.lblCurrentCamera.Location = new System.Drawing.Point(6, 129);
-         this.lblCurrentCamera.Name = "lblCurrentCamera";
-         this.lblCurrentCamera.Size = new System.Drawing.Size(156, 13);
-         this.lblCurrentCamera.TabIndex = 11;
-         this.lblCurrentCamera.Text = "Camera : (No Camera Selected)";
-         // 
-         // splitHorizontalVideoAndMessageSplit
-         // 
-         this.splitHorizontalVideoAndMessageSplit.Dock = System.Windows.Forms.DockStyle.Fill;
-         this.splitHorizontalVideoAndMessageSplit.Location = new System.Drawing.Point(0, 0);
-         this.splitHorizontalVideoAndMessageSplit.Name = "splitHorizontalVideoAndMessageSplit";
-         this.splitHorizontalVideoAndMessageSplit.Orientation = System.Windows.Forms.Orientation.Horizontal;
-         // 
-         // splitHorizontalVideoAndMessageSplit.Panel1
-         // 
-         this.splitHorizontalVideoAndMessageSplit.Panel1.Controls.Add(this.grpVideoControl);
-         // 
-         // splitHorizontalVideoAndMessageSplit.Panel2
-         // 
-         this.splitHorizontalVideoAndMessageSplit.Panel2.Controls.Add(this.grpMessages);
-         this.splitHorizontalVideoAndMessageSplit.Size = new System.Drawing.Size(850, 644);
-         this.splitHorizontalVideoAndMessageSplit.SplitterDistance = 390;
-         this.splitHorizontalVideoAndMessageSplit.TabIndex = 0;
-         // 
          // btnFocusFar
          // 
          this.btnFocusFar.Image = global::Vao.Sample.Properties.Resources.flip_to_back_black_24dp;
@@ -406,7 +384,9 @@ namespace Vao.Sample
          this.btnFocusFar.Name = "btnFocusFar";
          this.btnFocusFar.Size = new System.Drawing.Size(32, 32);
          this.btnFocusFar.TabIndex = 14;
-         this.btnFocusFar.UseVisualStyleBackColor = false;
+         this.btnFocusFar.UseVisualStyleBackColor = true;
+         this.btnFocusFar.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
+         this.btnFocusFar.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
          // 
          // btnFocusNear
          // 
@@ -415,7 +395,9 @@ namespace Vao.Sample
          this.btnFocusNear.Name = "btnFocusNear";
          this.btnFocusNear.Size = new System.Drawing.Size(32, 32);
          this.btnFocusNear.TabIndex = 13;
-         this.btnFocusNear.UseVisualStyleBackColor = false;
+         this.btnFocusNear.UseVisualStyleBackColor = true;
+         this.btnFocusNear.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
+         this.btnFocusNear.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
          // 
          // pictureBox1
          // 
@@ -426,6 +408,15 @@ namespace Vao.Sample
          this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
          this.pictureBox1.TabIndex = 12;
          this.pictureBox1.TabStop = false;
+         // 
+         // lblCurrentCamera
+         // 
+         this.lblCurrentCamera.AutoSize = true;
+         this.lblCurrentCamera.Location = new System.Drawing.Point(6, 129);
+         this.lblCurrentCamera.Name = "lblCurrentCamera";
+         this.lblCurrentCamera.Size = new System.Drawing.Size(156, 13);
+         this.lblCurrentCamera.TabIndex = 11;
+         this.lblCurrentCamera.Text = "Camera : (No Camera Selected)";
          // 
          // btnZoomOut
          // 
@@ -456,7 +447,7 @@ namespace Vao.Sample
          this.btnPanRight.Name = "btnPanRight";
          this.btnPanRight.Size = new System.Drawing.Size(32, 32);
          this.btnPanRight.TabIndex = 2;
-         this.btnPanRight.UseVisualStyleBackColor = false;
+         this.btnPanRight.UseVisualStyleBackColor = true;
          this.btnPanRight.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
          this.btnPanRight.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
          // 
@@ -467,7 +458,7 @@ namespace Vao.Sample
          this.btnPanLeft.Name = "btnPanLeft";
          this.btnPanLeft.Size = new System.Drawing.Size(32, 32);
          this.btnPanLeft.TabIndex = 1;
-         this.btnPanLeft.UseVisualStyleBackColor = false;
+         this.btnPanLeft.UseVisualStyleBackColor = true;
          this.btnPanLeft.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
          this.btnPanLeft.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
          // 
@@ -478,7 +469,7 @@ namespace Vao.Sample
          this.btnTiltDown.Name = "btnTiltDown";
          this.btnTiltDown.Size = new System.Drawing.Size(32, 32);
          this.btnTiltDown.TabIndex = 3;
-         this.btnTiltDown.UseVisualStyleBackColor = false;
+         this.btnTiltDown.UseVisualStyleBackColor = true;
          this.btnTiltDown.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
          this.btnTiltDown.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
          // 
@@ -489,14 +480,27 @@ namespace Vao.Sample
          this.btnTiltUp.Name = "btnTiltUp";
          this.btnTiltUp.Size = new System.Drawing.Size(32, 32);
          this.btnTiltUp.TabIndex = 0;
-         this.btnTiltUp.UseVisualStyleBackColor = false;
+         this.btnTiltUp.UseVisualStyleBackColor = true;
          this.btnTiltUp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
          this.btnTiltUp.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
          // 
-         // colLevel
+         // splitHorizontalVideoAndMessageSplit
          // 
-         this.colLevel.Text = "Level";
-         this.colLevel.Width = 116;
+         this.splitHorizontalVideoAndMessageSplit.Dock = System.Windows.Forms.DockStyle.Fill;
+         this.splitHorizontalVideoAndMessageSplit.Location = new System.Drawing.Point(0, 0);
+         this.splitHorizontalVideoAndMessageSplit.Name = "splitHorizontalVideoAndMessageSplit";
+         this.splitHorizontalVideoAndMessageSplit.Orientation = System.Windows.Forms.Orientation.Horizontal;
+         // 
+         // splitHorizontalVideoAndMessageSplit.Panel1
+         // 
+         this.splitHorizontalVideoAndMessageSplit.Panel1.Controls.Add(this.grpVideoControl);
+         // 
+         // splitHorizontalVideoAndMessageSplit.Panel2
+         // 
+         this.splitHorizontalVideoAndMessageSplit.Panel2.Controls.Add(this.grpMessages);
+         this.splitHorizontalVideoAndMessageSplit.Size = new System.Drawing.Size(850, 644);
+         this.splitHorizontalVideoAndMessageSplit.SplitterDistance = 390;
+         this.splitHorizontalVideoAndMessageSplit.TabIndex = 0;
          // 
          // MainWindow
          // 
@@ -520,11 +524,11 @@ namespace Vao.Sample
          this.splitMainVerticalSplit.ResumeLayout(false);
          this.grpCameraControl.ResumeLayout(false);
          this.grpCameraControl.PerformLayout();
+         ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
          this.splitHorizontalVideoAndMessageSplit.Panel1.ResumeLayout(false);
          this.splitHorizontalVideoAndMessageSplit.Panel2.ResumeLayout(false);
          ((System.ComponentModel.ISupportInitialize)(this.splitHorizontalVideoAndMessageSplit)).EndInit();
          this.splitHorizontalVideoAndMessageSplit.ResumeLayout(false);
-         ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
          this.ResumeLayout(false);
 
       }

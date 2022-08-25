@@ -22,6 +22,7 @@ namespace Vao.Client.Components
       private int mCurrentZoomSpeed;
       private int mCurrentPanSpeed;
       private int mCurrentTiltSpeed;
+      private string mCurrentFocus = "auto";
 
       internal Camera(int cameraNumber, JsonCameraObject camera, VaoClient vaoClient)
       {
@@ -166,7 +167,8 @@ namespace Vao.Client.Components
          mCurrentTiltSpeed = 0;
          mCurrentPanSpeed = 0;
          mCurrentZoomSpeed = 0;
-         RestResponse response = mVaoClient.MoveTargetStop(CameraNumber);         
+         mCurrentFocus = "auto";
+         RestResponse response = mVaoClient.MoveTargetStop(CameraNumber);
       }
 
       /// <summary>
@@ -218,13 +220,19 @@ namespace Vao.Client.Components
       /// Move focus near.
       /// </summary>
       public void FocusNear()
-      { }
+      {
+         mCurrentFocus = "near";
+         MoveTargetStart();
+      }
 
       /// <summary>
       /// Move focus far.
       /// </summary>
       public void FocusFar()
-      { }
+      {
+         mCurrentFocus = "far";
+         MoveTargetStart();
+      }
 
       #endregion
 
@@ -265,7 +273,7 @@ namespace Vao.Client.Components
       /// <returns></returns>
       private RestResponse MoveTargetStart()
       {
-         return mVaoClient.MoveTargetStart(CameraNumber, mCurrentPanSpeed, mCurrentTiltSpeed, mCurrentZoomSpeed);
+         return mVaoClient.MoveTargetStart(CameraNumber, mCurrentPanSpeed, mCurrentTiltSpeed, mCurrentZoomSpeed, mCurrentFocus);
       }
 
       // This method is called by the Set accessor of each property.  

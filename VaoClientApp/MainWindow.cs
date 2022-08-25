@@ -44,9 +44,14 @@ namespace Vao.Sample
          moToolTip.SetToolTip(btnPanRight, "Pan Right");
          moToolTip.SetToolTip(btnTiltUp, "Tilt Up");
          moToolTip.SetToolTip(btnTiltDown, "Tilt Down");
+
          moToolTip.SetToolTip(btnZoomIn, "Zoom In");
          moToolTip.SetToolTip(btnZoomOut, "Zoom Out");
 
+         moToolTip.SetToolTip(btnFocusFar, "Focus Far");
+         moToolTip.SetToolTip(btnFocusNear, "Focus Near");
+         
+         moToolTip.SetToolTip(btnClearMessages, "Clear message log");
       }
 
       private void StartInitializeVlc()

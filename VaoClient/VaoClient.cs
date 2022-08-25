@@ -157,7 +157,7 @@ namespace Vao.Client
 
       #region Internal Methods
 
-      internal RestResponse MoveTargetStart(int cameraNumber, int panSpeed, int tiltSpeed, int zoomSpeed)
+      internal RestResponse MoveTargetStart(int cameraNumber, int panSpeed, int tiltSpeed, int zoomSpeed, string focus)
       {
          RestClient client = GetRestClient();
          // ReSharper disable once RedundantArgumentDefaultValue
@@ -171,6 +171,8 @@ namespace Vao.Client
          jsonMoveTarget.tilt = tiltSpeed;
          // Set zoom speed.
          jsonMoveTarget.zoom = zoomSpeed;
+         // Set focus
+         jsonMoveTarget.focus = focus;
 
          string serializedJsonMoveTarget = Json.Net.JsonNet.Serialize(jsonMoveTarget);
          request.AddJsonBody(serializedJsonMoveTarget);
