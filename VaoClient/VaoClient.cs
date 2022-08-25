@@ -57,7 +57,7 @@ namespace Vao.Client
          return ValidateResponseContent(response);
       }
 
-      private string ValidateResponseContent(RestResponse response)
+      internal string ValidateResponseContent(RestResponse response)
       {
          if (!response.IsSuccessful)
          {
@@ -106,26 +106,11 @@ namespace Vao.Client
          {
             return mCameraList.Values.ToList();
          }
-
-         RestClient client = GetRestClient();
-
-         // ReSharper disable once RedundantArgumentDefaultValue
-         RestRequest request = new RestRequest("inputs", Method.Get);
-         RestResponse response = client.Execute(request);
-
-         string strResponse = ValidateResponseContent(response);
-         if (strResponse == null)
-         {
-            // Empty list.
-            return null;
-         }
-
-         List<Camera> cameras = JsonParser.ParseCameraList(strResponse, this);
+         var cameras = this.RequestVaoCameraList();
          foreach (var camera in cameras)
          {
             AddOrUpdateCamera(camera);
          }
-
          return cameras;
       }
 
@@ -230,7 +215,7 @@ namespace Vao.Client
 
       #region Private Methods
 
-      private RestClient GetRestClient()
+      internal RestClient GetRestClient()
       {
          if (mRestClient != null)
             return mRestClient;

@@ -9,12 +9,14 @@ namespace Vao.Client.Components
       private string mPresetName;
       private int mPresetNumber;
       private VaoClient mVaoClient;
+      private Camera mOwnerCamera;
 
-      internal Preset(int number, JsonPresetObject jsonObject, VaoClient vaoClient)
+      internal Preset(int number, JsonPresetObject jsonObject, VaoClient vaoClient, Camera ownerCamera)
       {
          mPresetNumber = number;
          mVaoClient = vaoClient;
          mPresetName = jsonObject.name;
+         mOwnerCamera = ownerCamera;
       }
 
       #region Public Properties
@@ -33,9 +35,10 @@ namespace Vao.Client.Components
 
       public Camera OwnerCamera
       {
-         get;
-         set;
+         get { return mOwnerCamera; }
+         set { mOwnerCamera = value; }
       }
+
       #endregion
 
       #region Public Methods

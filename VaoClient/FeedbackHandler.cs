@@ -75,7 +75,7 @@ namespace Vao.Client
 
                if (foundCamera != null)
                {
-                  foundCamera.HandleStatusMessage(message);
+                  foundCamera.UpdateCameraStatus(message);
                }
                break;
          }

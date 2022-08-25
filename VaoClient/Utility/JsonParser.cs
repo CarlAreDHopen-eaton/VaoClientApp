@@ -52,7 +52,7 @@ namespace Vao.Client.Utility
          return null;
       }
 
-      internal static List<Preset> ParsePresetList(string strJson, VaoClient vaoClient)
+      internal static List<Preset> ParsePresetList(string strJson, VaoClient vaoClient, Camera ownerCamera)
       {
          if (!string.IsNullOrEmpty(strJson))
          {
@@ -60,7 +60,7 @@ namespace Vao.Client.Utility
             List<Preset> returnList = new List<Preset>();
             foreach (JsonPresetObject preset in list)
             {
-               returnList.Add(new Preset(preset.presetId, preset, vaoClient));
+               returnList.Add(new Preset(preset.presetId, preset, vaoClient, ownerCamera));
             }
             return returnList;
          }

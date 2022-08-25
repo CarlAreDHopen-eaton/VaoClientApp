@@ -23,6 +23,7 @@ namespace Vao.Client.Components
       private int mCurrentPanSpeed;
       private int mCurrentTiltSpeed;
       private string mCurrentFocus = "auto";
+      private List<Preset> mPresetList;
 
       internal Camera(int cameraNumber, JsonCameraObject camera, VaoClient vaoClient)
       {
@@ -107,7 +108,15 @@ namespace Vao.Client.Components
       /// <summary>
       /// List of preset positions on the camera.
       /// </summary>
-      public List<Preset> PresetList { get; set; }
+      public List<Preset> PresetList
+      {
+         get
+         {
+            if (mPresetList == null)
+               mPresetList = mVaoClient.RequestVaoPresetList(this);
+            return mPresetList;
+         }
+      }
 
       #endregion
 
@@ -238,7 +247,7 @@ namespace Vao.Client.Components
 
       #region Internal Methods
 
-      internal void HandleStatusMessage(StatusMessage message)
+      internal void UpdateCameraStatus(StatusMessage message)
       {
          switch (message.Type)
          {
