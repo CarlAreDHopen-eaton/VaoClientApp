@@ -1,21 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using Json.Net;
 using RestSharp;
+using Vao.Client.Components.Interfaces;
 using Vao.Client.Contracts;
 using Vao.Client.Enum;
 using Vao.Client.Utility;
 
 namespace Vao.Client.Components
 {
-   public class Camera : INotifyPropertyChanged
+   public class Camera : BaseComponent, INamedComponent
    {
       // ReSharper disable once MemberInitializerValueIgnored
       private string mCameraName = string.Empty;
       private int mCameraNumber = 0;
-      private VaoClient mVaoClient;
       private bool mCameraVideoStream1Ok = true;
       private bool mCameraVideoStream2Ok = true;
       private bool mCameraDataOk = true;
@@ -27,18 +25,12 @@ namespace Vao.Client.Components
       private JsonCameraObject mJsonCameraObject;
 
       internal Camera(int cameraNumber, JsonCameraObject camera, VaoClient vaoClient)
+         : base(vaoClient)
       {
          mCameraNumber = cameraNumber;
-         mVaoClient = vaoClient;
          mCameraName = camera.name;
          mJsonCameraObject = camera;
       }
-
-      #region Public Events
-
-      public event PropertyChangedEventHandler PropertyChanged;
-
-      #endregion
 
       #region Public Properties
 
@@ -125,7 +117,7 @@ namespace Vao.Client.Components
          get
          {
             if (mPresetList == null)
-               mPresetList = mVaoClient.RequestVaoPresetList(this);
+               mPresetList = VaoClient.RequestVaoPresetList(this);
             return mPresetList;
          }
       }
@@ -142,11 +134,11 @@ namespace Vao.Client.Components
       /// <returns>The RTSP url for the camera live stream.</returns>
       public string GetCameraLiveStreamUrl(int iStream)
       {
-         RestResponse response = mVaoClient.GetVaoCameraInternal(CameraNumber);
+         RestResponse response = VaoClient.GetVaoCameraInternal(CameraNumber);
          if (response != null && response.IsSuccessful)
          {
             // Request new camera data in case redundant video server has taken over.
-            var newCameraData = Utility.JsonParser.ParseSingleCamera(response.Content, mVaoClient);
+            var newCameraData = Utility.JsonParser.ParseSingleCamera(response.Content, VaoClient);
             // Update own data in case other properties has changed.
             UpdateData(newCameraData);
             // Return correct url.
@@ -193,7 +185,7 @@ namespace Vao.Client.Components
          mCurrentPanSpeed = 0;
          mCurrentZoomSpeed = 0;
          mCurrentFocus = "auto";
-         RestResponse response = mVaoClient.MoveTargetStop(CameraNumber);
+         RestResponse response = VaoClient.MoveTargetStop(CameraNumber);
       }
 
       /// <summary>
@@ -259,6 +251,16 @@ namespace Vao.Client.Components
          MoveTargetStart();
       }
 
+      /// <summary>
+      /// Sets a new name for the camera.
+      /// </summary>
+      /// <param name="name">The new name</param>
+      /// <returns>True is success</returns>
+      public bool SetName(string newName)
+      {
+         return false;
+      }
+
       #endregion
 
       #region Internal Methods
@@ -298,15 +300,7 @@ namespace Vao.Client.Components
       /// <returns></returns>
       private RestResponse MoveTargetStart()
       {
-         return mVaoClient.MoveTargetStart(CameraNumber, mCurrentPanSpeed, mCurrentTiltSpeed, mCurrentZoomSpeed, mCurrentFocus);
-      }
-
-      // This method is called by the Set accessor of each property.  
-      // The CallerMemberName attribute that is applied to the optional propertyName  
-      // parameter causes the property name of the caller to be substituted as an argument.  
-      private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-      {
-         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+         return VaoClient.MoveTargetStart(CameraNumber, mCurrentPanSpeed, mCurrentTiltSpeed, mCurrentZoomSpeed, mCurrentFocus);
       }
 
       /// <summary>

@@ -1,10 +1,11 @@
 ﻿using System;
+using Vao.Client.Components.Interfaces;
 using Vao.Client.Contracts;
 using Vao.Client.Enum;
 
 namespace Vao.Client.Components
 {
-   internal class StatusMessage
+   public class StatusMessage : BaseComponent
    {
       #region Private Members
       
@@ -19,21 +20,16 @@ namespace Vao.Client.Components
       /// </summary>
       /// <param name="statusMessage">The messages desrialzed to JSON</param>
       /// <param name="vaoClient">The client that received the message</param>
-      internal StatusMessage(JsonStatusMessage statusMessage, VaoClient vaoClient)
+      internal StatusMessage(JsonStatusMessage statusMessage, VaoClient vaoClient) 
+         : base(vaoClient) 
       {
          ReceivedTime = DateTime.Now;
          mStatusMessage = statusMessage;
-         VaoClient = vaoClient;
       }
 
       #endregion
 
       #region Public Properties
-
-      /// <summary>
-      /// The client that received this message.
-      /// </summary>
-      public VaoClient VaoClient { get; }
 
       /// <summary>
       /// The level of the message.

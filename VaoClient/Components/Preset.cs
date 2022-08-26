@@ -1,20 +1,19 @@
-﻿using Json.Net;
-using RestSharp;
+﻿using RestSharp;
+using Vao.Client.Components.Interfaces;
 using Vao.Client.Contracts;
 
 namespace Vao.Client.Components
 {
-   public class Preset
+   public class Preset : BaseComponent, INamedComponent
    {
       private string mPresetName;
       private int mPresetNumber;
-      private VaoClient mVaoClient;
       private Camera mOwnerCamera;
 
       internal Preset(int number, JsonPresetObject jsonObject, VaoClient vaoClient, Camera ownerCamera)
+         : base(vaoClient)
       {
          mPresetNumber = number;
-         mVaoClient = vaoClient;
          mPresetName = jsonObject.name;
          mOwnerCamera = ownerCamera;
       }
@@ -45,11 +44,16 @@ namespace Vao.Client.Components
 
       public bool GotoPreset()
       {
-         RestResponse response = mVaoClient.MoveCameraToPreset(OwnerCamera.CameraNumber, PresetNumber);
+         RestResponse response = VaoClient.MoveCameraToPreset(OwnerCamera.CameraNumber, PresetNumber);
          if (response != null && response.IsSuccessful)
          {
             return true;
          }
+         return false;
+      }
+
+      public bool SetName(string newName)
+      {
          return false;
       }
 
