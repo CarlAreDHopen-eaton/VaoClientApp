@@ -6,8 +6,17 @@ using Vao.Client.Contracts;
 
 namespace Vao.Client.Utility
 {
+   /// <summary>
+   /// Support class for parsing JSON messages to .NET objects.
+   /// </summary>
    public class JsonParser
    {
+      /// <summary>
+      /// Parses the JSON message text to a list of camera objects.
+      /// </summary>
+      /// <param name="strJson">The JSON formatted message text</param>
+      /// <param name="vaoClient">The client that received the message</param>
+      /// <returns></returns>
       internal static List<Camera> ParseCameraList(string strJson, VaoClient vaoClient)
       {
          if (!string.IsNullOrEmpty(strJson))
@@ -23,6 +32,12 @@ namespace Vao.Client.Utility
          return null;
       }
 
+      /// <summary>
+      /// Parses the JSON message text to a list of status message objects.
+      /// </summary>
+      /// <param name="strJson">The JSON formatted message text</param>
+      /// <param name="vaoClient">The client that received the message</param>
+      /// <returns></returns>
       internal static List<StatusMessage> ParseStatusMessages(string strJson, VaoClient vaoClient)
       {
          if (!string.IsNullOrEmpty(strJson))
@@ -41,6 +56,12 @@ namespace Vao.Client.Utility
          return null; 
       }
 
+      /// <summary>
+      /// Parses the JSON message text to a camera object.
+      /// </summary>
+      /// <param name="strJson">The JSON formatted message text</param>
+      /// <param name="vaoClient">The client that received the message</param>
+      /// <returns></returns>
       internal static Camera ParseSingleCamera(string strJson, VaoClient vaoClient)
       {
          if (!string.IsNullOrEmpty(strJson))
@@ -52,6 +73,13 @@ namespace Vao.Client.Utility
          return null;
       }
 
+      /// <summary>
+      /// Parses the JSON message text to a list of preset position message objects.
+      /// </summary>
+      /// <param name="strJson">The JSON formatted message text</param>
+      /// <param name="vaoClient">The client that received the message</param>
+      /// <param name="ownerCamera">The camera that these presets belong to.</param>
+      /// <returns></returns>
       internal static List<Preset> ParsePresetList(string strJson, VaoClient vaoClient, Camera ownerCamera)
       {
          if (!string.IsNullOrEmpty(strJson))

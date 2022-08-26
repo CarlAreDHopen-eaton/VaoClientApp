@@ -24,12 +24,14 @@ namespace Vao.Client.Components
       private int mCurrentTiltSpeed;
       private string mCurrentFocus = "auto";
       private List<Preset> mPresetList;
+      private JsonCameraObject mJsonCameraObject;
 
       internal Camera(int cameraNumber, JsonCameraObject camera, VaoClient vaoClient)
       {
          mCameraNumber = cameraNumber;
          mVaoClient = vaoClient;
          mCameraName = camera.name;
+         mJsonCameraObject = camera;
       }
 
       #region Public Events
@@ -48,6 +50,16 @@ namespace Vao.Client.Components
          get { return mCameraName; }
          internal set { mCameraName = value; }
       }
+
+      /// <summary>
+      /// The resolution of stream 1. (Typically higher resolution resolution than stream 2)
+      /// </summary>
+      public string Stream1Resolution { get; internal set; }
+
+      /// <summary>
+      /// The resolution of stream 2. (Typically lower resolution than stream 1)
+      /// </summary>
+      public string Stream2Resolution { get; internal set; }
 
       /// <summary>
       /// The number of the camera in the VMS system.
@@ -133,18 +145,22 @@ namespace Vao.Client.Components
          RestResponse response = mVaoClient.GetVaoCameraInternal(CameraNumber);
          if (response != null && response.IsSuccessful)
          {
-            JsonCameraObject oCameraObject = JsonNet.Deserialize<JsonCameraObject>(response.Content);
+            // Request new camera data in case redundant video server has taken over.
+            var newCameraData = Utility.JsonParser.ParseSingleCamera(response.Content, mVaoClient);
+            // Update own data in case other properties has changed.
+            UpdateData(newCameraData);
+            // Return correct url.
             if (iStream == 1)
             {
-               return oCameraObject.stream1url;
+               return mJsonCameraObject.stream1url;
             }
             if (iStream == 2)
             {
                // If the 2nd stream is available we revert back to stream 1.
-               if (string.IsNullOrEmpty(oCameraObject.stream2url))
-                  return oCameraObject.stream1url;
+               if (string.IsNullOrEmpty(mJsonCameraObject.stream2url))
+                  return mJsonCameraObject.stream1url;
 
-               return oCameraObject.stream2url;
+               return mJsonCameraObject.stream2url;
             }
          }
          return "";
@@ -292,6 +308,26 @@ namespace Vao.Client.Components
       {
          PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
       }
+
+      /// <summary>
+      /// Updates the internal data for the camera.
+      /// </summary>
+      /// <param name="camera"></param>
+      private void UpdateData(Camera camera)
+      {
+         if (camera != null && camera.CameraNumber == CameraNumber)
+         {
+            JsonCameraObject jsonCameraObject = camera.mJsonCameraObject;
+            if (jsonCameraObject != null)
+            {
+               Name = jsonCameraObject.name;
+               Stream1Resolution = jsonCameraObject.stream1resolution;
+               Stream2Resolution = jsonCameraObject.stream2resolution;
+               mJsonCameraObject = jsonCameraObject;
+            }
+         }
+      }
+
       #endregion
    }
 }
