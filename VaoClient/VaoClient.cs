@@ -91,16 +91,18 @@ namespace Vao.Client
 
       private void AddOrUpdateCamera(Camera camera)
       {
-         if (!mCameraList.ContainsKey(camera.CameraNumber))
-            mCameraList.Add(camera.CameraNumber, camera);
+         if (!mCameraList.ContainsKey(camera.ComponentNumber))
+            mCameraList.Add(camera.ComponentNumber, camera);
          else
          {
-            mCameraList[camera.CameraNumber].Name = camera.Name;
+            mCameraList[camera.ComponentNumber].Name = camera.Name;
          }
 
       }
 
-      public List<Camera> GetVaoCameras()
+      
+
+      public List<Camera> GetCamerasList()
       {
          if (mCameraList != null && mCameraList.Count > 0)
          {

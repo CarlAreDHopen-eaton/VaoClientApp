@@ -7,13 +7,11 @@ namespace Vao.Client.Components
    public class Preset : BaseComponent, INamedComponent
    {
       private string mPresetName;
-      private int mPresetNumber;
       private Camera mOwnerCamera;
 
       internal Preset(int number, JsonPresetObject jsonObject, VaoClient vaoClient, Camera ownerCamera)
-         : base(vaoClient)
+         : base(vaoClient, number)
       {
-         mPresetNumber = number;
          mPresetName = jsonObject.name;
          mOwnerCamera = ownerCamera;
       }
@@ -23,13 +21,6 @@ namespace Vao.Client.Components
       public string Name
       {
          get { return mPresetName; }
-         set { mPresetName = value; }
-      }
-
-      public int PresetNumber
-      {
-         get { return mPresetNumber; }
-         set { mPresetNumber = value; }
       }
 
       public Camera OwnerCamera
@@ -44,7 +35,9 @@ namespace Vao.Client.Components
 
       public bool GotoPreset()
       {
-         RestResponse response = VaoClient.MoveCameraToPreset(OwnerCamera.CameraNumber, PresetNumber);
+         int iPreset = ComponentNumber;
+         int iCamera = OwnerCamera.ComponentNumber;
+         RestResponse response = VaoClient.MoveCameraToPreset(iCamera, iPreset);
          if (response != null && response.IsSuccessful)
          {
             return true;
@@ -52,10 +45,31 @@ namespace Vao.Client.Components
          return false;
       }
 
+      /// <summary>
+      /// Sets the name of the preset position.
+      /// </summary>
+      /// <param name="newName"></param>
+      /// <returns></returns>
       public bool SetName(string newName)
       {
+         //TODO implement.
+         mPresetName = newName;
          return false;
       }
+
+      /// <summary>
+      /// Deletes the preset position.
+      /// </summary>
+      /// <returns></returns>
+      public bool Delete()
+      { return false;}
+
+      /// <summary>
+      /// Sets the preset position
+      /// </summary>
+      /// <returns></returns>
+      public bool Set()
+      { return false; }
 
       #endregion
    }

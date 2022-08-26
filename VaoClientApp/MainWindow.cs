@@ -316,14 +316,14 @@ namespace Vao.Sample
          {
             if (button.Tag is Camera camera)
             {
-               SelectCamera(camera.CameraNumber, chkPreferSubChannel.Checked ? 2 : 1);
+               SelectCamera(camera.ComponentNumber, chkPreferSubChannel.Checked ? 2 : 1);
             }
          }
       }
 
       private void FillSelectCameraButtonList()
       {
-         var cameraList = moVaoClient.GetVaoCameras();
+         var cameraList = moVaoClient.GetCamerasList();
          if (cameraList != null)
          {
             pnlCameraSelectFlowPanel.Controls.Clear();
@@ -332,7 +332,7 @@ namespace Vao.Sample
                Button oButton = new Button()
                {
                   // ReSharper disable once LocalizableElement
-                  Text = "Cam " + camera.CameraNumber,
+                  Text = "Cam " + camera.ComponentNumber,
                   Height = 30,
                   Width = 60,
                   Tag = camera
@@ -384,7 +384,7 @@ namespace Vao.Sample
          {
             if (CurrentCamera != null)
             {
-               SelectCamera(CurrentCamera.CameraNumber, chkPreferSubChannel.Checked ? 2 : 1);
+               SelectCamera(CurrentCamera.ComponentNumber, chkPreferSubChannel.Checked ? 2 : 1);
             }
          }
       }

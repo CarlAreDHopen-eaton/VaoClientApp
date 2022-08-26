@@ -6,13 +6,21 @@ namespace Vao.Client.Components.Interfaces
    public class BaseComponent : INotifyPropertyChanged
    {
       private VaoClient mVaoClient;
+      private int mComponentNumber;
 
-      public BaseComponent(VaoClient client)
+      public BaseComponent(VaoClient client, int componentNumber)
       { 
          mVaoClient = client;
+         mComponentNumber = componentNumber;
       }
 
+      #region Public Properties
+
       public VaoClient VaoClient { get { return mVaoClient; } }
+
+      public int ComponentNumber { get { return mComponentNumber; } }
+
+      #endregion
 
       public event PropertyChangedEventHandler PropertyChanged;
 

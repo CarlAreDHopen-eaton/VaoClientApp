@@ -13,7 +13,6 @@ namespace Vao.Client.Components
    {
       // ReSharper disable once MemberInitializerValueIgnored
       private string mCameraName = string.Empty;
-      private int mCameraNumber = 0;
       private bool mCameraVideoStream1Ok = true;
       private bool mCameraVideoStream2Ok = true;
       private bool mCameraDataOk = true;
@@ -25,9 +24,8 @@ namespace Vao.Client.Components
       private JsonCameraObject mJsonCameraObject;
 
       internal Camera(int cameraNumber, JsonCameraObject camera, VaoClient vaoClient)
-         : base(vaoClient)
+         : base(vaoClient, cameraNumber)
       {
-         mCameraNumber = cameraNumber;
          mCameraName = camera.name;
          mJsonCameraObject = camera;
       }
@@ -52,15 +50,7 @@ namespace Vao.Client.Components
       /// The resolution of stream 2. (Typically lower resolution than stream 1)
       /// </summary>
       public string Stream2Resolution { get; internal set; }
-
-      /// <summary>
-      /// The number of the camera in the VMS system.
-      /// </summary>
-      public int CameraNumber
-      {
-         get { return mCameraNumber; }
-      }
-
+    
       /// <summary>
       /// Get the camera data status for this camera.
       /// </summary>
@@ -134,7 +124,7 @@ namespace Vao.Client.Components
       /// <returns>The RTSP url for the camera live stream.</returns>
       public string GetCameraLiveStreamUrl(int iStream)
       {
-         RestResponse response = VaoClient.GetVaoCameraInternal(CameraNumber);
+         RestResponse response = VaoClient.GetVaoCameraInternal(ComponentNumber);
          if (response != null && response.IsSuccessful)
          {
             // Request new camera data in case redundant video server has taken over.
@@ -185,7 +175,7 @@ namespace Vao.Client.Components
          mCurrentPanSpeed = 0;
          mCurrentZoomSpeed = 0;
          mCurrentFocus = "auto";
-         RestResponse response = VaoClient.MoveTargetStop(CameraNumber);
+         RestResponse response = VaoClient.MoveTargetStop(ComponentNumber);
       }
 
       /// <summary>
@@ -300,7 +290,7 @@ namespace Vao.Client.Components
       /// <returns></returns>
       private RestResponse MoveTargetStart()
       {
-         return VaoClient.MoveTargetStart(CameraNumber, mCurrentPanSpeed, mCurrentTiltSpeed, mCurrentZoomSpeed, mCurrentFocus);
+         return VaoClient.MoveTargetStart(ComponentNumber, mCurrentPanSpeed, mCurrentTiltSpeed, mCurrentZoomSpeed, mCurrentFocus);
       }
 
       /// <summary>
@@ -309,7 +299,7 @@ namespace Vao.Client.Components
       /// <param name="camera"></param>
       private void UpdateData(Camera camera)
       {
-         if (camera != null && camera.CameraNumber == CameraNumber)
+         if (camera != null && camera.ComponentNumber == ComponentNumber)
          {
             JsonCameraObject jsonCameraObject = camera.mJsonCameraObject;
             if (jsonCameraObject != null)

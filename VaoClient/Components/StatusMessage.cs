@@ -10,6 +10,7 @@ namespace Vao.Client.Components
       #region Private Members
       
       private JsonStatusMessage mStatusMessage;
+      private static int mCurrentComponentNumber = 0; 
 
       #endregion
 
@@ -21,7 +22,7 @@ namespace Vao.Client.Components
       /// <param name="statusMessage">The messages desrialzed to JSON</param>
       /// <param name="vaoClient">The client that received the message</param>
       internal StatusMessage(JsonStatusMessage statusMessage, VaoClient vaoClient) 
-         : base(vaoClient) 
+         : base(vaoClient, ++mCurrentComponentNumber) 
       {
          ReceivedTime = DateTime.Now;
          mStatusMessage = statusMessage;

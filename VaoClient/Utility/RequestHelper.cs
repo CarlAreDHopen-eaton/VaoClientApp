@@ -30,7 +30,7 @@ namespace Vao.Client.Utility
          RestClient client = vaoClient.GetRestClient();
 
          // ReSharper disable once RedundantArgumentDefaultValue
-         RestRequest request = new RestRequest($"inputs/{ownerCamera.CameraNumber}/presets", Method.Get);
+         RestRequest request = new RestRequest($"inputs/{ownerCamera.ComponentNumber}/presets", Method.Get);
          RestResponse response = client.Execute(request);
 
          string strResponse = vaoClient.ValidateResponseContent(response);
