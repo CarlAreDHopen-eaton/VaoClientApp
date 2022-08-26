@@ -56,13 +56,25 @@ namespace Vao.Client.Utility
          return null; 
       }
 
-      /// <summary>
-      /// Parses the JSON message text to a camera object.
-      /// </summary>
-      /// <param name="strJson">The JSON formatted message text</param>
-      /// <param name="vaoClient">The client that received the message</param>
-      /// <returns></returns>
-      internal static Camera ParseSingleCamera(string strJson, VaoClient vaoClient)
+      internal static Monitor ParseVideoOutput(string strJson, VaoClient vaoClient, int iVideoOutput)
+      {
+         if (!string.IsNullOrEmpty(strJson))
+         {
+            JsonVideoOutput jsonObject = JsonNet.Deserialize<JsonVideoOutput>(strJson);
+            Camera camera = vaoClient.GetVaoCamera(jsonObject.inputId);
+            Monitor monitor = new Monitor(iVideoOutput, vaoClient, camera);
+            return monitor;
+         }
+         return null;
+      }
+
+         /// <summary>
+         /// Parses the JSON message text to a camera object.
+         /// </summary>
+         /// <param name="strJson">The JSON formatted message text</param>
+         /// <param name="vaoClient">The client that received the message</param>
+         /// <returns></returns>
+         internal static Camera ParseSingleCamera(string strJson, VaoClient vaoClient)
       {
          if (!string.IsNullOrEmpty(strJson))
          {

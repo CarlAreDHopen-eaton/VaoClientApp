@@ -62,7 +62,7 @@ namespace Vao.Client
             case MessageType.CameraVideoStream1Restored:
             case MessageType.CameraVideoStream2Lost:
             case MessageType.CameraVideoStream2Restored:
-               List<Camera> cameras = message.VaoClient.GetCamerasList();
+               List<Camera> cameras = message.VaoClient.GetCameraList();
                Camera foundCamera = null;
                foreach (Camera camera in cameras)
                {

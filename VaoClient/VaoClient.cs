@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using RestSharp;
 using RestSharp.Authenticators;
 using Vao.Client.Components;
@@ -17,7 +19,10 @@ namespace Vao.Client
       private RestClient mRestClient;
       private FeedbackHandler mFeedbackHandler;
       private Dictionary<int, Camera> mCameraList = new Dictionary<int, Camera>();
-
+      private Dictionary<int, Components.Monitor> mMonitorList = new Dictionary<int, Components.Monitor>();
+      private ManualResetEvent mStopLoadData = new ManualResetEvent(false);
+      private Thread mInitializeThred;
+      private object mUpdateCameraListLocker = new object();
       #endregion
 
       #region Public Events
@@ -55,7 +60,7 @@ namespace Vao.Client
          RestResponse response = client.Execute(request);
 
          return ValidateResponseContent(response);
-      }
+      }      
 
       internal string ValidateResponseContent(RestResponse response)
       {
@@ -77,8 +82,11 @@ namespace Vao.Client
       /// <returns></returns>
       public Camera GetVaoCamera(int cameraNo, bool forceRequest = false)
       {
-         if (mCameraList.ContainsKey(cameraNo))
-            return mCameraList[cameraNo];
+         lock (mUpdateCameraListLocker)
+         {
+            if (mCameraList.ContainsKey(cameraNo))
+               return mCameraList[cameraNo];
+         }
 
          RestResponse response = GetVaoCameraInternal(cameraNo);
          if (response == null)
@@ -91,18 +99,22 @@ namespace Vao.Client
 
       private void AddOrUpdateCamera(Camera camera)
       {
-         if (!mCameraList.ContainsKey(camera.ComponentNumber))
-            mCameraList.Add(camera.ComponentNumber, camera);
-         else
-         {
-            mCameraList[camera.ComponentNumber].Name = camera.Name;
+         var key = camera.ComponentNumber;
+         lock (mUpdateCameraListLocker)
+         { 
+            if (!mCameraList.ContainsKey(key))
+            {
+               mCameraList.Add(key, camera);
+            }
+            else
+            {
+               mCameraList[key].Name = camera.Name;
+            }
          }
 
       }
-
-      
-
-      public List<Camera> GetCamerasList()
+     
+      public List<Camera> GetCameraList()
       {
          if (mCameraList != null && mCameraList.Count > 0)
          {
@@ -124,11 +136,71 @@ namespace Vao.Client
 
       public void StartClient()
       {
-         
+         if (mInitializeThred != null)
+            StopClient();
+
+         // Start async load.
+         mInitializeThred = new Thread(StartLoadAsync);
+         mInitializeThred.Start();
+         mInitializeThred = null;
+      }
+
+      private void StartLoadAsync()
+      {
+         int iLoadDelay = 200;
+         int iState = 0;
+
+         while (true)
+         {
+            switch (iState)
+            {
+               case 0:
+                  // Filling the camera list.
+                  GetCameraList();
+                  break;
+               case 1:
+                  for (int i = 1; i < 255; i++)
+                  {
+                     if (!mMonitorList.ContainsKey(i))
+                     {
+                        // Request the monitor
+                        Components.Monitor monitor = RequestHelper.RequestVaoMonitor(this, i);
+
+                        // No more monitors.
+                        if (monitor == null)
+                        {
+                           Debug.WriteLine($"Finished loading monitors at Monitor {i-1}");
+                           break;
+                        }
+
+                        // Add to the monitor list (Note Need to fix as this is not thread safe)
+                        mMonitorList.Add(i, monitor);
+
+                        // Stop signaled
+                        if (mStopLoadData.WaitOne(iLoadDelay))
+                           return;
+                     }
+                  }
+                  break;
+               case 2:
+
+                  break;
+               default:
+                  return;
+
+            }
+
+            if (mStopLoadData.WaitOne(iLoadDelay))
+               return;
+
+            iState++;
+         }
       }
 
       public void StopClient()
       {
+         mStopLoadData.Set();
+
          if (mFeedbackHandler != null)
          {
             mFeedbackHandler.Stop();

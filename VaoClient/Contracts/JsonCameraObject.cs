@@ -19,10 +19,5 @@ namespace Vao.Client.Contracts
       public string stream2url { get; set; }
       public string stream1resolution { get; set; }
       public string stream2resolution { get; set; }
-
-      /// <summary>
-      /// The features of the camera
-      /// </summary>
-      public string[] features { get; set; }
    }
 }

@@ -15,7 +15,7 @@ namespace Vao.Client.Components
       /// </summary>
       /// <param name="monitorNo"></param>
       /// <param name="client"></param>
-      public Monitor(int monitorNo, VaoClient client) 
+      public Monitor(int monitorNo, VaoClient client, Camera currentCamera) 
          : base(client, monitorNo)
       {
          mMonitorName = $"Monitor {ComponentNumber}";

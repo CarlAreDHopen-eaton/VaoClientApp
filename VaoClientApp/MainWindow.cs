@@ -323,7 +323,7 @@ namespace Vao.Sample
 
       private void FillSelectCameraButtonList()
       {
-         var cameraList = moVaoClient.GetCamerasList();
+         var cameraList = moVaoClient.GetCameraList();
          if (cameraList != null)
          {
             pnlCameraSelectFlowPanel.Controls.Clear();

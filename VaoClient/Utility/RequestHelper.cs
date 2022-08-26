@@ -44,5 +44,26 @@ namespace Vao.Client.Utility
          return presets;
       }
 
+
+      internal static Monitor RequestVaoMonitor(this VaoClient vaoClient, int iVideoOutput)
+      {
+         RestClient client = vaoClient.GetRestClient();
+
+         // ReSharper disable once RedundantArgumentDefaultValue
+         RestRequest request = new RestRequest($"video-output/{iVideoOutput}", Method.Get);
+         RestResponse response = client.Execute(request);
+
+         string strResponse = vaoClient.ValidateResponseContent(response);
+         if (strResponse == null)
+         {
+            // Empty list.
+            return null;
+         }
+
+         Monitor monitor = JsonParser.ParseVideoOutput(strResponse, vaoClient, iVideoOutput);        
+         return monitor;
+      }
+
+
    }
 }
