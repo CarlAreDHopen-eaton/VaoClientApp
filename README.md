@@ -12,12 +12,12 @@ The application allows the user to select and control cameras. The videostreams 
 - Video Streaming
 - Feedback processing and message log
 - Camera Names
-
-# Todo
-- Support for multiple API servers (alernate between servers)
 - Camera Renaming
 - Preset Positions
 - Focus
+
+# Todo
+- Support for multiple API servers (alernate between servers)
 - Wipe / WipeWash
 
 # Build
