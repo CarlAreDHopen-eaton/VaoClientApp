@@ -130,16 +130,16 @@ namespace Vao.Sample
          moVaoClient.OnMessage += OnVaoClientMessage;
          moVaoClient.StartClient();
 
-         var status = moVaoClient.GetVaoStatus();
-         if (status != null)
+         string statusTime = moVaoClient.GetStatusTime();
+         if (statusTime != null)
          {
-            WriteMessageLog("VaoAPI", status, LogLevel.Notice);
+            WriteMessageLog("VaoAPI", statusTime, LogLevel.Notice);
             FillSelectCameraButtonList();
             moVaoClient.StartStatusThread();
          }
          else
          {
-            WriteMessageLog("VaoAPI", "Unable to start.", LogLevel.Error);
+            WriteMessageLog("VaoAPI", "Unable to start, no response.", LogLevel.Error);
             btnStop_Click(sender, e);
          }
          UpdateEnabled();

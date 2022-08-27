@@ -7,18 +7,21 @@ namespace Vao.Client.Components
       #region Private Members
 
       private string mMonitorName;
+      private Camera mActiveCamera;
 
       #endregion
 
       /// <summary>
       /// Constructor
       /// </summary>
-      /// <param name="monitorNo"></param>
-      /// <param name="client"></param>
+      /// <param name="monitorNo">The monitor number</param>
+      /// <param name="client">The client that this camera belong to</param>
+      /// <param name="currentCamera">The camera currently active on this monitor</param>
       public Monitor(int monitorNo, VaoClient client, Camera currentCamera) 
          : base(client, monitorNo)
       {
          mMonitorName = $"Monitor {ComponentNumber}";
+         mActiveCamera = currentCamera;
       }
 
       /// <summary>
@@ -32,7 +35,18 @@ namespace Vao.Client.Components
             return mMonitorName;
          }
       }
-     
+
+      /// <summary>
+      /// Gets the currently active camera on this output/monitor.
+      /// </summary>
+      public Camera ActiveCamera 
+      { 
+         get
+         {
+            return mActiveCamera;
+         }
+      }
+
       /// <summary>
       /// This method does not have any functionallity.
       /// </summary>
@@ -44,12 +58,15 @@ namespace Vao.Client.Components
          return false;
       }
 
+      /// <summary>
+      /// Selects a camera to the specified output/monitor
+      /// </summary>
+      /// <param name="camera"></param>
+      /// <returns></returns>
       public bool SelectCamera(Camera camera)
       {
          // TODO Send message.
          return false;
       }
-
-      public Camera ActiveCamera { get; }
    }
 }

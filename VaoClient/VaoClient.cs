@@ -32,36 +32,7 @@ namespace Vao.Client
       #endregion
 
       #region Public Methods
-
-      public string GetVaoStatus()
-      {
-         var client = GetRestClient();
-         RestRequest request = new RestRequest("status", Method.Options);
-         RestResponse response = client.Execute(request);
-         
-         return ValidateResponseContent(response);
-      }
-
-      public string GetVaoStatusMessages(int iMinutesBeforeNow = 1)
-      {
-         var client = GetRestClient();
-         RestRequest request = new RestRequest("status");
-         request.AddHeader("If-Modified-Since", DateTime.Now.AddMinutes(-iMinutesBeforeNow).ToString(CultureInfo.InvariantCulture));
-         RestResponse response = client.Execute(request);
-
-         return ValidateResponseContent(response);
-      }
-
-      public string GetVaoStatusMessages(DateTime dateTime)
-      {
-         var client = GetRestClient();
-         RestRequest request = new RestRequest("status");
-         request.AddHeader("If-Modified-Since", dateTime.ToString("r"));
-         RestResponse response = client.Execute(request);
-
-         return ValidateResponseContent(response);
-      }      
-
+     
       internal string ValidateResponseContent(RestResponse response)
       {
          if (!response.IsSuccessful)
@@ -71,6 +42,16 @@ namespace Vao.Client
             return null;
          }
          return response.Content;
+      }
+
+      /// <summary>
+      /// Gets the status messages.
+      /// </summary>
+      /// <param name="lastCheck"></param>
+      /// <returns></returns>
+      internal string GetStatusMessages(DateTime lastCheck)
+      {
+         return this.GetVaoStatusMessages(lastCheck);
       }
 
       /// <summary>
@@ -88,7 +69,7 @@ namespace Vao.Client
                return mCameraList[cameraNo];
          }
 
-         RestResponse response = GetVaoCameraInternal(cameraNo);
+         RestResponse response = this.GetVaoCameraInternal(cameraNo);
          if (response == null)
             return null;
          var camera = JsonParser.ParseSingleCamera(response.Content, this);
@@ -197,6 +178,18 @@ namespace Vao.Client
          }
       }
 
+      /// <summary>
+      /// Gets the latest status messeg time of the system
+      /// </summary>
+      /// <returns></returns>
+      public string GetStatusTime()
+      {
+         return this.GetVaoStatus();
+      }
+
+      /// <summary>
+      /// Stops  the client.
+      /// </summary>
       public void StopClient()
       {
          mStopLoadData.Set();
@@ -214,71 +207,7 @@ namespace Vao.Client
 
       #endregion
 
-      #region Internal Methods
-
-      internal RestResponse MoveTargetStart(int cameraNumber, int panSpeed, int tiltSpeed, int zoomSpeed, string focus)
-      {
-         RestClient client = GetRestClient();
-         // ReSharper disable once RedundantArgumentDefaultValue
-         RestRequest request = new RestRequest($"inputs/{cameraNumber}/MoveTarget", Method.Post);
-
-         Contracts.JsonMoveTargetBody jsonMoveTarget = new Contracts.JsonMoveTargetBody();
-
-         // Set pan speed.
-         jsonMoveTarget.pan = panSpeed;
-         // Set tilt speed.
-         jsonMoveTarget.tilt = tiltSpeed;
-         // Set zoom speed.
-         jsonMoveTarget.zoom = zoomSpeed;
-         // Set focus
-         jsonMoveTarget.focus = focus;
-
-         string serializedJsonMoveTarget = Json.Net.JsonNet.Serialize(jsonMoveTarget);
-         request.AddJsonBody(serializedJsonMoveTarget);
-
-         RestResponse response = client.Execute(request);
-         return response;
-      }
-
-      internal RestResponse MoveTargetStop(int cameraNumber)
-      {
-         RestClient client = GetRestClient();
-         // ReSharper disable once RedundantArgumentDefaultValue
-         RestRequest request = new RestRequest($"inputs/{cameraNumber}/MoveTarget", Method.Delete);        
-         
-         RestResponse response = client.Execute(request);
-         return response;
-      }
-
-      internal RestResponse GetVaoCameraInternal(int iCameraNo)
-      {
-         RestClient client = GetRestClient();
-         // ReSharper disable once RedundantArgumentDefaultValue
-         RestRequest request = new RestRequest($"inputs/{iCameraNo}", Method.Get);
-         RestResponse response = client.Execute(request);
-
-         string strResponse = ValidateResponseContent(response);
-         if (strResponse == null)
-         {
-            return null;
-         }
-         return response;
-      }
-
-      internal RestResponse MoveCameraToPreset(int iCameraNo, int iPresetNumber)
-      {
-         RestClient client = GetRestClient();
-         // ReSharper disable once RedundantArgumentDefaultValue
-         RestRequest request = new RestRequest($"inputs/{iCameraNo}/presets/{iPresetNumber}", Method.Post);
-         RestResponse response = client.Execute(request);
-
-         string strResponse = ValidateResponseContent(response);
-         if (strResponse == null)
-         {
-            return null;
-         }
-         return response;
-      }
+     #region Internal Methods
 
       internal void RaiseOnMessage(MessageLevel messageType, string message)
       {

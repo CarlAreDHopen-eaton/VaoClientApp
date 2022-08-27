@@ -1,6 +1,7 @@
 ﻿using RestSharp;
 using Vao.Client.Components.Interfaces;
 using Vao.Client.Contracts;
+using Vao.Client.Utility;
 
 namespace Vao.Client.Components
 {

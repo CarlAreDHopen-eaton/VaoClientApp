@@ -34,7 +34,7 @@ namespace Vao.Client
          DateTime lastCheck = DateTime.Now.AddDays(-1);
          while (!mStopStatusCheckThread.WaitOne(1000))
          {
-            string rawMessages = mClient.GetVaoStatusMessages(lastCheck);
+            string rawMessages = mClient.GetStatusMessages(lastCheck);
             if (!string.IsNullOrEmpty(rawMessages))
             {
                var statusMessages = Utility.JsonParser.ParseStatusMessages(rawMessages, mClient);
