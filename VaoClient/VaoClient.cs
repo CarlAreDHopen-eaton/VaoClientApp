@@ -102,6 +102,7 @@ namespace Vao.Client
 
          return null;
       }
+
       /// <summary>
       /// Starts the client.
       /// </summary>
@@ -223,6 +224,8 @@ namespace Vao.Client
 
       private void StartLoadAsync()
       {
+         RaiseOnMessage(MessageLevel.Info, "Async load of data started");
+
          int iLoadDelay = 200;
          int iState = 0;
 
@@ -254,20 +257,27 @@ namespace Vao.Client
 
                         // Stop signaled
                         if (mStopLoadData.WaitOne(iLoadDelay))
+                        {
+                           RaiseOnMessage(MessageLevel.Info, "Async load of data started");
                            return;
+                        }
                      }
                   }
                   break;
                case 2:
-
+                  // TODO add additional loading.
                   break;
                default:
+                  RaiseOnMessage(MessageLevel.Info, "Async load of data completed");
                   return;
 
             }
 
             if (mStopLoadData.WaitOne(iLoadDelay))
+            {
+               RaiseOnMessage(MessageLevel.Info, "Async load of data aborted");
                return;
+            }
 
             iState++;
          }
