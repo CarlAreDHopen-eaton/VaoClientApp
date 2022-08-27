@@ -33,17 +33,6 @@ namespace Vao.Client
 
       #region Public Methods
      
-      internal string ValidateResponseContent(RestResponse response)
-      {
-         if (!response.IsSuccessful)
-         {
-            string strMessage = response.ErrorException?.ToString() ?? response.ErrorMessage ?? $"Unknown connection error {response.StatusCode}";
-            RaiseOnMessage(MessageLevel.Error, strMessage);
-            return null;
-         }
-         return response.Content;
-      }
-
       /// <summary>
       /// Gets the status messages.
       /// </summary>
@@ -102,9 +91,12 @@ namespace Vao.Client
             return mCameraList.Values.ToList();
          }
          var cameras = this.RequestVaoCameraList();
-         foreach (var camera in cameras)
+         if (cameras != null)
          {
-            AddOrUpdateCamera(camera);
+            foreach (var camera in cameras)
+            {
+               AddOrUpdateCamera(camera);
+            }
          }
          return cameras;
       }
@@ -207,7 +199,7 @@ namespace Vao.Client
 
       #endregion
 
-     #region Internal Methods
+      #region Internal Methods
 
       internal void RaiseOnMessage(MessageLevel messageType, string message)
       {
@@ -216,7 +208,7 @@ namespace Vao.Client
 
       #endregion
 
-      #region Private Methods
+      #region Internal Methods
 
       internal RestClient GetRestClient()
       {
@@ -242,6 +234,17 @@ namespace Vao.Client
          client.Authenticator = new HttpBasicAuthenticator(User, Password);
          mRestClient = client;
          return client;
+      }
+
+      internal string ValidateResponseContent(RestResponse response)
+      {
+         if (!response.IsSuccessful)
+         {
+            string strMessage = response.ErrorException?.ToString() ?? response.ErrorMessage ?? $"Unknown connection error {response.StatusCode}";
+            RaiseOnMessage(MessageLevel.Error, strMessage);
+            return null;
+         }
+         return response.Content;
       }
 
       #endregion
