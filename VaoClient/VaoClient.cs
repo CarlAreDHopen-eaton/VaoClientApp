@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
 using System.Threading;
 using RestSharp;
@@ -50,7 +49,7 @@ namespace Vao.Client
       /// <param name="cameraNo">The camera number to get</param>
       /// <param name="forceRequest">If true a request will be sent to the API even if the camera is already available.</param>
       /// <returns></returns>
-      public Camera GetVaoCamera(int cameraNo, bool forceRequest = false)
+      public Camera GetCamera(int cameraNo, bool forceRequest = false)
       {
          lock (mUpdateCameraListLocker)
          {
@@ -67,6 +66,10 @@ namespace Vao.Client
          return camera;
       }
      
+      /// <summary>
+      /// Gets the list of cameras for this client.
+      /// </summary>
+      /// <returns></returns>
       public List<Camera> GetCameraList()
       {
          if (mCameraList != null && mCameraList.Count > 0)
@@ -82,12 +85,6 @@ namespace Vao.Client
             }
          }
          return cameras;
-      }
-
-      public void StartStatusThread()
-      {
-         mFeedbackHandler = new FeedbackHandler(this);
-         mFeedbackHandler.Start(); 
       }
 
       /// <summary>
@@ -106,7 +103,7 @@ namespace Vao.Client
 
          StartStatusThread();
 
-         string statusTime = GetStatusTime();
+         string statusTime = GetLastStatusTime();
          if (statusTime != null)
          {
             return true;
@@ -115,63 +112,11 @@ namespace Vao.Client
 
          }
 
-         private void StartLoadAsync()
-      {
-         int iLoadDelay = 200;
-         int iState = 0;
-
-         while (true)
-         {
-            switch (iState)
-            {
-               case 0:
-                  // Filling the camera list.
-                  GetCameraList();
-                  break;
-               case 1:
-                  for (int i = 1; i < 255; i++)
-                  {
-                     if (!mMonitorList.ContainsKey(i))
-                     {
-                        // Request the monitor
-                        Components.Monitor monitor = RequestHelper.RequestVaoMonitor(this, i);
-
-                        // No more monitors.
-                        if (monitor == null)
-                        {
-                           Debug.WriteLine($"Finished loading monitors at Monitor {i-1}");
-                           break;
-                        }
-
-                        // Add to the monitor list (Note Need to fix as this is not thread safe)
-                        mMonitorList.Add(i, monitor);
-
-                        // Stop signaled
-                        if (mStopLoadData.WaitOne(iLoadDelay))
-                           return;
-                     }
-                  }
-                  break;
-               case 2:
-
-                  break;
-               default:
-                  return;
-
-            }
-
-            if (mStopLoadData.WaitOne(iLoadDelay))
-               return;
-
-            iState++;
-         }
-      }
-
       /// <summary>
       /// Gets the latest status messeg time of the system
       /// </summary>
       /// <returns></returns>
-      public string GetStatusTime()
+      public string GetLastStatusTime()
       {
          return this.GetVaoStatus();
       }
@@ -259,6 +204,64 @@ namespace Vao.Client
             }
          }
 
+      }
+
+      private void StartLoadAsync()
+      {
+         int iLoadDelay = 200;
+         int iState = 0;
+
+         while (true)
+         {
+            switch (iState)
+            {
+               case 0:
+                  // Filling the camera list.
+                  GetCameraList();
+                  break;
+               case 1:
+                  for (int i = 1; i < 255; i++)
+                  {
+                     if (!mMonitorList.ContainsKey(i))
+                     {
+                        // Request the monitor
+                        Components.Monitor monitor = RequestHelper.RequestVaoMonitor(this, i);
+
+                        // No more monitors.
+                        if (monitor == null)
+                        {
+                           Debug.WriteLine($"Finished loading monitors at Monitor {i - 1}");
+                           break;
+                        }
+
+                        // Add to the monitor list (Note Need to fix as this is not thread safe)
+                        mMonitorList.Add(i, monitor);
+
+                        // Stop signaled
+                        if (mStopLoadData.WaitOne(iLoadDelay))
+                           return;
+                     }
+                  }
+                  break;
+               case 2:
+
+                  break;
+               default:
+                  return;
+
+            }
+
+            if (mStopLoadData.WaitOne(iLoadDelay))
+               return;
+
+            iState++;
+         }
+      }
+
+      private void StartStatusThread()
+      {
+         mFeedbackHandler = new FeedbackHandler(this);
+         mFeedbackHandler.Start();
       }
 
       #endregion

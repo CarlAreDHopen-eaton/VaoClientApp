@@ -242,7 +242,7 @@ namespace Vao.Sample
 
       private void SelectCamera(int cameraNo, int streamNo)
       {
-         Camera camera = moVaoClient.GetVaoCamera(cameraNo);
+         Camera camera = moVaoClient.GetCamera(cameraNo);
          if (camera != null)
          {
             CurrentCamera = camera;

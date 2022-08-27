@@ -61,7 +61,7 @@ namespace Vao.Client.Utility
          if (!string.IsNullOrEmpty(strJson))
          {
             JsonVideoOutput jsonObject = JsonNet.Deserialize<JsonVideoOutput>(strJson);
-            Camera camera = vaoClient.GetVaoCamera(jsonObject.inputId);
+            Camera camera = vaoClient.GetCamera(jsonObject.inputId);
             Monitor monitor = new Monitor(iVideoOutput, vaoClient, camera);
             return monitor;
          }
