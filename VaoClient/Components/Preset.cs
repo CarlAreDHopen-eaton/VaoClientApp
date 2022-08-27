@@ -7,8 +7,14 @@ namespace Vao.Client.Components
 {
    public class Preset : BaseComponent, INamedComponent
    {
+      #region Private Members
+
       private string mPresetName;
       private Camera mOwnerCamera;
+
+      #endregion
+
+      #region Constructor
 
       internal Preset(int number, JsonPresetObject jsonObject, VaoClient vaoClient, Camera ownerCamera)
          : base(vaoClient, number)
@@ -16,6 +22,8 @@ namespace Vao.Client.Components
          mPresetName = jsonObject.name;
          mOwnerCamera = ownerCamera;
       }
+
+      #endregion
 
       #region Public Properties
 
@@ -34,6 +42,10 @@ namespace Vao.Client.Components
 
       #region Public Methods
 
+      /// <summary>
+      /// Moves the camera to the preset position.
+      /// </summary>
+      /// <returns></returns>
       public bool GotoPreset()
       {
          int iPreset = ComponentNumber;

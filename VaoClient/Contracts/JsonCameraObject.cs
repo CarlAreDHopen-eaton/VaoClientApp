@@ -19,5 +19,6 @@ namespace Vao.Client.Contracts
       public string stream2url { get; set; }
       public string stream1resolution { get; set; }
       public string stream2resolution { get; set; }
+      public string[] features { get; set; }
    }
 }
