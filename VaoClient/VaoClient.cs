@@ -88,6 +88,21 @@ namespace Vao.Client
       }
 
       /// <summary>
+      /// Gets a list of monitors.
+      /// </summary>
+      /// <returns></returns>
+      public List<Components.Monitor> GetMonitorList()
+      {
+         if (mMonitorList != null && mMonitorList.Count > 0)
+         {
+            return mMonitorList.Values.ToList();
+         }
+         
+         // NOTE there is no single request method to get all monitors.
+
+         return null;
+      }
+      /// <summary>
       /// Starts the client.
       /// </summary>
       /// <returns>Returns true if start was successfull</returns>

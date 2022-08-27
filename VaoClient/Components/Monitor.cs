@@ -2,7 +2,7 @@
 
 namespace Vao.Client.Components
 {
-   internal class Monitor : BaseComponent, INamedComponent
+   public class Monitor : BaseComponent, INamedComponent
    {
       #region Private Members
 
