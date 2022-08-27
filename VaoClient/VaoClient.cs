@@ -66,23 +66,6 @@ namespace Vao.Client
             AddOrUpdateCamera(camera);
          return camera;
       }
-
-      private void AddOrUpdateCamera(Camera camera)
-      {
-         var key = camera.ComponentNumber;
-         lock (mUpdateCameraListLocker)
-         { 
-            if (!mCameraList.ContainsKey(key))
-            {
-               mCameraList.Add(key, camera);
-            }
-            else
-            {
-               mCameraList[key].Name = camera.Name;
-            }
-         }
-
-      }
      
       public List<Camera> GetCameraList()
       {
@@ -107,7 +90,11 @@ namespace Vao.Client
          mFeedbackHandler.Start(); 
       }
 
-      public void StartClient()
+      /// <summary>
+      /// Starts the client.
+      /// </summary>
+      /// <returns>Returns true if start was successfull</returns>
+      public bool StartClient()
       {
          if (mInitializeThred != null)
             StopClient();
@@ -116,9 +103,19 @@ namespace Vao.Client
          mInitializeThred = new Thread(StartLoadAsync);
          mInitializeThred.Start();
          mInitializeThred = null;
-      }
 
-      private void StartLoadAsync()
+         StartStatusThread();
+
+         string statusTime = GetStatusTime();
+         if (statusTime != null)
+         {
+            return true;
+         }
+         return false;
+
+         }
+
+         private void StartLoadAsync()
       {
          int iLoadDelay = 200;
          int iState = 0;
@@ -206,10 +203,6 @@ namespace Vao.Client
          OnMessage?.Invoke(this, new MessageEventArgs(messageType, message));
       }
 
-      #endregion
-
-      #region Internal Methods
-
       internal RestClient GetRestClient()
       {
          if (mRestClient != null)
@@ -245,6 +238,27 @@ namespace Vao.Client
             return null;
          }
          return response.Content;
+      }
+
+      #endregion
+
+      #region Private Methods
+
+      private void AddOrUpdateCamera(Camera camera)
+      {
+         var key = camera.ComponentNumber;
+         lock (mUpdateCameraListLocker)
+         {
+            if (!mCameraList.ContainsKey(key))
+            {
+               mCameraList.Add(key, camera);
+            }
+            else
+            {
+               mCameraList[key].Name = camera.Name;
+            }
+         }
+
       }
 
       #endregion

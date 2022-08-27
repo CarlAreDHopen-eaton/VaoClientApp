@@ -128,14 +128,10 @@ namespace Vao.Sample
             IgnoreCertificateErrors = true
          };
          moVaoClient.OnMessage += OnVaoClientMessage;
-         moVaoClient.StartClient();
-
-         string statusTime = moVaoClient.GetStatusTime();
-         if (statusTime != null)
+         if (moVaoClient.StartClient())
          {
-            WriteMessageLog("VaoAPI", statusTime, LogLevel.Notice);
+            WriteMessageLog("VaoAPI", "Client started.", LogLevel.Notice);
             FillSelectCameraButtonList();
-            moVaoClient.StartStatusThread();
          }
          else
          {
@@ -176,6 +172,7 @@ namespace Vao.Sample
          IsStared = false;
          if (moVaoClient != null)
          {
+            moVaoClient.OnMessage -= OnVaoClientMessage;
             moVaoClient.StopClient();
             moVaoClient = null;
          }
