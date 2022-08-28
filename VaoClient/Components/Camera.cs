@@ -22,12 +22,15 @@ namespace Vao.Client.Components
       private string mCurrentFocus = "auto";
       private List<Preset> mPresetList;
       private JsonCameraObject mJsonCameraObject;
+      private List<string> mFeatureList = new List<string>();
 
       internal Camera(int cameraNumber, JsonCameraObject camera, VaoClient vaoClient)
          : base(vaoClient, cameraNumber)
       {
          mCameraName = camera.name;
          mJsonCameraObject = camera;
+         mFeatureList.Clear();
+         mFeatureList.AddRange(camera.features);
       }
 
       #region Public Properties
@@ -307,6 +310,10 @@ namespace Vao.Client.Components
                Name = jsonCameraObject.name;
                Stream1Resolution = jsonCameraObject.stream1resolution;
                Stream2Resolution = jsonCameraObject.stream2resolution;
+               
+               mFeatureList.Clear();
+               mFeatureList.AddRange(jsonCameraObject.features);
+
                mJsonCameraObject = jsonCameraObject;
             }
          }
