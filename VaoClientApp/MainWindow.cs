@@ -112,6 +112,8 @@ namespace Vao.Sample
          txtPort.Enabled = !IsStared;
          txtUser.Enabled = !IsStared;
          chkSecure.Enabled = !IsStared;
+
+         UpdateCameraControl();
       }
 
       private void btnStart_Click(object sender, EventArgs e)
@@ -198,7 +200,15 @@ namespace Vao.Sample
          {
             if (mCurrentCameraButton != null)
                mCurrentCameraButton.BackColor = Color.White;
+
+            if (mCurrentCamera != null)
+               mCurrentCamera.PropertyChanged -= Camera_PropertyChanged;
+
             mCurrentCamera = value;
+            
+            if (mCurrentCamera != null)
+               mCurrentCamera.PropertyChanged += Camera_PropertyChanged;
+
             mCurrentCameraButton = GetCameraButton(mCurrentCamera);
             if (mCurrentCameraButton != null)
                mCurrentCameraButton.BackColor = Color.Goldenrod;
@@ -214,10 +224,27 @@ namespace Vao.Sample
                selPreset.Items.Clear();
                selPreset.Items.Add("No Preset");
             }
-
             
             UpdateEnabled();
          }
+      }
+
+      private void Camera_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+      {
+         UpdateCameraControl();
+      }
+
+      private void UpdateCameraControl()
+      {
+         btnPanLeft.Enabled = CurrentCamera?.HasPanTiltControl ?? false;
+         btnPanRight.Enabled = CurrentCamera?.HasPanTiltControl ?? false;
+         btnTiltDown.Enabled = CurrentCamera?.HasPanTiltControl ?? false;
+         btnTiltUp.Enabled = CurrentCamera?.HasPanTiltControl ?? false;
+
+         btnZoomIn.Enabled = CurrentCamera?.HasLensControl ?? false;
+         btnZoomOut.Enabled = CurrentCamera?.HasLensControl ?? false;
+         btnFocusFar.Enabled = CurrentCamera?.HasLensControl ?? false;
+         btnFocusNear.Enabled = CurrentCamera?.HasLensControl ?? false;
       }
 
       private void FillSelectPresetList()

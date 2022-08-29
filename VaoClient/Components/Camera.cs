@@ -23,6 +23,9 @@ namespace Vao.Client.Components
       private List<Preset> mPresetList;
       private JsonCameraObject mJsonCameraObject;
       private List<string> mFeatureList = new List<string>();
+      private bool mHasLensControl = false;
+      private bool mHasPanTiltControl = false;
+      private bool mHasWipeWashControl = false;
 
       internal Camera(int cameraNumber, JsonCameraObject camera, VaoClient vaoClient)
          : base(vaoClient, cameraNumber)
@@ -53,7 +56,7 @@ namespace Vao.Client.Components
       /// The resolution of stream 2. (Typically lower resolution than stream 1)
       /// </summary>
       public string Stream2Resolution { get; internal set; }
-    
+
       /// <summary>
       /// Get the camera data status for this camera.
       /// </summary>
@@ -112,6 +115,54 @@ namespace Vao.Client.Components
             if (mPresetList == null)
                mPresetList = VaoClient.RequestVaoPresetList(this);
             return mPresetList;
+         }
+      }
+
+      public bool HasLensControl
+      {
+         get
+         {
+            return mHasLensControl;
+         }
+         internal set
+         {
+            if (mHasLensControl != value)
+            {
+               mHasLensControl = value;
+               NotifyPropertyChanged();
+            }
+         }
+      }
+
+      public bool HasWipeWashControl
+      {
+         get
+         {
+            return mHasWipeWashControl;
+         }
+         internal set
+         {
+            if (mHasWipeWashControl != value)
+            {
+               mHasWipeWashControl = value;
+               NotifyPropertyChanged();
+            }
+         }
+      }
+
+      public bool HasPanTiltControl
+      {
+         get
+         {
+            return mHasPanTiltControl;
+         }
+         internal set
+         {
+            if (mHasPanTiltControl != value)
+            {
+               mHasPanTiltControl = value;
+               NotifyPropertyChanged();
+            }
          }
       }
 
@@ -310,9 +361,35 @@ namespace Vao.Client.Components
                Name = jsonCameraObject.name;
                Stream1Resolution = jsonCameraObject.stream1resolution;
                Stream2Resolution = jsonCameraObject.stream2resolution;
-               
-               mFeatureList.Clear();
-               mFeatureList.AddRange(jsonCameraObject.features);
+
+               bool bHasPanTiltControl = false;
+               bool bHasLensControl = false;
+               bool bHasWipeWashControl = false;
+
+               foreach (string feature in jsonCameraObject.features)
+               {
+                  switch (feature)
+                  {
+                     case "pan":
+                     case "tilt":
+                        bHasPanTiltControl = true;
+                        break;
+                     case "iris":
+                     case "zoom":
+                     case "focus":
+                        bHasLensControl = true;
+                        break;
+                     case "wipe":
+                     case "wash":
+                        bHasWipeWashControl = true;
+                        break;
+                     default:
+                        break;
+                  }
+               }
+               HasLensControl = bHasLensControl;
+               HasWipeWashControl= bHasWipeWashControl;
+               HasPanTiltControl = bHasPanTiltControl; 
 
                mJsonCameraObject = jsonCameraObject;
             }
