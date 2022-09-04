@@ -132,6 +132,7 @@ namespace Vao.Sample
          btnStop.Enabled = IsStared;
          grpCameraSelection.Enabled = IsStared;
          chkPreferSubChannel.Enabled = IsStared;
+         grpSelectPreset.Enabled = IsStared;
 
          grpCameraControl.Enabled = IsStared && CurrentCamera != null;
 
@@ -191,10 +192,13 @@ namespace Vao.Sample
          }
          else
          {
-            var lvi = new ListViewItem(DateTime.Now.ToString(CultureInfo.InvariantCulture));
-            lvi.SubItems.Add(level.ToString());
-            lvi.SubItems.Add($"{strSource} - {strMessage}");
-            lstMessages.Items.Add(lvi);
+            var dlvi = new DarkUI.Controls.DarkListItem();
+            var strTime = DateTime.Now.ToString(CultureInfo.InvariantCulture);
+            var strLevel = level.ToString();
+            var strMsg = $"{strTime} [{strLevel}] - {strSource} - {strMessage}";
+            dlvi.Text = strMsg;
+            lstMessages.Items.Add(dlvi);
+
          }
       }
 
