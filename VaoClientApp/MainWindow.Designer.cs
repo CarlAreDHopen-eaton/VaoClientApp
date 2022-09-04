@@ -540,6 +540,7 @@ namespace Vao.Sample
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
          this.ClientSize = new System.Drawing.Size(1226, 715);
          this.Controls.Add(this.splitMainVerticalSplit);
+         this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
          this.MinimumSize = new System.Drawing.Size(400, 200);
          this.Name = "MainWindow";
          this.Text = "VAO Demo Client";
