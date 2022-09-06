@@ -257,9 +257,14 @@ namespace Vao.Sample
       private void FillSelectPresetList()
       {
          List<Preset> presets = CurrentCamera?.PresetList;
-         if (presets != null && presets.Count > 0)
+         if (presets != null)
          {
             selPreset.DataSource = presets;
+            selPreset.DisplayMember = nameof(Preset.Name);
+         }
+         else
+         {
+            selPreset.DataSource = null;
             selPreset.DisplayMember = nameof(Preset.Name);
          }
       }
