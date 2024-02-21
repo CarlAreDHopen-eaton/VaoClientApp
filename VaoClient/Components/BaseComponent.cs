@@ -1,14 +1,14 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace Vao.Client.Components.Interfaces
+namespace Vao.Client.Components
 {
    public class BaseComponent : INotifyPropertyChanged
    {
       #region Private Members
 
-      private VaoClient mVaoClient;
-      private int mComponentNumber;
+      private readonly VaoClient mVaoClient;
+      private readonly int mComponentNumber;
 
       #endregion
 
@@ -25,7 +25,7 @@ namespace Vao.Client.Components.Interfaces
       #region Public Properties
 
       /// <summary>
-      /// The clinet that this object belong to.
+      /// The client that this object belong to.
       /// </summary>
       public VaoClient VaoClient { get { return mVaoClient; } }
 

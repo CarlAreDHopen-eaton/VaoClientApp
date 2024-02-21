@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Vao.Client.Contracts
+﻿namespace Vao.Client.Contracts
 {
    internal class JsonVideoOutput
    {

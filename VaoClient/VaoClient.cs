@@ -17,11 +17,11 @@ namespace Vao.Client
 
       private RestClient mRestClient;
       private FeedbackHandler mFeedbackHandler;
-      private Dictionary<int, Camera> mCameraList = new Dictionary<int, Camera>();
-      private Dictionary<int, Components.Monitor> mMonitorList = new Dictionary<int, Components.Monitor>();
-      private ManualResetEvent mStopLoadData = new ManualResetEvent(false);
-      private Thread mInitializeThred;
-      private object mUpdateCameraListLocker = new object();
+      private readonly Dictionary<int, Camera> mCameraList = new Dictionary<int, Camera>();
+      private readonly Dictionary<int, Components.Monitor> mMonitorList = new Dictionary<int, Components.Monitor>();
+      private readonly ManualResetEvent mStopLoadData = new ManualResetEvent(false);
+      private Thread mInitializeThread;
+      private readonly object mUpdateCameraListLocker = new object();
       #endregion
 
       #region Public Events
@@ -53,8 +53,8 @@ namespace Vao.Client
       {
          lock (mUpdateCameraListLocker)
          {
-            if (mCameraList.ContainsKey(cameraNo))
-               return mCameraList[cameraNo];
+            if (mCameraList.TryGetValue(cameraNo, out var camera1))
+               return camera1;
          }
 
          RestResponse response = this.GetVaoCameraInternal(cameraNo);
@@ -106,16 +106,16 @@ namespace Vao.Client
       /// <summary>
       /// Starts the client.
       /// </summary>
-      /// <returns>Returns true if start was successfull</returns>
+      /// <returns>Returns true if start was successful</returns>
       public bool StartClient()
       {
-         if (mInitializeThred != null)
+         if (mInitializeThread != null)
             StopClient();
 
          // Start async load.
-         mInitializeThred = new Thread(StartLoadAsync);
-         mInitializeThred.Start();
-         mInitializeThred = null;
+         mInitializeThread = new Thread(StartLoadAsync);
+         mInitializeThread.Start();
+         mInitializeThread = null;
 
          StartStatusThread();
 
@@ -129,7 +129,7 @@ namespace Vao.Client
          }
 
       /// <summary>
-      /// Gets the latest status messeg time of the system
+      /// Gets the latest status message time of the system
       /// </summary>
       /// <returns></returns>
       public string GetLastStatusTime()
@@ -170,7 +170,7 @@ namespace Vao.Client
             return mRestClient;
 
          RestClient client;
-         string addressLine = string.Format(@"{0}://{1}:{2}", UseHttps ? "https" : "http", Host, Port);
+         string addressLine = $"{(UseHttps ? "https" : "http")}://{Host}:{Port}";
          if (UseHttps && IgnoreCertificateErrors)
          {
             // Bypass ssl validation check.
@@ -243,7 +243,7 @@ namespace Vao.Client
                      if (!mMonitorList.ContainsKey(i))
                      {
                         // Request the monitor
-                        Components.Monitor monitor = RequestHelper.RequestVaoMonitor(this, i);
+                        Components.Monitor monitor = this.RequestVaoMonitor(i);
 
                         // No more monitors.
                         if (monitor == null)

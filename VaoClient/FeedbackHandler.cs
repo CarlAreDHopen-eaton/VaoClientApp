@@ -9,7 +9,7 @@ namespace Vao.Client
    internal class FeedbackHandler
    {
       private Thread mStatusCheckThread;
-      private VaoClient mClient;
+      private readonly VaoClient mClient;
       private readonly ManualResetEvent mStopStatusCheckThread = new ManualResetEvent(false);
 
       public FeedbackHandler(VaoClient vaoClient)
@@ -52,7 +52,7 @@ namespace Vao.Client
          }
       }
 
-      private void HandleMessage(Components.StatusMessage message)
+      private void HandleMessage(StatusMessage message)
       {
          switch (message.Type)
          {
@@ -81,7 +81,7 @@ namespace Vao.Client
          }
       }
 
-      private void RaiseOnMessageEvents(Components.StatusMessage message)
+      private void RaiseOnMessageEvents(StatusMessage message)
       {
          try
          {

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Vao.Client.Utility
+﻿namespace Vao.Client.Utility
 {
    public static class MathHelper
    {
