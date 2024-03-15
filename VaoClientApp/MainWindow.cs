@@ -17,6 +17,7 @@ namespace Vao.Sample
       private bool mIsStared = false;
       private bool mIsCameraSelected = false;
       private bool mIsPlaybackStarted = false;
+      private bool mApiSupportsPlayback = false;
       private VaoClient moVaoClient;
       private VideoViewWithViewerId mVideoControl;
       private Camera mCurrentCamera;
@@ -30,6 +31,16 @@ namespace Vao.Sample
          set
          {
             mIsStared = value;
+            UpdateEnabled();
+         }
+      }
+
+      public bool ApiSupportsPlayback
+      {
+         get { return mApiSupportsPlayback; }
+         set
+         {
+            mApiSupportsPlayback = value;
             UpdateEnabled();
          }
       }
@@ -147,15 +158,15 @@ namespace Vao.Sample
          grpCameraSelection.Enabled = IsStared;
          chkPreferSubChannel.Enabled = IsStared && !IsPlayback;
          grpSelectPreset.Enabled = IsStared;
-         grpSelectPlayback.Enabled = IsStared;
+         grpSelectPlayback.Enabled = IsStared && ApiSupportsPlayback;
 
          grpCameraControl.Enabled = IsStared && CurrentCamera != null;
 
-         btnStopPlayback.Enabled = IsStared && IsPlayback;
+         btnStopPlayback.Enabled = IsStared && IsPlayback && ApiSupportsPlayback;
          
-         btnPlayPlayback.Enabled = IsStared && IsCameraSelected && !IsPlaybackStarted;
-         btnGotoTime.Enabled = IsStared && IsCameraSelected;
-         grpSelectPlayback.Enabled = IsStared && IsCameraSelected;
+         btnPlayPlayback.Enabled = IsStared && IsCameraSelected && !IsPlaybackStarted && ApiSupportsPlayback;
+         btnGotoTime.Enabled = IsStared && IsCameraSelected && ApiSupportsPlayback;
+         grpSelectPlayback.Enabled = IsStared && IsCameraSelected && ApiSupportsPlayback;
          btnConnect.Enabled = !IsStared;
          txtHost.Enabled = !IsStared;
          txtPassword.Enabled = !IsStared;
@@ -184,15 +195,19 @@ namespace Vao.Sample
          {
             WriteMessageLog("VaoAPI", "Client started.", LogLevel.Notice);
             FillSelectCameraButtonList();
+            CheckApiVersion();
+            ClearRecordingDropdown();
+            
          }
          else
          {
             WriteMessageLog("VaoAPI", "Unable to start, no response.", LogLevel.Error);
             btnDisconnect_Click(sender, e);
          }
-         UpdateEnabled();
-         ClearRecordingDropdown();
          ClearPresetDropdown();
+         UpdateEnabled();
+
+
       }
 
       /// <summary>
@@ -276,10 +291,12 @@ namespace Vao.Sample
             if (mCurrentCamera != null)
             {
                lblCurrentCamera.Text = $"Camera : {mCurrentCamera.Name}";
-               FillSelectPresetList();
-               FillPlaybackSelectionList();
                IsCameraSelected = true;
-
+               FillSelectPresetList();
+               if (ApiSupportsPlayback)
+               {
+                  FillPlaybackSelectionList();
+               }
             }
             else
             {
@@ -295,7 +312,14 @@ namespace Vao.Sample
       {
          selPlayback.DataSource = null;
          selPlayback.Items.Clear();
-         selPlayback.Items.Add("No camera selected");
+         if (!ApiSupportsPlayback && IsStared)
+         {
+            selPlayback.Items.Add("Api Version does not support playback");
+         }
+         else
+         {
+            selPlayback.Items.Add("No camera selected");
+         }
          selPlayback.SelectedIndex = 0;
       }
 
@@ -414,6 +438,20 @@ namespace Vao.Sample
                StartRtspStream(url);
             }
          }
+      }
+
+      private void CheckApiVersion()
+      {
+         ApiVersion apiversion = moVaoClient.GetApiVersion();
+         if (apiversion != null)
+         {
+            Version version = new Version(apiversion.MajorVersion, apiversion.MinorVersion);
+            if (version >= new Version(1,1))
+            {
+               ApiSupportsPlayback = true;
+            }
+         }
+         UpdateEnabled();
       }
 
       private static string GetMaskedUrl(string url)

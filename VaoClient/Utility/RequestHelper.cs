@@ -109,6 +109,22 @@ namespace Vao.Client.Utility
          return vaoClient.ValidateResponseContent(response);
       }
 
+      internal static ApiVersion GetVaoApiVersion(this VaoClient vaoClient)
+      {
+         RestClient client = vaoClient.GetRestClient();
+         RestRequest request = new RestRequest("version/api", Method.Options);
+         RestResponse response = client.Execute(request);
+         string strResponse = vaoClient.ValidateResponseContent(response);
+         if (strResponse == null)
+         {
+            // Empty list.
+            return null;
+         }
+
+         ApiVersion apiVersion = JsonParser.ParseApiVersion(strResponse, vaoClient);
+         return apiVersion;
+      }
+
       internal static string GetVaoStatusMessages(this VaoClient vaoClient, DateTime dateTime)
       {
          RestClient client = vaoClient.GetRestClient();

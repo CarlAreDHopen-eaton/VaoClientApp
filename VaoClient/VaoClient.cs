@@ -138,6 +138,15 @@ namespace Vao.Client
       }
 
       /// <summary>
+      /// Gets the VaoRApi version number
+      /// </summary>
+      /// <returns></returns>
+      public ApiVersion GetApiVersion()
+      {
+         return this.GetVaoApiVersion();
+      }
+
+      /// <summary>
       /// Stops  the client.
       /// </summary>
       public void StopClient()

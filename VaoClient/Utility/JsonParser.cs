@@ -127,5 +127,22 @@ namespace Vao.Client.Utility
          }
          return null;
       }
+
+      /// <summary>
+      /// Parses the JSON message text to an Api Version object.
+      /// </summary>
+      /// <param name="strJson">The JSON formatted message text</param>
+      /// <param name="vaoClient">The client that received the message</param>
+      /// <returns></returns>
+      internal static ApiVersion ParseApiVersion(string strJson, VaoClient vaoClient)
+      {
+         if (!string.IsNullOrEmpty(strJson))
+         {
+            JsonApiVersion apiVersion = JsonNet.Deserialize<JsonApiVersion>(strJson);
+            return new ApiVersion(apiVersion, vaoClient);
+         }
+
+         return null;
+      }
    }
 }
