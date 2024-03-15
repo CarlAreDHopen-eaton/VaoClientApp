@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using RestSharp;
@@ -21,6 +22,7 @@ namespace Vao.Client.Components
       private int mCurrentTiltSpeed;
       private string mCurrentFocus = "auto";
       private List<Preset> mPresetList;
+      private Dictionary<Guid, List<PlaybackInfo>> mPlaybackInfoList = new Dictionary<Guid, List<PlaybackInfo>>();
       private JsonCameraObject mJsonCameraObject;
       private List<string> mFeatureList = new List<string>();
       private bool mHasLensControl = false;
@@ -116,6 +118,19 @@ namespace Vao.Client.Components
                mPresetList = VaoClient.RequestVaoPresetList(this);
             return mPresetList;
          }
+      }
+
+      /// <summary>
+      /// List of recordings
+      /// </summary>
+      public List<PlaybackInfo> GetPlaybackInfoList(Guid viewerId)
+      {
+         if (!mPlaybackInfoList.ContainsKey(viewerId))
+         {
+            List<PlaybackInfo> playbackInfoList = VaoClient.RequestVaoRecordingList(this, viewerId);
+            mPlaybackInfoList.Add(viewerId, playbackInfoList);
+         }       
+         return mPlaybackInfoList[viewerId];
       }
 
       public bool HasLensControl

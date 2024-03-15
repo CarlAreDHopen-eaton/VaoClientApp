@@ -46,6 +46,31 @@ namespace Vao.Client.Utility
          return presets;
       }
 
+      internal static List<PlaybackInfo> RequestVaoRecordingList(this VaoClient vaoClient, Camera ownerCamera, Guid viewerId)
+      {
+         RestClient client = vaoClient.GetRestClient();
+
+         // ReSharper disable once RedundantArgumentDefaultValue
+         RestRequest request = new RestRequest($"inputs/{ownerCamera.ComponentNumber}/recordings", Method.Post);
+
+         Contracts.JsonViewerIdObject jsonViewerId = new Contracts.JsonViewerIdObject();
+         jsonViewerId.viewerId = viewerId.ToString();
+
+         string serializedJsonViewerId = Json.Net.JsonNet.Serialize(jsonViewerId);
+         request.AddJsonBody(serializedJsonViewerId);
+
+         RestResponse response = client.Execute(request);
+         string strResponse = vaoClient.ValidateResponseContent(response);
+         if (strResponse == null)
+         {
+            // Empty list.
+            return null;
+         }
+
+         List<PlaybackInfo> playbackInfoList = JsonParser.ParsePlaybackInfoList(strResponse, vaoClient);
+         return playbackInfoList;
+      }
+
       internal static Monitor RequestVaoMonitor(this VaoClient vaoClient, int iVideoOutput)
       {
          RestClient client = vaoClient.GetRestClient();

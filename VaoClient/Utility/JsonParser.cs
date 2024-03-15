@@ -106,5 +106,26 @@ namespace Vao.Client.Utility
          }
          return null;
       }
+
+      /// <summary>
+      /// Parses the JSON message text to a list of playback info message objects.
+      /// </summary>
+      /// <param name="strJson">The JSON formatted message text</param>
+      /// <param name="vaoClient">The client that received the message</param>
+      /// <returns>A list of playback info message objects</returns>
+      internal static List<PlaybackInfo> ParsePlaybackInfoList(string strJson, VaoClient vaoClient)
+      {
+         if (!string.IsNullOrEmpty(strJson))
+         {
+            List<JsonPlaybackInfoObject> list = JsonNet.Deserialize<List<JsonPlaybackInfoObject>>(strJson);
+            List<PlaybackInfo> returnList = new List<PlaybackInfo>();
+            foreach (JsonPlaybackInfoObject playbackInfo in list)
+            {
+               returnList.Add(new PlaybackInfo(playbackInfo, vaoClient));
+            }
+            return returnList;
+         }
+         return null;
+      }
    }
 }

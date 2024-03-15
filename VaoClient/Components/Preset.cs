@@ -84,6 +84,11 @@ namespace Vao.Client.Components
       public bool Set()
       { return false; }
 
+
+      public override string ToString()
+      {
+         return Name;
+      }
       #endregion
    }
 }

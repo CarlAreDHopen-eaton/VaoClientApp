@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Windows.Forms;
+using System.Xml;
 using LibVLCSharp.Shared;
 using LibVLCSharp.WinForms;
 using Vao.Client;
@@ -14,8 +15,10 @@ namespace Vao.Sample
    public partial class MainWindow : Form
    {
       private bool mIsStared = false;
+      private bool mIsCameraSelected = false;
+      private bool mIsPlaybackStarted = false;
       private VaoClient moVaoClient;
-      private VideoView mVideoControl;
+      private VideoViewWithViewerId mVideoControl;
       private Camera mCurrentCamera;
       private Button mCurrentCameraButton;
       private LibVLC mLibVlc;
@@ -30,7 +33,40 @@ namespace Vao.Sample
             UpdateEnabled();
          }
       }
-      
+      public bool IsPlaybackStarted
+      {
+         get { return mIsPlaybackStarted; }
+         set
+         {
+            mIsPlaybackStarted = value;
+            UpdateEnabled();
+         }
+      }
+
+      public bool IsPlayback
+      {
+         get 
+         {
+            return IsUriPlaybackUri(txtCurrentRtspUrl.Text);
+         }
+      }
+
+      public bool IsCameraSelected
+      {
+         get { return mIsCameraSelected; }
+         set
+         {
+            mIsCameraSelected = value;
+            UpdateEnabled();
+         }
+      }
+
+      private bool IsUriPlaybackUri(string text)
+      {
+         if (text == null) return false;
+         return text.Contains("playback");
+      }
+
       public MainWindow()
       {
          InitializeComponent();
@@ -40,6 +76,8 @@ namespace Vao.Sample
 
          StartInitializeVlc();
 
+         ClearPresetDropdown();
+         ClearRecordingDropdown();
          LoadSettings();
          UpdateEnabled();
 
@@ -56,6 +94,8 @@ namespace Vao.Sample
          moToolTip.SetToolTip(btnFocusNear, "Focus Near");
          
          moToolTip.SetToolTip(btnClearMessages, "Clear message log");
+
+         InitVideoControl();
       }
 
       private void StartInitializeVlc()
@@ -103,14 +143,20 @@ namespace Vao.Sample
 
       public void UpdateEnabled()
       {
-         btnStop.Enabled = IsStared;
+         btnDisconnect.Enabled = IsStared;
          grpCameraSelection.Enabled = IsStared;
-         chkPreferSubChannel.Enabled = IsStared;
+         chkPreferSubChannel.Enabled = IsStared && !IsPlayback;
          grpSelectPreset.Enabled = IsStared;
+         grpSelectPlayback.Enabled = IsStared;
 
          grpCameraControl.Enabled = IsStared && CurrentCamera != null;
 
-         btnStart.Enabled = !IsStared;
+         btnStopPlayback.Enabled = IsStared && IsPlayback;
+         
+         btnPlayPlayback.Enabled = IsStared && IsCameraSelected && !IsPlaybackStarted;
+         btnGotoTime.Enabled = IsStared && IsCameraSelected;
+         grpSelectPlayback.Enabled = IsStared && IsCameraSelected;
+         btnConnect.Enabled = !IsStared;
          txtHost.Enabled = !IsStared;
          txtPassword.Enabled = !IsStared;
          txtPort.Enabled = !IsStared;
@@ -120,7 +166,7 @@ namespace Vao.Sample
          UpdateCameraControl();
       }
 
-      private void btnStart_Click(object sender, EventArgs e)
+      private void btnConnect_Click(object sender, EventArgs e)
       {
          SaveSettings();
          IsStared = true;
@@ -142,9 +188,11 @@ namespace Vao.Sample
          else
          {
             WriteMessageLog("VaoAPI", "Unable to start, no response.", LogLevel.Error);
-            btnStop_Click(sender, e);
+            btnDisconnect_Click(sender, e);
          }
          UpdateEnabled();
+         ClearRecordingDropdown();
+         ClearPresetDropdown();
       }
 
       /// <summary>
@@ -176,7 +224,7 @@ namespace Vao.Sample
          }
       }
 
-      private void btnStop_Click(object sender, EventArgs e)
+      private void btnDisconnect_Click(object sender, EventArgs e)
       {
          IsStared = false;
          if (moVaoClient != null)
@@ -187,6 +235,11 @@ namespace Vao.Sample
          }
          StopRtspStream();
          CurrentCamera = null;
+         txtCurrentRtspUrl.Text = string.Empty;
+         IsCameraSelected = false;
+         ClearPresetDropdown();
+         ClearRecordingDropdown();
+
       }
 
       private void StopRtspStream()
@@ -224,18 +277,46 @@ namespace Vao.Sample
             {
                lblCurrentCamera.Text = $"Camera : {mCurrentCamera.Name}";
                FillSelectPresetList();
+               FillPlaybackSelectionList();
+               IsCameraSelected = true;
+
             }
             else
             {
-               lblCurrentCamera.Text = $"Camera : (No camera selected)";
-               selPreset.Items.Clear();
-               selPreset.Items.Add("No Preset");
+               ClearPresetDropdown();
+               ClearRecordingDropdown();
             }
-            
+
             UpdateEnabled();
          }
       }
 
+      private void ClearRecordingDropdown()
+      {
+         selPlayback.DataSource = null;
+         selPlayback.Items.Clear();
+         selPlayback.Items.Add("No camera selected");
+         selPlayback.SelectedIndex = 0;
+      }
+
+      private void ClearPresetDropdown()
+      {
+         lblCurrentCamera.Text = $"Camera : (No camera selected)";
+         selPreset.DataSource = null;
+         selPreset.Items.Clear();
+         selPreset.Items.Add("No camera selected");
+         selPreset.SelectedIndex = 0;
+      }
+      protected override void OnVisibleChanged(EventArgs e)
+      {
+         base.OnVisibleChanged(e);
+         if (Visible)
+         {
+            // Bugfix due to DarkUI libary not invalidating the controls when the windows appears on screen.
+            selPreset.Invalidate();
+            selPlayback.Invalidate();
+         }
+      }
       private void Camera_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
       {
          UpdateCameraControl();
@@ -259,13 +340,54 @@ namespace Vao.Sample
          List<Preset> presets = CurrentCamera?.PresetList;
          if (presets != null)
          {
-            selPreset.DataSource = presets;
-            selPreset.DisplayMember = nameof(Preset.Name);
+            if (presets.Count > 0)
+            {
+               selPreset.DisplayMember = nameof(Preset.Name);
+               selPreset.DataSource = presets;               
+               selPreset.SelectedIndex = 1;
+            }
+            else
+            {
+               selPreset.DataSource = null;
+               selPreset.Items.Clear();
+               selPreset.Items.Add("No Presets");
+               selPreset.SelectedIndex = 0;
+            }
          }
          else
          {
             selPreset.DataSource = null;
-            selPreset.DisplayMember = nameof(Preset.Name);
+            selPreset.Items.Clear();
+            selPreset.Items.Add("No Presets");
+            selPreset.SelectedIndex = 0;
+         }
+      }
+
+      private void FillPlaybackSelectionList()
+      {
+         List<PlaybackInfo> playbackInfoList = CurrentCamera?.GetPlaybackInfoList(mVideoControl.ViewerID);
+
+         if (playbackInfoList != null)
+         {
+            if (playbackInfoList.Count > 0)
+            {
+               selPlayback.DataSource = playbackInfoList;
+               selPlayback.DisplayMember = nameof(PlaybackInfo.RecorderAddress);
+            }
+            else
+            {
+               selPlayback.DataSource = null;
+               selPlayback.Items.Clear();
+               selPlayback.Items.Add("No Recorders");
+               selPlayback.SelectedIndex = 0;
+            }
+         }
+         else
+         {
+            selPlayback.DataSource = null;
+            selPlayback.Items.Clear();
+            selPlayback.Items.Add("No Recorders");
+            selPlayback.SelectedIndex = 0;
          }
       }
 
@@ -305,16 +427,6 @@ namespace Vao.Sample
 
       private void StartRtspStream(string rtspUrl)
       {
-         // Add the control to the WinForm.
-         if (mVideoControl == null)
-         {
-            var libVlc = new VideoView();
-            pnlVideo.Controls.Add(libVlc);
-            libVlc.Dock = DockStyle.Fill;
-            libVlc.BringToFront();
-            mVideoControl = libVlc;
-         }
-
          // Stop the stream if active.
          StopRtspStream();
 
@@ -332,6 +444,19 @@ namespace Vao.Sample
          {
             var media = new Media(mLibVlc, uri);
             mVideoControl.MediaPlayer.Play(media);
+         }
+      }
+
+      private void InitVideoControl()
+      {
+         // Add the control to the WinForm.
+         if (mVideoControl == null)
+         {
+            var libVlc = new VideoViewWithViewerId();
+            pnlVideo.Controls.Add(libVlc);
+            libVlc.Dock = DockStyle.Fill;
+            libVlc.BringToFront();
+            mVideoControl = libVlc;
          }
       }
 
@@ -435,6 +560,76 @@ namespace Vao.Sample
          if (selPreset.SelectedItem is Preset preset)
          {
             preset.GotoPreset();
+         }
+      }
+      private void btnPlayPlayback_Click(object sender, EventArgs e)
+      {
+         if (selPlayback.SelectedItem is PlaybackInfo recording && recording != null)
+         {
+            string url = recording.PlaybackUrl;
+            if (!string.IsNullOrEmpty(url))
+            {
+               txtCurrentRtspUrl.Text = GetMaskedUrl(url);
+               StartRtspStream(url);
+               IsPlaybackStarted = true;
+               UpdateEnabled();
+            }
+         }
+      }
+      private void btnGotoTime_Click(object sender, EventArgs e)
+      {
+         if (selPlayback.SelectedItem is PlaybackInfo recording && recording != null)
+         {
+            if (dateTimePicker1.Text != null)
+            {
+               try 
+               {
+                  DateTime dateTimeObject = DateTime.ParseExact(dateTimePicker1.Text, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+                  string startTimeParameter = $"?start={dateTimeObject.ToString("yyyyMMddHHmmss")}";
+                  string url = recording.PlaybackUrl;
+
+                  if (!string.IsNullOrEmpty(url))
+                  {
+                     string urlWithStartTime = url + startTimeParameter;
+                     txtCurrentRtspUrl.Text = GetMaskedUrl(url);
+                     StartRtspStream(urlWithStartTime);
+                     IsPlaybackStarted = true;
+                     UpdateEnabled();
+                  }
+               }
+               catch (Exception)
+               {
+               }
+            }
+         }
+      }
+
+      private void btnStopPlayback_Click(object sender, EventArgs e)
+      {
+         IsStared = false;
+         StopRtspStream();
+         SelectCamera(CurrentCamera.ComponentNumber, chkPreferSubChannel.Checked ? 2 : 1);
+         IsStared = true;
+         IsPlaybackStarted = false;
+         UpdateEnabled();
+      }
+
+      private void selPlayback_SelectedIndexChanged(object sender, EventArgs e)
+      {
+         if (selPlayback.SelectedItem is PlaybackInfo recording && recording != null)
+         {
+            try
+            {
+               TimeSpan timeSpan = XmlConvert.ToTimeSpan(recording.RecordingLimit);
+               dateTimePicker1.MinDate = DateTime.UtcNow.Add(-timeSpan);
+               dateTimePicker1.MaxDate = DateTime.UtcNow;
+
+               dateTimePicker1.Invalidate();
+               dateTimePicker1.Update();
+            }
+            catch (Exception)
+            {
+            }
          }
       }
    }
