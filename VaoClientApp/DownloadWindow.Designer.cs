@@ -132,6 +132,7 @@ namespace Vao.Sample
          this.txtFTPPassword.PasswordChar = '*';
          this.txtFTPPassword.Size = new System.Drawing.Size(136, 20);
          this.txtFTPPassword.TabIndex = 7;
+         this.txtFTPPassword.TextChanged += new System.EventHandler(this.txtFTPPassword_TextChanged);
          // 
          // lblPassword
          // 
@@ -164,6 +165,7 @@ namespace Vao.Sample
          this.txtFTPUser.Name = "txtFTPUser";
          this.txtFTPUser.Size = new System.Drawing.Size(136, 20);
          this.txtFTPUser.TabIndex = 5;
+         this.txtFTPUser.TextChanged += new System.EventHandler(this.txtFTPUser_TextChanged);
          // 
          // grpDownloadPath
          // 
@@ -506,6 +508,7 @@ namespace Vao.Sample
          this.ResumeLayout(false);
 
       }
+
 
 
 

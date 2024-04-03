@@ -48,6 +48,7 @@ namespace Vao.Sample
          {
             mIsDownloadPathSet = value;
             UpdateEnabled();
+            UpdateEnabledDownloadButton();
          }
       }
 
@@ -70,6 +71,7 @@ namespace Vao.Sample
          FillCameraSelectionList();
          LoadSettings();
          UpdateEnabled();
+         UpdateEnabledDownloadButton();
          // Updates the title bar to dark.
          DarkModeHelper.EnableImmersiveDarkMode(Handle);
       }
@@ -89,7 +91,6 @@ namespace Vao.Sample
          startTimePicker.Enabled = IsDownloadPathSet;
          selDuration.Enabled = IsDownloadPathSet;
          txtRecorderAddress.Enabled = IsDownloadPathSet;
-         btnDownloadRequest.Enabled = IsDownloadPathSet;
       }
 
       /// <summary>
@@ -205,6 +206,12 @@ namespace Vao.Sample
             ConnectToFtpServer(recorderAddress, downloadItem, e);
          }
 
+         if (!IsFtpConnected)
+         {
+            // Was unable to connect to ftp server.
+            return;
+         }
+
          if (File.Exists($@"{txtDownloadPath.Text}\{downloadName}.{fileType}"))
          {
             for (int i = 1; ; ++i)
@@ -221,6 +228,7 @@ namespace Vao.Sample
 
          try
          {
+            WriteMessageLog("FTP", $"Downloading {fileId} from FTP server {recorderAddress}", LogLevel.Notice);
             ftpStatus = mFTPClient.DownloadFile($@"{txtDownloadPath.Text}\{downloadName}.{fileType}", $"{fileId}");
             if (ftpStatus.IsSuccess())
             {
@@ -242,7 +250,10 @@ namespace Vao.Sample
          }
          catch (FluentFTP.Exceptions.FtpException ex)
          {
-            WriteMessageLog("FTP", ex.Message, LogLevel.Error);
+            if (ex.InnerException != null)
+               WriteMessageLog("FTP", ex.InnerException.Message, LogLevel.Error);
+            else
+               WriteMessageLog("FTP", ex.Message, LogLevel.Error);
          }
       }
 
@@ -325,14 +336,20 @@ namespace Vao.Sample
 
          try
          {
-            mFTPClient.AutoConnect();
+            WriteMessageLog("FTP", $"Connecting to FTP server {recorderAddress}", LogLevel.Notice);
+            mFTPClient.Connect();
             IsFtpConnected = true;
             return true;
          }
          catch (FluentFTP.Exceptions.FtpAuthenticationException ex)
          {
             downloadItem.Text = $"{e.StatusMessage.DownloadId} - Connecting to Ftp server failed - {DateTime.Now:HH:mm:ss}";
-            WriteMessageLog("FTP", ex.Message, LogLevel.Error);
+            
+            if (ex.InnerException != null)
+               WriteMessageLog("FTP", ex.InnerException.Message, LogLevel.Error);
+            else
+               WriteMessageLog("FTP", ex.Message, LogLevel.Error);
+
             return false;
          }
       }
@@ -346,7 +363,11 @@ namespace Vao.Sample
          }
          catch (FluentFTP.Exceptions.FtpException ex)
          {
-            WriteMessageLog("FTP", ex.Message, LogLevel.Error);
+            if (ex.InnerException != null)
+               WriteMessageLog("FTP", ex.InnerException.Message, LogLevel.Error);
+            else
+               WriteMessageLog("FTP", ex.Message, LogLevel.Error);
+
          }
       }
 
@@ -460,6 +481,28 @@ namespace Vao.Sample
       private void btnClearDownloadMessages_Click(object sender, EventArgs e)
       {
          lstDownloadMessages.Items.Clear();  
+      }
+
+
+      private void txtFTPUser_TextChanged(object sender, EventArgs e)
+      {
+         UpdateEnabledDownloadButton();
+      }
+      private void txtFTPPassword_TextChanged(object sender, EventArgs e)
+      {
+          UpdateEnabledDownloadButton();  
+      }
+
+      private void UpdateEnabledDownloadButton()
+     {
+         if (string.IsNullOrEmpty(txtFTPPassword.Text) || string.IsNullOrEmpty(txtFTPUser.Text))
+         {
+            btnDownloadRequest.Enabled = false;
+         }
+         else
+         {
+            btnDownloadRequest.Enabled = IsDownloadPathSet;
+         }
       }
    }
 }
