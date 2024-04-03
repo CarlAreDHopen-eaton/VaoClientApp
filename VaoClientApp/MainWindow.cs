@@ -18,12 +18,16 @@ namespace Vao.Sample
       private bool mIsCameraSelected = false;
       private bool mIsPlaybackStarted = false;
       private bool mApiSupportsPlayback = false;
+
       private VaoClient moVaoClient;
       private VideoViewWithViewerId mVideoControl;
       private Camera mCurrentCamera;
       private Button mCurrentCameraButton;
       private LibVLC mLibVlc;
       private ToolTip moToolTip;
+
+      public VaoClient VaoClient
+      {  get { return moVaoClient; } }
 
       public bool IsStared
       {
@@ -140,6 +144,9 @@ namespace Vao.Sample
          if (!string.IsNullOrEmpty(Settings.Default.ApiPort))
             txtPort.Text = Settings.Default.ApiPort;
 
+         if (!string.IsNullOrEmpty(Settings.Default.Password))
+            txtPassword.Text = Settings.Default.Password;
+
          // Select password input control after loading settings.
          txtPassword.Select();
       }
@@ -149,6 +156,7 @@ namespace Vao.Sample
          Settings.Default.Host1 = txtHost.Text;
          Settings.Default.User = txtUser.Text;
          Settings.Default.ApiPort = txtPort.Text;
+         Settings.Default.Password = txtPassword.Text;
          Settings.Default.Save();
       }
 
@@ -173,6 +181,7 @@ namespace Vao.Sample
          txtPort.Enabled = !IsStared;
          txtUser.Enabled = !IsStared;
          chkSecure.Enabled = !IsStared;
+         btnDownload.Enabled = IsStared && ApiSupportsPlayback;
 
          UpdateCameraControl();
       }
@@ -234,7 +243,12 @@ namespace Vao.Sample
             var strLevel = level.ToString();
             var strMsg = $"{strTime} [{strLevel}] - {strSource} - {strMessage}";
             dlvi.Text = strMsg;
-            lstMessages.Items.Add(dlvi);
+
+            if (strMessage != "drawable Warning: unsupported control query 3")
+            {
+               lstMessages.Items.Add(dlvi);
+            }
+        
 
          }
       }
@@ -668,6 +682,16 @@ namespace Vao.Sample
             catch (Exception)
             {
             }
+         }
+      }
+
+      private void btnOpenDownloadWindow_Click(object sender, EventArgs e)
+      {
+         using (DownloadWindow downloadWindow = new DownloadWindow(VaoClient))
+         {
+            downloadWindow.StartPosition = FormStartPosition.CenterParent;
+            downloadWindow.Icon = this.Icon;
+            downloadWindow.ShowDialog(this);
          }
       }
    }

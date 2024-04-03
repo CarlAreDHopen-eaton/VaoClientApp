@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using RestSharp;
 using Vao.Client.Components;
+using Newtonsoft.Json;
 
 namespace Vao.Client.Utility
 {
@@ -56,7 +57,7 @@ namespace Vao.Client.Utility
          Contracts.JsonViewerIdObject jsonViewerId = new Contracts.JsonViewerIdObject();
          jsonViewerId.viewerId = viewerId.ToString();
 
-         string serializedJsonViewerId = Json.Net.JsonNet.Serialize(jsonViewerId);
+         string serializedJsonViewerId = JsonConvert.SerializeObject(jsonViewerId);
          request.AddJsonBody(serializedJsonViewerId);
 
          RestResponse response = client.Execute(request);
@@ -69,6 +70,34 @@ namespace Vao.Client.Utility
 
          List<PlaybackInfo> playbackInfoList = JsonParser.ParsePlaybackInfoList(strResponse, vaoClient);
          return playbackInfoList;
+      }
+
+      internal static DownloadInfo RequestVaoDownloadInfo(this VaoClient vaoClient, Camera ownerCamera, string recorderAddress, int streamNo, string startTime, string duration)
+      {
+         RestClient client = vaoClient.GetRestClient();
+
+         // ReSharper disable once RedundantArgumentDefaultValue
+         RestRequest request = new RestRequest($"inputs/{ownerCamera.ComponentNumber}/downloads", Method.Post);
+
+         Contracts.JsonDownloadRequestObject jsonRequestobject = new Contracts.JsonDownloadRequestObject();
+         jsonRequestobject.recorderAddress = recorderAddress;
+         jsonRequestobject.stream = streamNo;
+         jsonRequestobject.start = startTime;
+         jsonRequestobject.duration = duration;
+
+         string serializedJsonDownloadRequest = JsonConvert.SerializeObject(jsonRequestobject);
+         request.AddJsonBody(serializedJsonDownloadRequest);
+
+         RestResponse response = client.Execute(request);
+         string strResponse = vaoClient.ValidateResponseContent(response);
+         if (strResponse == null)
+         {
+            // Empty list.
+            return null;
+         }
+
+         DownloadInfo downloadInfo = JsonParser.ParseDownloadResponse(strResponse, vaoClient);
+         return downloadInfo;
       }
 
       internal static Monitor RequestVaoMonitor(this VaoClient vaoClient, int iVideoOutput)
@@ -99,16 +128,6 @@ namespace Vao.Client.Utility
          return vaoClient.ValidateResponseContent(response);
       }
 
-      internal static string GetVaoStatusMessages(this VaoClient vaoClient, int iMinutesBeforeNow = 1)
-      {
-         RestClient client = vaoClient.GetRestClient();
-         RestRequest request = new RestRequest("status");
-         request.AddHeader("If-Modified-Since", DateTime.Now.AddMinutes(-iMinutesBeforeNow).ToString(CultureInfo.InvariantCulture));
-         RestResponse response = client.Execute(request);
-
-         return vaoClient.ValidateResponseContent(response);
-      }
-
       internal static ApiVersion GetVaoApiVersion(this VaoClient vaoClient)
       {
          RestClient client = vaoClient.GetRestClient();
@@ -129,7 +148,9 @@ namespace Vao.Client.Utility
       {
          RestClient client = vaoClient.GetRestClient();
          RestRequest request = new RestRequest("status");
-         request.AddHeader("If-Modified-Since", dateTime.ToString("r"));
+         dateTime = dateTime.AddSeconds(1);
+         string formattedDateTime = dateTime.ToString("r");
+         request.AddHeader("If-Modified-Since", formattedDateTime);
          RestResponse response = client.Execute(request);
 
          return vaoClient.ValidateResponseContent(response);
@@ -152,7 +173,7 @@ namespace Vao.Client.Utility
          // Set focus
          jsonMoveTarget.focus = focus;
 
-         string serializedJsonMoveTarget = Json.Net.JsonNet.Serialize(jsonMoveTarget);
+         string serializedJsonMoveTarget = JsonConvert.SerializeObject(jsonMoveTarget);
          request.AddJsonBody(serializedJsonMoveTarget);
 
          RestResponse response = client.Execute(request);

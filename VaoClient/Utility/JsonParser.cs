@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Json.Net;
+using Newtonsoft.Json;
 using Vao.Client.Components;
 using Vao.Client.Contracts;
 
@@ -21,7 +21,7 @@ namespace Vao.Client.Utility
       {
          if (!string.IsNullOrEmpty(strJson))
          {
-            List<JsonCameraObject> list = JsonNet.Deserialize<List<JsonCameraObject>>(strJson);
+            List<JsonCameraObject> list = JsonConvert.DeserializeObject<List<JsonCameraObject>>(strJson);
             List<Camera> returnList = new List<Camera>();
             foreach (JsonCameraObject camera in list)
             {
@@ -42,13 +42,13 @@ namespace Vao.Client.Utility
       {
          if (!string.IsNullOrEmpty(strJson))
          {
-            List<JsonStatusMessage> list = JsonNet.Deserialize<List<JsonStatusMessage>>(strJson);
+            List<JsonStatusMessage> list = JsonConvert.DeserializeObject<List<JsonStatusMessage>>(strJson);
             List<StatusMessage> returnList = new List<StatusMessage>();
             foreach (JsonStatusMessage statusMessage in list)
             {
                if (statusMessage.description.Equals("no entries", StringComparison.InvariantCultureIgnoreCase))
-                  continue;
-               
+                  continue;             
+
                returnList.Add(new StatusMessage(statusMessage, vaoClient));
             }
             return returnList;
@@ -60,7 +60,7 @@ namespace Vao.Client.Utility
       {
          if (!string.IsNullOrEmpty(strJson))
          {
-            JsonVideoOutput jsonObject = JsonNet.Deserialize<JsonVideoOutput>(strJson);
+            JsonVideoOutput jsonObject = JsonConvert.DeserializeObject<JsonVideoOutput>(strJson);
             Camera camera = vaoClient.GetCamera(jsonObject.inputId);
             Monitor monitor = new Monitor(iVideoOutput, vaoClient, camera);
             return monitor;
@@ -78,7 +78,7 @@ namespace Vao.Client.Utility
       {
          if (!string.IsNullOrEmpty(strJson))
          {
-            JsonCameraObject oCameraObject = JsonNet.Deserialize<JsonCameraObject>(strJson);
+            JsonCameraObject oCameraObject = JsonConvert.DeserializeObject<JsonCameraObject>(strJson);
             return new Camera(oCameraObject.inputId, oCameraObject, vaoClient);
          }
 
@@ -96,7 +96,7 @@ namespace Vao.Client.Utility
       {
          if (!string.IsNullOrEmpty(strJson))
          {
-            List<JsonPresetObject> list = JsonNet.Deserialize<List<JsonPresetObject>>(strJson);
+            List<JsonPresetObject> list = JsonConvert.DeserializeObject<List<JsonPresetObject>>(strJson);
             List<Preset> returnList = new List<Preset>();
             foreach (JsonPresetObject preset in list)
             {
@@ -117,7 +117,7 @@ namespace Vao.Client.Utility
       {
          if (!string.IsNullOrEmpty(strJson))
          {
-            List<JsonPlaybackInfoObject> list = JsonNet.Deserialize<List<JsonPlaybackInfoObject>>(strJson);
+            List<JsonPlaybackInfoObject> list = JsonConvert.DeserializeObject<List<JsonPlaybackInfoObject>>(strJson);
             List<PlaybackInfo> returnList = new List<PlaybackInfo>();
             foreach (JsonPlaybackInfoObject playbackInfo in list)
             {
@@ -125,6 +125,23 @@ namespace Vao.Client.Utility
             }
             return returnList;
          }
+         return null;
+      }
+
+      /// <summary>
+      /// Parses the JSON message text to a list of playback info message objects.
+      /// </summary>
+      /// <param name="strJson">The JSON formatted message text</param>
+      /// <param name="vaoClient">The client that received the message</param>
+      /// <returns>A list of playback info message objects</returns>
+      internal static DownloadInfo ParseDownloadResponse(string strJson, VaoClient vaoClient)
+      {
+         if (!string.IsNullOrEmpty(strJson))
+         {
+            JsonDownloadResponseObject downloadResponseObject = JsonConvert.DeserializeObject<JsonDownloadResponseObject>(strJson);
+            return new DownloadInfo(downloadResponseObject, vaoClient);
+         }
+
          return null;
       }
 
@@ -138,7 +155,7 @@ namespace Vao.Client.Utility
       {
          if (!string.IsNullOrEmpty(strJson))
          {
-            JsonApiVersion apiVersion = JsonNet.Deserialize<JsonApiVersion>(strJson);
+            JsonApiVersion apiVersion = JsonConvert.DeserializeObject<JsonApiVersion>(strJson);
             return new ApiVersion(apiVersion, vaoClient);
          }
 
