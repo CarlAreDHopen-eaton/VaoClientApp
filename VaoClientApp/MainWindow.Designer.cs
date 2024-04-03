@@ -31,7 +31,7 @@
          System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
          this.btnConnect = new DarkUI.Controls.DarkButton();
          this.btnDisconnect = new DarkUI.Controls.DarkButton();
-         this.chkSecure = new DarkUI.Controls.DarkCheckBox();
+         this.chkSecure = new System.Windows.Forms.CheckBox();
          this.lblHost = new System.Windows.Forms.Label();
          this.txtHost = new DarkUI.Controls.DarkTextBox();
          this.txtPort = new DarkUI.Controls.DarkTextBox();
@@ -49,7 +49,7 @@
          this.lstMessages = new DarkUI.Controls.DarkListView();
          this.btnClearMessages = new DarkUI.Controls.DarkButton();
          this.grpVideoControl = new System.Windows.Forms.Panel();
-         this.chkPreferSubChannel = new DarkUI.Controls.DarkCheckBox();
+         this.chkPreferSubChannel = new System.Windows.Forms.CheckBox();
          this.splitMainVerticalSplit = new System.Windows.Forms.SplitContainer();
          this.grpSelectPlayback = new DarkUI.Controls.DarkSectionPanel();
          this.btnStopPlayback = new DarkUI.Controls.DarkButton();
@@ -115,6 +115,7 @@
          this.chkSecure.AutoSize = true;
          this.chkSecure.Checked = true;
          this.chkSecure.CheckState = System.Windows.Forms.CheckState.Checked;
+         this.chkSecure.ForeColor = System.Drawing.SystemColors.Control;
          this.chkSecure.Location = new System.Drawing.Point(21, 134);
          this.chkSecure.Name = "chkSecure";
          this.chkSecure.Size = new System.Drawing.Size(60, 17);
@@ -249,6 +250,7 @@
          // 
          // pnlCameraSelectFlowPanel
          // 
+         this.pnlCameraSelectFlowPanel.AutoScroll = true;
          this.pnlCameraSelectFlowPanel.BackColor = System.Drawing.SystemColors.WindowFrame;
          this.pnlCameraSelectFlowPanel.Dock = System.Windows.Forms.DockStyle.Fill;
          this.pnlCameraSelectFlowPanel.Location = new System.Drawing.Point(1, 25);
@@ -361,7 +363,7 @@
          // 
          // grpSelectPlayback
          // 
-         this.grpSelectPlayback.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+         this.grpSelectPlayback.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
          this.grpSelectPlayback.Controls.Add(this.btnStopPlayback);
          this.grpSelectPlayback.Controls.Add(this.dateTimePicker1);
@@ -410,10 +412,11 @@
          // 
          this.selPlayback.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+         this.selPlayback.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
          this.selPlayback.FormattingEnabled = true;
          this.selPlayback.Location = new System.Drawing.Point(9, 38);
          this.selPlayback.Name = "selPlayback";
-         this.selPlayback.Size = new System.Drawing.Size(218, 24);
+         this.selPlayback.Size = new System.Drawing.Size(218, 21);
          this.selPlayback.TabIndex = 11;
          this.selPlayback.SelectedIndexChanged += new System.EventHandler(this.selPlayback_SelectedIndexChanged);
          // 
@@ -443,10 +446,11 @@
          // 
          this.selPreset.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+         this.selPreset.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
          this.selPreset.FormattingEnabled = true;
          this.selPreset.Location = new System.Drawing.Point(9, 38);
          this.selPreset.Name = "selPreset";
-         this.selPreset.Size = new System.Drawing.Size(171, 24);
+         this.selPreset.Size = new System.Drawing.Size(171, 21);
          this.selPreset.TabIndex = 11;
          // 
          // btnGotoPreset
@@ -645,7 +649,7 @@
 
       private DarkUI.Controls.DarkButton btnConnect;
       private DarkUI.Controls.DarkButton btnDisconnect;
-      private DarkUI.Controls.DarkCheckBox chkSecure;
+      private System.Windows.Forms.CheckBox chkSecure;
       private System.Windows.Forms.Label lblHost;
       private DarkUI.Controls.DarkTextBox txtHost;
       private DarkUI.Controls.DarkTextBox txtPort;
@@ -668,7 +672,7 @@
       private DarkUI.Controls.DarkButton btnPanLeft;
       private DarkUI.Controls.DarkButton btnTiltDown;
       private DarkUI.Controls.DarkButton btnTiltUp;
-      private DarkUI.Controls.DarkCheckBox chkPreferSubChannel;
+      private System.Windows.Forms.CheckBox chkPreferSubChannel;
       private DarkUI.Controls.DarkButton btnZoomOut;
       private DarkUI.Controls.DarkButton btnZoomIn;
       private System.Windows.Forms.Label lblCurrentCamera;
