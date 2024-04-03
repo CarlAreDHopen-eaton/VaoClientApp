@@ -411,6 +411,11 @@ namespace Vao.Client.Components
          }
       }
 
+      public override string ToString()
+      {
+         return Name;
+      }
+
       #endregion
    }
 }

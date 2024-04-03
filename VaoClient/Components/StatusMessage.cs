@@ -1,7 +1,10 @@
-﻿using System;
+﻿using FluentFTP.Helpers;
+using System;
+using System.Linq;
 using Vao.Client.Components.Interfaces;
 using Vao.Client.Contracts;
 using Vao.Client.Enum;
+using static System.Net.WebRequestMethods;
 
 namespace Vao.Client.Components
 {
@@ -57,6 +60,7 @@ namespace Vao.Client.Components
       {
          get
          {
+            //TODO Make case insensitive.
             // Session
             if (Message.Contains("REST Session started"))
                return MessageType.SessionStart;
@@ -81,6 +85,15 @@ namespace Vao.Client.Components
             if (Message.Contains("Camera data connection lost"))
                return MessageType.CameraDataLost;
 
+            // Video extraction
+            string statusDescription = mStatusMessage.description.ToLower();
+            if (statusDescription.Contains("extracted video available for ftp download"))
+               return MessageType.ExtractedVideoReadyForDownload;
+            if (statusDescription.Contains("with recording is offline"))
+               return MessageType.HvrWithRecordingIsOffline;
+            if (statusDescription.Contains("no video in requested download"))
+               return MessageType.NoVideoInRequestedDownload;
+
             // Unknown messages.
             return MessageType.Unknown;
          }
@@ -93,7 +106,7 @@ namespace Vao.Client.Components
       { 
          get 
          { 
-            return mStatusMessage.description; 
+            return mStatusMessage.description;
          } 
       }
 
@@ -106,6 +119,74 @@ namespace Vao.Client.Components
          get 
          { 
             return mStatusMessage.timestamp; 
+         }
+      }
+
+      /// <summary>
+      /// The download id (guid) for download status messages.
+      /// <c>Guid.Empty</c> if not available.
+      /// </summary>
+      public Guid DownloadId
+      { 
+         get
+         {
+            string id = mStatusMessage.downloadNotification?.downloadId ?? null;
+            if (id != null)
+            {
+               if (Guid.TryParse(id, out Guid guid))
+               { 
+                  return guid;
+               }
+            }
+            return Guid.Empty;
+         } 
+      }
+
+      /// <summary>
+      /// The download url for ftp download of video.
+      /// </summary>
+      public string DownloadUrl
+      {
+         get
+         {
+            string downloadUrl = mStatusMessage.downloadNotification?.downloadUrl ?? null;
+            if (downloadUrl != null)
+            { 
+               return downloadUrl;
+            }
+            return null;
+         }
+      }
+
+      /// <summary>
+      /// The suggested name for the downloaded file in download status messages.
+      /// </summary>
+      public string DownloadName
+      {
+         get
+         {
+            string downloadName = mStatusMessage.downloadNotification?.name ?? null;
+            if (downloadName != null)
+            {
+               return downloadName;
+            }
+            return null;
+         }
+      }
+
+      /// <summary>
+      /// The recorder address for the download.
+      /// </summary>
+      public string DownloadRecorderAddress
+      {
+         get
+         {
+            string downloadRecorderAddress = mStatusMessage.downloadNotification?.recorderAddress ?? null;
+            if (downloadRecorderAddress != null)
+            {
+               return downloadRecorderAddress;
+            }
+            return null;
          }
       }
 

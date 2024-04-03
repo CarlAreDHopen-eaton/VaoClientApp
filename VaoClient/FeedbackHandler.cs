@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using Vao.Client.Components;
+using Vao.Client.Contracts;
 using Vao.Client.Enum;
 
 namespace Vao.Client
@@ -31,7 +33,7 @@ namespace Vao.Client
 
       private void StatusCheckThread(object obj)
       {
-         DateTime lastCheck = DateTime.Now.AddDays(-1);
+         DateTime lastCheck = new DateTime(1980, 1, 1);
          while (!mStopStatusCheckThread.WaitOne(1000))
          {
             string rawMessages = mClient.GetStatusMessages(lastCheck);
@@ -44,11 +46,13 @@ namespace Vao.Client
                   {
                      HandleMessage(message);
                      RaiseOnMessageEvents(message);
+                     
+                     DateTime.TryParse(message.Timestamp, out DateTime checkDate);
+                     if (checkDate > lastCheck)
+                        lastCheck = checkDate;
                   }
                }
             }
-
-            lastCheck = DateTime.Now;
          }
       }
 
@@ -86,7 +90,7 @@ namespace Vao.Client
          try
          {
             string strMessage = $"{message.Timestamp} : [{message.Level}][{message.Type}] {message.Message}";
-            mClient.RaiseOnMessage(message.Level, strMessage);
+            mClient.RaiseOnMessage(message.Level, strMessage, message);
          }
          catch
          {

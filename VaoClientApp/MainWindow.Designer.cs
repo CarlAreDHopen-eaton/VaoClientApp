@@ -1,4 +1,6 @@
-﻿namespace Vao.Sample
+﻿using System;
+
+namespace Vao.Sample
 {
    partial class MainWindow
    {
@@ -51,6 +53,8 @@
          this.grpVideoControl = new System.Windows.Forms.Panel();
          this.chkPreferSubChannel = new DarkUI.Controls.DarkCheckBox();
          this.splitMainVerticalSplit = new System.Windows.Forms.SplitContainer();
+         this.grpDownload = new DarkUI.Controls.DarkSectionPanel();
+         this.btnDownload = new DarkUI.Controls.DarkButton();
          this.grpSelectPlayback = new DarkUI.Controls.DarkSectionPanel();
          this.btnStopPlayback = new DarkUI.Controls.DarkButton();
          this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
@@ -80,6 +84,7 @@
          this.splitMainVerticalSplit.Panel1.SuspendLayout();
          this.splitMainVerticalSplit.Panel2.SuspendLayout();
          this.splitMainVerticalSplit.SuspendLayout();
+         this.grpDownload.SuspendLayout();
          this.grpSelectPlayback.SuspendLayout();
          this.grpSelectPreset.SuspendLayout();
          this.grpCameraControl.SuspendLayout();
@@ -174,7 +179,7 @@
          this.pnlVideo.BackColor = System.Drawing.Color.Black;
          this.pnlVideo.Location = new System.Drawing.Point(1, 1);
          this.pnlVideo.Name = "pnlVideo";
-         this.pnlVideo.Size = new System.Drawing.Size(974, 548);
+         this.pnlVideo.Size = new System.Drawing.Size(974, 741);
          this.pnlVideo.TabIndex = 0;
          // 
          // txtUser
@@ -230,21 +235,20 @@
          this.txtCurrentRtspUrl.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
          this.txtCurrentRtspUrl.Enabled = false;
          this.txtCurrentRtspUrl.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-         this.txtCurrentRtspUrl.Location = new System.Drawing.Point(3, 555);
+         this.txtCurrentRtspUrl.Location = new System.Drawing.Point(3, 748);
          this.txtCurrentRtspUrl.Name = "txtCurrentRtspUrl";
          this.txtCurrentRtspUrl.Size = new System.Drawing.Size(845, 20);
          this.txtCurrentRtspUrl.TabIndex = 1;
          // 
          // grpCameraSelection
          // 
-         this.grpCameraSelection.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+         this.grpCameraSelection.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
          this.grpCameraSelection.Controls.Add(this.pnlCameraSelectFlowPanel);
          this.grpCameraSelection.Location = new System.Drawing.Point(6, 444);
          this.grpCameraSelection.Name = "grpCameraSelection";
          this.grpCameraSelection.SectionHeader = "Camera Selection";
-         this.grpCameraSelection.Size = new System.Drawing.Size(238, 119);
+         this.grpCameraSelection.Size = new System.Drawing.Size(238, 250);
          this.grpCameraSelection.TabIndex = 2;
          // 
          // pnlCameraSelectFlowPanel
@@ -253,7 +257,7 @@
          this.pnlCameraSelectFlowPanel.Dock = System.Windows.Forms.DockStyle.Fill;
          this.pnlCameraSelectFlowPanel.Location = new System.Drawing.Point(1, 25);
          this.pnlCameraSelectFlowPanel.Name = "pnlCameraSelectFlowPanel";
-         this.pnlCameraSelectFlowPanel.Size = new System.Drawing.Size(236, 93);
+         this.pnlCameraSelectFlowPanel.Size = new System.Drawing.Size(236, 224);
          this.pnlCameraSelectFlowPanel.TabIndex = 0;
          // 
          // grpConnection
@@ -320,14 +324,14 @@
          this.grpVideoControl.ForeColor = System.Drawing.Color.White;
          this.grpVideoControl.Location = new System.Drawing.Point(0, 0);
          this.grpVideoControl.Name = "grpVideoControl";
-         this.grpVideoControl.Size = new System.Drawing.Size(975, 580);
+         this.grpVideoControl.Size = new System.Drawing.Size(975, 773);
          this.grpVideoControl.TabIndex = 0;
          // 
          // chkPreferSubChannel
          // 
          this.chkPreferSubChannel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
          this.chkPreferSubChannel.AutoSize = true;
-         this.chkPreferSubChannel.Location = new System.Drawing.Point(854, 556);
+         this.chkPreferSubChannel.Location = new System.Drawing.Point(854, 749);
          this.chkPreferSubChannel.Name = "chkPreferSubChannel";
          this.chkPreferSubChannel.Size = new System.Drawing.Size(118, 17);
          this.chkPreferSubChannel.TabIndex = 9;
@@ -345,6 +349,7 @@
          // splitMainVerticalSplit.Panel1
          // 
          this.splitMainVerticalSplit.Panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+         this.splitMainVerticalSplit.Panel1.Controls.Add(this.grpDownload);
          this.splitMainVerticalSplit.Panel1.Controls.Add(this.grpSelectPlayback);
          this.splitMainVerticalSplit.Panel1.Controls.Add(this.grpSelectPreset);
          this.splitMainVerticalSplit.Panel1.Controls.Add(this.grpCameraControl);
@@ -355,9 +360,30 @@
          // splitMainVerticalSplit.Panel2
          // 
          this.splitMainVerticalSplit.Panel2.Controls.Add(this.splitHorizontalVideoAndMessageSplit);
-         this.splitMainVerticalSplit.Size = new System.Drawing.Size(1226, 715);
+         this.splitMainVerticalSplit.Size = new System.Drawing.Size(1226, 908);
          this.splitMainVerticalSplit.SplitterDistance = 247;
          this.splitMainVerticalSplit.TabIndex = 0;
+         // 
+         // grpDownload
+         // 
+         this.grpDownload.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+         this.grpDownload.Controls.Add(this.btnDownload);
+         this.grpDownload.Location = new System.Drawing.Point(6, 834);
+         this.grpDownload.Name = "grpDownload";
+         this.grpDownload.SectionHeader = "Download Recording";
+         this.grpDownload.Size = new System.Drawing.Size(238, 62);
+         this.grpDownload.TabIndex = 5;
+         // 
+         // btnDownload
+         // 
+         this.btnDownload.Location = new System.Drawing.Point(68, 28);
+         this.btnDownload.Name = "btnDownload";
+         this.btnDownload.Padding = new System.Windows.Forms.Padding(5);
+         this.btnDownload.Size = new System.Drawing.Size(88, 28);
+         this.btnDownload.TabIndex = 10;
+         this.btnDownload.Text = "Download";
+         this.btnDownload.Click += new System.EventHandler(this.btnOpenDownloadWindow_Click);
          // 
          // grpSelectPlayback
          // 
@@ -368,7 +394,7 @@
          this.grpSelectPlayback.Controls.Add(this.btnGotoTime);
          this.grpSelectPlayback.Controls.Add(this.selPlayback);
          this.grpSelectPlayback.Controls.Add(this.btnPlayPlayback);
-         this.grpSelectPlayback.Location = new System.Drawing.Point(6, 581);
+         this.grpSelectPlayback.Location = new System.Drawing.Point(6, 700);
          this.grpSelectPlayback.Name = "grpSelectPlayback";
          this.grpSelectPlayback.SectionHeader = "Playback Selection";
          this.grpSelectPlayback.Size = new System.Drawing.Size(235, 128);
@@ -410,10 +436,11 @@
          // 
          this.selPlayback.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+         this.selPlayback.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
          this.selPlayback.FormattingEnabled = true;
          this.selPlayback.Location = new System.Drawing.Point(9, 38);
          this.selPlayback.Name = "selPlayback";
-         this.selPlayback.Size = new System.Drawing.Size(218, 24);
+         this.selPlayback.Size = new System.Drawing.Size(218, 21);
          this.selPlayback.TabIndex = 11;
          this.selPlayback.SelectedIndexChanged += new System.EventHandler(this.selPlayback_SelectedIndexChanged);
          // 
@@ -443,10 +470,11 @@
          // 
          this.selPreset.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+         this.selPreset.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
          this.selPreset.FormattingEnabled = true;
          this.selPreset.Location = new System.Drawing.Point(9, 38);
          this.selPreset.Name = "selPreset";
-         this.selPreset.Size = new System.Drawing.Size(171, 24);
+         this.selPreset.Size = new System.Drawing.Size(171, 21);
          this.selPreset.TabIndex = 11;
          // 
          // btnGotoPreset
@@ -603,8 +631,8 @@
          // splitHorizontalVideoAndMessageSplit.Panel2
          // 
          this.splitHorizontalVideoAndMessageSplit.Panel2.Controls.Add(this.grpMessages);
-         this.splitHorizontalVideoAndMessageSplit.Size = new System.Drawing.Size(975, 715);
-         this.splitHorizontalVideoAndMessageSplit.SplitterDistance = 580;
+         this.splitHorizontalVideoAndMessageSplit.Size = new System.Drawing.Size(975, 908);
+         this.splitHorizontalVideoAndMessageSplit.SplitterDistance = 773;
          this.splitHorizontalVideoAndMessageSplit.TabIndex = 0;
          // 
          // MainWindow
@@ -612,7 +640,7 @@
          this.AcceptButton = this.btnConnect;
          this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-         this.ClientSize = new System.Drawing.Size(1226, 715);
+         this.ClientSize = new System.Drawing.Size(1226, 908);
          this.Controls.Add(this.splitMainVerticalSplit);
          this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
          this.MinimumSize = new System.Drawing.Size(400, 200);
@@ -628,6 +656,7 @@
          this.splitMainVerticalSplit.Panel2.ResumeLayout(false);
          ((System.ComponentModel.ISupportInitialize)(this.splitMainVerticalSplit)).EndInit();
          this.splitMainVerticalSplit.ResumeLayout(false);
+         this.grpDownload.ResumeLayout(false);
          this.grpSelectPlayback.ResumeLayout(false);
          this.grpSelectPreset.ResumeLayout(false);
          this.grpCameraControl.ResumeLayout(false);
@@ -640,6 +669,8 @@
          this.ResumeLayout(false);
 
       }
+
+
 
       #endregion
 
@@ -686,6 +717,8 @@
       private DarkUI.Controls.DarkButton btnGotoTime;
       private System.Windows.Forms.DateTimePicker dateTimePicker1;
       private DarkUI.Controls.DarkButton btnStopPlayback;
+      private DarkUI.Controls.DarkSectionPanel grpDownload;
+      private DarkUI.Controls.DarkButton btnDownload;
    }
 }
 

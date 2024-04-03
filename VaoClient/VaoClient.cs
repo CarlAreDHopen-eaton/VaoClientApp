@@ -86,6 +86,20 @@ namespace Vao.Client
          }
          return cameras;
       }
+      /// <summary>
+      /// Gets download information for video download
+      /// </summary>
+      /// <param name="ownerCamera">The camera which the recording is from.</param>
+      /// <param name="recorderAddress">the HVR address.</param>
+      /// <param name="streamNo">The stream number (1 for Main channel and 2 for Sub channel).</param>
+      /// <param name="startTime">Start time of the video recording.</param>
+      /// <param name="duration">duartion of the video recording.</param>
+      /// <returns></returns>
+      public DownloadInfo GetDownloadInfo(Camera ownerCamera, string recorderAddress, int streamNo, string startTime, string duration)
+      {
+         DownloadInfo downloadInfo = this.RequestVaoDownloadInfo(ownerCamera, recorderAddress, streamNo, startTime, duration);
+         return downloadInfo;
+      }
 
       /// <summary>
       /// Gets a list of monitors.
@@ -168,9 +182,9 @@ namespace Vao.Client
 
       #region Internal Methods
 
-      internal void RaiseOnMessage(MessageLevel messageType, string message)
+      internal void RaiseOnMessage(MessageLevel messageType, string message, StatusMessage statusMessage)
       {
-         OnMessage?.Invoke(this, new MessageEventArgs(messageType, message));
+         OnMessage?.Invoke(this, new MessageEventArgs(messageType, message, statusMessage));
       }
 
       internal RestClient GetRestClient()
@@ -203,8 +217,16 @@ namespace Vao.Client
       {
          if (!response.IsSuccessful)
          {
-            string strMessage = response.ErrorException?.ToString() ?? response.ErrorMessage ?? $"Unknown connection error {response.StatusCode}";
-            RaiseOnMessage(MessageLevel.Error, strMessage);
+            string strMessage;
+            if (response.ErrorException != null)
+            {
+               strMessage = $"{response.ErrorException.Message} {response.StatusDescription}";
+            }
+            else
+            {
+               strMessage = response.ErrorMessage ?? $"Unknown connection error {response.StatusCode}";
+            }
+            RaiseOnMessage(MessageLevel.Error, strMessage, null);
             return null;
          }
          return response.Content;
@@ -233,7 +255,7 @@ namespace Vao.Client
 
       private void StartLoadAsync()
       {
-         RaiseOnMessage(MessageLevel.Info, "Async load of data started");
+         RaiseOnMessage(MessageLevel.Info, "Async load of data started", null);
 
          int iLoadDelay = 200;
          int iState = 0;
@@ -267,7 +289,7 @@ namespace Vao.Client
                         // Stop signaled
                         if (mStopLoadData.WaitOne(iLoadDelay))
                         {
-                           RaiseOnMessage(MessageLevel.Info, "Async load of data started");
+                           RaiseOnMessage(MessageLevel.Info, "Async load of data started", null);
                            return;
                         }
                      }
@@ -277,14 +299,14 @@ namespace Vao.Client
                   // TODO add additional loading.
                   break;
                default:
-                  RaiseOnMessage(MessageLevel.Info, "Async load of data completed");
+                  RaiseOnMessage(MessageLevel.Info, "Async load of data completed", null);
                   return;
 
             }
 
             if (mStopLoadData.WaitOne(iLoadDelay))
             {
-               RaiseOnMessage(MessageLevel.Info, "Async load of data aborted");
+               RaiseOnMessage(MessageLevel.Info, "Async load of data aborted", null);
                return;
             }
 
