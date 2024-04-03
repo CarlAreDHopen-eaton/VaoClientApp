@@ -45,5 +45,20 @@
       /// Restored the data communication between the VMS system and the camera.
       /// </summary>
       CameraDataRestored,
+      /// <summary>
+      /// The extracted video is ready for download
+      /// </summary>
+      ExtractedVideoReadyForDownload,
+      /// <summary>
+      /// The HVR with recording is currently offline
+      /// </summary>
+      HvrWithRecordingIsOffline,
+      /// <summary>
+      /// There is no video in the requested download
+      /// </summary>
+      NoVideoInRequestedDownload
+
+
+
    }
 }
