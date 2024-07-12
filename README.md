@@ -15,11 +15,10 @@ The application allows the user to select and control cameras. The videostreams 
 - Camera Renaming
 - Preset Positions
 - Focus
-
-# In developent
-- Playback (Requires API version 1.1 or later)
+- Video Playback (Requires API version 1.1 or later)
+- Video Download (Requires API version 1.1 or later)
   
-# Todo
+# Future:
 - Support for multiple API servers (alernate between servers)
 - Wipe / WipeWash
 
