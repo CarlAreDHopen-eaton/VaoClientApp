@@ -149,7 +149,7 @@ namespace Vao.Client.Utility
          RestClient client = vaoClient.GetRestClient();
          RestRequest request = new RestRequest("status");
          dateTime = dateTime.AddSeconds(1);
-         string formattedDateTime = dateTime.ToString("r");
+         string formattedDateTime = dateTime.ToUniversalTime().ToString("r");
          request.AddHeader("If-Modified-Since", formattedDateTime);
          RestResponse response = client.Execute(request);
 
