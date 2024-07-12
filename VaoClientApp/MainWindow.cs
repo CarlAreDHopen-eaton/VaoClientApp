@@ -189,6 +189,10 @@ namespace Vao.Sample
       private void btnConnect_Click(object sender, EventArgs e)
       {
          SaveSettings();
+
+         if (!ValidateCanConnect())
+            return;
+
          IsStared = true;
          moVaoClient = new VaoClient
          {
@@ -215,8 +219,39 @@ namespace Vao.Sample
          }
          ClearPresetDropdown();
          UpdateEnabled();
+      }
 
+      /// <summary>
+      /// Checks if it will be possible to try to connect.
+      /// </summary>
+      /// <returns></returns>
+      private bool ValidateCanConnect()
+      {
+         if (string.IsNullOrWhiteSpace(txtHost.Text))
+         {
+            WriteMessageLog("Application", "Missing host name", LogLevel.Error);
+            return false;
+         }
 
+         if (string.IsNullOrWhiteSpace(txtPassword.Text))
+         {
+            WriteMessageLog("Application", "Missing host password", LogLevel.Error);
+            return false; 
+         }
+
+         if (string.IsNullOrWhiteSpace(txtUser.Text))
+         {
+            WriteMessageLog("Application", "Missing user name", LogLevel.Error);
+            return false;
+         }
+
+         if (string.IsNullOrWhiteSpace(txtPort.Text))
+         {
+            WriteMessageLog("Application", "Missing port", LogLevel.Error);
+            return false;
+         }
+
+         return true;
       }
 
       /// <summary>
