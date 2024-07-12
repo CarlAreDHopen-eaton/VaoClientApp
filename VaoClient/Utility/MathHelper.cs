@@ -1,4 +1,6 @@
-﻿namespace Vao.Client.Utility
+﻿using System.Text.Encodings.Web;
+
+namespace Vao.Client.Utility
 {
    public static class MathHelper
    {
