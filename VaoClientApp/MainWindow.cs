@@ -5,7 +5,6 @@ using System.Globalization;
 using System.Windows.Forms;
 using System.Xml;
 using LibVLCSharp.Shared;
-using LibVLCSharp.WinForms;
 using Vao.Client;
 using Vao.Client.Components;
 using Vao.Sample.Properties;
@@ -280,6 +279,10 @@ namespace Vao.Sample
          }
          else
          {
+            // Since this is async we might get here after the message contron is disposed. (When application is closing)
+            if (lstMessages.IsDisposed == true)
+               return;
+
             var dlvi = new DarkUI.Controls.DarkListItem();
             var strTime = DateTime.Now.ToString(CultureInfo.InvariantCulture);
             var strLevel = level.ToString();
@@ -289,9 +292,7 @@ namespace Vao.Sample
             if (strMessage != "drawable Warning: unsupported control query 3")
             {
                lstMessages.Items.Add(dlvi);
-            }
-        
-
+            }       
          }
       }
 

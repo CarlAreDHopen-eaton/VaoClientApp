@@ -7,10 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentFTP" Version="49.0.2" />
+    <PackageReference Include="FluentFTP" Version="50.1.0" />
     <PackageReference Include="Json.Net" Version="1.0.33" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="RestSharp" Version="108.0.1" />
+    <PackageReference Include="RestSharp" Version="111.4.0" />
   </ItemGroup>
 
 </Project>

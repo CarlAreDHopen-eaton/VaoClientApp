@@ -1,8 +1,4 @@
-﻿using RestSharp;
-using System.IO;
-using Vao.Client.Components.Interfaces;
-using Vao.Client.Contracts;
-using Vao.Client.Utility;
+﻿using Vao.Client.Contracts;
 
 namespace Vao.Client.Components
 {
@@ -93,7 +89,7 @@ namespace Vao.Client.Components
       /// <inheritdoc/>
       public override string ToString()
       {
-         if (RecorderAddress != null &&  RecordingType != null && Stream != null)
+         if (RecorderAddress != null &&  RecordingType != null)
          {
             if (Stream == 1)
             {

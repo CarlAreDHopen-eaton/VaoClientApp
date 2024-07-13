@@ -179,9 +179,9 @@ namespace Vao.Sample
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
          this.pnlVideo.BackColor = System.Drawing.Color.Black;
-         this.pnlVideo.Location = new System.Drawing.Point(1, 22);
+         this.pnlVideo.Location = new System.Drawing.Point(1, 25);
          this.pnlVideo.Name = "pnlVideo";
-         this.pnlVideo.Size = new System.Drawing.Size(974, 720);
+         this.pnlVideo.Size = new System.Drawing.Size(974, 717);
          this.pnlVideo.TabIndex = 0;
          // 
          // txtUser
@@ -641,14 +641,15 @@ namespace Vao.Sample
          // 
          // txtVideoHeader
          // 
-         this.txtVideoHeader.BackColor = System.Drawing.Color.Black;
+         this.txtVideoHeader.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(77)))), ((int)(((byte)(95)))));
          this.txtVideoHeader.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-         this.txtVideoHeader.Enabled = false;
          this.txtVideoHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
          this.txtVideoHeader.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
          this.txtVideoHeader.Location = new System.Drawing.Point(1, 3);
+         this.txtVideoHeader.Multiline = true;
          this.txtVideoHeader.Name = "txtVideoHeader";
-         this.txtVideoHeader.Size = new System.Drawing.Size(974, 20);
+         this.txtVideoHeader.ReadOnly = true;
+         this.txtVideoHeader.Size = new System.Drawing.Size(974, 26);
          this.txtVideoHeader.TabIndex = 10;
          this.txtVideoHeader.Text = "No Camera Selected";
          // 

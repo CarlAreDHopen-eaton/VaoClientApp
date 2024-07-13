@@ -192,25 +192,28 @@ namespace Vao.Client
          if (mRestClient != null)
             return mRestClient;
 
-         RestClient client;
          string addressLine = $"{(UseHttps ? "https" : "http")}://{Host}:{Port}";
+
+         RestClientOptions options;
          if (UseHttps && IgnoreCertificateErrors)
          {
             // Bypass ssl validation check.
-            var options = new RestClientOptions(addressLine)
+            options = new RestClientOptions(addressLine)
             {
+               Authenticator = new HttpBasicAuthenticator(User, Password),
                RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true
-            };
-            client = new RestClient(options);
+            };            
          }
          else
          {
-            client = new RestClient(addressLine);
+            // Bypass ssl validation check.
+            options = new RestClientOptions(addressLine)
+            {
+               Authenticator = new HttpBasicAuthenticator(User, Password),
+            };
          }
-
-         client.Authenticator = new HttpBasicAuthenticator(User, Password);
-         mRestClient = client;
-         return client;
+         mRestClient = new RestClient(options);
+         return mRestClient;
       }
 
       internal string ValidateResponseContent(RestResponse response)
