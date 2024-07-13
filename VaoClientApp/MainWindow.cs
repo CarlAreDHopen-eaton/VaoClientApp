@@ -157,6 +157,8 @@ namespace Vao.Sample
          Settings.Default.User = txtUser.Text;
          Settings.Default.ApiPort = txtPort.Text;
          Settings.Default.Password = txtPassword.Text;
+         if (CurrentCamera != null)
+            Settings.Default.CurrentCamera = CurrentCamera.ComponentNumber;
          Settings.Default.Save();
       }
 
@@ -204,21 +206,26 @@ namespace Vao.Sample
             IgnoreCertificateErrors = true
          };
          moVaoClient.OnMessage += OnVaoClientMessage;
+         txtVideoHeader.Text = $"No Camera Selected";
          if (moVaoClient.StartClient())
          {
             WriteMessageLog("VaoAPI", "Client started.", LogLevel.Notice);
             FillSelectCameraButtonList();
             CheckApiVersion();
             ClearRecordingDropdown();
-            
+            ClearPresetDropdown();
+            UpdateEnabled();
+
+            if (Settings.Default.CurrentCamera != 0)
+               SelectCamera(Settings.Default.CurrentCamera, chkPreferSubChannel.Checked ? 2 : 1);
          }
          else
          {
             WriteMessageLog("VaoAPI", "Unable to start, no response.", LogLevel.Error);
             btnDisconnect_Click(sender, e);
+            ClearPresetDropdown();
+            UpdateEnabled();
          }
-         ClearPresetDropdown();
-         UpdateEnabled();
       }
 
       /// <summary>
@@ -300,6 +307,7 @@ namespace Vao.Sample
          StopRtspStream();
          CurrentCamera = null;
          txtCurrentRtspUrl.Text = string.Empty;
+         txtVideoHeader.Text = "No Camera Selected";
          IsCameraSelected = false;
          ClearPresetDropdown();
          ClearRecordingDropdown();
@@ -346,6 +354,8 @@ namespace Vao.Sample
                {
                   FillPlaybackSelectionList();
                }
+
+               Settings.Default.CurrentCamera = mCurrentCamera.ComponentNumber;
             }
             else
             {
@@ -484,6 +494,7 @@ namespace Vao.Sample
             if (!string.IsNullOrEmpty(url))
             {
                txtCurrentRtspUrl.Text = GetMaskedUrl(url);
+               txtVideoHeader.Text = $"Camera {cameraNo}";
                StartRtspStream(url);
             }
          }

@@ -76,6 +76,7 @@ namespace Vao.Sample
          this.btnTiltDown = new DarkUI.Controls.DarkButton();
          this.btnTiltUp = new DarkUI.Controls.DarkButton();
          this.splitHorizontalVideoAndMessageSplit = new System.Windows.Forms.SplitContainer();
+         this.txtVideoHeader = new DarkUI.Controls.DarkTextBox();
          this.grpCameraSelection.SuspendLayout();
          this.grpConnection.SuspendLayout();
          this.grpMessages.SuspendLayout();
@@ -178,9 +179,9 @@ namespace Vao.Sample
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
          this.pnlVideo.BackColor = System.Drawing.Color.Black;
-         this.pnlVideo.Location = new System.Drawing.Point(1, 1);
+         this.pnlVideo.Location = new System.Drawing.Point(1, 22);
          this.pnlVideo.Name = "pnlVideo";
-         this.pnlVideo.Size = new System.Drawing.Size(974, 741);
+         this.pnlVideo.Size = new System.Drawing.Size(974, 720);
          this.pnlVideo.TabIndex = 0;
          // 
          // txtUser
@@ -319,6 +320,7 @@ namespace Vao.Sample
          // grpVideoControl
          // 
          this.grpVideoControl.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+         this.grpVideoControl.Controls.Add(this.txtVideoHeader);
          this.grpVideoControl.Controls.Add(this.chkPreferSubChannel);
          this.grpVideoControl.Controls.Add(this.pnlVideo);
          this.grpVideoControl.Controls.Add(this.txtCurrentRtspUrl);
@@ -637,6 +639,19 @@ namespace Vao.Sample
          this.splitHorizontalVideoAndMessageSplit.SplitterDistance = 773;
          this.splitHorizontalVideoAndMessageSplit.TabIndex = 0;
          // 
+         // txtVideoHeader
+         // 
+         this.txtVideoHeader.BackColor = System.Drawing.Color.Black;
+         this.txtVideoHeader.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+         this.txtVideoHeader.Enabled = false;
+         this.txtVideoHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+         this.txtVideoHeader.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+         this.txtVideoHeader.Location = new System.Drawing.Point(1, 3);
+         this.txtVideoHeader.Name = "txtVideoHeader";
+         this.txtVideoHeader.Size = new System.Drawing.Size(974, 20);
+         this.txtVideoHeader.TabIndex = 10;
+         this.txtVideoHeader.Text = "No Camera Selected";
+         // 
          // MainWindow
          // 
          this.AcceptButton = this.btnConnect;
@@ -721,6 +736,7 @@ namespace Vao.Sample
       private DarkUI.Controls.DarkButton btnStopPlayback;
       private DarkUI.Controls.DarkSectionPanel grpDownload;
       private DarkUI.Controls.DarkButton btnDownload;
+      private DarkUI.Controls.DarkTextBox txtVideoHeader;
    }
 }
 
