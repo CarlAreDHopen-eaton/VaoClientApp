@@ -156,7 +156,7 @@ namespace Vao.Client.Utility
          return vaoClient.ValidateResponseContent(response);
       }
 
-      internal static RestResponse MoveTargetStart(this VaoClient vaoClient, int cameraNumber, int panSpeed, int tiltSpeed, int zoomSpeed, string focus)
+      internal static RestResponse MoveTargetStart(this VaoClient vaoClient, int cameraNumber, int? panSpeed, int? tiltSpeed, int? zoomSpeed, string focus)
       {
          RestClient client = vaoClient.GetRestClient();
          // ReSharper disable once RedundantArgumentDefaultValue
@@ -173,10 +173,20 @@ namespace Vao.Client.Utility
          // Set focus
          jsonMoveTarget.focus = focus;
 
-         string serializedJsonMoveTarget = JsonConvert.SerializeObject(jsonMoveTarget);
+         string serializedJsonMoveTarget = JsonConvert.SerializeObject(jsonMoveTarget, Formatting.None,
+            new JsonSerializerSettings
+            {
+               NullValueHandling = NullValueHandling.Ignore
+            });
          request.AddJsonBody(serializedJsonMoveTarget);
 
          RestResponse response = client.Execute(request);
+
+         string strResponse = vaoClient.ValidateResponseContent(response);
+         if (strResponse == null)
+         {
+            return null;
+         }
          return response;
       }
 

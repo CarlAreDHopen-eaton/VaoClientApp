@@ -633,7 +633,11 @@ namespace Vao.Sample
          var currentCamera = CurrentCamera;
          if (currentCamera != null && sender is Button)
          {
-            if ((sender == btnPanLeft) || (sender == btnPanRight) || (sender == btnTiltUp) || (sender == btnTiltDown) || (sender == btnZoomIn) || (sender == btnZoomOut))
+            if ((sender == btnPanLeft) || (sender == btnPanRight) || 
+                (sender == btnTiltUp) || (sender == btnTiltDown) || 
+                (sender == btnZoomIn) || (sender == btnZoomOut) ||
+                (sender == btnFocusFar) || (sender == btnFocusNear))
+
                 currentCamera.PanTiltZoomStop();
          }
       }

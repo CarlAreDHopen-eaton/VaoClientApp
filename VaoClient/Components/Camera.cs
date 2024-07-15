@@ -17,9 +17,9 @@ namespace Vao.Client.Components
       private bool mCameraVideoStream1Ok = true;
       private bool mCameraVideoStream2Ok = true;
       private bool mCameraDataOk = true;
-      private int mCurrentZoomSpeed;
-      private int mCurrentPanSpeed;
-      private int mCurrentTiltSpeed;
+      private int? mCurrentZoomSpeed;
+      private int? mCurrentPanSpeed;
+      private int? mCurrentTiltSpeed;
       private string mCurrentFocus = "auto";
       private List<Preset> mPresetList;
       private Dictionary<Guid, List<PlaybackInfo>> mPlaybackInfoList = new Dictionary<Guid, List<PlaybackInfo>>();
@@ -240,10 +240,11 @@ namespace Vao.Client.Components
       /// </summary>
       public void PanTiltZoomStop()
       {
-         mCurrentTiltSpeed = 0;
-         mCurrentPanSpeed = 0;
-         mCurrentZoomSpeed = 0;
-         mCurrentFocus = "auto";
+         // Set to null since MoveTargetStop stops everything completely.
+         mCurrentTiltSpeed = null;
+         mCurrentPanSpeed = null;
+         mCurrentZoomSpeed = null;
+         mCurrentFocus = null;
          RestResponse response = VaoClient.MoveTargetStop(ComponentNumber);
       }
 
