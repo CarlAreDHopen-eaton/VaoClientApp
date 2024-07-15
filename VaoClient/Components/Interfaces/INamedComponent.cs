@@ -10,7 +10,7 @@
       /// <summary>
       /// Sets a new name for the conponent.
       /// </summary>
-      /// <param name="name">The new name</param>
+      /// <param name="newName">The new name</param>
       /// <returns>True is success</returns>
       bool SetName(string newName);
    }

@@ -314,11 +314,11 @@ namespace Vao.Client.Components
       /// <summary>
       /// Sets a new name for the camera.
       /// </summary>
-      /// <param name="name">The new name</param>
+      /// <param name="newName">The new name</param>
       /// <returns>True is success</returns>
       public bool SetName(string newName)
       {
-         return false;
+         return VaoClient.RequestVaoSetCameraName(ComponentNumber, newName);
       }
 
       #endregion

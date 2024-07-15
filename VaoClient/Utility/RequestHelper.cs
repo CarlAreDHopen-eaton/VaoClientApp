@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using RestSharp;
 using Vao.Client.Components;
 using Newtonsoft.Json;
+using Vao.Client.Contracts;
 
 namespace Vao.Client.Utility
 {
@@ -98,6 +100,28 @@ namespace Vao.Client.Utility
 
          DownloadInfo downloadInfo = JsonParser.ParseDownloadResponse(strResponse, vaoClient);
          return downloadInfo;
+      }
+
+      internal static bool RequestVaoSetCameraName(this VaoClient vaoClient, int videoInput, string name)
+      {
+         RestClient client = vaoClient.GetRestClient();
+
+         // ReSharper disable once RedundantArgumentDefaultValue
+         RestRequest request = new RestRequest($"inputs/{videoInput}", Method.Post);
+
+         JsonChangeName changeName = new JsonChangeName() { name = name };
+         string serializedJsonDownloadRequest = JsonConvert.SerializeObject(changeName);
+         request.AddJsonBody(serializedJsonDownloadRequest);
+
+         RestResponse response = client.Execute(request);
+         string strResponse = vaoClient.ValidateResponseContent(response);
+         if (strResponse == null)
+         {
+            // Empty list.
+            return false;
+         }
+
+         return true;
       }
 
       internal static Monitor RequestVaoMonitor(this VaoClient vaoClient, int iVideoOutput)
