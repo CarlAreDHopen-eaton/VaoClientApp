@@ -1,9 +1,7 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using Vao.Client.Components;
-using Vao.Client.Contracts;
 using Vao.Client.Enum;
 
 namespace Vao.Client

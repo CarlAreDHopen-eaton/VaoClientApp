@@ -57,8 +57,5 @@
       /// There is no video in the requested download
       /// </summary>
       NoVideoInRequestedDownload
-
-
-
    }
 }
