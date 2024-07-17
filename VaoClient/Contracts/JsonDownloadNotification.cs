@@ -1,7 +1,5 @@
 ﻿// ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Global
-using System.Collections.Generic;
-using System.IO;
 using Newtonsoft.Json;
 
 namespace Vao.Client.Contracts

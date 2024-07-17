@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using RestSharp;
 using Vao.Client.Components.Interfaces;
 using Vao.Client.Contracts;
