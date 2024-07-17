@@ -149,7 +149,7 @@ namespace Vao.Sample
          }
          else
          {
-            if (e.IsStatusMessage)
+            if (e.IsFromSystem)
             {
                 if (e.StatusMessage.DownloadId != Guid.Empty)
                 {
