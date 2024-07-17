@@ -1,19 +1,11 @@
-﻿using RestSharp;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Xml.Linq;
-using Vao.Client.Components.Interfaces;
+﻿using System;
 using Vao.Client.Contracts;
-using Vao.Client.Utility;
 
 namespace Vao.Client.Components
 {
    public class DownloadInfo : BaseComponent
    {
       #region Private Members
-
-      private static int mCurrentComponentNumber = 0;
 
       private Guid mDownloadId;
       private int mInputId;
@@ -27,7 +19,7 @@ namespace Vao.Client.Components
       #region Constructor
 
       internal DownloadInfo(JsonDownloadResponseObject jsonObject, VaoClient vaoClient)
-         : base(vaoClient, mCurrentComponentNumber)
+         : base(vaoClient, 0)
       {
          mDownloadId = jsonObject.downloadId;  
          mInputId = jsonObject.inputId;

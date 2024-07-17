@@ -1,10 +1,6 @@
-﻿using FluentFTP.Helpers;
-using System;
-using System.Linq;
-using Vao.Client.Components.Interfaces;
+﻿using System;
 using Vao.Client.Contracts;
 using Vao.Client.Enum;
-using static System.Net.WebRequestMethods;
 
 namespace Vao.Client.Components
 {

@@ -6,8 +6,6 @@ namespace Vao.Client.Components
    {
       #region Private Members
 
-      private static int mCurrentComponentNumber = 0;
-
       private string mPlaybackUrl;
       private string mRecorderAddress;
       private int mInputId;
@@ -20,7 +18,7 @@ namespace Vao.Client.Components
       #region Constructor
 
       internal PlaybackInfo(JsonPlaybackInfoObject jsonObject, VaoClient vaoClient)
-         : base(vaoClient, mCurrentComponentNumber)
+         : base(vaoClient, 0)
       {
          mPlaybackUrl = jsonObject.playbackUrl;
          mRecorderAddress = jsonObject.recorderAddress;
