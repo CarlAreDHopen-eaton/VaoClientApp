@@ -85,6 +85,8 @@ namespace Vao.Sample
       public MainWindow()
       {
          InitializeComponent();
+
+         Text = $"{Text} v{Application.ProductVersion}";
          
          // Updates the title bar to dark.
          DarkModeHelper.EnableImmersiveDarkMode(Handle);

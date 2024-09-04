@@ -676,7 +676,7 @@ namespace Vao.Sample
          this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
          this.MinimumSize = new System.Drawing.Size(400, 200);
          this.Name = "MainWindow";
-         this.Text = "VAO Demo Client";
+         this.Text = "HERNIS FLEX VAO API Demo";
          this.grpCameraSelection.ResumeLayout(false);
          this.grpConnection.ResumeLayout(false);
          this.grpConnection.PerformLayout();
