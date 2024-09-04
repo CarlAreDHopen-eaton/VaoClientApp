@@ -207,6 +207,7 @@ namespace Vao.Sample
          };
          moVaoClient.OnMessage += OnVaoClientMessage;
          txtVideoHeader.Text = $"No Camera Selected";
+         grpVideoControl.BackColor = Color.FromArgb(66, 77, 95);
          if (moVaoClient.StartClient())
          {
             WriteMessageLog("VaoAPI", "Client started.", LogLevel.Notice);
@@ -310,6 +311,7 @@ namespace Vao.Sample
          CurrentCamera = null;
          txtCurrentRtspUrl.Text = string.Empty;
          txtVideoHeader.Text = "No Camera Selected";
+         grpVideoControl.BackColor = Color.FromArgb(66, 77, 95);
          IsCameraSelected = false;
          ClearPresetDropdown();
          ClearRecordingDropdown();
@@ -513,6 +515,7 @@ namespace Vao.Sample
             {
                txtCurrentRtspUrl.Text = GetMaskedUrl(url);
                txtVideoHeader.Text = $"LIVE - Camera {cameraNo}";
+               grpVideoControl.BackColor = Color.FromArgb(65, 142, 62);
                StartRtspStream(url);
             }
          }
@@ -703,6 +706,8 @@ namespace Vao.Sample
 
                var cameraNo = CurrentCamera?.ComponentNumber ?? 0;
                txtVideoHeader.Text = $"PLAYBACK - Camera {cameraNo}";
+               grpVideoControl.BackColor = Color.FromArgb(142, 62, 62);
+
                StartRtspStream(url);
                IsPlaybackStarted = true;
                UpdateEnabled();
@@ -727,6 +732,7 @@ namespace Vao.Sample
                      txtCurrentRtspUrl.Text = GetMaskedUrl(url);
                      var cameraNo = CurrentCamera?.ComponentNumber ?? 0;
                      txtVideoHeader.Text = $"PLAYBACK - Camera {cameraNo}";
+                     grpVideoControl.BackColor = Color.FromArgb(142, 62, 62);
                      StartRtspStream(urlWithStartTime);
                      IsPlaybackStarted = true;
                      UpdateEnabled();

@@ -77,6 +77,7 @@ namespace Vao.Sample
          this.btnTiltDown = new DarkUI.Controls.DarkButton();
          this.btnTiltUp = new DarkUI.Controls.DarkButton();
          this.splitHorizontalVideoAndMessageSplit = new System.Windows.Forms.SplitContainer();
+         this.panel1 = new System.Windows.Forms.Panel();
          this.grpCameraSelection.SuspendLayout();
          this.grpConnection.SuspendLayout();
          this.grpMessages.SuspendLayout();
@@ -181,7 +182,7 @@ namespace Vao.Sample
          this.pnlVideo.BackColor = System.Drawing.Color.Black;
          this.pnlVideo.Location = new System.Drawing.Point(1, 25);
          this.pnlVideo.Name = "pnlVideo";
-         this.pnlVideo.Size = new System.Drawing.Size(974, 713);
+         this.pnlVideo.Size = new System.Drawing.Size(969, 713);
          this.pnlVideo.TabIndex = 0;
          // 
          // txtUser
@@ -237,9 +238,9 @@ namespace Vao.Sample
          this.txtCurrentRtspUrl.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
          this.txtCurrentRtspUrl.Enabled = false;
          this.txtCurrentRtspUrl.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-         this.txtCurrentRtspUrl.Location = new System.Drawing.Point(3, 744);
+         this.txtCurrentRtspUrl.Location = new System.Drawing.Point(4, 743);
          this.txtCurrentRtspUrl.Name = "txtCurrentRtspUrl";
-         this.txtCurrentRtspUrl.Size = new System.Drawing.Size(845, 20);
+         this.txtCurrentRtspUrl.Size = new System.Drawing.Size(841, 20);
          this.txtCurrentRtspUrl.TabIndex = 1;
          // 
          // grpCameraSelection
@@ -292,7 +293,7 @@ namespace Vao.Sample
          this.grpMessages.Location = new System.Drawing.Point(0, 0);
          this.grpMessages.Name = "grpMessages";
          this.grpMessages.SectionHeader = "Messages";
-         this.grpMessages.Size = new System.Drawing.Size(975, 131);
+         this.grpMessages.Size = new System.Drawing.Size(971, 131);
          this.grpMessages.TabIndex = 0;
          // 
          // lstMessages
@@ -302,14 +303,14 @@ namespace Vao.Sample
             | System.Windows.Forms.AnchorStyles.Right)));
          this.lstMessages.Location = new System.Drawing.Point(3, 27);
          this.lstMessages.Name = "lstMessages";
-         this.lstMessages.Size = new System.Drawing.Size(967, 64);
+         this.lstMessages.Size = new System.Drawing.Size(963, 64);
          this.lstMessages.TabIndex = 12;
          this.lstMessages.Text = "1";
          // 
          // btnClearMessages
          // 
          this.btnClearMessages.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-         this.btnClearMessages.Location = new System.Drawing.Point(883, 96);
+         this.btnClearMessages.Location = new System.Drawing.Point(879, 96);
          this.btnClearMessages.Name = "btnClearMessages";
          this.btnClearMessages.Padding = new System.Windows.Forms.Padding(5);
          this.btnClearMessages.Size = new System.Drawing.Size(88, 29);
@@ -324,11 +325,12 @@ namespace Vao.Sample
          this.grpVideoControl.Controls.Add(this.chkPreferSubChannel);
          this.grpVideoControl.Controls.Add(this.pnlVideo);
          this.grpVideoControl.Controls.Add(this.txtCurrentRtspUrl);
+         this.grpVideoControl.Controls.Add(this.panel1);
          this.grpVideoControl.Dock = System.Windows.Forms.DockStyle.Fill;
          this.grpVideoControl.ForeColor = System.Drawing.Color.White;
          this.grpVideoControl.Location = new System.Drawing.Point(0, 0);
          this.grpVideoControl.Name = "grpVideoControl";
-         this.grpVideoControl.Size = new System.Drawing.Size(975, 769);
+         this.grpVideoControl.Size = new System.Drawing.Size(971, 769);
          this.grpVideoControl.TabIndex = 0;
          // 
          // txtVideoHeader
@@ -339,7 +341,7 @@ namespace Vao.Sample
          this.txtVideoHeader.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
          this.txtVideoHeader.Location = new System.Drawing.Point(5, 5);
          this.txtVideoHeader.Name = "txtVideoHeader";
-         this.txtVideoHeader.Size = new System.Drawing.Size(972, 17);
+         this.txtVideoHeader.Size = new System.Drawing.Size(968, 17);
          this.txtVideoHeader.TabIndex = 11;
          this.txtVideoHeader.Text = "No Camera Selected";
          // 
@@ -347,11 +349,13 @@ namespace Vao.Sample
          // 
          this.chkPreferSubChannel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
          this.chkPreferSubChannel.AutoSize = true;
-         this.chkPreferSubChannel.Location = new System.Drawing.Point(854, 745);
+         this.chkPreferSubChannel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+         this.chkPreferSubChannel.Location = new System.Drawing.Point(850, 744);
          this.chkPreferSubChannel.Name = "chkPreferSubChannel";
          this.chkPreferSubChannel.Size = new System.Drawing.Size(118, 17);
          this.chkPreferSubChannel.TabIndex = 9;
          this.chkPreferSubChannel.Text = "Prefer Sub Channel";
+         this.chkPreferSubChannel.UseVisualStyleBackColor = false;
          this.chkPreferSubChannel.CheckedChanged += new System.EventHandler(this.chkPreferSubChannel_CheckedChanged);
          // 
          // splitMainVerticalSplit
@@ -376,7 +380,7 @@ namespace Vao.Sample
          // splitMainVerticalSplit.Panel2
          // 
          this.splitMainVerticalSplit.Panel2.Controls.Add(this.splitHorizontalVideoAndMessageSplit);
-         this.splitMainVerticalSplit.Panel2.Padding = new System.Windows.Forms.Padding(0, 4, 0, 0);
+         this.splitMainVerticalSplit.Panel2.Padding = new System.Windows.Forms.Padding(0, 4, 4, 0);
          this.splitMainVerticalSplit.Size = new System.Drawing.Size(1226, 908);
          this.splitMainVerticalSplit.SplitterDistance = 247;
          this.splitMainVerticalSplit.TabIndex = 0;
@@ -648,9 +652,19 @@ namespace Vao.Sample
          // splitHorizontalVideoAndMessageSplit.Panel2
          // 
          this.splitHorizontalVideoAndMessageSplit.Panel2.Controls.Add(this.grpMessages);
-         this.splitHorizontalVideoAndMessageSplit.Size = new System.Drawing.Size(975, 904);
+         this.splitHorizontalVideoAndMessageSplit.Size = new System.Drawing.Size(971, 904);
          this.splitHorizontalVideoAndMessageSplit.SplitterDistance = 769;
          this.splitHorizontalVideoAndMessageSplit.TabIndex = 0;
+         // 
+         // panel1
+         // 
+         this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+         this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+         this.panel1.Location = new System.Drawing.Point(1, 737);
+         this.panel1.Name = "panel1";
+         this.panel1.Size = new System.Drawing.Size(969, 31);
+         this.panel1.TabIndex = 12;
          // 
          // MainWindow
          // 
@@ -737,6 +751,7 @@ namespace Vao.Sample
       private DarkUI.Controls.DarkSectionPanel grpDownload;
       private DarkUI.Controls.DarkButton btnDownload;
       private DarkUI.Controls.DarkLabel txtVideoHeader;
+      private System.Windows.Forms.Panel panel1;
    }
 }
 
