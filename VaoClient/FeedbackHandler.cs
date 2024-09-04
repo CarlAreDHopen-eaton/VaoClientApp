@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading;
 using Vao.Client.Components;
 using Vao.Client.Enum;
@@ -45,7 +46,7 @@ namespace Vao.Client
                      HandleMessage(message);
                      RaiseOnMessageEvents(message);
                      
-                     DateTime.TryParse(message.Timestamp, out DateTime checkDate);
+                     DateTime.TryParse(message.Timestamp, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out DateTime checkDate);
                      if (checkDate > lastCheck)
                         lastCheck = checkDate;
                   }

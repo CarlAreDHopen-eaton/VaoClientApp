@@ -51,6 +51,7 @@ namespace Vao.Sample
          this.lstMessages = new DarkUI.Controls.DarkListView();
          this.btnClearMessages = new DarkUI.Controls.DarkButton();
          this.grpVideoControl = new System.Windows.Forms.Panel();
+         this.txtVideoHeader = new DarkUI.Controls.DarkLabel();
          this.chkPreferSubChannel = new System.Windows.Forms.CheckBox();
          this.splitMainVerticalSplit = new System.Windows.Forms.SplitContainer();
          this.grpDownload = new DarkUI.Controls.DarkSectionPanel();
@@ -76,7 +77,6 @@ namespace Vao.Sample
          this.btnTiltDown = new DarkUI.Controls.DarkButton();
          this.btnTiltUp = new DarkUI.Controls.DarkButton();
          this.splitHorizontalVideoAndMessageSplit = new System.Windows.Forms.SplitContainer();
-         this.txtVideoHeader = new DarkUI.Controls.DarkLabel();
          this.grpCameraSelection.SuspendLayout();
          this.grpConnection.SuspendLayout();
          this.grpMessages.SuspendLayout();
@@ -331,6 +331,18 @@ namespace Vao.Sample
          this.grpVideoControl.Size = new System.Drawing.Size(975, 769);
          this.grpVideoControl.TabIndex = 0;
          // 
+         // txtVideoHeader
+         // 
+         this.txtVideoHeader.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+         this.txtVideoHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+         this.txtVideoHeader.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+         this.txtVideoHeader.Location = new System.Drawing.Point(5, 5);
+         this.txtVideoHeader.Name = "txtVideoHeader";
+         this.txtVideoHeader.Size = new System.Drawing.Size(972, 17);
+         this.txtVideoHeader.TabIndex = 11;
+         this.txtVideoHeader.Text = "No Camera Selected";
+         // 
          // chkPreferSubChannel
          // 
          this.chkPreferSubChannel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -392,7 +404,7 @@ namespace Vao.Sample
          // 
          // grpSelectPlayback
          // 
-         this.grpSelectPlayback.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+         this.grpSelectPlayback.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
          this.grpSelectPlayback.Controls.Add(this.btnStopPlayback);
          this.grpSelectPlayback.Controls.Add(this.dateTimePicker1);
@@ -639,17 +651,6 @@ namespace Vao.Sample
          this.splitHorizontalVideoAndMessageSplit.Size = new System.Drawing.Size(975, 904);
          this.splitHorizontalVideoAndMessageSplit.SplitterDistance = 769;
          this.splitHorizontalVideoAndMessageSplit.TabIndex = 0;
-         // 
-         // txtVideoHeader
-         // 
-         this.txtVideoHeader.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-         this.txtVideoHeader.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-         this.txtVideoHeader.Location = new System.Drawing.Point(5, 5);
-         this.txtVideoHeader.Name = "txtVideoHeader";
-         this.txtVideoHeader.Size = new System.Drawing.Size(972, 17);
-         this.txtVideoHeader.TabIndex = 11;
-         this.txtVideoHeader.Text = "No Camera Selected";
          // 
          // MainWindow
          // 

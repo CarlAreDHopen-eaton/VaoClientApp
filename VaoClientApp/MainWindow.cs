@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using LibVLCSharp.Shared;
@@ -319,8 +320,24 @@ namespace Vao.Sample
       {
          if (mVideoControl?.MediaPlayer != null)
          {
-            mVideoControl.MediaPlayer.Stop();
+            var mp = mVideoControl.MediaPlayer;
+            mVideoControl.MediaPlayer = null;
+            mIsVideoStarted = false;
+            DisposeMediaPlayerAsync(mp);
          }
+      }
+
+      private static void DisposeMediaPlayerAsync(MediaPlayer mp)
+      {
+         if (mp == null)
+            return;
+
+         Task.Run(() =>
+         {
+            if (mp.IsPlaying)
+               mp.Stop();
+            mp.Dispose();
+         });
       }
 
       private Camera CurrentCamera 
@@ -495,7 +512,7 @@ namespace Vao.Sample
             if (!string.IsNullOrEmpty(url))
             {
                txtCurrentRtspUrl.Text = GetMaskedUrl(url);
-               txtVideoHeader.Text = $"Camera {cameraNo}";
+               txtVideoHeader.Text = $"LIVE - Camera {cameraNo}";
                StartRtspStream(url);
             }
          }
@@ -524,10 +541,15 @@ namespace Vao.Sample
          return maskedUri.ToString();         
       }
 
+      bool mIsVideoStarted = false;
+
       private void StartRtspStream(string rtspUrl)
       {
-         // Stop the stream if active.
-         StopRtspStream();
+         if (mIsVideoStarted)
+         {
+            // Stop the stream if active.
+            StopRtspStream();
+         }
 
          // Start the stream.
          var uri = new Uri(rtspUrl);
@@ -537,13 +559,18 @@ namespace Vao.Sample
             mVideoControl.MediaPlayer = new MediaPlayer(media);
             mVideoControl.MediaPlayer.EncounteredError += MediaPlayer_EncounteredError;
             mVideoControl.MediaPlayer.Opening += MediaPlayer_Opening;
+            
             mVideoControl.MediaPlayer.Play();
+            mIsVideoStarted = true;
          }
          else
          {
             var media = new Media(mLibVlc, uri);
             mVideoControl.MediaPlayer.Play(media);
+            mIsVideoStarted = true;
          }
+
+
       }
 
       private void InitVideoControl()
@@ -673,6 +700,9 @@ namespace Vao.Sample
             if (!string.IsNullOrEmpty(url))
             {
                txtCurrentRtspUrl.Text = GetMaskedUrl(url);
+
+               var cameraNo = CurrentCamera?.ComponentNumber ?? 0;
+               txtVideoHeader.Text = $"PLAYBACK - Camera {cameraNo}";
                StartRtspStream(url);
                IsPlaybackStarted = true;
                UpdateEnabled();
@@ -695,6 +725,8 @@ namespace Vao.Sample
                   {
                      string urlWithStartTime = url + startTimeParameter;
                      txtCurrentRtspUrl.Text = GetMaskedUrl(url);
+                     var cameraNo = CurrentCamera?.ComponentNumber ?? 0;
+                     txtVideoHeader.Text = $"PLAYBACK - Camera {cameraNo}";
                      StartRtspStream(urlWithStartTime);
                      IsPlaybackStarted = true;
                      UpdateEnabled();
