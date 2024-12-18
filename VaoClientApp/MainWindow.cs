@@ -29,7 +29,7 @@ namespace Vao.Sample
       public VaoClient VaoClient
       {  get { return moVaoClient; } }
 
-      public bool IsStared
+      public bool IsStarted
       {
          get { return mIsStared; }
          set
@@ -149,6 +149,10 @@ namespace Vao.Sample
          if (!string.IsNullOrEmpty(Settings.Default.Password))
             txtPassword.Text = Settings.Default.Password;
 
+         chkUseTcp.Checked = Settings.Default.UseTcp;
+         chkPreferSubChannel.Checked = Settings.Default.PreferSubChannel;
+         chkSecure.Checked = Settings.Default.UseHttps;
+
          // Select password input control after loading settings.
          txtPassword.Select();
       }
@@ -161,31 +165,35 @@ namespace Vao.Sample
          Settings.Default.Password = txtPassword.Text;
          if (CurrentCamera != null)
             Settings.Default.CurrentCamera = CurrentCamera.ComponentNumber;
+         Settings.Default.UseTcp = chkUseTcp.Checked;
+         Settings.Default.PreferSubChannel = chkPreferSubChannel.Checked;
+         Settings.Default.UseHttps = chkSecure.Checked;
+
          Settings.Default.Save();
       }
 
       public void UpdateEnabled()
       {
-         btnDisconnect.Enabled = IsStared;
-         grpCameraSelection.Enabled = IsStared;
-         chkPreferSubChannel.Enabled = IsStared && !IsPlayback;
-         grpSelectPreset.Enabled = IsStared;
-         grpSelectPlayback.Enabled = IsStared && ApiSupportsPlayback;
+         btnDisconnect.Enabled = IsStarted;
+         grpCameraSelection.Enabled = IsStarted;
+         chkPreferSubChannel.Enabled = IsStarted && !IsPlayback;
+         grpSelectPreset.Enabled = IsStarted;
+         grpSelectPlayback.Enabled = IsStarted && ApiSupportsPlayback;
 
-         grpCameraControl.Enabled = IsStared && CurrentCamera != null;
+         grpCameraControl.Enabled = IsStarted && CurrentCamera != null;
 
-         btnStopPlayback.Enabled = IsStared && IsPlayback && ApiSupportsPlayback;
+         btnStopPlayback.Enabled = IsStarted && IsPlayback && ApiSupportsPlayback;
          
-         btnPlayPlayback.Enabled = IsStared && IsCameraSelected && !IsPlaybackStarted && ApiSupportsPlayback;
-         btnGotoTime.Enabled = IsStared && IsCameraSelected && ApiSupportsPlayback;
-         grpSelectPlayback.Enabled = IsStared && IsCameraSelected && ApiSupportsPlayback;
-         btnConnect.Enabled = !IsStared;
-         txtHost.Enabled = !IsStared;
-         txtPassword.Enabled = !IsStared;
-         txtPort.Enabled = !IsStared;
-         txtUser.Enabled = !IsStared;
-         chkSecure.Enabled = !IsStared;
-         btnDownload.Enabled = IsStared && ApiSupportsPlayback;
+         btnPlayPlayback.Enabled = IsStarted && IsCameraSelected && !IsPlaybackStarted && ApiSupportsPlayback;
+         btnGotoTime.Enabled = IsStarted && IsCameraSelected && ApiSupportsPlayback;
+         grpSelectPlayback.Enabled = IsStarted && IsCameraSelected && ApiSupportsPlayback;
+         btnConnect.Enabled = !IsStarted;
+         txtHost.Enabled = !IsStarted;
+         txtPassword.Enabled = !IsStarted;
+         txtPort.Enabled = !IsStarted;
+         txtUser.Enabled = !IsStarted;
+         chkSecure.Enabled = !IsStarted;
+         btnDownload.Enabled = IsStarted && ApiSupportsPlayback;
 
          UpdateCameraControl();
       }
@@ -197,7 +205,7 @@ namespace Vao.Sample
          if (!ValidateCanConnect())
             return;
 
-         IsStared = true;
+         IsStarted = true;
          moVaoClient = new VaoClient
          {
             Host = txtHost.Text,
@@ -302,7 +310,7 @@ namespace Vao.Sample
 
       private void btnDisconnect_Click(object sender, EventArgs e)
       {
-         IsStared = false;
+         IsStarted = false;
          if (moVaoClient != null)
          {
             moVaoClient.OnMessage -= OnVaoClientMessage;
@@ -393,7 +401,7 @@ namespace Vao.Sample
       {
          selPlayback.DataSource = null;
          selPlayback.Items.Clear();
-         if (!ApiSupportsPlayback && IsStared)
+         if (!ApiSupportsPlayback && IsStarted)
          {
             selPlayback.Items.Add("Api Version does not support playback");
          }
@@ -564,13 +572,21 @@ namespace Vao.Sample
             mVideoControl.MediaPlayer = new MediaPlayer(media);
             mVideoControl.MediaPlayer.EncounteredError += MediaPlayer_EncounteredError;
             mVideoControl.MediaPlayer.Opening += MediaPlayer_Opening;
-            
+            if (chkUseTcp.Checked)
+            {
+               media.AddOption(":rtsp-tcp");
+            }
+
             mVideoControl.MediaPlayer.Play();
             mIsVideoStarted = true;
          }
          else
          {
             var media = new Media(mLibVlc, uri);
+            if (chkUseTcp.Checked)
+            {
+               media.AddOption(":rtsp-tcp");
+            }
             mVideoControl.MediaPlayer.Play(media);
             mIsVideoStarted = true;
          }
@@ -676,13 +692,21 @@ namespace Vao.Sample
 
       private void chkPreferSubChannel_CheckedChanged(object sender, EventArgs e)
       {
-         if (IsStared)
+         if (IsStarted)
          {
-            if (CurrentCamera != null)
+            if (mIsPlaybackStarted)
             {
-               SelectCamera(CurrentCamera.ComponentNumber, chkPreferSubChannel.Checked ? 2 : 1);
+               btnPlayPlayback_Click(null, EventArgs.Empty);
+            }
+            else
+            {
+               if (CurrentCamera != null)
+               {
+                  SelectCamera(CurrentCamera.ComponentNumber, chkPreferSubChannel.Checked ? 2 : 1);
+               }
             }
          }
+         SaveSettings();
       }
 
       private void btnClearMessages_Click(object sender, EventArgs e)
@@ -749,10 +773,10 @@ namespace Vao.Sample
 
       private void btnStopPlayback_Click(object sender, EventArgs e)
       {
-         IsStared = false;
+         IsStarted = false;
          StopRtspStream();
          SelectCamera(CurrentCamera.ComponentNumber, chkPreferSubChannel.Checked ? 2 : 1);
-         IsStared = true;
+         IsStarted = true;
          IsPlaybackStarted = false;
          UpdateEnabled();
       }
@@ -784,6 +808,25 @@ namespace Vao.Sample
             downloadWindow.Icon = this.Icon;
             downloadWindow.ShowDialog(this);
          }
+      }
+
+      private void chkUseTcp_CheckedChanged(object sender, EventArgs e)
+      {
+         if (IsStarted)
+         {
+            if (mIsPlaybackStarted)
+            {
+               btnPlayPlayback_Click(null, EventArgs.Empty);
+            }
+            else
+            {
+               if (CurrentCamera != null)
+               {
+                  SelectCamera(CurrentCamera.ComponentNumber, chkPreferSubChannel.Checked ? 2 : 1);
+               }
+            }
+         }
+         SaveSettings();
       }
    }
 }

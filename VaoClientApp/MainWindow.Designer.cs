@@ -52,6 +52,8 @@ namespace Vao.Sample
          this.btnClearMessages = new DarkUI.Controls.DarkButton();
          this.grpVideoControl = new System.Windows.Forms.Panel();
          this.txtVideoHeader = new DarkUI.Controls.DarkLabel();
+         this.panel1 = new System.Windows.Forms.Panel();
+         this.chkUseTcp = new System.Windows.Forms.CheckBox();
          this.chkPreferSubChannel = new System.Windows.Forms.CheckBox();
          this.splitMainVerticalSplit = new System.Windows.Forms.SplitContainer();
          this.grpDownload = new DarkUI.Controls.DarkSectionPanel();
@@ -77,11 +79,11 @@ namespace Vao.Sample
          this.btnTiltDown = new DarkUI.Controls.DarkButton();
          this.btnTiltUp = new DarkUI.Controls.DarkButton();
          this.splitHorizontalVideoAndMessageSplit = new System.Windows.Forms.SplitContainer();
-         this.panel1 = new System.Windows.Forms.Panel();
          this.grpCameraSelection.SuspendLayout();
          this.grpConnection.SuspendLayout();
          this.grpMessages.SuspendLayout();
          this.grpVideoControl.SuspendLayout();
+         this.panel1.SuspendLayout();
          ((System.ComponentModel.ISupportInitialize)(this.splitMainVerticalSplit)).BeginInit();
          this.splitMainVerticalSplit.Panel1.SuspendLayout();
          this.splitMainVerticalSplit.Panel2.SuspendLayout();
@@ -240,7 +242,7 @@ namespace Vao.Sample
          this.txtCurrentRtspUrl.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
          this.txtCurrentRtspUrl.Location = new System.Drawing.Point(4, 743);
          this.txtCurrentRtspUrl.Name = "txtCurrentRtspUrl";
-         this.txtCurrentRtspUrl.Size = new System.Drawing.Size(841, 20);
+         this.txtCurrentRtspUrl.Size = new System.Drawing.Size(763, 20);
          this.txtCurrentRtspUrl.TabIndex = 1;
          // 
          // grpCameraSelection
@@ -322,7 +324,6 @@ namespace Vao.Sample
          // 
          this.grpVideoControl.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(77)))), ((int)(((byte)(95)))));
          this.grpVideoControl.Controls.Add(this.txtVideoHeader);
-         this.grpVideoControl.Controls.Add(this.chkPreferSubChannel);
          this.grpVideoControl.Controls.Add(this.pnlVideo);
          this.grpVideoControl.Controls.Add(this.txtCurrentRtspUrl);
          this.grpVideoControl.Controls.Add(this.panel1);
@@ -345,12 +346,37 @@ namespace Vao.Sample
          this.txtVideoHeader.TabIndex = 11;
          this.txtVideoHeader.Text = "No Camera Selected";
          // 
+         // panel1
+         // 
+         this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+         this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+         this.panel1.Controls.Add(this.chkUseTcp);
+         this.panel1.Controls.Add(this.chkPreferSubChannel);
+         this.panel1.Location = new System.Drawing.Point(1, 737);
+         this.panel1.Name = "panel1";
+         this.panel1.Size = new System.Drawing.Size(969, 31);
+         this.panel1.TabIndex = 12;
+         // 
+         // chkUseTcp
+         // 
+         this.chkUseTcp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+         this.chkUseTcp.AutoSize = true;
+         this.chkUseTcp.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+         this.chkUseTcp.Location = new System.Drawing.Point(893, 7);
+         this.chkUseTcp.Name = "chkUseTcp";
+         this.chkUseTcp.Size = new System.Drawing.Size(69, 17);
+         this.chkUseTcp.TabIndex = 10;
+         this.chkUseTcp.Text = "Use TCP";
+         this.chkUseTcp.UseVisualStyleBackColor = false;
+         this.chkUseTcp.CheckedChanged += new System.EventHandler(this.chkUseTcp_CheckedChanged);
+         // 
          // chkPreferSubChannel
          // 
          this.chkPreferSubChannel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
          this.chkPreferSubChannel.AutoSize = true;
          this.chkPreferSubChannel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-         this.chkPreferSubChannel.Location = new System.Drawing.Point(850, 744);
+         this.chkPreferSubChannel.Location = new System.Drawing.Point(772, 7);
          this.chkPreferSubChannel.Name = "chkPreferSubChannel";
          this.chkPreferSubChannel.Size = new System.Drawing.Size(118, 17);
          this.chkPreferSubChannel.TabIndex = 9;
@@ -656,16 +682,6 @@ namespace Vao.Sample
          this.splitHorizontalVideoAndMessageSplit.SplitterDistance = 769;
          this.splitHorizontalVideoAndMessageSplit.TabIndex = 0;
          // 
-         // panel1
-         // 
-         this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-         this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-         this.panel1.Location = new System.Drawing.Point(1, 737);
-         this.panel1.Name = "panel1";
-         this.panel1.Size = new System.Drawing.Size(969, 31);
-         this.panel1.TabIndex = 12;
-         // 
          // MainWindow
          // 
          this.AcceptButton = this.btnConnect;
@@ -683,6 +699,8 @@ namespace Vao.Sample
          this.grpMessages.ResumeLayout(false);
          this.grpVideoControl.ResumeLayout(false);
          this.grpVideoControl.PerformLayout();
+         this.panel1.ResumeLayout(false);
+         this.panel1.PerformLayout();
          this.splitMainVerticalSplit.Panel1.ResumeLayout(false);
          this.splitMainVerticalSplit.Panel2.ResumeLayout(false);
          ((System.ComponentModel.ISupportInitialize)(this.splitMainVerticalSplit)).EndInit();
@@ -752,6 +770,7 @@ namespace Vao.Sample
       private DarkUI.Controls.DarkButton btnDownload;
       private DarkUI.Controls.DarkLabel txtVideoHeader;
       private System.Windows.Forms.Panel panel1;
+      private System.Windows.Forms.CheckBox chkUseTcp;
    }
 }
 
