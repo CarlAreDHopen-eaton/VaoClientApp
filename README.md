@@ -4,6 +4,11 @@ The application allows the user to select and control cameras. The video streams
 
 ![image](https://github.com/user-attachments/assets/afce2c25-07c0-478a-92b6-b2c6a9a0797d)
 
+# Important 3rd party libraries
+- RestSharp, communication with the VMS system REST API. (https://github.com/restsharp/RestSharp)
+- DarkUI, dark mode user interface for WinForms. (https://github.com/RobinPerris/DarkUI)
+- FluentFTP, download of video from the VMS system. (https://github.com/robinrodricks/FluentFTP)
+- LibVLCSharp, view RTSP video from the VMS system. (https://github.com/videolan/libvlcsharp)
 
 # Current Features
 - Secure and Insecure connection to the VMS System
