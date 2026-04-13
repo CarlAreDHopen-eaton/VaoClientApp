@@ -40,7 +40,7 @@ namespace Vao.Client
       /// <returns></returns>
       internal string GetStatusMessages(DateTime lastCheck)
       {
-         return this.GetVaoStatusMessages(lastCheck);
+         return this.ExecuteGetStatusMessages(lastCheck);
       }
 
       /// <summary>
@@ -58,7 +58,7 @@ namespace Vao.Client
                return camera1;
          }
 
-         RestResponse response = this.GetVaoCameraInternal(cameraNo);
+         RestResponse response = this.ExecuteGetCameraInternal(cameraNo);
          if (response == null)
             return null;
          var camera = JsonParser.ParseSingleCamera(response.Content, this);
@@ -77,7 +77,7 @@ namespace Vao.Client
          {
             return mCameraList.Values.ToList();
          }
-         var cameras = this.RequestVaoCameraList();
+         var cameras = this.ExecuteGetCameraList();
          if (cameras != null)
          {
             foreach (var camera in cameras)
@@ -98,7 +98,7 @@ namespace Vao.Client
       /// <returns></returns>
       public DownloadInfo GetDownloadInfo(Camera ownerCamera, string recorderAddress, int streamNo, string startTime, string duration)
       {
-         DownloadInfo downloadInfo = this.RequestVaoDownloadInfo(ownerCamera, recorderAddress, streamNo, startTime, duration);
+         DownloadInfo downloadInfo = this.ExecuteGetDownloadInfo(ownerCamera, recorderAddress, streamNo, startTime, duration);
          return downloadInfo;
       }
 
@@ -149,7 +149,7 @@ namespace Vao.Client
       /// <returns></returns>
       public string GetLastStatusTime()
       {
-         return this.GetVaoStatus();
+         return this.ExecuteGetStatus();
       }
 
       /// <summary>
@@ -158,7 +158,7 @@ namespace Vao.Client
       /// <returns></returns>
       public ApiVersion GetApiVersion()
       {
-         return this.GetVaoApiVersion();
+         return this.ExecuteGetApiVersion();
       }
 
       /// <summary>
@@ -185,7 +185,7 @@ namespace Vao.Client
          {
             return mAlarmList.Values.ToList();
          }
-         List<Alarm> alarms = this.RequestVaoAlarmList();
+         List<Alarm> alarms = this.ExecuteGetAlarmList();
          if (alarms != null)
          {
             foreach (Alarm alarm in alarms)
@@ -198,31 +198,31 @@ namespace Vao.Client
 
       public Alarm GetSingleAlarm(int alarmNo)
       {
-         return this.RequestVaoAlarm(alarmNo);
+         return this.ExecuteGetAlarm(alarmNo);
       }
 
       public RestResponse SendAlarmCommand(int iAlarmNo, string command)
       {
-        return this.SendVaoAlarmCommand(iAlarmNo, command);
+        return this.ExecuteAlarmCommand(iAlarmNo, command);
       }
 
       public RestResponse SendAbsolutePosition(int iCameraNo, float? pan, float? tilt, float? zoom)
       {
-         return this.SendVaoAbsolutePosition(iCameraNo, pan, tilt, zoom);
+         return this.ExecuteCameraAbsolutePosition(iCameraNo, pan, tilt, zoom);
       }
 
       public RestResponse SendLockCamera(int iCameraNo, string timeout)
       {
-         return this.RequestVaoLockCamera(iCameraNo, timeout);
+         return this.ExecuteLockCamera(iCameraNo, timeout);
       }
       public RestResponse SendUnlockCamera(int iCameraNo)
       {
-         return this.RequestVaoUnlockCamera(iCameraNo);
+         return this.ExecuteUnlockCamera(iCameraNo);
       }
 
       public User GetLoggedInUserInfo()
       {
-         return this.RequestVaoLoggedInUserInfo();
+         return this.ExecuteGetLoggedInUserInfo();
       }
 
       #endregion
@@ -324,7 +324,7 @@ namespace Vao.Client
                      if (!mMonitorList.ContainsKey(i))
                      {
                         // Request the monitor
-                        Components.Monitor monitor = this.RequestVaoMonitor(i);
+                        Components.Monitor monitor = this.ExecuteGetMonitor(i);
 
                         // No more monitors.
                         if (monitor == null)

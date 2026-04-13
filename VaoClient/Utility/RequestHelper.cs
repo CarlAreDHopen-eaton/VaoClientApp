@@ -10,7 +10,7 @@ namespace Vao.Client.Utility
 {
    internal static class RequestHelper
    {
-      internal static List<Camera> RequestVaoCameraList(this VaoClient vaoClient)
+      internal static List<Camera> ExecuteGetCameraList(this VaoClient vaoClient)
       {
          RestClient client = vaoClient.GetRestClient();
 
@@ -29,7 +29,7 @@ namespace Vao.Client.Utility
          return cameras;
       }
 
-      internal static List<Preset> RequestVaoPresetList(this VaoClient vaoClient, Camera ownerCamera)
+      internal static List<Preset> ExecuteGetPresetList(this VaoClient vaoClient, Camera ownerCamera)
       {
          RestClient client = vaoClient.GetRestClient();
 
@@ -48,7 +48,7 @@ namespace Vao.Client.Utility
          return presets;
       }
 
-      internal static List<PlaybackInfo> RequestVaoRecordingList(this VaoClient vaoClient, Camera ownerCamera, Guid viewerId)
+      internal static List<PlaybackInfo> ExecuteGetRecordingList(this VaoClient vaoClient, Camera ownerCamera, Guid viewerId)
       {
          RestClient client = vaoClient.GetRestClient();
 
@@ -73,7 +73,7 @@ namespace Vao.Client.Utility
          return playbackInfoList;
       }
 
-      internal static DownloadInfo RequestVaoDownloadInfo(this VaoClient vaoClient, Camera ownerCamera, string recorderAddress, int streamNo, string startTime, string duration)
+      internal static DownloadInfo ExecuteGetDownloadInfo(this VaoClient vaoClient, Camera ownerCamera, string recorderAddress, int streamNo, string startTime, string duration)
       {
          RestClient client = vaoClient.GetRestClient();
 
@@ -101,7 +101,7 @@ namespace Vao.Client.Utility
          return downloadInfo;
       }
 
-      internal static bool RequestVaoSetCameraName(this VaoClient vaoClient, int videoInput, string name)
+      internal static bool ExecuteSetCameraName(this VaoClient vaoClient, int videoInput, string name)
       {
          RestClient client = vaoClient.GetRestClient();
 
@@ -123,7 +123,7 @@ namespace Vao.Client.Utility
          return true;
       }
 
-      internal static Monitor RequestVaoMonitor(this VaoClient vaoClient, int iVideoOutput)
+      internal static Monitor ExecuteGetMonitor(this VaoClient vaoClient, int iVideoOutput)
       {
          RestClient client = vaoClient.GetRestClient();
 
@@ -142,7 +142,7 @@ namespace Vao.Client.Utility
          return monitor;
       }
 
-      internal static string GetVaoStatus(this VaoClient vaoClient)
+      internal static string ExecuteGetStatus(this VaoClient vaoClient)
       {
          RestClient client = vaoClient.GetRestClient();
          RestRequest request = new RestRequest("status", Method.Options);
@@ -151,7 +151,7 @@ namespace Vao.Client.Utility
          return vaoClient.ValidateResponseContent(response);
       }
 
-      internal static ApiVersion GetVaoApiVersion(this VaoClient vaoClient)
+      internal static ApiVersion ExecuteGetApiVersion(this VaoClient vaoClient)
       {
          RestClient client = vaoClient.GetRestClient();
          RestRequest request = new RestRequest("version/api", Method.Options);
@@ -167,7 +167,7 @@ namespace Vao.Client.Utility
          return apiVersion;
       }
 
-      internal static string GetVaoStatusMessages(this VaoClient vaoClient, DateTime dateTime)
+      internal static string ExecuteGetStatusMessages(this VaoClient vaoClient, DateTime dateTime)
       {
          RestClient client = vaoClient.GetRestClient();
          RestRequest request = new RestRequest("status");
@@ -179,7 +179,7 @@ namespace Vao.Client.Utility
          return vaoClient.ValidateResponseContent(response);
       }
 
-      internal static RestResponse MoveTargetStart(this VaoClient vaoClient, int cameraNumber, int? panSpeed, int? tiltSpeed, int? zoomSpeed, string focus)
+      internal static RestResponse ExecuteMoveTargetStart(this VaoClient vaoClient, int cameraNumber, int? panSpeed, int? tiltSpeed, int? zoomSpeed, string focus)
       {
          RestClient client = vaoClient.GetRestClient();
          // ReSharper disable once RedundantArgumentDefaultValue
@@ -213,7 +213,7 @@ namespace Vao.Client.Utility
          return response;
       }
 
-      internal static RestResponse MoveTargetStop(this VaoClient vaoClient, int cameraNumber)
+      internal static RestResponse ExecuteMoveTargetStop(this VaoClient vaoClient, int cameraNumber)
       {
          RestClient client = vaoClient.GetRestClient();
          // ReSharper disable once RedundantArgumentDefaultValue
@@ -223,7 +223,7 @@ namespace Vao.Client.Utility
          return response;
       }
 
-      internal static RestResponse GetVaoCameraInternal(this VaoClient vaoClient, int iCameraNo)
+      internal static RestResponse ExecuteGetCameraInternal(this VaoClient vaoClient, int iCameraNo)
       {
          RestClient client = vaoClient.GetRestClient();
          // ReSharper disable once RedundantArgumentDefaultValue
@@ -238,7 +238,7 @@ namespace Vao.Client.Utility
          return response;
       }
 
-      internal static RestResponse MoveCameraToPreset(this VaoClient vaoClient,  int iCameraNo, int iPresetNumber)
+      internal static RestResponse ExecuteMoveCameraToPreset(this VaoClient vaoClient,  int iCameraNo, int iPresetNumber)
       {
          RestClient client = vaoClient.GetRestClient();
          // ReSharper disable once RedundantArgumentDefaultValue
@@ -254,7 +254,7 @@ namespace Vao.Client.Utility
       }
 
 
-      internal static List<Alarm> RequestVaoAlarmList(this VaoClient vaoClient)
+      internal static List<Alarm> ExecuteGetAlarmList(this VaoClient vaoClient)
       {
          RestClient client = vaoClient.GetRestClient();
 
@@ -273,7 +273,7 @@ namespace Vao.Client.Utility
          return alarms;
       }
 
-      internal static Alarm RequestVaoAlarm(this VaoClient vaoClient, int iAlarmNo)
+      internal static Alarm ExecuteGetAlarm(this VaoClient vaoClient, int iAlarmNo)
       {
          RestClient client = vaoClient.GetRestClient();
 
@@ -292,7 +292,7 @@ namespace Vao.Client.Utility
          return alarm;
       }
 
-      internal static RestResponse SendVaoAlarmCommand(this VaoClient vaoClient, int iAlarmNo, string command)
+      internal static RestResponse ExecuteAlarmCommand(this VaoClient vaoClient, int iAlarmNo, string command)
       {
          RestClient client = vaoClient.GetRestClient();
          // ReSharper disable once RedundantArgumentDefaultValue
@@ -319,7 +319,7 @@ namespace Vao.Client.Utility
          return response;
       }
 
-      internal static RestResponse SendVaoAbsolutePosition(this VaoClient vaoClient, int iCameraNo, float? pan, float? tilt, float? zoom)
+      internal static RestResponse ExecuteCameraAbsolutePosition(this VaoClient vaoClient, int iCameraNo, float? pan, float? tilt, float? zoom)
       {
          RestClient client = vaoClient.GetRestClient();
          // ReSharper disable once RedundantArgumentDefaultValue
@@ -348,7 +348,7 @@ namespace Vao.Client.Utility
          return response;
       }
 
-      internal static RestResponse RequestVaoLockCamera(this VaoClient vaoClient, int iCameraNo, string timeout = null)
+      internal static RestResponse ExecuteLockCamera(this VaoClient vaoClient, int iCameraNo, string timeout = null)
       {
          RestClient client = vaoClient.GetRestClient();
          // ReSharper disable once RedundantArgumentDefaultValue
@@ -373,7 +373,7 @@ namespace Vao.Client.Utility
          return response;
       }
 
-      internal static RestResponse RequestVaoUnlockCamera(this VaoClient vaoClient, int iCameraNo)
+      internal static RestResponse ExecuteUnlockCamera(this VaoClient vaoClient, int iCameraNo)
       {
          RestClient client = vaoClient.GetRestClient();
          // ReSharper disable once RedundantArgumentDefaultValue
@@ -388,7 +388,7 @@ namespace Vao.Client.Utility
          return response;
       }
 
-      internal static User RequestVaoLoggedInUserInfo(this VaoClient vaoClient)
+      internal static User ExecuteGetLoggedInUserInfo(this VaoClient vaoClient)
       {
          RestClient client = vaoClient.GetRestClient();
          // ReSharper disable once RedundantArgumentDefaultValue

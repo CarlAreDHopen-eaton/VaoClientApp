@@ -239,7 +239,7 @@ namespace Vao.Sample
             WriteMessageLog("VaoAPI", "Client started.", LogLevel.Notice);
             SetCurrentLoggedInUser();
             FillSelectCameraButtonList();
-            FillAlarmList();
+            FillSelectAlarmButtonList();
             CheckApiVersion();
             ClearRecordingDropdown();
             ClearPresetDropdown();
@@ -539,7 +539,12 @@ namespace Vao.Sample
          btnFocusFar.Enabled = CurrentCamera?.HasLensControl ?? false;
          btnFocusNear.Enabled = CurrentCamera?.HasLensControl ?? false;
       }
-
+      /// <summary>
+      /// Converts an image into a grayscale image
+      /// </summary>
+      /// <param name="original">The original image.</param>
+      /// <param name="bSelected">Indicates whether the image is selected.</param>
+      /// <returns></returns>
       private static Image MakeGrayscale(Image original, bool bSelected)
       {
          if (original != null)
@@ -790,8 +795,8 @@ namespace Vao.Sample
       {
          if (sender is Form window)
          {
-            Point panelTopRight = new Point(pnlActiveAlarms.Width, 0);
-            Point screenLocation = pnlActiveAlarms.PointToScreen(panelTopRight);
+            Point panelTopRight = new Point(pnlAlarms.Width, 0);
+            Point screenLocation = pnlAlarms.PointToScreen(panelTopRight);
 
             window.Location = screenLocation;
          }
@@ -829,13 +834,13 @@ namespace Vao.Sample
          }
       }
 
-      private void FillAlarmList()
+      private void FillSelectAlarmButtonList()
       {
          List<Alarm> alarmList = moVaoClient.GetAlarmList();
          if (alarmList == null)
             return;
 
-         foreach (Control control in pnlActiveAlarms.Controls)
+         foreach (Control control in pnlAlarms.Controls)
          {
             if (control.Controls.Count > 0 && control.Controls[0] is Button button)
             {
@@ -843,7 +848,7 @@ namespace Vao.Sample
                button.Click -= OnSelectAlarmClicked;
             }
          }
-         pnlActiveAlarms.Controls.Clear();
+         pnlAlarms.Controls.Clear();
 
          foreach (Alarm alarm in alarmList)
          {
@@ -865,7 +870,7 @@ namespace Vao.Sample
             oButton.Click += OnSelectAlarmClicked;
             moToolTip.SetToolTip(oButton, alarm.Name);
 
-            pnlActiveAlarms.Controls.Add(frameBehindButton);
+            pnlAlarms.Controls.Add(frameBehindButton);
             frameBehindButton.Invalidate();
 
             alarm.PropertyChanged += delegate (object sender, PropertyChangedEventArgs e)

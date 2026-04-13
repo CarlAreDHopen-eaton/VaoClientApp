@@ -123,7 +123,7 @@ namespace Vao.Client.Components
          get
          {
             if (mPresetList == null)
-               mPresetList = VaoClient.RequestVaoPresetList(this);
+               mPresetList = VaoClient.ExecuteGetPresetList(this);
             return mPresetList;
          }
       }
@@ -135,12 +135,14 @@ namespace Vao.Client.Components
       {
          if (!mPlaybackInfoList.ContainsKey(viewerId))
          {
-            List<PlaybackInfo> playbackInfoList = VaoClient.RequestVaoRecordingList(this, viewerId);
+            List<PlaybackInfo> playbackInfoList = VaoClient.ExecuteGetRecordingList(this, viewerId);
             mPlaybackInfoList.Add(viewerId, playbackInfoList);
          }       
          return mPlaybackInfoList[viewerId];
       }
-
+      /// <summary>
+      /// Gets whether the camera has Lens control
+      /// </summary>
       public bool HasLensControl
       {
          get
@@ -156,7 +158,9 @@ namespace Vao.Client.Components
             }
          }
       }
-
+      /// <summary>
+      /// Gets whether the camera has wipe and wash control
+      /// </summary>
       public bool HasWipeWashControl
       {
          get
@@ -172,7 +176,9 @@ namespace Vao.Client.Components
             }
          }
       }
-
+      /// <summary>
+      /// Gets whether the camera has pan and tilt control
+      /// </summary>
       public bool HasPanTiltControl
       {
          get
@@ -188,7 +194,9 @@ namespace Vao.Client.Components
             }
          }
       }
-
+      /// <summary>
+      /// Gets the priority of the current user has on the camera 
+      /// </summary>
       public int Priority
       {
          get
@@ -204,7 +212,9 @@ namespace Vao.Client.Components
             }
          }
       }
-
+      /// <summary>
+      /// Indicates whether the camera is locked
+      /// </summary>
       public bool IsLocked
       {
          get
@@ -220,7 +230,9 @@ namespace Vao.Client.Components
             }
          }
       }
-
+      /// <summary>
+      /// Indicates whether the logged-in user has access to unlock the camera
+      /// </summary>
       public bool? CanUnlock
       {
          get
@@ -236,7 +248,9 @@ namespace Vao.Client.Components
             }
          }
       }
-
+      /// <summary>
+      /// The owner of the lock on the camera
+      /// </summary>
       public string LockOwner
       {
          get
@@ -265,7 +279,7 @@ namespace Vao.Client.Components
       /// <returns>The RTSP url for the camera live stream.</returns>
       public string GetCameraLiveStreamUrl(int iStream)
       {
-         RestResponse response = VaoClient.GetVaoCameraInternal(ComponentNumber);
+         RestResponse response = VaoClient.ExecuteGetCameraInternal(ComponentNumber);
          if (response != null && response.IsSuccessful)
          {
             // Request new camera data in case redundant video server has taken over.
@@ -288,10 +302,12 @@ namespace Vao.Client.Components
          }
          return "";
       }
-
+      /// <summary>
+      /// Updates the internal data of the camera
+      /// </summary>
       public void UpdateCameraData()
       {
-         RestResponse response = VaoClient.GetVaoCameraInternal(ComponentNumber);
+         RestResponse response = VaoClient.ExecuteGetCameraInternal(ComponentNumber);
          if (response != null && response.IsSuccessful)
          {
             Camera newCameraData = JsonParser.ParseSingleCamera(response.Content, VaoClient);
@@ -327,7 +343,7 @@ namespace Vao.Client.Components
          mCurrentPanSpeed = null;
          mCurrentZoomSpeed = null;
          mCurrentFocus = null;
-         RestResponse response = VaoClient.MoveTargetStop(ComponentNumber);
+         RestResponse response = VaoClient.ExecuteMoveTargetStop(ComponentNumber);
       }
 
       /// <summary>
@@ -400,7 +416,7 @@ namespace Vao.Client.Components
       /// <returns>True is success</returns>
       public bool SetName(string newName)
       {
-         return VaoClient.RequestVaoSetCameraName(ComponentNumber, newName);
+         return VaoClient.ExecuteSetCameraName(ComponentNumber, newName);
       }
 
       #endregion
@@ -448,7 +464,7 @@ namespace Vao.Client.Components
       /// <returns></returns>
       private RestResponse MoveTargetStart()
       {
-         return VaoClient.MoveTargetStart(ComponentNumber, mCurrentPanSpeed, mCurrentTiltSpeed, mCurrentZoomSpeed, mCurrentFocus);
+         return VaoClient.ExecuteMoveTargetStart(ComponentNumber, mCurrentPanSpeed, mCurrentTiltSpeed, mCurrentZoomSpeed, mCurrentFocus);
       }
 
       /// <summary>

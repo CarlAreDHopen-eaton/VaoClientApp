@@ -50,7 +50,7 @@ namespace Vao.Client.Components
       {
          int iPreset = ComponentNumber;
          int iCamera = OwnerCamera.ComponentNumber;
-         RestResponse response = VaoClient.MoveCameraToPreset(iCamera, iPreset);
+         RestResponse response = VaoClient.ExecuteMoveCameraToPreset(iCamera, iPreset);
          if (response != null && response.IsSuccessful)
          {
             return true;

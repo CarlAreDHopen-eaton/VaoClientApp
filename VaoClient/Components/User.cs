@@ -26,13 +26,17 @@ namespace Vao.Client.Components
          DownloadAccess = user.downloadAccess;
          mJsonUserObject = user;
       }
-
+      /// <summary>
+      /// The name of the user
+      /// </summary>
       public string Name
       {
          get { return mUserName; }
          internal set { mUserName = value; }
       }
-
+      /// <summary>
+      /// The priority of the user
+      /// </summary>
       public int Priority
       {
          get
@@ -48,7 +52,9 @@ namespace Vao.Client.Components
             }
          }
       }
-
+      /// <summary>
+      /// The privilege of the user
+      /// </summary>
       public UserPrivilege Privilege
       {
          get
@@ -64,7 +70,9 @@ namespace Vao.Client.Components
             }
          }
       }
-
+      /// <summary>
+      /// Indicates whether the user has playback access 
+      /// </summary>
       public bool PlaybackAccess
       {
          get
@@ -80,7 +88,9 @@ namespace Vao.Client.Components
             }
          }
       }
-
+      /// <summary>
+      /// Indicates whether the user has download access
+      /// </summary>
       public bool DownloadAccess
       {
          get

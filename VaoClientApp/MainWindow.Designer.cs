@@ -58,7 +58,7 @@ namespace Vao.Sample
          this.splitHorizontalVideoAndMessageSplit = new System.Windows.Forms.SplitContainer();
          this.btnConnect = new DarkUI.Controls.DarkButton();
          this.grpActiveAlarms = new Vao.Sample.CollapsibleDarkSectionPanel();
-         this.pnlActiveAlarms = new System.Windows.Forms.FlowLayoutPanel();
+         this.pnlAlarms = new System.Windows.Forms.FlowLayoutPanel();
          this.grpDownload = new Vao.Sample.CollapsibleDarkSectionPanel();
          this.btnDownload = new DarkUI.Controls.DarkButton();
          this.grpSelectPlayback = new Vao.Sample.CollapsibleDarkSectionPanel();
@@ -437,7 +437,7 @@ namespace Vao.Sample
          // 
          this.grpActiveAlarms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-         this.grpActiveAlarms.Controls.Add(this.pnlActiveAlarms);
+         this.grpActiveAlarms.Controls.Add(this.pnlAlarms);
          this.grpActiveAlarms.Location = new System.Drawing.Point(6, 622);
          this.grpActiveAlarms.Name = "grpActiveAlarms";
          this.grpActiveAlarms.SectionHeader = "Alarms";
@@ -446,13 +446,13 @@ namespace Vao.Sample
          // 
          // pnlActiveAlarms
          // 
-         this.pnlActiveAlarms.AutoScroll = true;
-         this.pnlActiveAlarms.BackColor = System.Drawing.SystemColors.WindowFrame;
-         this.pnlActiveAlarms.Dock = System.Windows.Forms.DockStyle.Fill;
-         this.pnlActiveAlarms.Location = new System.Drawing.Point(1, 25);
-         this.pnlActiveAlarms.Name = "pnlActiveAlarms";
-         this.pnlActiveAlarms.Size = new System.Drawing.Size(236, 166);
-         this.pnlActiveAlarms.TabIndex = 0;
+         this.pnlAlarms.AutoScroll = true;
+         this.pnlAlarms.BackColor = System.Drawing.SystemColors.WindowFrame;
+         this.pnlAlarms.Dock = System.Windows.Forms.DockStyle.Fill;
+         this.pnlAlarms.Location = new System.Drawing.Point(1, 25);
+         this.pnlAlarms.Name = "pnlAlarms";
+         this.pnlAlarms.Size = new System.Drawing.Size(236, 166);
+         this.pnlAlarms.TabIndex = 0;
          // 
          // grpDownload
          // 
@@ -825,7 +825,7 @@ namespace Vao.Sample
       private DarkUI.Controls.DarkButton btnAbsolutePosition;
       private DarkUI.Controls.DarkButton btnCameraLock;
       private CollapsibleDarkSectionPanel grpActiveAlarms;
-      private System.Windows.Forms.FlowLayoutPanel pnlActiveAlarms;
+      private System.Windows.Forms.FlowLayoutPanel pnlAlarms;
    }
 }
 
