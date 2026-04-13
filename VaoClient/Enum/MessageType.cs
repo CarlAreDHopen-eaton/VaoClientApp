@@ -56,6 +56,34 @@
       /// <summary>
       /// There is no video in the requested download
       /// </summary>
-      NoVideoInRequestedDownload
+      NoVideoInRequestedDownload,
+      /// <summary>
+      /// The camera is locked and cannot be operated.
+      /// </summary>
+      CameraLocked,
+      /// <summary>
+      /// The camera is unlocked and can be operated.
+      /// </summary>
+      CameraUnlocked,
+      /// <summary>
+      /// The alarm function for the device is disabled.
+      /// </summary>
+      AlarmStatusDisabled,
+      /// <summary>
+      /// The alarm reports a tamper condition.
+      /// </summary>
+      AlarmStatusTampered,
+      /// <summary>
+      /// The alarm is active.
+      /// </summary>
+      AlarmStatusActive,
+      /// <summary>
+      /// The alarm is inactive.
+      /// </summary>
+      AlarmStatusInactive,
+      /// <summary>
+      /// The alarm has been acknowledged.
+      /// </summary>
+      AlarmStatusAcknowledged
    }
 }

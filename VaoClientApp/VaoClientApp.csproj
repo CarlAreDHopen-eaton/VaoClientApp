@@ -108,6 +108,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CameraLockWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CameraLockWindow.Designer.cs">
+      <DependentUpon>CameraLockWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AlarmActionWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AlarmActionWindow.Designer.cs">
+      <DependentUpon>AlarmActionWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AbsolutePositionWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AbsolutePositionWindow.Designer.cs">
+      <DependentUpon>AbsolutePositionWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CollapsibleDarkSectionPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="DarkListItemWithId.cs" />
     <Compile Include="DarkModeHelper.cs" />
     <Compile Include="DownloadWindow.cs">
@@ -128,8 +149,18 @@
     <Compile Include="VideoViewWithViewerId.cs">
       <SubType>Component</SubType>
     </Compile>
+    <EmbeddedResource Include="CameraLockWindow.resx">
+      <DependentUpon>CameraLockWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AlarmActionWindow.resx">
+      <DependentUpon>AlarmActionWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AbsolutePositionWindow.resx">
+      <DependentUpon>AbsolutePositionWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DownloadWindow.resx">
       <DependentUpon>DownloadWindow.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
@@ -200,6 +231,13 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\absoluteposition_black_24dp.png" />
+    <None Include="Resources\cameralocked_black_24dp.png" />
+    <None Include="Resources\cameralocked_red_24dp.png" />
+    <None Include="Resources\cameralocked_yellow_24dp.png" />
+    <None Include="Resources\cameraunlocked_black_24dp.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\VideoLAN.LibVLC.Windows.3.0.20\build\VideoLAN.LibVLC.Windows.targets" Condition="Exists('..\packages\VideoLAN.LibVLC.Windows.3.0.20\build\VideoLAN.LibVLC.Windows.targets')" />

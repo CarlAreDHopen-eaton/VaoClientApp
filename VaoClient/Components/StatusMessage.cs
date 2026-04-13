@@ -78,17 +78,33 @@ namespace Vao.Client.Components
                return MessageType.CameraVideoStream2Restored;
 
             // Camera data
-            if (Message.Contains("Camera data connection lost"))
+            string statusDescription = mStatusMessage.description.ToLower();
+            if (statusDescription.Contains("camera data connection lost"))
                return MessageType.CameraDataLost;
+            if (statusDescription.Contains("camera locked"))
+               return MessageType.CameraLocked;
+            if (statusDescription.Contains("camera unlocked"))
+               return MessageType.CameraUnlocked;
 
             // Video extraction
-            string statusDescription = mStatusMessage.description.ToLower();
             if (statusDescription.Contains("extracted video available for ftp download"))
                return MessageType.ExtractedVideoReadyForDownload;
             if (statusDescription.Contains("with recording is offline"))
                return MessageType.HvrWithRecordingIsOffline;
             if (statusDescription.Contains("no video in requested download"))
                return MessageType.NoVideoInRequestedDownload;
+
+            // Alarms
+            if (statusDescription.Contains("alarm status disabled"))
+               return MessageType.AlarmStatusDisabled;
+            if (statusDescription.Contains("alarm status tampered"))
+               return MessageType.AlarmStatusTampered;
+            if (statusDescription.Contains("alarm status active"))
+               return MessageType.AlarmStatusActive;
+            if (statusDescription.Contains("alarm status inactive"))
+               return MessageType.AlarmStatusInactive;
+            if (statusDescription.Contains("alarm status acknowledged"))
+               return MessageType.AlarmStatusAcknowledged;
 
             // Unknown messages.
             return MessageType.Unknown;

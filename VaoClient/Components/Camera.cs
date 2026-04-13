@@ -26,6 +26,10 @@ namespace Vao.Client.Components
       private bool mHasLensControl = false;
       private bool mHasPanTiltControl = false;
       private bool mHasWipeWashControl = false;
+      private bool mIslocked = false;
+      private int mPriority = 0;
+      private bool? mCanUnlock = null;
+      private string mLockOwner = null;
 
       internal Camera(int cameraNumber, JsonCameraObject camera, VaoClient vaoClient)
          : base(vaoClient, cameraNumber)
@@ -35,6 +39,12 @@ namespace Vao.Client.Components
          mFeatureList.Clear();
          mFeatureList.AddRange(camera.features);
       }
+
+      #region Events
+
+      public event EventHandler<EventArgs> LockStatusChanged;
+
+      #endregion
 
       #region Public Properties
 
@@ -179,6 +189,70 @@ namespace Vao.Client.Components
          }
       }
 
+      public int Priority
+      {
+         get
+         {
+            return mPriority;
+         }
+         internal set
+         {
+            if (mPriority != value)
+            {
+               mPriority = value;
+               NotifyPropertyChanged();
+            }
+         }
+      }
+
+      public bool IsLocked
+      {
+         get
+         {
+            return mIslocked;
+         }
+         private set
+         {
+            if (mIslocked != value)
+            {
+               mIslocked = value;
+               NotifyPropertyChanged();
+            }
+         }
+      }
+
+      public bool? CanUnlock
+      {
+         get
+         {
+            return mCanUnlock;
+         }
+         internal set
+         {
+            if (mCanUnlock != value)
+            {
+               mCanUnlock = value;
+               NotifyPropertyChanged();
+            }
+         }
+      }
+
+      public string LockOwner
+      {
+         get
+         {
+            return mLockOwner;
+         }
+         internal set
+         {
+            if (mLockOwner != value)
+            {
+               mLockOwner = value;
+               NotifyPropertyChanged();
+            }
+         }
+      }
+
       #endregion
 
       #region Public Methods
@@ -213,6 +287,16 @@ namespace Vao.Client.Components
             }
          }
          return "";
+      }
+
+      public void UpdateCameraData()
+      {
+         RestResponse response = VaoClient.GetVaoCameraInternal(ComponentNumber);
+         if (response != null && response.IsSuccessful)
+         {
+            Camera newCameraData = JsonParser.ParseSingleCamera(response.Content, VaoClient);
+            UpdateData(newCameraData);
+         }
       }
 
       /// <summary>
@@ -345,6 +429,12 @@ namespace Vao.Client.Components
             case MessageType.CameraDataRestored:
                CameraDataOk = true;
                break;
+            case MessageType.CameraLocked:
+               IsLocked = true;
+               break;
+            case MessageType.CameraUnlocked:
+               IsLocked = false;
+               break;
          }
       }
 
@@ -365,7 +455,7 @@ namespace Vao.Client.Components
       /// Updates the internal data for the camera.
       /// </summary>
       /// <param name="camera"></param>
-      private void UpdateData(Camera camera)
+      internal void UpdateData(Camera camera)
       {
          if (camera != null && camera.ComponentNumber == ComponentNumber)
          {
@@ -403,8 +493,9 @@ namespace Vao.Client.Components
                }
                HasLensControl = bHasLensControl;
                HasWipeWashControl= bHasWipeWashControl;
-               HasPanTiltControl = bHasPanTiltControl; 
-
+               HasPanTiltControl = bHasPanTiltControl;
+               Priority = jsonCameraObject.priority;
+               UpdateLockState(jsonCameraObject.locked, jsonCameraObject.lockOwner, jsonCameraObject.canUnlock);
                mJsonCameraObject = jsonCameraObject;
             }
          }
@@ -415,6 +506,14 @@ namespace Vao.Client.Components
          return Name;
       }
 
+      private void UpdateLockState(bool isLocked, string lockOwner, bool? canUnlock)
+      {
+         IsLocked = isLocked;
+         LockOwner = lockOwner;
+         CanUnlock = canUnlock;
+
+         LockStatusChanged?.Invoke(this, EventArgs.Empty);
+      }
       #endregion
    }
 }

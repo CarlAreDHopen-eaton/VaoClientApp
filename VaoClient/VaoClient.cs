@@ -22,6 +22,7 @@ namespace Vao.Client
       private readonly ManualResetEvent mStopLoadData = new ManualResetEvent(false);
       private Thread mInitializeThread;
       private readonly object mUpdateCameraListLocker = new object();
+      private readonly Dictionary<int, Alarm> mAlarmList = new Dictionary<int, Alarm>();
       #endregion
 
       #region Public Events
@@ -90,10 +91,10 @@ namespace Vao.Client
       /// Gets download information for video download
       /// </summary>
       /// <param name="ownerCamera">The camera which the recording is from.</param>
-      /// <param name="recorderAddress">the HVR address.</param>
+      /// <param name="recorderAddress">The HVR address.</param>
       /// <param name="streamNo">The stream number (1 for Main channel and 2 for Sub channel).</param>
       /// <param name="startTime">Start time of the video recording.</param>
-      /// <param name="duration">duartion of the video recording.</param>
+      /// <param name="duration">Duration of the video recording.</param>
       /// <returns></returns>
       public DownloadInfo GetDownloadInfo(Camera ownerCamera, string recorderAddress, int streamNo, string startTime, string duration)
       {
@@ -176,6 +177,52 @@ namespace Vao.Client
          mCameraList.Clear();
 
          mRestClient = null;
+      }
+
+      public List<Alarm> GetAlarmList()
+      {
+         if (mAlarmList != null && mAlarmList.Count > 0)
+         {
+            return mAlarmList.Values.ToList();
+         }
+         List<Alarm> alarms = this.RequestVaoAlarmList();
+         if (alarms != null)
+         {
+            foreach (Alarm alarm in alarms)
+            {
+               AddOrUpdateAlarm(alarm);
+            }
+         }
+         return alarms;
+      }
+
+      public Alarm GetSingleAlarm(int alarmNo)
+      {
+         return this.RequestVaoAlarm(alarmNo);
+      }
+
+      public RestResponse SendAlarmCommand(int iAlarmNo, string command)
+      {
+        return this.SendVaoAlarmCommand(iAlarmNo, command);
+      }
+
+      public RestResponse SendAbsolutePosition(int iCameraNo, float? pan, float? tilt, float? zoom)
+      {
+         return this.SendVaoAbsolutePosition(iCameraNo, pan, tilt, zoom);
+      }
+
+      public RestResponse SendLockCamera(int iCameraNo, string timeout)
+      {
+         return this.RequestVaoLockCamera(iCameraNo, timeout);
+      }
+      public RestResponse SendUnlockCamera(int iCameraNo)
+      {
+         return this.RequestVaoUnlockCamera(iCameraNo);
+      }
+
+      public User GetLoggedInUserInfo()
+      {
+         return this.RequestVaoLoggedInUserInfo();
       }
 
       #endregion
@@ -321,6 +368,23 @@ namespace Vao.Client
       {
          mFeedbackHandler = new FeedbackHandler(this);
          mFeedbackHandler.Start();
+      }
+
+      private void AddOrUpdateAlarm(Alarm alarm)
+      {
+         var key = alarm.ComponentNumber;
+         lock (mUpdateCameraListLocker)
+         {
+            if (!mAlarmList.ContainsKey(key))
+            {
+               mAlarmList.Add(key, alarm);
+            }
+            else
+            {
+               mAlarmList[key].Name = alarm.Name;
+            }
+         }
+
       }
 
       #endregion

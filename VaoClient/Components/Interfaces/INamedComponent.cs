@@ -8,7 +8,7 @@
       string Name { get; }
 
       /// <summary>
-      /// Sets a new name for the conponent.
+      /// Sets a new name for the component.
       /// </summary>
       /// <param name="newName">The new name</param>
       /// <returns>True is success</returns>

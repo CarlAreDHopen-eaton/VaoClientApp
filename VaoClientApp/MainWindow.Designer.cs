@@ -31,22 +31,8 @@ namespace Vao.Sample
       private void InitializeComponent()
       {
          System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
-         this.btnConnect = new DarkUI.Controls.DarkButton();
-         this.btnDisconnect = new DarkUI.Controls.DarkButton();
-         this.chkSecure = new System.Windows.Forms.CheckBox();
-         this.lblHost = new System.Windows.Forms.Label();
-         this.txtHost = new DarkUI.Controls.DarkTextBox();
-         this.txtPort = new DarkUI.Controls.DarkTextBox();
-         this.lblPort = new System.Windows.Forms.Label();
          this.pnlVideo = new System.Windows.Forms.Panel();
-         this.txtUser = new DarkUI.Controls.DarkTextBox();
-         this.lblUser = new System.Windows.Forms.Label();
-         this.txtPassword = new DarkUI.Controls.DarkTextBox();
-         this.lblPassword = new System.Windows.Forms.Label();
          this.txtCurrentRtspUrl = new DarkUI.Controls.DarkTextBox();
-         this.grpCameraSelection = new DarkUI.Controls.DarkSectionPanel();
-         this.pnlCameraSelectFlowPanel = new System.Windows.Forms.FlowLayoutPanel();
-         this.grpConnection = new DarkUI.Controls.DarkSectionPanel();
          this.grpMessages = new DarkUI.Controls.DarkSectionPanel();
          this.lstMessages = new DarkUI.Controls.DarkListView();
          this.btnClearMessages = new DarkUI.Controls.DarkButton();
@@ -56,18 +42,9 @@ namespace Vao.Sample
          this.chkUseTcp = new System.Windows.Forms.CheckBox();
          this.chkPreferSubChannel = new System.Windows.Forms.CheckBox();
          this.splitMainVerticalSplit = new System.Windows.Forms.SplitContainer();
-         this.grpDownload = new DarkUI.Controls.DarkSectionPanel();
-         this.btnDownload = new DarkUI.Controls.DarkButton();
-         this.grpSelectPlayback = new DarkUI.Controls.DarkSectionPanel();
-         this.btnStopPlayback = new DarkUI.Controls.DarkButton();
-         this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
-         this.btnGotoTime = new DarkUI.Controls.DarkButton();
-         this.selPlayback = new DarkUI.Controls.DarkComboBox();
-         this.btnPlayPlayback = new DarkUI.Controls.DarkButton();
-         this.grpSelectPreset = new DarkUI.Controls.DarkSectionPanel();
-         this.selPreset = new DarkUI.Controls.DarkComboBox();
-         this.btnGotoPreset = new DarkUI.Controls.DarkButton();
          this.grpCameraControl = new DarkUI.Controls.DarkSectionPanel();
+         this.btnCameraLock = new DarkUI.Controls.DarkButton();
+         this.btnAbsolutePosition = new DarkUI.Controls.DarkButton();
          this.btnFocusFar = new DarkUI.Controls.DarkButton();
          this.btnFocusNear = new DarkUI.Controls.DarkButton();
          this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -79,8 +56,33 @@ namespace Vao.Sample
          this.btnTiltDown = new DarkUI.Controls.DarkButton();
          this.btnTiltUp = new DarkUI.Controls.DarkButton();
          this.splitHorizontalVideoAndMessageSplit = new System.Windows.Forms.SplitContainer();
-         this.grpCameraSelection.SuspendLayout();
-         this.grpConnection.SuspendLayout();
+         this.btnConnect = new DarkUI.Controls.DarkButton();
+         this.grpActiveAlarms = new Vao.Sample.CollapsibleDarkSectionPanel();
+         this.pnlActiveAlarms = new System.Windows.Forms.FlowLayoutPanel();
+         this.grpDownload = new Vao.Sample.CollapsibleDarkSectionPanel();
+         this.btnDownload = new DarkUI.Controls.DarkButton();
+         this.grpSelectPlayback = new Vao.Sample.CollapsibleDarkSectionPanel();
+         this.btnStopPlayback = new DarkUI.Controls.DarkButton();
+         this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
+         this.btnGotoTime = new DarkUI.Controls.DarkButton();
+         this.selPlayback = new DarkUI.Controls.DarkComboBox();
+         this.btnPlayPlayback = new DarkUI.Controls.DarkButton();
+         this.grpSelectPreset = new Vao.Sample.CollapsibleDarkSectionPanel();
+         this.selPreset = new DarkUI.Controls.DarkComboBox();
+         this.btnGotoPreset = new DarkUI.Controls.DarkButton();
+         this.grpConnection = new Vao.Sample.CollapsibleDarkSectionPanel();
+         this.lblHost = new System.Windows.Forms.Label();
+         this.chkSecure = new System.Windows.Forms.CheckBox();
+         this.txtHost = new DarkUI.Controls.DarkTextBox();
+         this.lblPort = new System.Windows.Forms.Label();
+         this.txtPassword = new DarkUI.Controls.DarkTextBox();
+         this.txtPort = new DarkUI.Controls.DarkTextBox();
+         this.lblPassword = new System.Windows.Forms.Label();
+         this.btnDisconnect = new DarkUI.Controls.DarkButton();
+         this.lblUser = new System.Windows.Forms.Label();
+         this.txtUser = new DarkUI.Controls.DarkTextBox();
+         this.grpCameraSelection = new Vao.Sample.CollapsibleDarkSectionPanel();
+         this.pnlCameraSelectFlowPanel = new System.Windows.Forms.FlowLayoutPanel();
          this.grpMessages.SuspendLayout();
          this.grpVideoControl.SuspendLayout();
          this.panel1.SuspendLayout();
@@ -88,93 +90,19 @@ namespace Vao.Sample
          this.splitMainVerticalSplit.Panel1.SuspendLayout();
          this.splitMainVerticalSplit.Panel2.SuspendLayout();
          this.splitMainVerticalSplit.SuspendLayout();
-         this.grpDownload.SuspendLayout();
-         this.grpSelectPlayback.SuspendLayout();
-         this.grpSelectPreset.SuspendLayout();
          this.grpCameraControl.SuspendLayout();
          ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.splitHorizontalVideoAndMessageSplit)).BeginInit();
          this.splitHorizontalVideoAndMessageSplit.Panel1.SuspendLayout();
          this.splitHorizontalVideoAndMessageSplit.Panel2.SuspendLayout();
          this.splitHorizontalVideoAndMessageSplit.SuspendLayout();
+         this.grpActiveAlarms.SuspendLayout();
+         this.grpDownload.SuspendLayout();
+         this.grpSelectPlayback.SuspendLayout();
+         this.grpSelectPreset.SuspendLayout();
+         this.grpConnection.SuspendLayout();
+         this.grpCameraSelection.SuspendLayout();
          this.SuspendLayout();
-         // 
-         // btnConnect
-         // 
-         this.btnConnect.Location = new System.Drawing.Point(21, 156);
-         this.btnConnect.Name = "btnConnect";
-         this.btnConnect.Padding = new System.Windows.Forms.Padding(5);
-         this.btnConnect.Size = new System.Drawing.Size(88, 28);
-         this.btnConnect.TabIndex = 9;
-         this.btnConnect.Text = "Connect";
-         this.btnConnect.Click += new System.EventHandler(this.btnConnect_Click);
-         // 
-         // btnDisconnect
-         // 
-         this.btnDisconnect.Location = new System.Drawing.Point(115, 156);
-         this.btnDisconnect.Name = "btnDisconnect";
-         this.btnDisconnect.Padding = new System.Windows.Forms.Padding(5);
-         this.btnDisconnect.Size = new System.Drawing.Size(88, 28);
-         this.btnDisconnect.TabIndex = 10;
-         this.btnDisconnect.Text = "Disconnect";
-         this.btnDisconnect.Click += new System.EventHandler(this.btnDisconnect_Click);
-         // 
-         // chkSecure
-         // 
-         this.chkSecure.AutoSize = true;
-         this.chkSecure.Checked = true;
-         this.chkSecure.CheckState = System.Windows.Forms.CheckState.Checked;
-         this.chkSecure.ForeColor = System.Drawing.SystemColors.Control;
-         this.chkSecure.Location = new System.Drawing.Point(21, 134);
-         this.chkSecure.Name = "chkSecure";
-         this.chkSecure.Size = new System.Drawing.Size(60, 17);
-         this.chkSecure.TabIndex = 8;
-         this.chkSecure.Text = "Secure";
-         // 
-         // lblHost
-         // 
-         this.lblHost.AutoSize = true;
-         this.lblHost.ForeColor = System.Drawing.Color.Silver;
-         this.lblHost.Location = new System.Drawing.Point(18, 34);
-         this.lblHost.Name = "lblHost";
-         this.lblHost.Size = new System.Drawing.Size(29, 13);
-         this.lblHost.TabIndex = 0;
-         this.lblHost.Text = "Host";
-         // 
-         // txtHost
-         // 
-         this.txtHost.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-         this.txtHost.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-         this.txtHost.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-         this.txtHost.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-         this.txtHost.Location = new System.Drawing.Point(103, 31);
-         this.txtHost.Name = "txtHost";
-         this.txtHost.Size = new System.Drawing.Size(124, 20);
-         this.txtHost.TabIndex = 1;
-         // 
-         // txtPort
-         // 
-         this.txtPort.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-         this.txtPort.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-         this.txtPort.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-         this.txtPort.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-         this.txtPort.Location = new System.Drawing.Point(103, 57);
-         this.txtPort.Name = "txtPort";
-         this.txtPort.Size = new System.Drawing.Size(124, 20);
-         this.txtPort.TabIndex = 3;
-         this.txtPort.Text = "444";
-         // 
-         // lblPort
-         // 
-         this.lblPort.AutoSize = true;
-         this.lblPort.ForeColor = System.Drawing.Color.Silver;
-         this.lblPort.Location = new System.Drawing.Point(18, 60);
-         this.lblPort.Name = "lblPort";
-         this.lblPort.Size = new System.Drawing.Size(26, 13);
-         this.lblPort.TabIndex = 2;
-         this.lblPort.Text = "Port";
          // 
          // pnlVideo
          // 
@@ -184,53 +112,8 @@ namespace Vao.Sample
          this.pnlVideo.BackColor = System.Drawing.Color.Black;
          this.pnlVideo.Location = new System.Drawing.Point(1, 25);
          this.pnlVideo.Name = "pnlVideo";
-         this.pnlVideo.Size = new System.Drawing.Size(969, 713);
+         this.pnlVideo.Size = new System.Drawing.Size(969, 866);
          this.pnlVideo.TabIndex = 0;
-         // 
-         // txtUser
-         // 
-         this.txtUser.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-         this.txtUser.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-         this.txtUser.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-         this.txtUser.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-         this.txtUser.Location = new System.Drawing.Point(103, 83);
-         this.txtUser.Name = "txtUser";
-         this.txtUser.Size = new System.Drawing.Size(124, 20);
-         this.txtUser.TabIndex = 5;
-         // 
-         // lblUser
-         // 
-         this.lblUser.AutoSize = true;
-         this.lblUser.ForeColor = System.Drawing.Color.Silver;
-         this.lblUser.Location = new System.Drawing.Point(18, 86);
-         this.lblUser.Name = "lblUser";
-         this.lblUser.Size = new System.Drawing.Size(29, 13);
-         this.lblUser.TabIndex = 4;
-         this.lblUser.Text = "User";
-         // 
-         // txtPassword
-         // 
-         this.txtPassword.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-         this.txtPassword.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-         this.txtPassword.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-         this.txtPassword.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-         this.txtPassword.Location = new System.Drawing.Point(103, 109);
-         this.txtPassword.Name = "txtPassword";
-         this.txtPassword.PasswordChar = '*';
-         this.txtPassword.Size = new System.Drawing.Size(124, 20);
-         this.txtPassword.TabIndex = 7;
-         // 
-         // lblPassword
-         // 
-         this.lblPassword.AutoSize = true;
-         this.lblPassword.ForeColor = System.Drawing.Color.Silver;
-         this.lblPassword.Location = new System.Drawing.Point(18, 112);
-         this.lblPassword.Name = "lblPassword";
-         this.lblPassword.Size = new System.Drawing.Size(53, 13);
-         this.lblPassword.TabIndex = 6;
-         this.lblPassword.Text = "Password";
          // 
          // txtCurrentRtspUrl
          // 
@@ -240,52 +123,10 @@ namespace Vao.Sample
          this.txtCurrentRtspUrl.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
          this.txtCurrentRtspUrl.Enabled = false;
          this.txtCurrentRtspUrl.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-         this.txtCurrentRtspUrl.Location = new System.Drawing.Point(4, 743);
+         this.txtCurrentRtspUrl.Location = new System.Drawing.Point(4, 896);
          this.txtCurrentRtspUrl.Name = "txtCurrentRtspUrl";
          this.txtCurrentRtspUrl.Size = new System.Drawing.Size(763, 20);
          this.txtCurrentRtspUrl.TabIndex = 1;
-         // 
-         // grpCameraSelection
-         // 
-         this.grpCameraSelection.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-         this.grpCameraSelection.Controls.Add(this.pnlCameraSelectFlowPanel);
-         this.grpCameraSelection.Location = new System.Drawing.Point(6, 444);
-         this.grpCameraSelection.Name = "grpCameraSelection";
-         this.grpCameraSelection.SectionHeader = "Camera Selection";
-         this.grpCameraSelection.Size = new System.Drawing.Size(238, 250);
-         this.grpCameraSelection.TabIndex = 2;
-         // 
-         // pnlCameraSelectFlowPanel
-         // 
-         this.pnlCameraSelectFlowPanel.AutoScroll = true;
-         this.pnlCameraSelectFlowPanel.BackColor = System.Drawing.SystemColors.WindowFrame;
-         this.pnlCameraSelectFlowPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-         this.pnlCameraSelectFlowPanel.Location = new System.Drawing.Point(1, 25);
-         this.pnlCameraSelectFlowPanel.Name = "pnlCameraSelectFlowPanel";
-         this.pnlCameraSelectFlowPanel.Size = new System.Drawing.Size(236, 224);
-         this.pnlCameraSelectFlowPanel.TabIndex = 0;
-         // 
-         // grpConnection
-         // 
-         this.grpConnection.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-         this.grpConnection.Controls.Add(this.lblHost);
-         this.grpConnection.Controls.Add(this.chkSecure);
-         this.grpConnection.Controls.Add(this.txtHost);
-         this.grpConnection.Controls.Add(this.lblPort);
-         this.grpConnection.Controls.Add(this.txtPassword);
-         this.grpConnection.Controls.Add(this.txtPort);
-         this.grpConnection.Controls.Add(this.lblPassword);
-         this.grpConnection.Controls.Add(this.btnDisconnect);
-         this.grpConnection.Controls.Add(this.lblUser);
-         this.grpConnection.Controls.Add(this.btnConnect);
-         this.grpConnection.Controls.Add(this.txtUser);
-         this.grpConnection.Location = new System.Drawing.Point(6, 3);
-         this.grpConnection.Name = "grpConnection";
-         this.grpConnection.SectionHeader = "Connection";
-         this.grpConnection.Size = new System.Drawing.Size(238, 189);
-         this.grpConnection.TabIndex = 0;
          // 
          // grpMessages
          // 
@@ -331,7 +172,7 @@ namespace Vao.Sample
          this.grpVideoControl.ForeColor = System.Drawing.Color.White;
          this.grpVideoControl.Location = new System.Drawing.Point(0, 0);
          this.grpVideoControl.Name = "grpVideoControl";
-         this.grpVideoControl.Size = new System.Drawing.Size(971, 769);
+         this.grpVideoControl.Size = new System.Drawing.Size(971, 922);
          this.grpVideoControl.TabIndex = 0;
          // 
          // txtVideoHeader
@@ -353,7 +194,7 @@ namespace Vao.Sample
          this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
          this.panel1.Controls.Add(this.chkUseTcp);
          this.panel1.Controls.Add(this.chkPreferSubChannel);
-         this.panel1.Location = new System.Drawing.Point(1, 737);
+         this.panel1.Location = new System.Drawing.Point(1, 890);
          this.panel1.Name = "panel1";
          this.panel1.Size = new System.Drawing.Size(969, 31);
          this.panel1.TabIndex = 12;
@@ -395,6 +236,7 @@ namespace Vao.Sample
          // splitMainVerticalSplit.Panel1
          // 
          this.splitMainVerticalSplit.Panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+         this.splitMainVerticalSplit.Panel1.Controls.Add(this.grpActiveAlarms);
          this.splitMainVerticalSplit.Panel1.Controls.Add(this.grpDownload);
          this.splitMainVerticalSplit.Panel1.Controls.Add(this.grpSelectPlayback);
          this.splitMainVerticalSplit.Panel1.Controls.Add(this.grpSelectPreset);
@@ -407,16 +249,217 @@ namespace Vao.Sample
          // 
          this.splitMainVerticalSplit.Panel2.Controls.Add(this.splitHorizontalVideoAndMessageSplit);
          this.splitMainVerticalSplit.Panel2.Padding = new System.Windows.Forms.Padding(0, 4, 4, 0);
-         this.splitMainVerticalSplit.Size = new System.Drawing.Size(1226, 908);
+         this.splitMainVerticalSplit.Size = new System.Drawing.Size(1226, 1061);
          this.splitMainVerticalSplit.SplitterDistance = 247;
          this.splitMainVerticalSplit.TabIndex = 0;
+         // 
+         // grpCameraControl
+         // 
+         this.grpCameraControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+         this.grpCameraControl.Controls.Add(this.btnCameraLock);
+         this.grpCameraControl.Controls.Add(this.btnAbsolutePosition);
+         this.grpCameraControl.Controls.Add(this.btnFocusFar);
+         this.grpCameraControl.Controls.Add(this.btnFocusNear);
+         this.grpCameraControl.Controls.Add(this.pictureBox1);
+         this.grpCameraControl.Controls.Add(this.lblCurrentCamera);
+         this.grpCameraControl.Controls.Add(this.btnZoomOut);
+         this.grpCameraControl.Controls.Add(this.btnZoomIn);
+         this.grpCameraControl.Controls.Add(this.btnPanRight);
+         this.grpCameraControl.Controls.Add(this.btnPanLeft);
+         this.grpCameraControl.Controls.Add(this.btnTiltDown);
+         this.grpCameraControl.Controls.Add(this.btnTiltUp);
+         this.grpCameraControl.Location = new System.Drawing.Point(6, 198);
+         this.grpCameraControl.Name = "grpCameraControl";
+         this.grpCameraControl.SectionHeader = "Camera Control";
+         this.grpCameraControl.Size = new System.Drawing.Size(238, 164);
+         this.grpCameraControl.TabIndex = 1;
+         // 
+         // btnCameraLock
+         // 
+         this.btnCameraLock.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+         this.btnCameraLock.Image = global::Vao.Sample.Properties.Resources.cameraunlocked_black_24dp;
+         this.btnCameraLock.Location = new System.Drawing.Point(199, 69);
+         this.btnCameraLock.Name = "btnCameraLock";
+         this.btnCameraLock.Padding = new System.Windows.Forms.Padding(5);
+         this.btnCameraLock.Size = new System.Drawing.Size(32, 32);
+         this.btnCameraLock.TabIndex = 17;
+         this.btnCameraLock.Click += new System.EventHandler(this.btnCameraLock_Click);
+         // 
+         // btnAbsolutePosition
+         // 
+         this.btnAbsolutePosition.Image = global::Vao.Sample.Properties.Resources.absoluteposition_black_24dp;
+         this.btnAbsolutePosition.Location = new System.Drawing.Point(199, 31);
+         this.btnAbsolutePosition.Name = "btnAbsolutePosition";
+         this.btnAbsolutePosition.Padding = new System.Windows.Forms.Padding(5);
+         this.btnAbsolutePosition.Size = new System.Drawing.Size(32, 32);
+         this.btnAbsolutePosition.TabIndex = 15;
+         this.btnAbsolutePosition.Click += new System.EventHandler(this.btnOpenAbsolutePositionWindow_Click);
+         // 
+         // btnFocusFar
+         // 
+         this.btnFocusFar.Image = global::Vao.Sample.Properties.Resources.flip_to_back_black_24dp;
+         this.btnFocusFar.Location = new System.Drawing.Point(61, 107);
+         this.btnFocusFar.Name = "btnFocusFar";
+         this.btnFocusFar.Padding = new System.Windows.Forms.Padding(5);
+         this.btnFocusFar.Size = new System.Drawing.Size(32, 32);
+         this.btnFocusFar.TabIndex = 14;
+         this.btnFocusFar.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
+         this.btnFocusFar.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
+         // 
+         // btnFocusNear
+         // 
+         this.btnFocusNear.Image = global::Vao.Sample.Properties.Resources.flip_to_front_black_24dp;
+         this.btnFocusNear.Location = new System.Drawing.Point(61, 31);
+         this.btnFocusNear.Name = "btnFocusNear";
+         this.btnFocusNear.Padding = new System.Windows.Forms.Padding(5);
+         this.btnFocusNear.Size = new System.Drawing.Size(32, 32);
+         this.btnFocusNear.TabIndex = 13;
+         this.btnFocusNear.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
+         this.btnFocusNear.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
+         // 
+         // pictureBox1
+         // 
+         this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+         this.pictureBox1.Location = new System.Drawing.Point(97, 69);
+         this.pictureBox1.Name = "pictureBox1";
+         this.pictureBox1.Size = new System.Drawing.Size(29, 32);
+         this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+         this.pictureBox1.TabIndex = 12;
+         this.pictureBox1.TabStop = false;
+         // 
+         // lblCurrentCamera
+         // 
+         this.lblCurrentCamera.AutoSize = true;
+         this.lblCurrentCamera.ForeColor = System.Drawing.SystemColors.AppWorkspace;
+         this.lblCurrentCamera.Location = new System.Drawing.Point(6, 146);
+         this.lblCurrentCamera.Name = "lblCurrentCamera";
+         this.lblCurrentCamera.Size = new System.Drawing.Size(156, 13);
+         this.lblCurrentCamera.TabIndex = 11;
+         this.lblCurrentCamera.Text = "Camera : (No Camera Selected)";
+         // 
+         // btnZoomOut
+         // 
+         this.btnZoomOut.Image = global::Vao.Sample.Properties.Resources.zoom_out_black_24dp;
+         this.btnZoomOut.Location = new System.Drawing.Point(132, 107);
+         this.btnZoomOut.Name = "btnZoomOut";
+         this.btnZoomOut.Padding = new System.Windows.Forms.Padding(5);
+         this.btnZoomOut.Size = new System.Drawing.Size(32, 32);
+         this.btnZoomOut.TabIndex = 5;
+         this.btnZoomOut.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
+         this.btnZoomOut.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
+         // 
+         // btnZoomIn
+         // 
+         this.btnZoomIn.Image = global::Vao.Sample.Properties.Resources.zoom_in_black_24dp;
+         this.btnZoomIn.Location = new System.Drawing.Point(132, 31);
+         this.btnZoomIn.Name = "btnZoomIn";
+         this.btnZoomIn.Padding = new System.Windows.Forms.Padding(5);
+         this.btnZoomIn.Size = new System.Drawing.Size(32, 32);
+         this.btnZoomIn.TabIndex = 4;
+         this.btnZoomIn.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
+         this.btnZoomIn.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
+         // 
+         // btnPanRight
+         // 
+         this.btnPanRight.Image = global::Vao.Sample.Properties.Resources.arrow_forward_black_24dp;
+         this.btnPanRight.Location = new System.Drawing.Point(132, 69);
+         this.btnPanRight.Name = "btnPanRight";
+         this.btnPanRight.Padding = new System.Windows.Forms.Padding(5);
+         this.btnPanRight.Size = new System.Drawing.Size(32, 32);
+         this.btnPanRight.TabIndex = 2;
+         this.btnPanRight.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
+         this.btnPanRight.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
+         // 
+         // btnPanLeft
+         // 
+         this.btnPanLeft.Image = global::Vao.Sample.Properties.Resources.arrow_back_black_24dp;
+         this.btnPanLeft.Location = new System.Drawing.Point(61, 69);
+         this.btnPanLeft.Name = "btnPanLeft";
+         this.btnPanLeft.Padding = new System.Windows.Forms.Padding(5);
+         this.btnPanLeft.Size = new System.Drawing.Size(32, 32);
+         this.btnPanLeft.TabIndex = 1;
+         this.btnPanLeft.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
+         this.btnPanLeft.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
+         // 
+         // btnTiltDown
+         // 
+         this.btnTiltDown.Image = global::Vao.Sample.Properties.Resources.arrow_downward_black_24dp;
+         this.btnTiltDown.Location = new System.Drawing.Point(97, 107);
+         this.btnTiltDown.Name = "btnTiltDown";
+         this.btnTiltDown.Padding = new System.Windows.Forms.Padding(5);
+         this.btnTiltDown.Size = new System.Drawing.Size(32, 32);
+         this.btnTiltDown.TabIndex = 3;
+         this.btnTiltDown.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
+         this.btnTiltDown.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
+         // 
+         // btnTiltUp
+         // 
+         this.btnTiltUp.Image = global::Vao.Sample.Properties.Resources.arrow_upward_black_24dp;
+         this.btnTiltUp.Location = new System.Drawing.Point(97, 31);
+         this.btnTiltUp.Name = "btnTiltUp";
+         this.btnTiltUp.Padding = new System.Windows.Forms.Padding(5);
+         this.btnTiltUp.Size = new System.Drawing.Size(32, 32);
+         this.btnTiltUp.TabIndex = 0;
+         this.btnTiltUp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
+         this.btnTiltUp.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
+         // 
+         // splitHorizontalVideoAndMessageSplit
+         // 
+         this.splitHorizontalVideoAndMessageSplit.Dock = System.Windows.Forms.DockStyle.Fill;
+         this.splitHorizontalVideoAndMessageSplit.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
+         this.splitHorizontalVideoAndMessageSplit.Location = new System.Drawing.Point(0, 4);
+         this.splitHorizontalVideoAndMessageSplit.Name = "splitHorizontalVideoAndMessageSplit";
+         this.splitHorizontalVideoAndMessageSplit.Orientation = System.Windows.Forms.Orientation.Horizontal;
+         // 
+         // splitHorizontalVideoAndMessageSplit.Panel1
+         // 
+         this.splitHorizontalVideoAndMessageSplit.Panel1.Controls.Add(this.grpVideoControl);
+         // 
+         // splitHorizontalVideoAndMessageSplit.Panel2
+         // 
+         this.splitHorizontalVideoAndMessageSplit.Panel2.Controls.Add(this.grpMessages);
+         this.splitHorizontalVideoAndMessageSplit.Size = new System.Drawing.Size(971, 1057);
+         this.splitHorizontalVideoAndMessageSplit.SplitterDistance = 922;
+         this.splitHorizontalVideoAndMessageSplit.TabIndex = 0;
+         // 
+         // btnConnect
+         // 
+         this.btnConnect.Location = new System.Drawing.Point(21, 156);
+         this.btnConnect.Name = "btnConnect";
+         this.btnConnect.Padding = new System.Windows.Forms.Padding(5);
+         this.btnConnect.Size = new System.Drawing.Size(88, 28);
+         this.btnConnect.TabIndex = 9;
+         this.btnConnect.Text = "Connect";
+         this.btnConnect.Click += new System.EventHandler(this.btnConnect_Click);
+         // 
+         // grpActiveAlarms
+         // 
+         this.grpActiveAlarms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+         this.grpActiveAlarms.Controls.Add(this.pnlActiveAlarms);
+         this.grpActiveAlarms.Location = new System.Drawing.Point(6, 622);
+         this.grpActiveAlarms.Name = "grpActiveAlarms";
+         this.grpActiveAlarms.SectionHeader = "Alarms";
+         this.grpActiveAlarms.Size = new System.Drawing.Size(238, 192);
+         this.grpActiveAlarms.TabIndex = 3;
+         // 
+         // pnlActiveAlarms
+         // 
+         this.pnlActiveAlarms.AutoScroll = true;
+         this.pnlActiveAlarms.BackColor = System.Drawing.SystemColors.WindowFrame;
+         this.pnlActiveAlarms.Dock = System.Windows.Forms.DockStyle.Fill;
+         this.pnlActiveAlarms.Location = new System.Drawing.Point(1, 25);
+         this.pnlActiveAlarms.Name = "pnlActiveAlarms";
+         this.pnlActiveAlarms.Size = new System.Drawing.Size(236, 166);
+         this.pnlActiveAlarms.TabIndex = 0;
          // 
          // grpDownload
          // 
          this.grpDownload.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
          this.grpDownload.Controls.Add(this.btnDownload);
-         this.grpDownload.Location = new System.Drawing.Point(6, 834);
+         this.grpDownload.Location = new System.Drawing.Point(6, 942);
          this.grpDownload.Name = "grpDownload";
          this.grpDownload.SectionHeader = "Download Recording";
          this.grpDownload.Size = new System.Drawing.Size(238, 62);
@@ -441,10 +484,10 @@ namespace Vao.Sample
          this.grpSelectPlayback.Controls.Add(this.btnGotoTime);
          this.grpSelectPlayback.Controls.Add(this.selPlayback);
          this.grpSelectPlayback.Controls.Add(this.btnPlayPlayback);
-         this.grpSelectPlayback.Location = new System.Drawing.Point(6, 700);
+         this.grpSelectPlayback.Location = new System.Drawing.Point(6, 814);
          this.grpSelectPlayback.Name = "grpSelectPlayback";
          this.grpSelectPlayback.SectionHeader = "Playback Selection";
-         this.grpSelectPlayback.Size = new System.Drawing.Size(235, 128);
+         this.grpSelectPlayback.Size = new System.Drawing.Size(238, 128);
          this.grpSelectPlayback.TabIndex = 4;
          // 
          // btnStopPlayback
@@ -487,7 +530,7 @@ namespace Vao.Sample
          this.selPlayback.FormattingEnabled = true;
          this.selPlayback.Location = new System.Drawing.Point(9, 38);
          this.selPlayback.Name = "selPlayback";
-         this.selPlayback.Size = new System.Drawing.Size(218, 21);
+         this.selPlayback.Size = new System.Drawing.Size(221, 21);
          this.selPlayback.TabIndex = 11;
          this.selPlayback.SelectedIndexChanged += new System.EventHandler(this.selPlayback_SelectedIndexChanged);
          // 
@@ -507,10 +550,10 @@ namespace Vao.Sample
             | System.Windows.Forms.AnchorStyles.Right)));
          this.grpSelectPreset.Controls.Add(this.selPreset);
          this.grpSelectPreset.Controls.Add(this.btnGotoPreset);
-         this.grpSelectPreset.Location = new System.Drawing.Point(6, 368);
+         this.grpSelectPreset.Location = new System.Drawing.Point(6, 361);
          this.grpSelectPreset.Name = "grpSelectPreset";
          this.grpSelectPreset.SectionHeader = "Preset Selection";
-         this.grpSelectPreset.Size = new System.Drawing.Size(235, 70);
+         this.grpSelectPreset.Size = new System.Drawing.Size(238, 70);
          this.grpSelectPreset.TabIndex = 3;
          // 
          // selPreset
@@ -521,13 +564,13 @@ namespace Vao.Sample
          this.selPreset.FormattingEnabled = true;
          this.selPreset.Location = new System.Drawing.Point(9, 38);
          this.selPreset.Name = "selPreset";
-         this.selPreset.Size = new System.Drawing.Size(171, 21);
+         this.selPreset.Size = new System.Drawing.Size(174, 21);
          this.selPreset.TabIndex = 11;
          // 
          // btnGotoPreset
          // 
          this.btnGotoPreset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-         this.btnGotoPreset.Location = new System.Drawing.Point(186, 31);
+         this.btnGotoPreset.Location = new System.Drawing.Point(189, 31);
          this.btnGotoPreset.Name = "btnGotoPreset";
          this.btnGotoPreset.Padding = new System.Windows.Forms.Padding(5);
          this.btnGotoPreset.Size = new System.Drawing.Size(43, 32);
@@ -535,167 +578,171 @@ namespace Vao.Sample
          this.btnGotoPreset.Text = "Go";
          this.btnGotoPreset.Click += new System.EventHandler(this.btnGotoPreset_Click);
          // 
-         // grpCameraControl
+         // grpConnection
          // 
-         this.grpCameraControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+         this.grpConnection.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-         this.grpCameraControl.Controls.Add(this.btnFocusFar);
-         this.grpCameraControl.Controls.Add(this.btnFocusNear);
-         this.grpCameraControl.Controls.Add(this.pictureBox1);
-         this.grpCameraControl.Controls.Add(this.lblCurrentCamera);
-         this.grpCameraControl.Controls.Add(this.btnZoomOut);
-         this.grpCameraControl.Controls.Add(this.btnZoomIn);
-         this.grpCameraControl.Controls.Add(this.btnPanRight);
-         this.grpCameraControl.Controls.Add(this.btnPanLeft);
-         this.grpCameraControl.Controls.Add(this.btnTiltDown);
-         this.grpCameraControl.Controls.Add(this.btnTiltUp);
-         this.grpCameraControl.Location = new System.Drawing.Point(6, 198);
-         this.grpCameraControl.Name = "grpCameraControl";
-         this.grpCameraControl.SectionHeader = "Camera Control";
-         this.grpCameraControl.Size = new System.Drawing.Size(238, 164);
-         this.grpCameraControl.TabIndex = 1;
+         this.grpConnection.Controls.Add(this.lblHost);
+         this.grpConnection.Controls.Add(this.chkSecure);
+         this.grpConnection.Controls.Add(this.txtHost);
+         this.grpConnection.Controls.Add(this.lblPort);
+         this.grpConnection.Controls.Add(this.txtPassword);
+         this.grpConnection.Controls.Add(this.txtPort);
+         this.grpConnection.Controls.Add(this.lblPassword);
+         this.grpConnection.Controls.Add(this.btnDisconnect);
+         this.grpConnection.Controls.Add(this.lblUser);
+         this.grpConnection.Controls.Add(this.btnConnect);
+         this.grpConnection.Controls.Add(this.txtUser);
+         this.grpConnection.Location = new System.Drawing.Point(6, 3);
+         this.grpConnection.Name = "grpConnection";
+         this.grpConnection.SectionHeader = "Connection";
+         this.grpConnection.Size = new System.Drawing.Size(238, 189);
+         this.grpConnection.TabIndex = 0;
          // 
-         // btnFocusFar
+         // lblHost
          // 
-         this.btnFocusFar.Image = global::Vao.Sample.Properties.Resources.flip_to_back_black_24dp;
-         this.btnFocusFar.Location = new System.Drawing.Point(62, 107);
-         this.btnFocusFar.Name = "btnFocusFar";
-         this.btnFocusFar.Padding = new System.Windows.Forms.Padding(5);
-         this.btnFocusFar.Size = new System.Drawing.Size(32, 32);
-         this.btnFocusFar.TabIndex = 14;
-         this.btnFocusFar.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
-         this.btnFocusFar.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
+         this.lblHost.AutoSize = true;
+         this.lblHost.ForeColor = System.Drawing.Color.Silver;
+         this.lblHost.Location = new System.Drawing.Point(18, 34);
+         this.lblHost.Name = "lblHost";
+         this.lblHost.Size = new System.Drawing.Size(29, 13);
+         this.lblHost.TabIndex = 0;
+         this.lblHost.Text = "Host";
          // 
-         // btnFocusNear
+         // chkSecure
          // 
-         this.btnFocusNear.Image = global::Vao.Sample.Properties.Resources.flip_to_front_black_24dp;
-         this.btnFocusNear.Location = new System.Drawing.Point(62, 31);
-         this.btnFocusNear.Name = "btnFocusNear";
-         this.btnFocusNear.Padding = new System.Windows.Forms.Padding(5);
-         this.btnFocusNear.Size = new System.Drawing.Size(32, 32);
-         this.btnFocusNear.TabIndex = 13;
-         this.btnFocusNear.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
-         this.btnFocusNear.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
+         this.chkSecure.AutoSize = true;
+         this.chkSecure.Checked = true;
+         this.chkSecure.CheckState = System.Windows.Forms.CheckState.Checked;
+         this.chkSecure.ForeColor = System.Drawing.SystemColors.Control;
+         this.chkSecure.Location = new System.Drawing.Point(21, 134);
+         this.chkSecure.Name = "chkSecure";
+         this.chkSecure.Size = new System.Drawing.Size(60, 17);
+         this.chkSecure.TabIndex = 8;
+         this.chkSecure.Text = "Secure";
          // 
-         // pictureBox1
+         // txtHost
          // 
-         this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-         this.pictureBox1.Location = new System.Drawing.Point(98, 69);
-         this.pictureBox1.Name = "pictureBox1";
-         this.pictureBox1.Size = new System.Drawing.Size(29, 32);
-         this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-         this.pictureBox1.TabIndex = 12;
-         this.pictureBox1.TabStop = false;
+         this.txtHost.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+         this.txtHost.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+         this.txtHost.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+         this.txtHost.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+         this.txtHost.Location = new System.Drawing.Point(103, 31);
+         this.txtHost.Name = "txtHost";
+         this.txtHost.Size = new System.Drawing.Size(124, 20);
+         this.txtHost.TabIndex = 1;
          // 
-         // lblCurrentCamera
+         // lblPort
          // 
-         this.lblCurrentCamera.AutoSize = true;
-         this.lblCurrentCamera.ForeColor = System.Drawing.SystemColors.AppWorkspace;
-         this.lblCurrentCamera.Location = new System.Drawing.Point(6, 146);
-         this.lblCurrentCamera.Name = "lblCurrentCamera";
-         this.lblCurrentCamera.Size = new System.Drawing.Size(156, 13);
-         this.lblCurrentCamera.TabIndex = 11;
-         this.lblCurrentCamera.Text = "Camera : (No Camera Selected)";
+         this.lblPort.AutoSize = true;
+         this.lblPort.ForeColor = System.Drawing.Color.Silver;
+         this.lblPort.Location = new System.Drawing.Point(18, 60);
+         this.lblPort.Name = "lblPort";
+         this.lblPort.Size = new System.Drawing.Size(26, 13);
+         this.lblPort.TabIndex = 2;
+         this.lblPort.Text = "Port";
          // 
-         // btnZoomOut
+         // txtPassword
          // 
-         this.btnZoomOut.Image = global::Vao.Sample.Properties.Resources.zoom_out_black_24dp;
-         this.btnZoomOut.Location = new System.Drawing.Point(133, 107);
-         this.btnZoomOut.Name = "btnZoomOut";
-         this.btnZoomOut.Padding = new System.Windows.Forms.Padding(5);
-         this.btnZoomOut.Size = new System.Drawing.Size(32, 32);
-         this.btnZoomOut.TabIndex = 5;
-         this.btnZoomOut.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
-         this.btnZoomOut.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
+         this.txtPassword.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+         this.txtPassword.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+         this.txtPassword.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+         this.txtPassword.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+         this.txtPassword.Location = new System.Drawing.Point(103, 109);
+         this.txtPassword.Name = "txtPassword";
+         this.txtPassword.PasswordChar = '*';
+         this.txtPassword.Size = new System.Drawing.Size(124, 20);
+         this.txtPassword.TabIndex = 7;
          // 
-         // btnZoomIn
+         // txtPort
          // 
-         this.btnZoomIn.Image = global::Vao.Sample.Properties.Resources.zoom_in_black_24dp;
-         this.btnZoomIn.Location = new System.Drawing.Point(133, 31);
-         this.btnZoomIn.Name = "btnZoomIn";
-         this.btnZoomIn.Padding = new System.Windows.Forms.Padding(5);
-         this.btnZoomIn.Size = new System.Drawing.Size(32, 32);
-         this.btnZoomIn.TabIndex = 4;
-         this.btnZoomIn.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
-         this.btnZoomIn.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
+         this.txtPort.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+         this.txtPort.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+         this.txtPort.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+         this.txtPort.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+         this.txtPort.Location = new System.Drawing.Point(103, 57);
+         this.txtPort.Name = "txtPort";
+         this.txtPort.Size = new System.Drawing.Size(124, 20);
+         this.txtPort.TabIndex = 3;
+         this.txtPort.Text = "444";
          // 
-         // btnPanRight
+         // lblPassword
          // 
-         this.btnPanRight.Image = global::Vao.Sample.Properties.Resources.arrow_forward_black_24dp;
-         this.btnPanRight.Location = new System.Drawing.Point(133, 69);
-         this.btnPanRight.Name = "btnPanRight";
-         this.btnPanRight.Padding = new System.Windows.Forms.Padding(5);
-         this.btnPanRight.Size = new System.Drawing.Size(32, 32);
-         this.btnPanRight.TabIndex = 2;
-         this.btnPanRight.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
-         this.btnPanRight.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
+         this.lblPassword.AutoSize = true;
+         this.lblPassword.ForeColor = System.Drawing.Color.Silver;
+         this.lblPassword.Location = new System.Drawing.Point(18, 112);
+         this.lblPassword.Name = "lblPassword";
+         this.lblPassword.Size = new System.Drawing.Size(53, 13);
+         this.lblPassword.TabIndex = 6;
+         this.lblPassword.Text = "Password";
          // 
-         // btnPanLeft
+         // btnDisconnect
          // 
-         this.btnPanLeft.Image = global::Vao.Sample.Properties.Resources.arrow_back_black_24dp;
-         this.btnPanLeft.Location = new System.Drawing.Point(62, 69);
-         this.btnPanLeft.Name = "btnPanLeft";
-         this.btnPanLeft.Padding = new System.Windows.Forms.Padding(5);
-         this.btnPanLeft.Size = new System.Drawing.Size(32, 32);
-         this.btnPanLeft.TabIndex = 1;
-         this.btnPanLeft.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
-         this.btnPanLeft.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
+         this.btnDisconnect.Location = new System.Drawing.Point(115, 156);
+         this.btnDisconnect.Name = "btnDisconnect";
+         this.btnDisconnect.Padding = new System.Windows.Forms.Padding(5);
+         this.btnDisconnect.Size = new System.Drawing.Size(88, 28);
+         this.btnDisconnect.TabIndex = 10;
+         this.btnDisconnect.Text = "Disconnect";
+         this.btnDisconnect.Click += new System.EventHandler(this.btnDisconnect_Click);
          // 
-         // btnTiltDown
+         // lblUser
          // 
-         this.btnTiltDown.Image = global::Vao.Sample.Properties.Resources.arrow_downward_black_24dp;
-         this.btnTiltDown.Location = new System.Drawing.Point(98, 107);
-         this.btnTiltDown.Name = "btnTiltDown";
-         this.btnTiltDown.Padding = new System.Windows.Forms.Padding(5);
-         this.btnTiltDown.Size = new System.Drawing.Size(32, 32);
-         this.btnTiltDown.TabIndex = 3;
-         this.btnTiltDown.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
-         this.btnTiltDown.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
+         this.lblUser.AutoSize = true;
+         this.lblUser.ForeColor = System.Drawing.Color.Silver;
+         this.lblUser.Location = new System.Drawing.Point(18, 86);
+         this.lblUser.Name = "lblUser";
+         this.lblUser.Size = new System.Drawing.Size(29, 13);
+         this.lblUser.TabIndex = 4;
+         this.lblUser.Text = "User";
          // 
-         // btnTiltUp
+         // txtUser
          // 
-         this.btnTiltUp.Image = global::Vao.Sample.Properties.Resources.arrow_upward_black_24dp;
-         this.btnTiltUp.Location = new System.Drawing.Point(98, 31);
-         this.btnTiltUp.Name = "btnTiltUp";
-         this.btnTiltUp.Padding = new System.Windows.Forms.Padding(5);
-         this.btnTiltUp.Size = new System.Drawing.Size(32, 32);
-         this.btnTiltUp.TabIndex = 0;
-         this.btnTiltUp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseDown);
-         this.btnTiltUp.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnControlCameraMouseUp);
+         this.txtUser.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+         this.txtUser.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+         this.txtUser.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+         this.txtUser.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+         this.txtUser.Location = new System.Drawing.Point(103, 83);
+         this.txtUser.Name = "txtUser";
+         this.txtUser.Size = new System.Drawing.Size(124, 20);
+         this.txtUser.TabIndex = 5;
          // 
-         // splitHorizontalVideoAndMessageSplit
+         // grpCameraSelection
          // 
-         this.splitHorizontalVideoAndMessageSplit.Dock = System.Windows.Forms.DockStyle.Fill;
-         this.splitHorizontalVideoAndMessageSplit.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
-         this.splitHorizontalVideoAndMessageSplit.Location = new System.Drawing.Point(0, 4);
-         this.splitHorizontalVideoAndMessageSplit.Name = "splitHorizontalVideoAndMessageSplit";
-         this.splitHorizontalVideoAndMessageSplit.Orientation = System.Windows.Forms.Orientation.Horizontal;
+         this.grpCameraSelection.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+         this.grpCameraSelection.Controls.Add(this.pnlCameraSelectFlowPanel);
+         this.grpCameraSelection.Location = new System.Drawing.Point(6, 431);
+         this.grpCameraSelection.Name = "grpCameraSelection";
+         this.grpCameraSelection.SectionHeader = "Camera Selection";
+         this.grpCameraSelection.Size = new System.Drawing.Size(238, 192);
+         this.grpCameraSelection.TabIndex = 2;
          // 
-         // splitHorizontalVideoAndMessageSplit.Panel1
+         // pnlCameraSelectFlowPanel
          // 
-         this.splitHorizontalVideoAndMessageSplit.Panel1.Controls.Add(this.grpVideoControl);
-         // 
-         // splitHorizontalVideoAndMessageSplit.Panel2
-         // 
-         this.splitHorizontalVideoAndMessageSplit.Panel2.Controls.Add(this.grpMessages);
-         this.splitHorizontalVideoAndMessageSplit.Size = new System.Drawing.Size(971, 904);
-         this.splitHorizontalVideoAndMessageSplit.SplitterDistance = 769;
-         this.splitHorizontalVideoAndMessageSplit.TabIndex = 0;
+         this.pnlCameraSelectFlowPanel.AutoScroll = true;
+         this.pnlCameraSelectFlowPanel.BackColor = System.Drawing.SystemColors.WindowFrame;
+         this.pnlCameraSelectFlowPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+         this.pnlCameraSelectFlowPanel.Location = new System.Drawing.Point(1, 25);
+         this.pnlCameraSelectFlowPanel.Name = "pnlCameraSelectFlowPanel";
+         this.pnlCameraSelectFlowPanel.Size = new System.Drawing.Size(236, 166);
+         this.pnlCameraSelectFlowPanel.TabIndex = 0;
          // 
          // MainWindow
          // 
          this.AcceptButton = this.btnConnect;
          this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-         this.ClientSize = new System.Drawing.Size(1226, 908);
+         this.ClientSize = new System.Drawing.Size(1226, 1061);
          this.Controls.Add(this.splitMainVerticalSplit);
          this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
          this.MinimumSize = new System.Drawing.Size(400, 200);
          this.Name = "MainWindow";
          this.Text = "HERNIS FLEX VAO API Demo";
-         this.grpCameraSelection.ResumeLayout(false);
-         this.grpConnection.ResumeLayout(false);
-         this.grpConnection.PerformLayout();
          this.grpMessages.ResumeLayout(false);
          this.grpVideoControl.ResumeLayout(false);
          this.grpVideoControl.PerformLayout();
@@ -705,9 +752,6 @@ namespace Vao.Sample
          this.splitMainVerticalSplit.Panel2.ResumeLayout(false);
          ((System.ComponentModel.ISupportInitialize)(this.splitMainVerticalSplit)).EndInit();
          this.splitMainVerticalSplit.ResumeLayout(false);
-         this.grpDownload.ResumeLayout(false);
-         this.grpSelectPlayback.ResumeLayout(false);
-         this.grpSelectPreset.ResumeLayout(false);
          this.grpCameraControl.ResumeLayout(false);
          this.grpCameraControl.PerformLayout();
          ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -715,6 +759,13 @@ namespace Vao.Sample
          this.splitHorizontalVideoAndMessageSplit.Panel2.ResumeLayout(false);
          ((System.ComponentModel.ISupportInitialize)(this.splitHorizontalVideoAndMessageSplit)).EndInit();
          this.splitHorizontalVideoAndMessageSplit.ResumeLayout(false);
+         this.grpActiveAlarms.ResumeLayout(false);
+         this.grpDownload.ResumeLayout(false);
+         this.grpSelectPlayback.ResumeLayout(false);
+         this.grpSelectPreset.ResumeLayout(false);
+         this.grpConnection.ResumeLayout(false);
+         this.grpConnection.PerformLayout();
+         this.grpCameraSelection.ResumeLayout(false);
          this.ResumeLayout(false);
 
       }
@@ -736,8 +787,8 @@ namespace Vao.Sample
       private DarkUI.Controls.DarkTextBox txtPassword;
       private System.Windows.Forms.Label lblPassword;
       private DarkUI.Controls.DarkTextBox txtCurrentRtspUrl;
-      private DarkUI.Controls.DarkSectionPanel grpCameraSelection;
-      private DarkUI.Controls.DarkSectionPanel grpConnection;
+      private CollapsibleDarkSectionPanel grpCameraSelection;
+      private CollapsibleDarkSectionPanel grpConnection;
       private DarkUI.Controls.DarkSectionPanel grpMessages;
       private System.Windows.Forms.Panel grpVideoControl;
       private System.Windows.Forms.FlowLayoutPanel pnlCameraSelectFlowPanel;
@@ -756,21 +807,25 @@ namespace Vao.Sample
       private DarkUI.Controls.DarkButton btnClearMessages;
       private DarkUI.Controls.DarkButton btnFocusFar;
       private DarkUI.Controls.DarkButton btnFocusNear;
-      private DarkUI.Controls.DarkSectionPanel grpSelectPreset;
+      private CollapsibleDarkSectionPanel grpSelectPreset;
       private DarkUI.Controls.DarkComboBox selPreset;
       private DarkUI.Controls.DarkButton btnGotoPreset;
       private DarkUI.Controls.DarkListView lstMessages;
-      private DarkUI.Controls.DarkSectionPanel grpSelectPlayback;
+      private CollapsibleDarkSectionPanel grpSelectPlayback;
       private DarkUI.Controls.DarkComboBox selPlayback;
       private DarkUI.Controls.DarkButton btnPlayPlayback;
       private DarkUI.Controls.DarkButton btnGotoTime;
       private System.Windows.Forms.DateTimePicker dateTimePicker1;
       private DarkUI.Controls.DarkButton btnStopPlayback;
-      private DarkUI.Controls.DarkSectionPanel grpDownload;
+      private CollapsibleDarkSectionPanel grpDownload;
       private DarkUI.Controls.DarkButton btnDownload;
       private DarkUI.Controls.DarkLabel txtVideoHeader;
       private System.Windows.Forms.Panel panel1;
       private System.Windows.Forms.CheckBox chkUseTcp;
+      private DarkUI.Controls.DarkButton btnAbsolutePosition;
+      private DarkUI.Controls.DarkButton btnCameraLock;
+      private CollapsibleDarkSectionPanel grpActiveAlarms;
+      private System.Windows.Forms.FlowLayoutPanel pnlActiveAlarms;
    }
 }
 

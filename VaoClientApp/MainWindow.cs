@@ -1,13 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Globalization;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
+using DarkUI.Controls;
 using LibVLCSharp.Shared;
 using Vao.Client;
 using Vao.Client.Components;
+using Vao.Client.Enum;
 using Vao.Sample.Properties;
 
 namespace Vao.Sample
@@ -22,6 +29,8 @@ namespace Vao.Sample
       private VaoClient moVaoClient;
       private VideoViewWithViewerId mVideoControl;
       private Camera mCurrentCamera;
+      private Alarm mCurrentAlarm;
+      private User mCurrentLoggedInUser;
       private Button mCurrentCameraButton;
       private LibVLC mLibVlc;
       private ToolTip moToolTip;
@@ -85,6 +94,13 @@ namespace Vao.Sample
       public MainWindow()
       {
          InitializeComponent();
+
+         foreach (CollapsibleDarkSectionPanel panel in splitMainVerticalSplit.Panel1.Controls
+                     .OfType<CollapsibleDarkSectionPanel>())
+         {
+            panel.CollapseStateChanged += Panel_CollapseStateChanged;
+         }
+         RelayoutPanels();
 
          Text = $"{Text} v{Application.ProductVersion}";
          
@@ -221,7 +237,9 @@ namespace Vao.Sample
          if (moVaoClient.StartClient())
          {
             WriteMessageLog("VaoAPI", "Client started.", LogLevel.Notice);
+            SetCurrentLoggedInUser();
             FillSelectCameraButtonList();
+            FillAlarmList();
             CheckApiVersion();
             ClearRecordingDropdown();
             ClearPresetDropdown();
@@ -319,6 +337,7 @@ namespace Vao.Sample
          }
          StopRtspStream();
          CurrentCamera = null;
+         CurrentAlarm = null;
          txtCurrentRtspUrl.Text = string.Empty;
          txtVideoHeader.Text = "No Camera Selected";
          grpVideoControl.BackColor = Color.FromArgb(66, 77, 95);
@@ -364,12 +383,19 @@ namespace Vao.Sample
                mCurrentCameraButton.BackColor = Color.White;
 
             if (mCurrentCamera != null)
+            {
                mCurrentCamera.PropertyChanged -= Camera_PropertyChanged;
+               mCurrentCamera.LockStatusChanged -= Camera_LockStatusChanged;
+            }
 
             mCurrentCamera = value;
-            
+
             if (mCurrentCamera != null)
+            {
                mCurrentCamera.PropertyChanged += Camera_PropertyChanged;
+               mCurrentCamera.LockStatusChanged += Camera_LockStatusChanged;
+            }
+               
 
             mCurrentCameraButton = GetCameraButton(mCurrentCamera);
             if (mCurrentCameraButton != null)
@@ -393,6 +419,32 @@ namespace Vao.Sample
                ClearRecordingDropdown();
             }
 
+            UpdateEnabled();
+         }
+      }
+
+      private Alarm CurrentAlarm
+      {
+         get
+         {
+            return mCurrentAlarm;
+         }
+         set
+         {
+            mCurrentAlarm = value;
+            UpdateEnabled();
+         }
+      }
+
+      private User CurrentLoggedInUser
+      {
+         get
+         {
+            return mCurrentLoggedInUser;
+         }
+         set
+         {
+            mCurrentLoggedInUser = value;
             UpdateEnabled();
          }
       }
@@ -425,14 +477,54 @@ namespace Vao.Sample
          base.OnVisibleChanged(e);
          if (Visible)
          {
-            // Bugfix due to DarkUI libary not invalidating the controls when the windows appears on screen.
+            // Bugfix due to DarkUI library not invalidating the controls when the windows appear on screen.
             selPreset.Invalidate();
             selPlayback.Invalidate();
          }
       }
-      private void Camera_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+      private void Camera_PropertyChanged(object sender, PropertyChangedEventArgs e)
       {
+         if (e.PropertyName == nameof(Camera.IsLocked) || e.PropertyName == nameof(Camera.LockOwner) || e.PropertyName == nameof(Camera.CanUnlock))
+            return;
+
          UpdateCameraControl();
+      }
+
+      private void Camera_LockStatusChanged(object sender, EventArgs e)
+      {
+         if (InvokeRequired)
+         {
+            Invoke(new MethodInvoker(() => Camera_LockStatusChanged(sender, e)));
+            return;
+         }
+
+         Image buttonImage = btnCameraLock.Image;
+
+         if (mCurrentCamera != null && mCurrentCamera.IsLocked && mCurrentCamera.LockOwner == "Alarm")
+         {
+            buttonImage = Resources.cameralocked_red_24dp;
+            btnCameraLock.Enabled = true;
+         }
+
+         else if (mCurrentCamera != null && mCurrentCamera.IsLocked)
+         {
+            buttonImage = Resources.cameralocked_yellow_24dp;
+            btnCameraLock.Enabled = true;
+         }
+
+         else if (mCurrentCamera != null && !mCurrentCamera.IsLocked)
+         {
+            buttonImage = Resources.cameraunlocked_black_24dp;
+            btnCameraLock.Enabled = true;
+         }
+
+         if (mCurrentCamera != null && mCurrentCamera.CanUnlock == false)
+         {
+            buttonImage = MakeGrayscale(buttonImage, true);
+            btnCameraLock.Enabled = false;
+         }
+
+         btnCameraLock.Image = buttonImage;
       }
 
       private void UpdateCameraControl()
@@ -446,6 +538,46 @@ namespace Vao.Sample
          btnZoomOut.Enabled = CurrentCamera?.HasLensControl ?? false;
          btnFocusFar.Enabled = CurrentCamera?.HasLensControl ?? false;
          btnFocusNear.Enabled = CurrentCamera?.HasLensControl ?? false;
+      }
+
+      private static Image MakeGrayscale(Image original, bool bSelected)
+      {
+         if (original != null)
+         {
+            Bitmap newBitmap = new Bitmap(original.Width, original.Height);
+            Graphics g = Graphics.FromImage(newBitmap);
+
+            ColorMatrix colorMatrix = new ColorMatrix(
+               new[]
+               {
+                  new[] {.1f, .1f, .1f, 0, 0},
+                  new[] {.99f, .99f, .99f, 0, 0},
+                  new[] {.41f, .41f, .41f, 0, 0},
+                  new float[] {0, 0, 0, 1, 0},
+                  new float[] {0, 0, 0, 0, 1}
+               });
+
+            if (bSelected)
+               colorMatrix = new ColorMatrix(
+                  new[]
+                  {
+                     new[] {1f, 0f, 0f, 0, 0},
+                     new[] {0f, 1f, 0.4f, 0, 0},
+                     new[] {0f, 0f, 1f, 0f, 0f},
+                     new float[] {0, 0, 0, 1, 0},
+                     new float[] {0, 0, 0, 0, 1}
+                  });
+
+            ImageAttributes attributes = new ImageAttributes();
+            attributes.SetColorMatrix(colorMatrix);
+
+            g.DrawImage(original, new Rectangle(0, 0, original.Width, original.Height),
+               0, 0, original.Width, original.Height, GraphicsUnit.Pixel, attributes);
+
+            g.Dispose();
+            return newBitmap;
+         }
+         return null;
       }
 
       private void FillSelectPresetList()
@@ -528,6 +660,15 @@ namespace Vao.Sample
                grpVideoControl.BackColor = Color.FromArgb(65, 142, 62);
                StartRtspStream(url);
             }
+         }
+      }
+
+      private void SelectAlarm(int alarmNo)
+      {
+         Alarm alarm = moVaoClient.GetSingleAlarm(alarmNo);
+         if (alarm != null)
+         {
+            CurrentAlarm = alarm;
          }
       }
 
@@ -629,15 +770,51 @@ namespace Vao.Sample
          }
       }
 
+      private void OnSelectAlarmClicked(object sender, EventArgs e)
+      {
+         if (sender is Button button && button.Tag is Alarm alarm)
+         {
+            SelectAlarm(alarm.ComponentNumber);
+
+            using (AlarmActionWindow window = new AlarmActionWindow(VaoClient, CurrentAlarm, CurrentLoggedInUser))
+            {
+               window.StartPosition = FormStartPosition.Manual;
+               window.Icon = Icon;
+               window.Load += AlarmActionWindow_Load;
+               window.ShowDialog(this);
+            }
+         }
+      }
+
+      private void AlarmActionWindow_Load(object sender, EventArgs e)
+      {
+         if (sender is Form window)
+         {
+            Point panelTopRight = new Point(pnlActiveAlarms.Width, 0);
+            Point screenLocation = pnlActiveAlarms.PointToScreen(panelTopRight);
+
+            window.Location = screenLocation;
+         }
+      }
+
       private void FillSelectCameraButtonList()
       {
          var cameraList = moVaoClient.GetCameraList();
          if (cameraList != null)
          {
+            foreach (Control control in pnlCameraSelectFlowPanel.Controls)
+            {
+               if (control is Button button)
+               {
+                  moToolTip.SetToolTip(button, null);
+                  button.Click -= OnSelectCameraClicked;
+               }
+            } 
             pnlCameraSelectFlowPanel.Controls.Clear();
+
             foreach (var camera in cameraList)
             {
-               Button oButton = new DarkUI.Controls.DarkButton()
+               Button oButton = new DarkButton()
                {
                   // ReSharper disable once LocalizableElement
                   Text = "Cam " + camera.ComponentNumber,
@@ -650,6 +827,126 @@ namespace Vao.Sample
                pnlCameraSelectFlowPanel.Controls.Add(oButton);
             }
          }
+      }
+
+      private void FillAlarmList()
+      {
+         List<Alarm> alarmList = moVaoClient.GetAlarmList();
+         if (alarmList == null)
+            return;
+
+         foreach (Control control in pnlActiveAlarms.Controls)
+         {
+            if (control.Controls.Count > 0 && control.Controls[0] is Button button)
+            {
+               moToolTip.SetToolTip(button, null);
+               button.Click -= OnSelectAlarmClicked;
+            }
+         }
+         pnlActiveAlarms.Controls.Clear();
+
+         foreach (Alarm alarm in alarmList)
+         {
+            Panel frameBehindButton = new Panel();
+            frameBehindButton.Size = new Size(64, 24);
+            frameBehindButton.Tag = alarm;
+            frameBehindButton.BackColor = GetColorForStatus(alarm.Status);
+            frameBehindButton.Paint += FrameBehindAlarmButton_Paint;
+
+            DarkButton oButton = new DarkButton();
+            oButton.Text = "Alarm " + alarm.ComponentNumber;
+            oButton.Size = new Size(60, 20);
+            oButton.Tag = alarm;
+
+            oButton.Location = new Point((frameBehindButton.Width - oButton.Width) / 2, (frameBehindButton.Height - oButton.Height) / 2);
+
+            frameBehindButton.Controls.Add(oButton);
+
+            oButton.Click += OnSelectAlarmClicked;
+            moToolTip.SetToolTip(oButton, alarm.Name);
+
+            pnlActiveAlarms.Controls.Add(frameBehindButton);
+            frameBehindButton.Invalidate();
+
+            alarm.PropertyChanged += delegate (object sender, PropertyChangedEventArgs e)
+            {
+               if (e.PropertyName == "Status")
+               {
+                  UpdateAlarmButtonFrameColor(frameBehindButton, alarm);
+               }
+            };
+         }
+      }
+
+      private void FrameBehindAlarmButton_Paint(object sender, PaintEventArgs e)
+      {
+         Panel frame = (Panel)sender;
+         if (!(frame.Tag is Alarm alarm))
+            return;
+
+         Pen pen;
+
+         if (alarm.Status == AlarmGeneralStatus.Disabled)
+         {
+            pen = new Pen(Color.DarkRed, 3f);
+            pen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
+         }
+         else
+         {
+            pen = new Pen(frame.BackColor, 3f); // solid border
+            pen.DashStyle = System.Drawing.Drawing2D.DashStyle.Solid;
+         }
+
+         try
+         {
+            Rectangle r = frame.ClientRectangle;
+            r.Width--;
+            r.Height--;
+
+            e.Graphics.DrawRectangle(pen, r);
+         }
+         finally
+         {
+            pen.Dispose();
+         }
+      }
+
+      private void UpdateAlarmButtonFrameColor(Panel frame, Alarm alarm)
+      {
+         if (frame.InvokeRequired)
+         {
+            frame.BeginInvoke(new Action(() => UpdateAlarmButtonFrameColor(frame, alarm)));
+            return;
+         }
+
+         frame.BackColor = GetColorForStatus(alarm.Status);
+         frame.Invalidate();
+      }
+
+      private static Color GetColorForStatus(AlarmGeneralStatus status)
+      {
+         switch(status)
+         {
+            case AlarmGeneralStatus.Active:
+            return Color.Red;
+
+            case AlarmGeneralStatus.Inactive:
+            return Color.Gray;
+
+            case AlarmGeneralStatus.Acknowledged:
+            return Color.Orange;
+
+            case AlarmGeneralStatus.Tampered:
+            return Color.DarkOrange;
+
+            default:
+            return Color.FromArgb(120, Color.Gray);
+         }
+      }
+
+      private void SetCurrentLoggedInUser()
+      {
+         CurrentLoggedInUser = VaoClient.GetLoggedInUserInfo();
       }
 
       private void OnControlCameraMouseDown(object sender, MouseEventArgs e)
@@ -827,6 +1124,79 @@ namespace Vao.Sample
             }
          }
          SaveSettings();
+      }
+
+      private void btnOpenAbsolutePositionWindow_Click(object sender, EventArgs e)
+      {
+         using (AbsolutePositionWindow absolutePositionWindow = new AbsolutePositionWindow(VaoClient, CurrentCamera))
+         {
+            absolutePositionWindow.StartPosition = FormStartPosition.Manual;
+            absolutePositionWindow.Icon = Icon;
+
+            if (sender is Button button)
+            {
+               Point screenPoint = button.PointToScreen(new Point(button.Width, 0));
+               absolutePositionWindow.Location = screenPoint;
+            }
+
+
+            absolutePositionWindow.ShowDialog(this);
+         }
+      }
+
+      private void btnCameraLock_Click(object sender, EventArgs e)
+      { 
+         if (!CurrentCamera.IsLocked)
+         {
+            using (CameraLockWindow cameraLockWindow = new CameraLockWindow(VaoClient, CurrentCamera))
+            {
+               cameraLockWindow.StartPosition = FormStartPosition.Manual;
+               cameraLockWindow.Icon = Icon;
+
+               if (sender is Button button)
+               {
+                  Point screenPoint = button.PointToScreen(new Point(button.Width, 0));
+                  cameraLockWindow.Location = screenPoint;
+               }
+               cameraLockWindow.ShowDialog(this);
+            }
+         }
+         else
+         {
+            VaoClient.SendUnlockCamera(CurrentCamera.ComponentNumber);
+         }
+      }
+
+
+      private void Panel_CollapseStateChanged(object sender, EventArgs e)
+      {
+         RelayoutPanels();
+      }
+
+      private static bool IsStackable(Control c)
+      {
+         return c is CollapsibleDarkSectionPanel || c is DarkSectionPanel || c is Panel;
+      }
+
+      private void RelayoutPanels()
+      {
+         int y = 0;
+
+         List<Control> panels = new List<Control>();
+         foreach (Control c in splitMainVerticalSplit.Panel1.Controls)
+         {
+            if (IsStackable(c))
+            {
+               panels.Add(c);
+            }
+         }
+         panels.Sort((a, b) => a.TabIndex.CompareTo(b.TabIndex));
+
+         foreach (Control p in panels)
+         {
+            p.Top = y;
+            y += p.Height - 1;
+         }
       }
    }
 }

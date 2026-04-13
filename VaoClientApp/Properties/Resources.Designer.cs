@@ -63,6 +63,16 @@ namespace Vao.Sample.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap absoluteposition_black_24dp {
+            get {
+                object obj = ResourceManager.GetObject("absoluteposition_black_24dp", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap arrow_back_black_24dp {
             get {
                 object obj = ResourceManager.GetObject("arrow_back_black_24dp", resourceCulture);
@@ -107,6 +117,46 @@ namespace Vao.Sample.Properties {
             get {
                 object obj = ResourceManager.GetObject("camera_white50_24dp", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap cameralocked_black_24dp {
+            get {
+                object obj = ResourceManager.GetObject("cameralocked_black_24dp", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap cameralocked_red_24dp {
+            get {
+                object obj = ResourceManager.GetObject("cameralocked_red_24dp", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap cameralocked_yellow_24dp {
+            get {
+                object obj = ResourceManager.GetObject("cameralocked_yellow_24dp", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap cameraunlocked_black_24dp {
+            get {
+                object obj = ResourceManager.GetObject("cameraunlocked_black_24dp", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         

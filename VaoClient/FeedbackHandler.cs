@@ -65,23 +65,70 @@ namespace Vao.Client
             case MessageType.CameraVideoStream1Restored:
             case MessageType.CameraVideoStream2Lost:
             case MessageType.CameraVideoStream2Restored:
-               List<Camera> cameras = message.VaoClient.GetCameraList();
-               Camera foundCamera = null;
-               foreach (Camera camera in cameras)
+            {
+               Camera camera = FindCamera(message);
+               if (camera != null)
                {
-                  if (message.Message.Contains(camera.Name))
-                  {
-                     foundCamera = camera;
-                     break;
-                  }
-               }
-
-               if (foundCamera != null)
-               {
-                  foundCamera.UpdateCameraStatus(message);
+                  camera.UpdateCameraStatus(message);
                }
                break;
+            }
+
+            case MessageType.CameraLocked:
+            case MessageType.CameraUnlocked:
+            {
+               Camera camera = FindCamera(message);
+               if (camera != null)
+               {
+                  camera.UpdateCameraData();
+               }
+               break;
+            }
+
+            case MessageType.AlarmStatusDisabled:
+            case MessageType.AlarmStatusTampered:
+            case MessageType.AlarmStatusActive:
+            case MessageType.AlarmStatusInactive:
+            case MessageType.AlarmStatusAcknowledged:
+            {
+               Alarm alarm = FindAlarm(message);
+               if (alarm != null)
+               {
+                  alarm.UpdateAlarmStatus(message);
+               }
+               break;
+            }
          }
+      }
+
+      private static Camera FindCamera(StatusMessage message)
+      {
+         List<Camera> cameras = message.VaoClient.GetCameraList();
+
+         foreach (Camera camera in cameras)
+         {
+            if (message.Message.Contains($"Camera_{camera.ComponentNumber}"))
+            {
+               return camera;
+            }
+         }
+
+         return null;
+      }
+
+      private static Alarm FindAlarm(StatusMessage message)
+      {
+         List<Alarm> alarms = message.VaoClient.GetAlarmList();
+
+         foreach (Alarm alarm in alarms)
+         {
+            if (message.Message.Contains($"Alarm_{alarm.ComponentNumber}"))
+            {
+               return alarm;
+            }
+         }
+
+         return null;
       }
 
       private void RaiseOnMessageEvents(StatusMessage message)

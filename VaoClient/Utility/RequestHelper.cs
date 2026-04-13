@@ -4,6 +4,7 @@ using RestSharp;
 using Vao.Client.Components;
 using Newtonsoft.Json;
 using Vao.Client.Contracts;
+using Monitor = Vao.Client.Components.Monitor;
 
 namespace Vao.Client.Utility
 {
@@ -252,5 +253,155 @@ namespace Vao.Client.Utility
          return response;
       }
 
+
+      internal static List<Alarm> RequestVaoAlarmList(this VaoClient vaoClient)
+      {
+         RestClient client = vaoClient.GetRestClient();
+
+         // ReSharper disable once RedundantArgumentDefaultValue
+         RestRequest request = new RestRequest("alarms", Method.Get);
+         RestResponse response = client.Execute(request);
+
+         string strResponse = vaoClient.ValidateResponseContent(response);
+         if (strResponse == null)
+         {
+            // Empty list.
+            return null;
+         }
+
+         List<Alarm> alarms = JsonParser.ParseAlarmList(strResponse, vaoClient);
+         return alarms;
+      }
+
+      internal static Alarm RequestVaoAlarm(this VaoClient vaoClient, int iAlarmNo)
+      {
+         RestClient client = vaoClient.GetRestClient();
+
+         // ReSharper disable once RedundantArgumentDefaultValue
+         RestRequest request = new RestRequest($"alarms/{iAlarmNo}", Method.Get);
+         RestResponse response = client.Execute(request);
+
+         string strResponse = vaoClient.ValidateResponseContent(response);
+         if (strResponse == null)
+         {
+            // Empty list.
+            return null;
+         }
+
+         Alarm alarm = JsonParser.ParseSingleAlarm(strResponse, vaoClient);
+         return alarm;
+      }
+
+      internal static RestResponse SendVaoAlarmCommand(this VaoClient vaoClient, int iAlarmNo, string command)
+      {
+         RestClient client = vaoClient.GetRestClient();
+         // ReSharper disable once RedundantArgumentDefaultValue
+         RestRequest request = new RestRequest($"alarms/{iAlarmNo}", Method.Post);
+
+         JsonAlarmCommandBody jsonAlarmCommandBody = new JsonAlarmCommandBody();
+
+         jsonAlarmCommandBody.command = command;
+
+         string serializedJsonCommand = JsonConvert.SerializeObject(jsonAlarmCommandBody, Formatting.None,
+            new JsonSerializerSettings
+            {
+               NullValueHandling = NullValueHandling.Ignore
+            });
+         request.AddJsonBody(serializedJsonCommand);
+
+         RestResponse response = client.Execute(request);
+
+         string strResponse = vaoClient.ValidateResponseContent(response);
+         if (strResponse == null)
+         {
+            return null;
+         }
+         return response;
+      }
+
+      internal static RestResponse SendVaoAbsolutePosition(this VaoClient vaoClient, int iCameraNo, float? pan, float? tilt, float? zoom)
+      {
+         RestClient client = vaoClient.GetRestClient();
+         // ReSharper disable once RedundantArgumentDefaultValue
+         RestRequest request = new RestRequest($"inputs/{iCameraNo}/target", Method.Post);
+
+         JsonAbsolutePositionBody absolutePositionBody = new JsonAbsolutePositionBody();
+
+         absolutePositionBody.pan = pan;
+         absolutePositionBody.tilt = tilt;
+         absolutePositionBody.zoom = zoom;
+
+         string serializedJsonAbsolutePosition = JsonConvert.SerializeObject(absolutePositionBody, Formatting.None,
+            new JsonSerializerSettings
+            {
+               NullValueHandling = NullValueHandling.Ignore
+            });
+         request.AddJsonBody(serializedJsonAbsolutePosition);
+
+         RestResponse response = client.Execute(request);
+
+         string strResponse = vaoClient.ValidateResponseContent(response);
+         if (strResponse == null)
+         {
+            return null;
+         }
+         return response;
+      }
+
+      internal static RestResponse RequestVaoLockCamera(this VaoClient vaoClient, int iCameraNo, string timeout = null)
+      {
+         RestClient client = vaoClient.GetRestClient();
+         // ReSharper disable once RedundantArgumentDefaultValue
+         RestRequest request = new RestRequest($"inputs/{iCameraNo}/lock", Method.Post);
+
+         if (timeout != null)
+         {
+            JsonCameraLockRequestObject jsonRequestobject = new JsonCameraLockRequestObject();
+            jsonRequestobject.timeout = timeout;
+
+            string serializedJsonLockRequest = JsonConvert.SerializeObject(jsonRequestobject);
+            request.AddJsonBody(serializedJsonLockRequest);
+         }
+
+         RestResponse response = client.Execute(request);
+
+         string strResponse = vaoClient.ValidateResponseContent(response);
+         if (strResponse == null)
+         {
+            return null;
+         }
+         return response;
+      }
+
+      internal static RestResponse RequestVaoUnlockCamera(this VaoClient vaoClient, int iCameraNo)
+      {
+         RestClient client = vaoClient.GetRestClient();
+         // ReSharper disable once RedundantArgumentDefaultValue
+         RestRequest request = new RestRequest($"inputs/{iCameraNo}/lock", Method.Delete);
+         RestResponse response = client.Execute(request);
+
+         string strResponse = vaoClient.ValidateResponseContent(response);
+         if (strResponse == null)
+         {
+            return null;
+         }
+         return response;
+      }
+
+      internal static User RequestVaoLoggedInUserInfo(this VaoClient vaoClient)
+      {
+         RestClient client = vaoClient.GetRestClient();
+         // ReSharper disable once RedundantArgumentDefaultValue
+         RestRequest request = new RestRequest($"user", Method.Get);
+         RestResponse response = client.Execute(request);
+
+         string strResponse = vaoClient.ValidateResponseContent(response);
+         if (strResponse == null)
+         {
+            return null;
+         }
+         User user = JsonParser.ParseSingleUser(strResponse, vaoClient);
+         return user;
+      }
    }
 }
