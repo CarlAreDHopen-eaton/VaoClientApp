@@ -344,7 +344,8 @@ namespace Vao.Sample
          IsCameraSelected = false;
          ClearPresetDropdown();
          ClearRecordingDropdown();
-
+         ClearCameraSelection();
+         ClearAlarmSelection();
       }
 
       private void StopRtspStream()
@@ -472,6 +473,35 @@ namespace Vao.Sample
          selPreset.Items.Add("No camera selected");
          selPreset.SelectedIndex = 0;
       }
+
+      private void ClearCameraSelection()
+      {
+         foreach (Control control in pnlCameraSelectFlowPanel.Controls)
+         {
+            if (control is Button button)
+            {
+               moToolTip.SetToolTip(button, null);
+               button.Click -= OnSelectCameraClicked;
+               button.Dispose();
+            }
+         }
+         pnlCameraSelectFlowPanel.Controls.Clear();
+      }
+
+      private void ClearAlarmSelection()
+      {
+         foreach (Control control in pnlAlarms.Controls)
+         {
+            if (control.Controls.Count > 0 && control.Controls[0] is Button button)
+            {
+               moToolTip.SetToolTip(button, null);
+               button.Click -= OnSelectAlarmClicked;
+               button.Dispose();
+            }
+         }
+         pnlAlarms.Controls.Clear();
+      }
+
       protected override void OnVisibleChanged(EventArgs e)
       {
          base.OnVisibleChanged(e);
@@ -804,19 +834,10 @@ namespace Vao.Sample
 
       private void FillSelectCameraButtonList()
       {
-         var cameraList = moFlexRApiClient.GetCameraList();
+         ClearCameraSelection();
+         List<Camera> cameraList = moFlexRApiClient.GetCameraList();
          if (cameraList != null)
          {
-            foreach (Control control in pnlCameraSelectFlowPanel.Controls)
-            {
-               if (control is Button button)
-               {
-                  moToolTip.SetToolTip(button, null);
-                  button.Click -= OnSelectCameraClicked;
-               }
-            } 
-            pnlCameraSelectFlowPanel.Controls.Clear();
-
             foreach (var camera in cameraList)
             {
                Button oButton = new DarkButton()
@@ -836,19 +857,10 @@ namespace Vao.Sample
 
       private void FillSelectAlarmButtonList()
       {
+         ClearAlarmSelection();
          List<Alarm> alarmList = moFlexRApiClient.GetAlarmList();
          if (alarmList == null)
             return;
-
-         foreach (Control control in pnlAlarms.Controls)
-         {
-            if (control.Controls.Count > 0 && control.Controls[0] is Button button)
-            {
-               moToolTip.SetToolTip(button, null);
-               button.Click -= OnSelectAlarmClicked;
-            }
-         }
-         pnlAlarms.Controls.Clear();
 
          foreach (Alarm alarm in alarmList)
          {
