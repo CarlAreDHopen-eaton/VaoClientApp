@@ -26,7 +26,7 @@ namespace Vao.Sample
       private bool mIsPlaybackStarted = false;
       private bool mApiSupportsPlayback = false;
 
-      private VaoClient moVaoClient;
+      private FlexRApiClient moFlexRApiClient;
       private VideoViewWithViewerId mVideoControl;
       private Camera mCurrentCamera;
       private Alarm mCurrentAlarm;
@@ -35,8 +35,8 @@ namespace Vao.Sample
       private LibVLC mLibVlc;
       private ToolTip moToolTip;
 
-      public VaoClient VaoClient
-      {  get { return moVaoClient; } }
+      public FlexRApiClient FlexRApiClient
+      {  get { return moFlexRApiClient; } }
 
       public bool IsStarted
       {
@@ -222,7 +222,7 @@ namespace Vao.Sample
             return;
 
          IsStarted = true;
-         moVaoClient = new VaoClient
+         moFlexRApiClient = new FlexRApiClient
          {
             Host = txtHost.Text,
             Port = txtPort.Text,
@@ -231,10 +231,10 @@ namespace Vao.Sample
             UseHttps = chkSecure.Checked,
             IgnoreCertificateErrors = true
          };
-         moVaoClient.OnMessage += OnVaoClientMessage;
+         moFlexRApiClient.OnMessage += OnFlexRApiClientMessage;
          txtVideoHeader.Text = $"No Camera Selected";
          grpVideoControl.BackColor = Color.FromArgb(66, 77, 95);
-         if (moVaoClient.StartClient())
+         if (moFlexRApiClient.StartClient())
          {
             WriteMessageLog("VaoAPI", "Client started.", LogLevel.Notice);
             SetCurrentLoggedInUser();
@@ -296,7 +296,7 @@ namespace Vao.Sample
       /// </summary>
       /// <param name="sender"></param>
       /// <param name="e"></param>
-      private void OnVaoClientMessage(object sender, MessageEventArgs e)
+      private void OnFlexRApiClientMessage(object sender, MessageEventArgs e)
       {
          WriteMessageLog("VaoAPI", e.Message, LogLevel.Notice);
       }
@@ -329,11 +329,11 @@ namespace Vao.Sample
       private void btnDisconnect_Click(object sender, EventArgs e)
       {
          IsStarted = false;
-         if (moVaoClient != null)
+         if (moFlexRApiClient != null)
          {
-            moVaoClient.OnMessage -= OnVaoClientMessage;
-            moVaoClient.StopClient();
-            moVaoClient = null;
+            moFlexRApiClient.OnMessage -= OnFlexRApiClientMessage;
+            moFlexRApiClient.StopClient();
+            moFlexRApiClient = null;
          }
          StopRtspStream();
          CurrentCamera = null;
@@ -653,7 +653,7 @@ namespace Vao.Sample
 
       private void SelectCamera(int cameraNo, int streamNo)
       {
-         Camera camera = moVaoClient.GetCamera(cameraNo);
+         Camera camera = moFlexRApiClient.GetCamera(cameraNo);
          if (camera != null)
          {
             CurrentCamera = camera;
@@ -670,7 +670,7 @@ namespace Vao.Sample
 
       private void SelectAlarm(int alarmNo)
       {
-         Alarm alarm = moVaoClient.GetSingleAlarm(alarmNo);
+         Alarm alarm = moFlexRApiClient.GetSingleAlarm(alarmNo);
          if (alarm != null)
          {
             CurrentAlarm = alarm;
@@ -679,7 +679,7 @@ namespace Vao.Sample
 
       private void CheckApiVersion()
       {
-         ApiVersion apiversion = moVaoClient.GetApiVersion();
+         ApiVersion apiversion = moFlexRApiClient.GetApiVersion();
          if (apiversion != null)
          {
             Version version = new Version(apiversion.MajorVersion, apiversion.MinorVersion);
@@ -781,7 +781,7 @@ namespace Vao.Sample
          {
             SelectAlarm(alarm.ComponentNumber);
 
-            using (AlarmActionWindow window = new AlarmActionWindow(VaoClient, CurrentAlarm, CurrentLoggedInUser))
+            using (AlarmActionWindow window = new AlarmActionWindow(FlexRApiClient, CurrentAlarm, CurrentLoggedInUser))
             {
                window.StartPosition = FormStartPosition.Manual;
                window.Icon = Icon;
@@ -804,7 +804,7 @@ namespace Vao.Sample
 
       private void FillSelectCameraButtonList()
       {
-         var cameraList = moVaoClient.GetCameraList();
+         var cameraList = moFlexRApiClient.GetCameraList();
          if (cameraList != null)
          {
             foreach (Control control in pnlCameraSelectFlowPanel.Controls)
@@ -836,7 +836,7 @@ namespace Vao.Sample
 
       private void FillSelectAlarmButtonList()
       {
-         List<Alarm> alarmList = moVaoClient.GetAlarmList();
+         List<Alarm> alarmList = moFlexRApiClient.GetAlarmList();
          if (alarmList == null)
             return;
 
@@ -951,7 +951,7 @@ namespace Vao.Sample
 
       private void SetCurrentLoggedInUser()
       {
-         CurrentLoggedInUser = VaoClient.GetLoggedInUserInfo();
+         CurrentLoggedInUser = FlexRApiClient.GetLoggedInUserInfo();
       }
 
       private void OnControlCameraMouseDown(object sender, MouseEventArgs e)
@@ -1104,7 +1104,7 @@ namespace Vao.Sample
 
       private void btnOpenDownloadWindow_Click(object sender, EventArgs e)
       {
-         using (DownloadWindow downloadWindow = new DownloadWindow(VaoClient))
+         using (DownloadWindow downloadWindow = new DownloadWindow(FlexRApiClient))
          {
             downloadWindow.StartPosition = FormStartPosition.CenterParent;
             downloadWindow.Icon = this.Icon;
@@ -1133,7 +1133,7 @@ namespace Vao.Sample
 
       private void btnOpenAbsolutePositionWindow_Click(object sender, EventArgs e)
       {
-         using (AbsolutePositionWindow absolutePositionWindow = new AbsolutePositionWindow(VaoClient, CurrentCamera))
+         using (AbsolutePositionWindow absolutePositionWindow = new AbsolutePositionWindow(FlexRApiClient, CurrentCamera))
          {
             absolutePositionWindow.StartPosition = FormStartPosition.Manual;
             absolutePositionWindow.Icon = Icon;
@@ -1153,7 +1153,7 @@ namespace Vao.Sample
       { 
          if (!CurrentCamera.IsLocked)
          {
-            using (CameraLockWindow cameraLockWindow = new CameraLockWindow(VaoClient, CurrentCamera))
+            using (CameraLockWindow cameraLockWindow = new CameraLockWindow(FlexRApiClient, CurrentCamera))
             {
                cameraLockWindow.StartPosition = FormStartPosition.Manual;
                cameraLockWindow.Icon = Icon;
@@ -1168,7 +1168,7 @@ namespace Vao.Sample
          }
          else
          {
-            VaoClient.SendUnlockCamera(CurrentCamera.ComponentNumber);
+            FlexRApiClient.SendUnlockCamera(CurrentCamera.ComponentNumber);
          }
       }
 

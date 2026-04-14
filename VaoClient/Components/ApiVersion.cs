@@ -17,8 +17,8 @@ namespace Vao.Client.Components
 
       #region Constructor
 
-      internal ApiVersion(JsonApiVersion jsonObject, VaoClient vaoClient)
-         : base(vaoClient, mCurrentComponentNumber)
+      internal ApiVersion(JsonApiVersion jsonObject, FlexRApiClient flexRApiClient)
+         : base(flexRApiClient, mCurrentComponentNumber)
       {
          mName = jsonObject.name; 
          mMajorVersion = jsonObject.majorVersion;

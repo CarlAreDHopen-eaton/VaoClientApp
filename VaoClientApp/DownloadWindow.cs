@@ -20,7 +20,7 @@ namespace Vao.Sample
    {
       private bool mIsDownloadPathSet = false;
       private bool mIsFtpConnected = false;
-      private readonly VaoClient mVaoClient = null;
+      private readonly FlexRApiClient mFlexRApiClient = null;
       private FtpClient mFTPClient = null;
       private Camera mCurrentCamera;
 
@@ -36,9 +36,9 @@ namespace Vao.Sample
             UpdateEnabled();
          }
       }
-      public VaoClient VaoClient
+      public FlexRApiClient FlexRApiClient
       { 
-         get { return mVaoClient; } 
+         get { return mFlexRApiClient; } 
       }
 
       public bool IsDownloadPathSet
@@ -61,11 +61,11 @@ namespace Vao.Sample
             UpdateEnabled();
          }
       }
-      public DownloadWindow(VaoClient client)
+      public DownloadWindow(FlexRApiClient client)
       {
          InitializeComponent();
-         mVaoClient = client;
-         mVaoClient.OnMessage += VaoClient_OnMessage;
+         mFlexRApiClient = client;
+         mFlexRApiClient.OnMessage += FlexRApiClientOnMessage;
          FillStreamSelectionList();
          FillDurationSelectionList();
          FillCameraSelectionList();
@@ -141,11 +141,11 @@ namespace Vao.Sample
          }
       }
 
-      private void VaoClient_OnMessage(object sender, MessageEventArgs e)
+      private void FlexRApiClientOnMessage(object sender, MessageEventArgs e)
       {
          if (InvokeRequired)
          {
-            BeginInvoke(new MethodInvoker(() => VaoClient_OnMessage(sender, e)));
+            BeginInvoke(new MethodInvoker(() => FlexRApiClientOnMessage(sender, e)));
          }
          else
          {
@@ -308,7 +308,7 @@ namespace Vao.Sample
 
       private void FillCameraSelectionList()
       {
-         List<Camera> cameraList = VaoClient.GetCameraList();
+         List<Camera> cameraList = FlexRApiClient.GetCameraList();
          if (cameraList?.Count > 0)
          {
             selCamera.DataSource = cameraList;
@@ -441,7 +441,7 @@ namespace Vao.Sample
                }
             }
 
-            DownloadInfo downloadInfo = mVaoClient.GetDownloadInfo(currentCamera, txtRecorderAddress.Text, streamNumber, startTimePicker.Text, durationIsoString);
+            DownloadInfo downloadInfo = mFlexRApiClient.GetDownloadInfo(currentCamera, txtRecorderAddress.Text, streamNumber, startTimePicker.Text, durationIsoString);
                
             if (downloadInfo != null)
             {

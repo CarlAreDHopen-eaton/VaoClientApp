@@ -10,12 +10,12 @@ namespace Vao.Client
    internal class FeedbackHandler
    {
       private Thread mStatusCheckThread;
-      private readonly VaoClient mClient;
+      private readonly FlexRApiClient mClient;
       private readonly ManualResetEvent mStopStatusCheckThread = new ManualResetEvent(false);
 
-      public FeedbackHandler(VaoClient vaoClient)
+      public FeedbackHandler(FlexRApiClient flexRApiClient)
       {         
-         mClient = vaoClient;
+         mClient = flexRApiClient;
       }
 
       public bool Start()
@@ -103,7 +103,7 @@ namespace Vao.Client
 
       private static Camera FindCamera(StatusMessage message)
       {
-         List<Camera> cameras = message.VaoClient.GetCameraList();
+         List<Camera> cameras = message.FlexRApiClient.GetCameraList();
 
          foreach (Camera camera in cameras)
          {
@@ -118,7 +118,7 @@ namespace Vao.Client
 
       private static Alarm FindAlarm(StatusMessage message)
       {
-         List<Alarm> alarms = message.VaoClient.GetAlarmList();
+         List<Alarm> alarms = message.FlexRApiClient.GetAlarmList();
 
          foreach (Alarm alarm in alarms)
          {

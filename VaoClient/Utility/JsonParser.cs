@@ -15,9 +15,9 @@ namespace Vao.Client.Utility
       /// Parses the JSON message text to a list of camera objects.
       /// </summary>
       /// <param name="strJson">The JSON formatted message text</param>
-      /// <param name="vaoClient">The client that received the message</param>
+      /// <param name="flexRApiClient">The client that received the message</param>
       /// <returns></returns>
-      internal static List<Camera> ParseCameraList(string strJson, VaoClient vaoClient)
+      internal static List<Camera> ParseCameraList(string strJson, FlexRApiClient flexRApiClient)
       {
          if (!string.IsNullOrEmpty(strJson))
          {
@@ -25,7 +25,7 @@ namespace Vao.Client.Utility
             List<Camera> returnList = new List<Camera>();
             foreach (JsonCameraObject camera in list)
             {
-               returnList.Add(new Camera(camera.inputId, camera, vaoClient));
+               returnList.Add(new Camera(camera.inputId, camera, flexRApiClient));
             }
             return returnList;
          }
@@ -36,9 +36,9 @@ namespace Vao.Client.Utility
       /// Parses the JSON message text to a list of status message objects.
       /// </summary>
       /// <param name="strJson">The JSON formatted message text</param>
-      /// <param name="vaoClient">The client that received the message</param>
+      /// <param name="flexRApiClient">The client that received the message</param>
       /// <returns></returns>
-      internal static List<StatusMessage> ParseStatusMessages(string strJson, VaoClient vaoClient)
+      internal static List<StatusMessage> ParseStatusMessages(string strJson, FlexRApiClient flexRApiClient)
       {
          if (!string.IsNullOrEmpty(strJson))
          {
@@ -49,20 +49,20 @@ namespace Vao.Client.Utility
                if (statusMessage.description.Equals("no entries", StringComparison.InvariantCultureIgnoreCase))
                   continue;             
 
-               returnList.Add(new StatusMessage(statusMessage, vaoClient));
+               returnList.Add(new StatusMessage(statusMessage, flexRApiClient));
             }
             return returnList;
          }
          return null; 
       }
 
-      internal static Monitor ParseVideoOutput(string strJson, VaoClient vaoClient, int iVideoOutput)
+      internal static Monitor ParseVideoOutput(string strJson, FlexRApiClient flexRApiClient, int iVideoOutput)
       {
          if (!string.IsNullOrEmpty(strJson))
          {
             JsonVideoOutput jsonObject = JsonConvert.DeserializeObject<JsonVideoOutput>(strJson);
-            Camera camera = vaoClient.GetCamera(jsonObject.inputId);
-            Monitor monitor = new Monitor(iVideoOutput, vaoClient, camera);
+            Camera camera = flexRApiClient.GetCamera(jsonObject.inputId);
+            Monitor monitor = new Monitor(iVideoOutput, flexRApiClient, camera);
             return monitor;
          }
          return null;
@@ -72,14 +72,14 @@ namespace Vao.Client.Utility
          /// Parses the JSON message text to a camera object.
          /// </summary>
          /// <param name="strJson">The JSON formatted message text</param>
-         /// <param name="vaoClient">The client that received the message</param>
+         /// <param name="flexRApiClient">The client that received the message</param>
          /// <returns></returns>
-         internal static Camera ParseSingleCamera(string strJson, VaoClient vaoClient)
+         internal static Camera ParseSingleCamera(string strJson, FlexRApiClient flexRApiClient)
       {
          if (!string.IsNullOrEmpty(strJson))
          {
             JsonCameraObject oCameraObject = JsonConvert.DeserializeObject<JsonCameraObject>(strJson);
-            return new Camera(oCameraObject.inputId, oCameraObject, vaoClient);
+            return new Camera(oCameraObject.inputId, oCameraObject, flexRApiClient);
          }
 
          return null;
@@ -89,10 +89,10 @@ namespace Vao.Client.Utility
       /// Parses the JSON message text to a list of preset position message objects.
       /// </summary>
       /// <param name="strJson">The JSON formatted message text</param>
-      /// <param name="vaoClient">The client that received the message</param>
+      /// <param name="flexRApiClient">The client that received the message</param>
       /// <param name="ownerCamera">The camera that these presets belong to.</param>
       /// <returns></returns>
-      internal static List<Preset> ParsePresetList(string strJson, VaoClient vaoClient, Camera ownerCamera)
+      internal static List<Preset> ParsePresetList(string strJson, FlexRApiClient flexRApiClient, Camera ownerCamera)
       {
          if (!string.IsNullOrEmpty(strJson))
          {
@@ -100,7 +100,7 @@ namespace Vao.Client.Utility
             List<Preset> returnList = new List<Preset>();
             foreach (JsonPresetObject preset in list)
             {
-               returnList.Add(new Preset(preset.presetId, preset, vaoClient, ownerCamera));
+               returnList.Add(new Preset(preset.presetId, preset, flexRApiClient, ownerCamera));
             }
             return returnList;
          }
@@ -111,9 +111,9 @@ namespace Vao.Client.Utility
       /// Parses the JSON message text to a list of playback info message objects.
       /// </summary>
       /// <param name="strJson">The JSON formatted message text</param>
-      /// <param name="vaoClient">The client that received the message</param>
+      /// <param name="flexRApiClient">The client that received the message</param>
       /// <returns>A list of playback info message objects</returns>
-      internal static List<PlaybackInfo> ParsePlaybackInfoList(string strJson, VaoClient vaoClient)
+      internal static List<PlaybackInfo> ParsePlaybackInfoList(string strJson, FlexRApiClient flexRApiClient)
       {
          if (!string.IsNullOrEmpty(strJson))
          {
@@ -121,7 +121,7 @@ namespace Vao.Client.Utility
             List<PlaybackInfo> returnList = new List<PlaybackInfo>();
             foreach (JsonPlaybackInfoObject playbackInfo in list)
             {
-               returnList.Add(new PlaybackInfo(playbackInfo, vaoClient));
+               returnList.Add(new PlaybackInfo(playbackInfo, flexRApiClient));
             }
             return returnList;
          }
@@ -132,14 +132,14 @@ namespace Vao.Client.Utility
       /// Parses the JSON message text to a list of playback info message objects.
       /// </summary>
       /// <param name="strJson">The JSON formatted message text</param>
-      /// <param name="vaoClient">The client that received the message</param>
+      /// <param name="flexRApiClient">The client that received the message</param>
       /// <returns>A list of playback info message objects</returns>
-      internal static DownloadInfo ParseDownloadResponse(string strJson, VaoClient vaoClient)
+      internal static DownloadInfo ParseDownloadResponse(string strJson, FlexRApiClient flexRApiClient)
       {
          if (!string.IsNullOrEmpty(strJson))
          {
             JsonDownloadResponseObject downloadResponseObject = JsonConvert.DeserializeObject<JsonDownloadResponseObject>(strJson);
-            return new DownloadInfo(downloadResponseObject, vaoClient);
+            return new DownloadInfo(downloadResponseObject, flexRApiClient);
          }
 
          return null;
@@ -149,14 +149,14 @@ namespace Vao.Client.Utility
       /// Parses the JSON message text to an Api Version object.
       /// </summary>
       /// <param name="strJson">The JSON formatted message text</param>
-      /// <param name="vaoClient">The client that received the message</param>
+      /// <param name="flexRApiClient">The client that received the message</param>
       /// <returns></returns>
-      internal static ApiVersion ParseApiVersion(string strJson, VaoClient vaoClient)
+      internal static ApiVersion ParseApiVersion(string strJson, FlexRApiClient flexRApiClient)
       {
          if (!string.IsNullOrEmpty(strJson))
          {
             JsonApiVersion apiVersion = JsonConvert.DeserializeObject<JsonApiVersion>(strJson);
-            return new ApiVersion(apiVersion, vaoClient);
+            return new ApiVersion(apiVersion, flexRApiClient);
          }
 
          return null;
@@ -166,11 +166,11 @@ namespace Vao.Client.Utility
       /// Parses the JSON message text to a list of Alarm objects.
       /// </summary>
       /// <param name="strJson">The JSON formatted message text</param>
-      /// <param name="vaoClient">The client that received the message</param>
+      /// <param name="flexRApiClient">The client that received the message</param>
       /// <returns>
       /// A list of <see cref="Alarm"/> objects, or null if input is invalid
       /// </returns>
-      internal static List<Alarm> ParseAlarmList(string strJson, VaoClient vaoClient)
+      internal static List<Alarm> ParseAlarmList(string strJson, FlexRApiClient flexRApiClient)
       {
          if (!string.IsNullOrEmpty(strJson))
          {
@@ -178,7 +178,7 @@ namespace Vao.Client.Utility
             List<Alarm> returnList = new List<Alarm>();
             foreach (JsonAlarmObject alarm in list)
             {
-               returnList.Add(new Alarm(alarm.alarmId, alarm, vaoClient));
+               returnList.Add(new Alarm(alarm.alarmId, alarm, flexRApiClient));
             }
             return returnList;
          }
@@ -189,16 +189,16 @@ namespace Vao.Client.Utility
       /// Parses the JSON message text to a single Alarm object.
       /// </summary>
       /// <param name="strJson">The JSON formatted message text</param>
-      /// <param name="vaoClient">The client that received the message</param>
+      /// <param name="flexRApiClient">The client that received the message</param>
       /// <returns>
       /// An <see cref="Alarm"/> instance, or null if input is invalid
       /// </returns>
-      internal static Alarm ParseSingleAlarm(string strJson, VaoClient vaoClient)
+      internal static Alarm ParseSingleAlarm(string strJson, FlexRApiClient flexRApiClient)
       {
          if (!string.IsNullOrEmpty(strJson))
          {
             JsonAlarmObject alarmObject = JsonConvert.DeserializeObject<JsonAlarmObject>(strJson);
-            return new Alarm(alarmObject.alarmId, alarmObject, vaoClient);
+            return new Alarm(alarmObject.alarmId, alarmObject, flexRApiClient);
          }
 
          return null;
@@ -208,16 +208,16 @@ namespace Vao.Client.Utility
       /// Parses the JSON message text to a single User object.
       /// </summary>
       /// <param name="strJson">The JSON formatted message text</param>
-      /// <param name="vaoClient">The client that received the message</param>
+      /// <param name="flexRApiClient">The client that received the message</param>
       /// <returns>
       /// A <see cref="User"/> instance, or null if input is invalid
       /// </returns>
-      internal static User ParseSingleUser(string strJson, VaoClient vaoClient)
+      internal static User ParseSingleUser(string strJson, FlexRApiClient flexRApiClient)
       {
          if (!string.IsNullOrEmpty(strJson))
          {
             JsonUserObject userObject = JsonConvert.DeserializeObject<JsonUserObject>(strJson);
-            return new User(userObject.userId, userObject, vaoClient);
+            return new User(userObject.userId, userObject, flexRApiClient);
          }
 
          return null;

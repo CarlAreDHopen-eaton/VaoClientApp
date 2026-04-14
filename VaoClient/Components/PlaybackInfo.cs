@@ -17,8 +17,8 @@ namespace Vao.Client.Components
 
       #region Constructor
 
-      internal PlaybackInfo(JsonPlaybackInfoObject jsonObject, VaoClient vaoClient)
-         : base(vaoClient, 0)
+      internal PlaybackInfo(JsonPlaybackInfoObject jsonObject, FlexRApiClient flexRApiClient)
+         : base(flexRApiClient, 0)
       {
          mPlaybackUrl = jsonObject.playbackUrl;
          mRecorderAddress = jsonObject.recorderAddress;

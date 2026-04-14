@@ -7,7 +7,7 @@ namespace Vao.Sample
 {
    public partial class AbsolutePositionWindow : Form
    {
-      private readonly VaoClient mVaoClient = null;
+      private readonly FlexRApiClient mFlexRApiClient = null;
       private Camera mCurrentCamera;
 
       public Camera CurrentCamera
@@ -21,15 +21,15 @@ namespace Vao.Sample
             mCurrentCamera = value;
          }
       }
-      public VaoClient VaoClient
+      public FlexRApiClient FlexRApiClient
       { 
-         get { return mVaoClient; } 
+         get { return mFlexRApiClient; } 
       }
 
-      public AbsolutePositionWindow(VaoClient client, Camera camera)
+      public AbsolutePositionWindow(FlexRApiClient client, Camera camera)
       {
          InitializeComponent();
-         mVaoClient = client;
+         mFlexRApiClient = client;
          CurrentCamera = camera;
 
          // Updates the title bar to dark.
@@ -47,7 +47,7 @@ namespace Vao.Sample
          float? tilt = TryParseOrNull(txtAbsoluteTilt.Text);
          float? zoom = TryParseOrNull(txtAbsoluteZoom.Text);
 
-         VaoClient.SendAbsolutePosition(CurrentCamera.ComponentNumber, pan, tilt, zoom);
+         FlexRApiClient.SendAbsolutePosition(CurrentCamera.ComponentNumber, pan, tilt, zoom);
       }
 
       private static float? TryParseOrNull(string text)

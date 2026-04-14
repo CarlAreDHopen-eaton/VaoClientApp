@@ -17,7 +17,7 @@ namespace Vao.Client.Components
       /// <param name="monitorNo">The monitor number</param>
       /// <param name="client">The client that this camera belong to</param>
       /// <param name="currentCamera">The camera currently active on this monitor</param>
-      public Monitor(int monitorNo, VaoClient client, Camera currentCamera) 
+      public Monitor(int monitorNo, FlexRApiClient client, Camera currentCamera) 
          : base(client, monitorNo)
       {
          mMonitorName = $"Monitor {ComponentNumber}";

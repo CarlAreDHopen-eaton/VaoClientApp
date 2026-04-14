@@ -8,7 +8,7 @@ namespace Vao.Sample
 {
    public partial class CameraLockWindow : Form
    {
-      private readonly VaoClient mVaoClient = null;
+      private readonly FlexRApiClient mFlexRApiClient = null;
       private Camera mCurrentCamera;
 
       public Camera CurrentCamera
@@ -22,15 +22,15 @@ namespace Vao.Sample
             mCurrentCamera = value;
          }
       }
-      public VaoClient VaoClient
+      public FlexRApiClient FlexRApiClient
       { 
-         get { return mVaoClient; } 
+         get { return mFlexRApiClient; } 
       }
 
-      public CameraLockWindow(VaoClient client, Camera camera)
+      public CameraLockWindow(FlexRApiClient client, Camera camera)
       {
          InitializeComponent();
-         mVaoClient = client;
+         mFlexRApiClient = client;
          CurrentCamera = camera;
 
          // Updates the title bar to dark.
@@ -51,7 +51,7 @@ namespace Vao.Sample
          // If everything is zero, send null
          if (hours == 0 && minutes == 0 && seconds == 0)
          {
-            VaoClient.SendLockCamera(CurrentCamera.ComponentNumber, null);
+            FlexRApiClient.SendLockCamera(CurrentCamera.ComponentNumber, null);
             return;
          }
 
@@ -66,7 +66,7 @@ namespace Vao.Sample
          if (seconds > 0)
             duration.Append($"{seconds}S");
 
-         VaoClient.SendLockCamera(CurrentCamera.ComponentNumber, duration.ToString());
+         FlexRApiClient.SendLockCamera(CurrentCamera.ComponentNumber, duration.ToString());
       }
 
 

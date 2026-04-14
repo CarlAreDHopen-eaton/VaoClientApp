@@ -16,8 +16,8 @@ namespace Vao.Client.Components
       private int mActions = 0;
 
 
-      internal Alarm(int alarmNumber, JsonAlarmObject alarm, VaoClient vaoClient)
-         : base(vaoClient, alarmNumber)
+      internal Alarm(int alarmNumber, JsonAlarmObject alarm, FlexRApiClient flexRApiClient)
+         : base(flexRApiClient, alarmNumber)
       {
          mAlarmName = alarm.name;
          Status = System.Enum.TryParse(alarm.status, ignoreCase: true, out AlarmGeneralStatus parsedStatus) ? parsedStatus : AlarmGeneralStatus.Unknown;

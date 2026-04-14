@@ -31,8 +31,8 @@ namespace Vao.Client.Components
       private bool? mCanUnlock = null;
       private string mLockOwner = null;
 
-      internal Camera(int cameraNumber, JsonCameraObject camera, VaoClient vaoClient)
-         : base(vaoClient, cameraNumber)
+      internal Camera(int cameraNumber, JsonCameraObject camera, FlexRApiClient flexRApiClient)
+         : base(flexRApiClient, cameraNumber)
       {
          mCameraName = camera.name;
          mJsonCameraObject = camera;
@@ -123,7 +123,7 @@ namespace Vao.Client.Components
          get
          {
             if (mPresetList == null)
-               mPresetList = VaoClient.ExecuteGetPresetList(this);
+               mPresetList = FlexRApiClient.ExecuteGetPresetList(this);
             return mPresetList;
          }
       }
@@ -135,7 +135,7 @@ namespace Vao.Client.Components
       {
          if (!mPlaybackInfoList.ContainsKey(viewerId))
          {
-            List<PlaybackInfo> playbackInfoList = VaoClient.ExecuteGetRecordingList(this, viewerId);
+            List<PlaybackInfo> playbackInfoList = FlexRApiClient.ExecuteGetRecordingList(this, viewerId);
             mPlaybackInfoList.Add(viewerId, playbackInfoList);
          }       
          return mPlaybackInfoList[viewerId];
@@ -279,11 +279,11 @@ namespace Vao.Client.Components
       /// <returns>The RTSP url for the camera live stream.</returns>
       public string GetCameraLiveStreamUrl(int iStream)
       {
-         RestResponse response = VaoClient.ExecuteGetCameraInternal(ComponentNumber);
+         RestResponse response = FlexRApiClient.ExecuteGetCameraInternal(ComponentNumber);
          if (response != null && response.IsSuccessful)
          {
             // Request new camera data in case redundant video server has taken over.
-            var newCameraData = Utility.JsonParser.ParseSingleCamera(response.Content, VaoClient);
+            var newCameraData = Utility.JsonParser.ParseSingleCamera(response.Content, FlexRApiClient);
             // Update own data in case other properties has changed.
             UpdateData(newCameraData);
             // Return correct url.
@@ -307,10 +307,10 @@ namespace Vao.Client.Components
       /// </summary>
       public void UpdateCameraData()
       {
-         RestResponse response = VaoClient.ExecuteGetCameraInternal(ComponentNumber);
+         RestResponse response = FlexRApiClient.ExecuteGetCameraInternal(ComponentNumber);
          if (response != null && response.IsSuccessful)
          {
-            Camera newCameraData = JsonParser.ParseSingleCamera(response.Content, VaoClient);
+            Camera newCameraData = JsonParser.ParseSingleCamera(response.Content, FlexRApiClient);
             UpdateData(newCameraData);
          }
       }
@@ -343,7 +343,7 @@ namespace Vao.Client.Components
          mCurrentPanSpeed = null;
          mCurrentZoomSpeed = null;
          mCurrentFocus = null;
-         RestResponse response = VaoClient.ExecuteMoveTargetStop(ComponentNumber);
+         RestResponse response = FlexRApiClient.ExecuteMoveTargetStop(ComponentNumber);
       }
 
       /// <summary>
@@ -416,7 +416,7 @@ namespace Vao.Client.Components
       /// <returns>True is success</returns>
       public bool SetName(string newName)
       {
-         return VaoClient.ExecuteSetCameraName(ComponentNumber, newName);
+         return FlexRApiClient.ExecuteSetCameraName(ComponentNumber, newName);
       }
 
       #endregion
@@ -464,7 +464,7 @@ namespace Vao.Client.Components
       /// <returns></returns>
       private RestResponse MoveTargetStart()
       {
-         return VaoClient.ExecuteMoveTargetStart(ComponentNumber, mCurrentPanSpeed, mCurrentTiltSpeed, mCurrentZoomSpeed, mCurrentFocus);
+         return FlexRApiClient.ExecuteMoveTargetStart(ComponentNumber, mCurrentPanSpeed, mCurrentTiltSpeed, mCurrentZoomSpeed, mCurrentFocus);
       }
 
       /// <summary>

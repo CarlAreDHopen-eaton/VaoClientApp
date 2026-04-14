@@ -19,9 +19,9 @@ namespace Vao.Client.Components
       /// Constructor for the message.
       /// </summary>
       /// <param name="statusMessage">The messages desrialzed to JSON</param>
-      /// <param name="vaoClient">The client that received the message</param>
-      internal StatusMessage(JsonStatusMessage statusMessage, VaoClient vaoClient) 
-         : base(vaoClient, ++mCurrentComponentNumber) 
+      /// <param name="flexRApiClient">The client that received the message</param>
+      internal StatusMessage(JsonStatusMessage statusMessage, FlexRApiClient flexRApiClient) 
+         : base(flexRApiClient, ++mCurrentComponentNumber) 
       {
          ReceivedTime = DateTime.Now;
          mStatusMessage = statusMessage;
