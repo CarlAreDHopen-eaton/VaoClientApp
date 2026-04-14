@@ -133,7 +133,7 @@ namespace Vao.Sample
 
       private void StartInitializeVlc()
       {
-         WriteMessageLog("LibVLC", "Loading VLC", LogLevel.Notice);
+         WriteMessageLog(MessageSource.LibVlc, "Loading VLC", LogLevel.Notice);
          var options = new[] { "-vv", "--rtsp-timeout=300", "--network-caching=300" };
          mLibVlc = new LibVLC(true, options);
          mLibVlc.Log += LibVlc_Log;
@@ -145,7 +145,7 @@ namespace Vao.Sample
          if (e.Level == LogLevel.Debug)
             return;
 
-         WriteMessageLog("LibVLC", e.FormattedLog, e.Level);
+         WriteMessageLog(MessageSource.LibVlc, e.Message, e.Level);
       }
 
       /// <summary>
@@ -236,7 +236,7 @@ namespace Vao.Sample
          grpVideoControl.BackColor = Color.FromArgb(66, 77, 95);
          if (moFlexRApiClient.StartClient())
          {
-            WriteMessageLog("VaoAPI", "Client started.", LogLevel.Notice);
+            WriteMessageLog(MessageSource.FlexApi, "Client started.", LogLevel.Notice);
             SetCurrentLoggedInUser();
             FillSelectCameraButtonList();
             FillSelectAlarmButtonList();
@@ -250,7 +250,7 @@ namespace Vao.Sample
          }
          else
          {
-            WriteMessageLog("VaoAPI", "Unable to start, no response.", LogLevel.Error);
+            WriteMessageLog(MessageSource.FlexApi, "Unable to start, no response.", LogLevel.Error);
             btnDisconnect_Click(sender, e);
             ClearPresetDropdown();
             UpdateEnabled();
@@ -265,25 +265,25 @@ namespace Vao.Sample
       {
          if (string.IsNullOrWhiteSpace(txtHost.Text))
          {
-            WriteMessageLog("Application", "Missing host name", LogLevel.Error);
+            WriteMessageLog(MessageSource.Application, "Missing host name", LogLevel.Error);
             return false;
          }
 
          if (string.IsNullOrWhiteSpace(txtPassword.Text))
          {
-            WriteMessageLog("Application", "Missing host password", LogLevel.Error);
+            WriteMessageLog(MessageSource.Application, "Missing host password", LogLevel.Error);
             return false; 
          }
 
          if (string.IsNullOrWhiteSpace(txtUser.Text))
          {
-            WriteMessageLog("Application", "Missing user name", LogLevel.Error);
+            WriteMessageLog(MessageSource.Application, "Missing user name", LogLevel.Error);
             return false;
          }
 
          if (string.IsNullOrWhiteSpace(txtPort.Text))
          {
-            WriteMessageLog("Application", "Missing port", LogLevel.Error);
+            WriteMessageLog(MessageSource.Application, "Missing port", LogLevel.Error);
             return false;
          }
 
@@ -298,17 +298,45 @@ namespace Vao.Sample
       /// <param name="e"></param>
       private void OnFlexRApiClientMessage(object sender, MessageEventArgs e)
       {
-         WriteMessageLog("VaoAPI", e.Message, LogLevel.Notice);
+         if (e.StatusMessage is StatusMessage statusMessage)
+         {
+            string logText = $"{statusMessage.Timestamp} : [{statusMessage.Type}] {statusMessage.Message}";
+            switch (statusMessage.Level)
+            {
+               case MessageLevel.Debug:
+                  WriteMessageLog(MessageSource.FlexApi, logText, LogLevel.Debug);
+                  break;
+               case MessageLevel.Info:
+                  WriteMessageLog(MessageSource.FlexApi, logText, LogLevel.Notice);
+                  break;
+               case MessageLevel.Warning:
+                  WriteMessageLog(MessageSource.FlexApi, logText, LogLevel.Warning);
+                  break;
+               case MessageLevel.Error:
+                  WriteMessageLog(MessageSource.FlexApi, logText, LogLevel.Error);
+                  break;
+            }
+            
+         }
       }
 
-      private void WriteMessageLog(string strSource, string strMessage, LogLevel level)
+      private enum MessageSource
+      {
+         FlexApi,
+         LibVlc,
+         Application
+      }
+
+      private void WriteMessageLog(MessageSource source, string strMessage, LogLevel level)
       {
          if (InvokeRequired)
          {
-            BeginInvoke(new MethodInvoker(() => WriteMessageLog(strSource, strMessage, level)));
+            BeginInvoke(new MethodInvoker(() => WriteMessageLog(source, strMessage, level)));
          }
          else
          {
+            string strSource = source.ToString();
+
             // Since this is async we might get here after the message contron is disposed. (When application is closing)
             if (lstMessages.IsDisposed == true)
                return;
@@ -319,9 +347,29 @@ namespace Vao.Sample
             var strMsg = $"{strTime} [{strLevel}] - {strSource} - {strMessage}";
             dlvi.Text = strMsg;
 
+            // Set text color based on log level
+            switch (level)
+            {
+               case LogLevel.Error:
+                  dlvi.TextColor = Color.Red;
+                  break;
+               case LogLevel.Warning:
+                  dlvi.TextColor = Color.Orange;
+                  break;
+               case LogLevel.Debug:
+                  dlvi.TextColor = Color.LightBlue;
+                  break;
+               case LogLevel.Notice:
+               default:
+                  dlvi.TextColor = Color.White;
+                  break;
+            }
+
             if (strMessage != "drawable Warning: unsupported control query 3")
             {
                lstMessages.Items.Add(dlvi);
+               lstMessages.SelectItem(lstMessages.Items.Count - 1);
+               lstMessages.EnsureVisible();
             }       
          }
       }
@@ -785,13 +833,13 @@ namespace Vao.Sample
 
       private void MediaPlayer_EncounteredError(object sender, EventArgs e)
       {
-         WriteMessageLog("LibVLC", "LibVLC error encountered.", LogLevel.Error);
+         WriteMessageLog(MessageSource.LibVlc, "LibVLC error encountered.", LogLevel.Error);
       }
 
       private void MediaPlayer_Opening(object sender, EventArgs e)
       {
          string mrl = mVideoControl?.MediaPlayer?.Media?.Mrl ?? "";
-         WriteMessageLog("LibVLC", $"LibVLC opening {GetMaskedUrl(mrl)}", LogLevel.Notice);
+         WriteMessageLog(MessageSource.LibVlc, $"LibVLC opening {GetMaskedUrl(mrl)}", LogLevel.Notice);
       }
 
       private void OnSelectCameraClicked(object sender, EventArgs e)
