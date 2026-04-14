@@ -10,12 +10,20 @@ namespace Vao.Client.Utility
 {
    internal static class RequestHelper
    {
+      /// <summary>
+      /// Rate limiter to limit API requests to 9 per second.
+      /// NOTE: The max limit in the FLEX API is 10.
+      /// </summary>
+      private static readonly RateLimiter mRateLimiter = new RateLimiter(9);
+
       internal static List<Camera> ExecuteGetCameraList(this FlexRApiClient flexRApiClient)
       {
          RestClient client = flexRApiClient.GetRestClient();
 
          // ReSharper disable once RedundantArgumentDefaultValue
          RestRequest request = new RestRequest("inputs", Method.Get);
+         
+         mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
 
          string strResponse = flexRApiClient.ValidateResponseContent(response);
@@ -35,6 +43,8 @@ namespace Vao.Client.Utility
 
          // ReSharper disable once RedundantArgumentDefaultValue
          RestRequest request = new RestRequest($"inputs/{ownerCamera.ComponentNumber}/presets", Method.Get);
+         
+         mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
 
          string strResponse = flexRApiClient.ValidateResponseContent(response);
@@ -61,6 +71,7 @@ namespace Vao.Client.Utility
          string serializedJsonViewerId = JsonConvert.SerializeObject(jsonViewerId);
          request.AddJsonBody(serializedJsonViewerId);
 
+         mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
          string strResponse = flexRApiClient.ValidateResponseContent(response);
          if (strResponse == null)
@@ -89,6 +100,7 @@ namespace Vao.Client.Utility
          string serializedJsonDownloadRequest = JsonConvert.SerializeObject(jsonRequestobject);
          request.AddJsonBody(serializedJsonDownloadRequest);
 
+         mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
          string strResponse = flexRApiClient.ValidateResponseContent(response);
          if (strResponse == null)
@@ -112,6 +124,7 @@ namespace Vao.Client.Utility
          string serializedJsonDownloadRequest = JsonConvert.SerializeObject(changeName);
          request.AddJsonBody(serializedJsonDownloadRequest);
 
+         mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
          string strResponse = flexRApiClient.ValidateResponseContent(response);
          if (strResponse == null)
@@ -129,6 +142,8 @@ namespace Vao.Client.Utility
 
          // ReSharper disable once RedundantArgumentDefaultValue
          RestRequest request = new RestRequest($"video-output/{iVideoOutput}", Method.Get);
+         
+         mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
 
          string strResponse = flexRApiClient.ValidateResponseContent(response);
@@ -146,6 +161,8 @@ namespace Vao.Client.Utility
       {
          RestClient client = flexRApiClient.GetRestClient();
          RestRequest request = new RestRequest("status", Method.Options);
+         
+         mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
 
          return flexRApiClient.ValidateResponseContent(response);
@@ -155,6 +172,8 @@ namespace Vao.Client.Utility
       {
          RestClient client = flexRApiClient.GetRestClient();
          RestRequest request = new RestRequest("version/api", Method.Options);
+         
+         mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
          string strResponse = flexRApiClient.ValidateResponseContent(response);
          if (strResponse == null)
@@ -174,6 +193,8 @@ namespace Vao.Client.Utility
          dateTime = dateTime.AddSeconds(1);
          string formattedDateTime = dateTime.ToUniversalTime().ToString("r");
          request.AddHeader("If-Modified-Since", formattedDateTime);
+         
+         mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
 
          return flexRApiClient.ValidateResponseContent(response);
@@ -203,6 +224,7 @@ namespace Vao.Client.Utility
             });
          request.AddJsonBody(serializedJsonMoveTarget);
 
+         mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
 
          string strResponse = flexRApiClient.ValidateResponseContent(response);
@@ -219,6 +241,7 @@ namespace Vao.Client.Utility
          // ReSharper disable once RedundantArgumentDefaultValue
          RestRequest request = new RestRequest($"inputs/{cameraNumber}/MoveTarget", Method.Delete);
 
+         mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
          return response;
       }
@@ -228,6 +251,8 @@ namespace Vao.Client.Utility
          RestClient client = flexRApiClient.GetRestClient();
          // ReSharper disable once RedundantArgumentDefaultValue
          RestRequest request = new RestRequest($"inputs/{iCameraNo}", Method.Get);
+         
+         mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
 
          string strResponse = flexRApiClient.ValidateResponseContent(response);
@@ -243,6 +268,8 @@ namespace Vao.Client.Utility
          RestClient client = flexRApiClient.GetRestClient();
          // ReSharper disable once RedundantArgumentDefaultValue
          RestRequest request = new RestRequest($"inputs/{iCameraNo}/presets/{iPresetNumber}", Method.Post);
+         
+         mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
 
          string strResponse = flexRApiClient.ValidateResponseContent(response);
@@ -260,6 +287,8 @@ namespace Vao.Client.Utility
 
          // ReSharper disable once RedundantArgumentDefaultValue
          RestRequest request = new RestRequest("alarms", Method.Get);
+         
+         mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
 
          string strResponse = flexRApiClient.ValidateResponseContent(response);
@@ -279,6 +308,8 @@ namespace Vao.Client.Utility
 
          // ReSharper disable once RedundantArgumentDefaultValue
          RestRequest request = new RestRequest($"alarms/{iAlarmNo}", Method.Get);
+         
+         mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
 
          string strResponse = flexRApiClient.ValidateResponseContent(response);
@@ -309,6 +340,7 @@ namespace Vao.Client.Utility
             });
          request.AddJsonBody(serializedJsonCommand);
 
+         mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
 
          string strResponse = flexRApiClient.ValidateResponseContent(response);
@@ -338,6 +370,7 @@ namespace Vao.Client.Utility
             });
          request.AddJsonBody(serializedJsonAbsolutePosition);
 
+         mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
 
          string strResponse = flexRApiClient.ValidateResponseContent(response);
@@ -363,6 +396,7 @@ namespace Vao.Client.Utility
             request.AddJsonBody(serializedJsonLockRequest);
          }
 
+         mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
 
          string strResponse = flexRApiClient.ValidateResponseContent(response);
@@ -378,6 +412,8 @@ namespace Vao.Client.Utility
          RestClient client = flexRApiClient.GetRestClient();
          // ReSharper disable once RedundantArgumentDefaultValue
          RestRequest request = new RestRequest($"inputs/{iCameraNo}/lock", Method.Delete);
+         
+         mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
 
          string strResponse = flexRApiClient.ValidateResponseContent(response);
@@ -393,6 +429,8 @@ namespace Vao.Client.Utility
          RestClient client = flexRApiClient.GetRestClient();
          // ReSharper disable once RedundantArgumentDefaultValue
          RestRequest request = new RestRequest($"user", Method.Get);
+         
+         mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
 
          string strResponse = flexRApiClient.ValidateResponseContent(response);
