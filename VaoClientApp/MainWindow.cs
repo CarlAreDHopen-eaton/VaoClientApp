@@ -5,8 +5,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
 using System.Linq;
-using System.Security.Claims;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
@@ -145,6 +143,9 @@ namespace Vao.Sample
          if (e.Level == LogLevel.Debug)
             return;
 
+         // Ingnore specific messages
+         if (e.Message.ToLower() == "unsupported control query 3") return;
+
          WriteMessageLog(MessageSource.LibVlc, e.Message, e.Level);
       }
 
@@ -265,25 +266,25 @@ namespace Vao.Sample
       {
          if (string.IsNullOrWhiteSpace(txtHost.Text))
          {
-            WriteMessageLog(MessageSource.Application, "Missing host name", LogLevel.Error);
+            WriteMessageLog(MessageSource.Config, "Missing host name", LogLevel.Error);
             return false;
          }
 
          if (string.IsNullOrWhiteSpace(txtPassword.Text))
          {
-            WriteMessageLog(MessageSource.Application, "Missing host password", LogLevel.Error);
+            WriteMessageLog(MessageSource.Config, "Missing host password", LogLevel.Error);
             return false; 
          }
 
          if (string.IsNullOrWhiteSpace(txtUser.Text))
          {
-            WriteMessageLog(MessageSource.Application, "Missing user name", LogLevel.Error);
+            WriteMessageLog(MessageSource.Config, "Missing user name", LogLevel.Error);
             return false;
          }
 
          if (string.IsNullOrWhiteSpace(txtPort.Text))
          {
-            WriteMessageLog(MessageSource.Application, "Missing port", LogLevel.Error);
+            WriteMessageLog(MessageSource.Config, "Missing port", LogLevel.Error);
             return false;
          }
 
@@ -324,7 +325,7 @@ namespace Vao.Sample
       {
          FlexApi,
          LibVlc,
-         Application
+         Config
       }
 
       private void WriteMessageLog(MessageSource source, string strMessage, LogLevel level)
@@ -335,7 +336,7 @@ namespace Vao.Sample
          }
          else
          {
-            string strSource = source.ToString();
+            string strSource = source.ToString().PadRight(7); // 7 is the length of "FlexApi" which is the longest source string, this is to align the messages in the log.
 
             // Since this is async we might get here after the message contron is disposed. (When application is closing)
             if (lstMessages.IsDisposed == true)
@@ -343,8 +344,8 @@ namespace Vao.Sample
 
             var dlvi = new DarkUI.Controls.DarkListItem();
             var strTime = DateTime.Now.ToString(CultureInfo.InvariantCulture);
-            var strLevel = level.ToString();
-            var strMsg = $"{strTime} [{strLevel}] - {strSource} - {strMessage}";
+            var strLevel = level.ToString().PadRight(7); // 7 is the length of "Warning" which is the longest level string, this is to align the messages in the log.
+            var strMsg = $"{strTime} [{strLevel}][{strSource}] - {strMessage}";
             dlvi.Text = strMsg;
 
             // Set text color based on log level

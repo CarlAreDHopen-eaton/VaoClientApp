@@ -112,7 +112,7 @@ namespace Vao.Sample
          this.pnlVideo.BackColor = System.Drawing.Color.Black;
          this.pnlVideo.Location = new System.Drawing.Point(1, 25);
          this.pnlVideo.Name = "pnlVideo";
-         this.pnlVideo.Size = new System.Drawing.Size(969, 866);
+         this.pnlVideo.Size = new System.Drawing.Size(969, 807);
          this.pnlVideo.TabIndex = 0;
          // 
          // txtCurrentRtspUrl
@@ -123,7 +123,7 @@ namespace Vao.Sample
          this.txtCurrentRtspUrl.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
          this.txtCurrentRtspUrl.Enabled = false;
          this.txtCurrentRtspUrl.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-         this.txtCurrentRtspUrl.Location = new System.Drawing.Point(4, 896);
+         this.txtCurrentRtspUrl.Location = new System.Drawing.Point(4, 837);
          this.txtCurrentRtspUrl.Name = "txtCurrentRtspUrl";
          this.txtCurrentRtspUrl.Size = new System.Drawing.Size(763, 20);
          this.txtCurrentRtspUrl.TabIndex = 1;
@@ -144,6 +144,7 @@ namespace Vao.Sample
          this.lstMessages.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+         this.lstMessages.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
          this.lstMessages.Location = new System.Drawing.Point(3, 27);
          this.lstMessages.Name = "lstMessages";
          this.lstMessages.Size = new System.Drawing.Size(963, 64);
@@ -172,7 +173,7 @@ namespace Vao.Sample
          this.grpVideoControl.ForeColor = System.Drawing.Color.White;
          this.grpVideoControl.Location = new System.Drawing.Point(0, 0);
          this.grpVideoControl.Name = "grpVideoControl";
-         this.grpVideoControl.Size = new System.Drawing.Size(971, 922);
+         this.grpVideoControl.Size = new System.Drawing.Size(971, 863);
          this.grpVideoControl.TabIndex = 0;
          // 
          // txtVideoHeader
@@ -194,7 +195,7 @@ namespace Vao.Sample
          this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
          this.panel1.Controls.Add(this.chkUseTcp);
          this.panel1.Controls.Add(this.chkPreferSubChannel);
-         this.panel1.Location = new System.Drawing.Point(1, 890);
+         this.panel1.Location = new System.Drawing.Point(1, 831);
          this.panel1.Name = "panel1";
          this.panel1.Size = new System.Drawing.Size(969, 31);
          this.panel1.TabIndex = 12;
@@ -249,7 +250,7 @@ namespace Vao.Sample
          // 
          this.splitMainVerticalSplit.Panel2.Controls.Add(this.splitHorizontalVideoAndMessageSplit);
          this.splitMainVerticalSplit.Panel2.Padding = new System.Windows.Forms.Padding(0, 4, 4, 0);
-         this.splitMainVerticalSplit.Size = new System.Drawing.Size(1226, 1061);
+         this.splitMainVerticalSplit.Size = new System.Drawing.Size(1226, 1002);
          this.splitMainVerticalSplit.SplitterDistance = 247;
          this.splitMainVerticalSplit.TabIndex = 0;
          // 
@@ -419,8 +420,8 @@ namespace Vao.Sample
          // splitHorizontalVideoAndMessageSplit.Panel2
          // 
          this.splitHorizontalVideoAndMessageSplit.Panel2.Controls.Add(this.grpMessages);
-         this.splitHorizontalVideoAndMessageSplit.Size = new System.Drawing.Size(971, 1057);
-         this.splitHorizontalVideoAndMessageSplit.SplitterDistance = 922;
+         this.splitHorizontalVideoAndMessageSplit.Size = new System.Drawing.Size(971, 998);
+         this.splitHorizontalVideoAndMessageSplit.SplitterDistance = 863;
          this.splitHorizontalVideoAndMessageSplit.TabIndex = 0;
          // 
          // btnConnect
@@ -444,7 +445,7 @@ namespace Vao.Sample
          this.grpActiveAlarms.Size = new System.Drawing.Size(238, 192);
          this.grpActiveAlarms.TabIndex = 3;
          // 
-         // pnlActiveAlarms
+         // pnlAlarms
          // 
          this.pnlAlarms.AutoScroll = true;
          this.pnlAlarms.BackColor = System.Drawing.SystemColors.WindowFrame;
@@ -737,7 +738,7 @@ namespace Vao.Sample
          this.AcceptButton = this.btnConnect;
          this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-         this.ClientSize = new System.Drawing.Size(1226, 1061);
+         this.ClientSize = new System.Drawing.Size(1226, 1002);
          this.Controls.Add(this.splitMainVerticalSplit);
          this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
          this.MinimumSize = new System.Drawing.Size(400, 200);
