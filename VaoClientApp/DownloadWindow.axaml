@@ -1,0 +1,103 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Vao.Sample.DownloadWindow"
+        Title="Download Recording"
+        Width="1118" Height="573" MinWidth="600" MinHeight="200"
+        Background="{StaticResource DarkBg}"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid ColumnDefinitions="400,*">
+        <!-- Left panel -->
+        <ScrollViewer Grid.Column="0">
+            <StackPanel Spacing="8" Margin="12">
+
+                <!-- FTP Connection -->
+                <Border Background="{StaticResource DarkSectionBg}" CornerRadius="2" Padding="8">
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="FTP Connection" FontWeight="Bold" Foreground="White"/>
+                        <Grid ColumnDefinitions="80,*" RowDefinitions="Auto,Auto">
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="User" Foreground="Silver" VerticalAlignment="Center"/>
+                            <TextBox Grid.Row="0" Grid.Column="1" x:Name="txtFTPUser" TextChanged="txtFTPCredential_TextChanged"/>
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Password" Foreground="Silver" VerticalAlignment="Center"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" x:Name="txtFTPPassword" PasswordChar="*" TextChanged="txtFTPCredential_TextChanged"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Download Path -->
+                <Border Background="{StaticResource DarkSectionBg}" CornerRadius="2" Padding="8">
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Download path" FontWeight="Bold" Foreground="White"/>
+                        <TextBox x:Name="txtDownloadPath" Text="C:\"/>
+                        <Button x:Name="btnBrowse" Content="Browse" Click="btnBrowseDownloadPath_Click"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Available Recordings -->
+                <Border Background="{StaticResource DarkSectionBg}" CornerRadius="2" Padding="8" x:Name="grpSelectRecording">
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Available Recordings" FontWeight="Bold" Foreground="White"/>
+                        <Grid ColumnDefinitions="80,*" RowDefinitions="Auto,Auto">
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Camera" Foreground="Silver" VerticalAlignment="Center"/>
+                            <ComboBox Grid.Row="0" Grid.Column="1" x:Name="selCamera" SelectionChanged="selCamera_SelectedIndexChanged" MinWidth="140"/>
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Recordings" Foreground="Silver" VerticalAlignment="Center"/>
+                            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="selRecording" SelectionChanged="selRecording_SelectedIndexChanged" MinWidth="140"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Request Download -->
+                <Border Background="{StaticResource DarkSectionBg}" CornerRadius="2" Padding="8" x:Name="grpDownload">
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Request Download" FontWeight="Bold" Foreground="White"/>
+                        <Grid ColumnDefinitions="100,*" RowDefinitions="Auto,Auto,Auto,Auto">
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Recorder Address" Foreground="Silver" VerticalAlignment="Center"/>
+                            <TextBox Grid.Row="0" Grid.Column="1" x:Name="txtRecorderAddress"/>
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Stream" Foreground="Silver" VerticalAlignment="Center"/>
+                            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="selStreamNumber" MinWidth="140"/>
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Start time" Foreground="Silver" VerticalAlignment="Center"/>
+                            <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Spacing="4">
+                                <DatePicker x:Name="startDatePicker"/>
+                                <TimePicker x:Name="startTimePicker" ClockIdentifier="24HourClock"/>
+                            </StackPanel>
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Duration" Foreground="Silver" VerticalAlignment="Center"/>
+                            <ComboBox Grid.Row="3" Grid.Column="1" x:Name="selDuration" MinWidth="140"/>
+                        </Grid>
+                        <Button x:Name="btnDownloadRequest" Content="Download" Click="btnDownloadRequest_Click" Margin="0,8,0,0"/>
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Right panel -->
+        <StackPanel Grid.Column="1" Spacing="8" Margin="12">
+            <!-- Pending Downloads -->
+            <Border Background="{StaticResource DarkSectionBg}" CornerRadius="2" Padding="8" Height="185">
+                <Grid RowDefinitions="Auto,*,Auto">
+                    <TextBlock Grid.Row="0" Text="Pending Downloads" FontWeight="Bold" Foreground="White"/>
+                    <ListBox Grid.Row="1" x:Name="lstPendingDownloads" Background="Transparent" Margin="0,4"/>
+                    <Button Grid.Row="2" Content="Clear" Click="btnClearPendingDownloads_Click" HorizontalAlignment="Right"/>
+                </Grid>
+            </Border>
+
+            <!-- Finished Downloads -->
+            <Border Background="{StaticResource DarkSectionBg}" CornerRadius="2" Padding="8" Height="185">
+                <Grid RowDefinitions="Auto,*,Auto">
+                    <TextBlock Grid.Row="0" Text="Finished Downloads" FontWeight="Bold" Foreground="White"/>
+                    <ListBox Grid.Row="1" x:Name="lstFinishedDownloads" Background="Transparent" Margin="0,4"/>
+                    <Button Grid.Row="2" Content="Clear" Click="btnClearFinishedDownloads_Click" HorizontalAlignment="Right"/>
+                </Grid>
+            </Border>
+
+            <!-- Messages -->
+            <Border Background="{StaticResource DarkSectionBg}" CornerRadius="2" Padding="8" Height="155">
+                <Grid RowDefinitions="Auto,*,Auto">
+                    <TextBlock Grid.Row="0" Text="Messages" FontWeight="Bold" Foreground="White"/>
+                    <ListBox Grid.Row="1" x:Name="lstDownloadMessages" Background="Transparent" Margin="0,4"/>
+                    <Button Grid.Row="2" Content="Clear" Click="btnClearDownloadMessages_Click" HorizontalAlignment="Right"/>
+                </Grid>
+            </Border>
+        </StackPanel>
+    </Grid>
+</Window>

@@ -1,19 +1,19 @@
-﻿using System;
-using System.Windows.Forms;
+using Avalonia;
+using System;
 
 namespace Vao.Sample
 {
    static class Program
    {
-      /// <summary>
-      /// The main entry point for the application.
-      /// </summary>
       [STAThread]
-      static void Main()
+      static void Main(string[] args)
       {
-         Application.EnableVisualStyles();
-         Application.SetCompatibleTextRenderingDefault(false);
-         Application.Run(new MainWindow());
+         BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
       }
+
+      public static AppBuilder BuildAvaloniaApp()
+         => AppBuilder.Configure<App>()
+            .UsePlatformDetect()
+            .LogToTrace();
    }
 }
