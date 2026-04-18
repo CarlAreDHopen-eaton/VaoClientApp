@@ -269,9 +269,9 @@ namespace Vao.Sample
          IBrush color = level switch
          {
             LogLevel.Error => Brushes.Red,
-            LogLevel.Warning => Brushes.Orange,
-            LogLevel.Debug => Brushes.LightBlue,
-            _ => Brushes.White,
+            LogLevel.Warning => new SolidColorBrush(IsDarkMode ? Colors.Orange : Color.FromRgb(200, 120, 0)),
+            LogLevel.Debug => new SolidColorBrush(IsDarkMode ? Colors.LightBlue : Color.FromRgb(0, 100, 180)),
+            _ => new SolidColorBrush(IsDarkMode ? Colors.White : Colors.Black),
          };
 
          if (strMessage != "drawable Warning: unsupported control query 3")
