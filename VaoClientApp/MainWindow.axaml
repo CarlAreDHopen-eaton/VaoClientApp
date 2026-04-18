@@ -131,7 +131,7 @@
                     <Border Grid.Row="0" x:Name="brdVideoHeader" Background="#424D5F" CornerRadius="2,2,0,0">
                         <TextBlock x:Name="txtVideoHeader" Text="No Camera Selected" FontWeight="Bold" Foreground="White" Margin="5"/>
                     </Border>
-                    <Panel Grid.Row="1" x:Name="pnlVideo" Background="Black"/>
+                    <Panel Grid.Row="1" x:Name="pnlVideo" Background="{DynamicResource VideoBg}"/>
                     <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12" Margin="4">
                         <CheckBox x:Name="chkPreferSubChannel" Content="Prefer Sub Channel" IsChecked="True" Checked="chkPreferSubChannel_CheckedChanged" Unchecked="chkPreferSubChannel_CheckedChanged"/>
                         <CheckBox x:Name="chkUseTcp" Content="Use TCP" Checked="chkUseTcp_CheckedChanged" Unchecked="chkUseTcp_CheckedChanged"/>

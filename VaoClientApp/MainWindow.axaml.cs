@@ -85,7 +85,6 @@ namespace Vao.Sample
          ClearRecordingDropdown();
          LoadSettings();
          UpdateEnabled();
-         InitVideoControl();
          ApplyIcons();
       }
 
@@ -310,7 +309,11 @@ namespace Vao.Sample
             var mp = mMediaPlayer;
             mMediaPlayer = null;
             if (mVideoControl != null)
+            {
                mVideoControl.MediaPlayer = null;
+               pnlVideo.Children.Remove(mVideoControl);
+               mVideoControl = null;
+            }
             mIsVideoStarted = false;
             DisposeMediaPlayerAsync(mp);
          }
@@ -524,6 +527,7 @@ namespace Vao.Sample
       {
          if (mIsVideoStarted) StopRtspStream();
 
+         InitVideoControl();
          var uri = new Uri(rtspUrl);
          if (mMediaPlayer == null)
          {

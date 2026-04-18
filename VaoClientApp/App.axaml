@@ -43,11 +43,13 @@
                     <SolidColorBrush x:Key="AppBg" Color="#404040" />
                     <SolidColorBrush x:Key="SectionBg" Color="#2D2D30" />
                     <SolidColorBrush x:Key="LabelFg" Color="#C0C0C0" />
+                    <SolidColorBrush x:Key="VideoBg" Color="#3A3A3A" />
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Light">
                     <SolidColorBrush x:Key="AppBg" Color="#F0F0F0" />
                     <SolidColorBrush x:Key="SectionBg" Color="#FFFFFF" />
                     <SolidColorBrush x:Key="LabelFg" Color="#333333" />
+                    <SolidColorBrush x:Key="VideoBg" Color="#B0B0B0" />
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>
