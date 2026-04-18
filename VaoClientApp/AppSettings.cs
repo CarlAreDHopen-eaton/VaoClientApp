@@ -25,6 +25,7 @@ namespace Vao.Sample
       public int CurrentCamera { get; set; } = 0;
       public bool UseTcp { get; set; } = false;
       public bool PreferSubChannel { get; set; } = true;
+      public bool IsDarkMode { get; set; } = true;
 
       public void Save()
       {

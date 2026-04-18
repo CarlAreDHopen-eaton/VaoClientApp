@@ -86,6 +86,34 @@ namespace Vao.Sample
          LoadSettings();
          UpdateEnabled();
          InitVideoControl();
+         ApplyIcons();
+      }
+
+      private static readonly string ResBase = "avares://VaoClientApp/Resources/";
+
+      private bool IsDarkMode => AppSettings.Default.IsDarkMode;
+
+      private void ApplyIcons()
+      {
+         bool invert = IsDarkMode;
+         imgFocusNear.Source = IconHelper.Load(ResBase + "flip_to_front_black_24dp.png", invert);
+         imgTiltUp.Source = IconHelper.Load(ResBase + "arrow_upward_black_24dp.png", invert);
+         imgZoomIn.Source = IconHelper.Load(ResBase + "zoom_in_black_24dp.png", invert);
+         imgPanLeft.Source = IconHelper.Load(ResBase + "arrow_back_black_24dp.png", invert);
+         imgCenterCamera.Source = IconHelper.Load(ResBase + "control_camera_black_24dp.png", invert);
+         imgPanRight.Source = IconHelper.Load(ResBase + "arrow_forward_black_24dp.png", invert);
+         imgFocusFar.Source = IconHelper.Load(ResBase + "flip_to_back_black_24dp.png", invert);
+         imgTiltDown.Source = IconHelper.Load(ResBase + "arrow_downward_black_24dp.png", invert);
+         imgZoomOut.Source = IconHelper.Load(ResBase + "zoom_out_black_24dp.png", invert);
+         imgAbsolutePosition.Source = IconHelper.Load(ResBase + "absoluteposition_black_24dp.png", invert);
+         imgCameraLock.Source = IconHelper.Load(ResBase + "cameraunlocked_black_24dp.png", invert);
+      }
+
+      private void chkDarkMode_Changed(object sender, RoutedEventArgs e)
+      {
+         bool isDark = chkDarkMode.IsChecked == true;
+         ((App)Application.Current).SetTheme(isDark);
+         ApplyIcons();
       }
 
       private void StartInitializeVlc()
@@ -113,6 +141,7 @@ namespace Vao.Sample
          chkUseTcp.IsChecked = s.UseTcp;
          chkPreferSubChannel.IsChecked = s.PreferSubChannel;
          chkSecure.IsChecked = s.UseHttps;
+         chkDarkMode.IsChecked = s.IsDarkMode;
       }
 
       private void SaveSettings()
@@ -375,19 +404,20 @@ namespace Vao.Sample
       {
          Dispatcher.UIThread.Post(() =>
          {
+            bool invert = IsDarkMode;
             if (mCurrentCamera != null && mCurrentCamera.IsLocked && mCurrentCamera.LockOwner == "Alarm")
             {
-               imgCameraLock.Source = new Avalonia.Media.Imaging.Bitmap(Avalonia.Platform.AssetLoader.Open(new Uri("avares://VaoClientApp/Resources/cameralocked_red_24dp.png")));
+               imgCameraLock.Source = IconHelper.Load(ResBase + "cameralocked_red_24dp.png", invert);
                btnCameraLock.IsEnabled = true;
             }
             else if (mCurrentCamera != null && mCurrentCamera.IsLocked)
             {
-               imgCameraLock.Source = new Avalonia.Media.Imaging.Bitmap(Avalonia.Platform.AssetLoader.Open(new Uri("avares://VaoClientApp/Resources/cameralocked_yellow_24dp.png")));
+               imgCameraLock.Source = IconHelper.Load(ResBase + "cameralocked_yellow_24dp.png", invert);
                btnCameraLock.IsEnabled = true;
             }
             else if (mCurrentCamera != null && !mCurrentCamera.IsLocked)
             {
-               imgCameraLock.Source = new Avalonia.Media.Imaging.Bitmap(Avalonia.Platform.AssetLoader.Open(new Uri("avares://VaoClientApp/Resources/cameraunlocked_black_24dp.png")));
+               imgCameraLock.Source = IconHelper.Load(ResBase + "cameraunlocked_black_24dp.png", invert);
                btnCameraLock.IsEnabled = true;
             }
 

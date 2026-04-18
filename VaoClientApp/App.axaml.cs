@@ -1,6 +1,8 @@
 using Avalonia;
+using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Avalonia.Styling;
 
 namespace Vao.Sample
 {
@@ -9,7 +11,15 @@ namespace Vao.Sample
       public override void Initialize()
       {
          AvaloniaXamlLoader.Load(this);
-         RequestedThemeVariant = Avalonia.Styling.ThemeVariant.Dark;
+         var isDark = AppSettings.Default.IsDarkMode;
+         RequestedThemeVariant = isDark ? ThemeVariant.Dark : ThemeVariant.Light;
+      }
+
+      public void SetTheme(bool isDark)
+      {
+         RequestedThemeVariant = isDark ? ThemeVariant.Dark : ThemeVariant.Light;
+         AppSettings.Default.IsDarkMode = isDark;
+         AppSettings.Default.Save();
       }
 
       public override void OnFrameworkInitializationCompleted()
