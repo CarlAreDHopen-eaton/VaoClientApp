@@ -27,6 +27,15 @@ namespace Vao.Sample
       public bool PreferSubChannel { get; set; } = true;
       public bool IsDarkMode { get; set; } = true;
 
+      public bool IsConnectionExpanded { get; set; } = true;
+      public bool IsCameraControlExpanded { get; set; } = true;
+      public bool IsCameraSelectionExpanded { get; set; } = true;
+      public bool IsPresetSelectionExpanded { get; set; } = true;
+      public bool IsAlarmsExpanded { get; set; } = true;
+      public bool IsPlaybackSelectionExpanded { get; set; } = true;
+      public bool IsDownloadRecordingExpanded { get; set; } = true;
+      public bool IsSettingsExpanded { get; set; } = false;
+
       public void Save()
       {
          var dir = Path.GetDirectoryName(SettingsPath);

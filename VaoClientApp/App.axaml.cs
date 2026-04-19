@@ -19,7 +19,6 @@ namespace Vao.Sample
       {
          RequestedThemeVariant = isDark ? ThemeVariant.Dark : ThemeVariant.Light;
          AppSettings.Default.IsDarkMode = isDark;
-         AppSettings.Default.Save();
       }
 
       public override void OnFrameworkInitializationCompleted()

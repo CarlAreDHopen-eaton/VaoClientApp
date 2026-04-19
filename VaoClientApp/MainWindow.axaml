@@ -12,7 +12,7 @@
             <StackPanel Spacing="2" Margin="6,3,6,3">
 
                 <!-- Connection -->
-                <Expander Header="Connection" IsExpanded="True" HorizontalAlignment="Stretch">
+                <Expander x:Name="expConnection" Header="Connection" IsExpanded="True" HorizontalAlignment="Stretch">
                     <StackPanel Spacing="2" Margin="4,2">
                         <Grid ColumnDefinitions="80,*" RowDefinitions="Auto,Auto,Auto,Auto">
                             <TextBlock Grid.Row="0" Grid.Column="0" Text="Host" Foreground="{DynamicResource LabelFg}" VerticalAlignment="Center"/>
@@ -33,7 +33,7 @@
                 </Expander>
 
                 <!-- Camera Control -->
-                <Expander Header="Camera Control" IsExpanded="True" HorizontalAlignment="Stretch">
+                <Expander x:Name="expCameraControl" Header="Camera Control" IsExpanded="True" HorizontalAlignment="Stretch">
                     <StackPanel Spacing="4" Margin="4" x:Name="grpCameraControl" IsEnabled="False">
                         <Grid ColumnDefinitions="34,34,34,*,34,34" RowDefinitions="34,34,34">
                             <!-- PTZ: row0=FocusNear/TiltUp/ZoomIn, row1=PanLeft/icon/PanRight, row2=FocusFar/TiltDown/ZoomOut -->
@@ -75,12 +75,12 @@
                 </Expander>
 
                 <!-- Camera Selection -->
-                <Expander Header="Camera Selection" IsExpanded="True" HorizontalAlignment="Stretch">
+                <Expander x:Name="expCameraSelection" Header="Camera Selection" IsExpanded="True" HorizontalAlignment="Stretch">
                     <WrapPanel x:Name="pnlCameraSelectFlowPanel" Margin="4" IsEnabled="False"/>
                 </Expander>
 
                 <!-- Preset Selection -->
-                <Expander Header="Preset Selection" IsExpanded="True" HorizontalAlignment="Stretch">
+                <Expander x:Name="expPresetSelection" Header="Preset Selection" IsExpanded="True" HorizontalAlignment="Stretch">
                     <StackPanel x:Name="grpSelectPreset" Spacing="4" Margin="4" Orientation="Horizontal" IsEnabled="False">
                         <ComboBox x:Name="selPreset" MinWidth="150"/>
                         <Button x:Name="btnGotoPreset" Content="Go" Click="btnGotoPreset_Click"/>
@@ -88,12 +88,12 @@
                 </Expander>
 
                 <!-- Alarms -->
-                <Expander Header="Alarms" IsExpanded="True" HorizontalAlignment="Stretch">
+                <Expander x:Name="expAlarms" Header="Alarms" IsExpanded="True" HorizontalAlignment="Stretch">
                     <WrapPanel x:Name="pnlAlarms" Margin="4"/>
                 </Expander>
 
                 <!-- Playback Selection -->
-                <Expander Header="Playback Selection" IsExpanded="True" HorizontalAlignment="Stretch">
+                <Expander x:Name="expPlaybackSelection" Header="Playback Selection" IsExpanded="True" HorizontalAlignment="Stretch">
                     <StackPanel x:Name="grpSelectPlayback" Spacing="4" Margin="4" IsEnabled="False">
                         <ComboBox x:Name="selPlayback" MinWidth="200" SelectionChanged="selPlayback_SelectedIndexChanged"/>
                         <StackPanel Orientation="Horizontal" Spacing="4">
@@ -109,12 +109,12 @@
                 </Expander>
 
                 <!-- Download Recording -->
-                <Expander Header="Download Recording" IsExpanded="True" HorizontalAlignment="Stretch">
+                <Expander x:Name="expDownloadRecording" Header="Download Recording" IsExpanded="True" HorizontalAlignment="Stretch">
                     <Button x:Name="btnDownload" Content="Download" Click="btnOpenDownloadWindow_Click" Margin="4"/>
                 </Expander>
 
                 <!-- Settings -->
-                <Expander Header="Settings" IsExpanded="False" HorizontalAlignment="Stretch">
+                <Expander x:Name="expSettings" Header="Settings" IsExpanded="False" HorizontalAlignment="Stretch">
                     <StackPanel Spacing="4" Margin="4">
                         <CheckBox x:Name="chkDarkMode" Content="Dark Mode" IsChecked="True" Checked="chkDarkMode_Changed" Unchecked="chkDarkMode_Changed"/>
                     </StackPanel>

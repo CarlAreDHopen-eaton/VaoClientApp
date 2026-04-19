@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Xml;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -38,6 +36,7 @@ namespace Vao.Sample
       private LibVLC mLibVlc;
       private MediaPlayer mMediaPlayer;
       private bool mIsVideoStarted = false;
+      private bool mIsLoadingSettings;
 
       private ObservableCollection<MessageItem> mMessages = new();
 
@@ -74,6 +73,7 @@ namespace Vao.Sample
          return text != null && text.Contains("playback");
       }
 
+
       public MainWindow()
       {
          InitializeComponent();
@@ -83,9 +83,30 @@ namespace Vao.Sample
          StartInitializeVlc();
          ClearPresetDropdown();
          ClearRecordingDropdown();
+
+         mIsLoadingSettings = true;
          LoadSettings();
+         mIsLoadingSettings = false;
+
          UpdateEnabled();
          ApplyIcons();
+
+         Opened += MainWindow_Opened;
+      }
+
+      private void MainWindow_Opened(object sender, EventArgs e)
+      {
+         Opened -= MainWindow_Opened;
+
+         var s = AppSettings.Default;
+         expConnection.IsExpanded = s.IsConnectionExpanded;
+         expCameraControl.IsExpanded = s.IsCameraControlExpanded;
+         expCameraSelection.IsExpanded = s.IsCameraSelectionExpanded;
+         expPresetSelection.IsExpanded = s.IsPresetSelectionExpanded;
+         expAlarms.IsExpanded = s.IsAlarmsExpanded;
+         expPlaybackSelection.IsExpanded = s.IsPlaybackSelectionExpanded;
+         expDownloadRecording.IsExpanded = s.IsDownloadRecordingExpanded;
+         expSettings.IsExpanded = s.IsSettingsExpanded;
       }
 
       private static readonly string ResBase = "avares://VaoClientApp/Resources/";
@@ -110,9 +131,11 @@ namespace Vao.Sample
 
       private void chkDarkMode_Changed(object sender, RoutedEventArgs e)
       {
+         if (mIsLoadingSettings) return;
          bool isDark = chkDarkMode.IsChecked == true;
          ((App)Application.Current).SetTheme(isDark);
          ApplyIcons();
+         SaveSettings();
       }
 
       private void StartInitializeVlc()
@@ -154,7 +177,21 @@ namespace Vao.Sample
          s.UseTcp = chkUseTcp.IsChecked == true;
          s.PreferSubChannel = chkPreferSubChannel.IsChecked == true;
          s.UseHttps = chkSecure.IsChecked == true;
+         s.IsConnectionExpanded = expConnection.IsExpanded;
+         s.IsCameraControlExpanded = expCameraControl.IsExpanded;
+         s.IsCameraSelectionExpanded = expCameraSelection.IsExpanded;
+         s.IsPresetSelectionExpanded = expPresetSelection.IsExpanded;
+         s.IsAlarmsExpanded = expAlarms.IsExpanded;
+         s.IsPlaybackSelectionExpanded = expPlaybackSelection.IsExpanded;
+         s.IsDownloadRecordingExpanded = expDownloadRecording.IsExpanded;
+         s.IsSettingsExpanded = expSettings.IsExpanded;
          s.Save();
+      }
+
+      protected override void OnClosing(WindowClosingEventArgs e)
+      {
+         SaveSettings();
+         base.OnClosing(e);
       }
 
       public void UpdateEnabled()
@@ -684,6 +721,7 @@ namespace Vao.Sample
 
       private void chkPreferSubChannel_CheckedChanged(object sender, RoutedEventArgs e)
       {
+         if (mIsLoadingSettings) return;
          if (IsStarted)
          {
             if (mIsPlaybackStarted) btnPlayPlayback_Click(null, null);
@@ -775,6 +813,7 @@ namespace Vao.Sample
 
       private void chkUseTcp_CheckedChanged(object sender, RoutedEventArgs e)
       {
+         if (mIsLoadingSettings) return;
          if (IsStarted)
          {
             if (mIsPlaybackStarted) btnPlayPlayback_Click(null, null);
