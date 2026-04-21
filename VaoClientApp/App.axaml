@@ -3,12 +3,38 @@
              x:Class="Vao.Sample.App">
     <Application.Styles>
         <FluentTheme />
+        <Style Selector="Border.sidebar-shell">
+            <Setter Property="Background" Value="{DynamicResource SidebarBg}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource SidebarBorder}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="6"/>
+            <Setter Property="Margin" Value="0,0,6,0"/>
+        </Style>
+        <Style Selector="Border.sidebar-card">
+            <Setter Property="Background" Value="{DynamicResource SidebarCardBg}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource SidebarBorder}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
         <Style Selector="Expander /template/ ToggleButton">
             <Setter Property="MinHeight" Value="24"/>
             <Setter Property="Padding" Value="6,1,6,1"/>
         </Style>
+        <Style Selector="Expander.sidebar-section /template/ ToggleButton">
+            <Setter Property="Background" Value="{DynamicResource SidebarCardBg}"/>
+            <Setter Property="Foreground" Value="{DynamicResource SidebarHeaderFg}"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="10,5,10,5"/>
+        </Style>
         <Style Selector="Expander /template/ ToggleButton /template/ Border">
             <Setter Property="MinHeight" Value="0"/>
+        </Style>
+        <Style Selector="Expander.sidebar-section /template/ ToggleButton /template/ Border">
+            <Setter Property="Background" Value="{DynamicResource SidebarCardBg}"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="CornerRadius" Value="8,8,0,0"/>
         </Style>
         <Style Selector="Expander /template/ ToggleButton ContentPresenter">
             <Setter Property="VerticalAlignment" Value="Center"/>
@@ -29,14 +55,17 @@
             <x:Double x:Key="ExpanderHeaderMinHeight">0</x:Double>
             <Thickness x:Key="ExpanderHeaderPadding">6,1,6,1</Thickness>
             <x:Double x:Key="ExpanderChevronButtonSize">20</x:Double>
-            <Thickness x:Key="ButtonPadding">8,3,8,3</Thickness>
+            <Thickness x:Key="ButtonPadding">8,4,8,4</Thickness>
+            <x:Double x:Key="ButtonMinHeight">0</x:Double>
             <x:Double x:Key="TextBoxMinHeight">0</x:Double>
-            <Thickness x:Key="TextBoxPadding">6,3,6,3</Thickness>
+            <Thickness x:Key="TextBoxPadding">6,4,6,4</Thickness>
             <x:Double x:Key="ComboBoxMinHeight">0</x:Double>
-            <Thickness x:Key="ComboBoxPadding">6,3,6,3</Thickness>
+            <Thickness x:Key="ComboBoxPadding">6,4,6,4</Thickness>
             <x:Double x:Key="CheckBoxMinHeight">0</x:Double>
             <x:Double x:Key="DatePickerMinHeight">0</x:Double>
+            <Thickness x:Key="DatePickerFlyoutPresenterItemPadding">9,3,9,3</Thickness>
             <x:Double x:Key="TimePickerMinHeight">0</x:Double>
+            <Thickness x:Key="TimePickerFlyoutPresenterItemPadding">9,3,9,3</Thickness>
 
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Dark">
@@ -44,12 +73,20 @@
                     <SolidColorBrush x:Key="SectionBg" Color="#2D2D30" />
                     <SolidColorBrush x:Key="LabelFg" Color="#C0C0C0" />
                     <SolidColorBrush x:Key="VideoBg" Color="#3A3A3A" />
+                    <SolidColorBrush x:Key="SidebarBg" Color="#262A31" />
+                    <SolidColorBrush x:Key="SidebarCardBg" Color="#313740" />
+                    <SolidColorBrush x:Key="SidebarBorder" Color="#4D5563" />
+                    <SolidColorBrush x:Key="SidebarHeaderFg" Color="#F2F4F8" />
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Light">
                     <SolidColorBrush x:Key="AppBg" Color="#F0F0F0" />
                     <SolidColorBrush x:Key="SectionBg" Color="#FFFFFF" />
                     <SolidColorBrush x:Key="LabelFg" Color="#333333" />
                     <SolidColorBrush x:Key="VideoBg" Color="#B0B0B0" />
+                    <SolidColorBrush x:Key="SidebarBg" Color="#E5E7EB" />
+                    <SolidColorBrush x:Key="SidebarCardBg" Color="#F9FAFB" />
+                    <SolidColorBrush x:Key="SidebarBorder" Color="#C5CAD3" />
+                    <SolidColorBrush x:Key="SidebarHeaderFg" Color="#1F2937" />
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>

@@ -6,36 +6,40 @@
         Width="1226" Height="1002" MinWidth="400" MinHeight="200"
         Background="{DynamicResource AppBg}">
 
-    <Grid ColumnDefinitions="250,*">
+    <Grid ColumnDefinitions="280,*">
         <!-- Left panel - scrollable sections -->
         <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-            <StackPanel Spacing="2" Margin="6,3,6,3">
+            <Border Classes="sidebar-shell" Margin="6,3,0,3">
+                <StackPanel Spacing="8">
 
-                <!-- Connection -->
-                <Expander x:Name="expConnection" Header="Connection" IsExpanded="True" HorizontalAlignment="Stretch">
-                    <StackPanel Spacing="2" Margin="4,2">
-                        <Grid ColumnDefinitions="80,*" RowDefinitions="Auto,Auto,Auto,Auto">
-                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Host" Foreground="{DynamicResource LabelFg}" VerticalAlignment="Center"/>
-                            <TextBox Grid.Row="0" Grid.Column="1" x:Name="txtHost"/>
-                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Port" Foreground="{DynamicResource LabelFg}" VerticalAlignment="Center" Margin="0,2,0,0"/>
-                            <TextBox Grid.Row="1" Grid.Column="1" x:Name="txtPort" Text="444" Margin="0,2,0,0"/>
-                            <TextBlock Grid.Row="2" Grid.Column="0" Text="User" Foreground="{DynamicResource LabelFg}" VerticalAlignment="Center" Margin="0,2,0,0"/>
-                            <TextBox Grid.Row="2" Grid.Column="1" x:Name="txtUser" Margin="0,2,0,0"/>
-                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Password" Foreground="{DynamicResource LabelFg}" VerticalAlignment="Center" Margin="0,2,0,0"/>
-                            <TextBox Grid.Row="3" Grid.Column="1" x:Name="txtPassword" PasswordChar="*" Margin="0,2,0,0"/>
-                        </Grid>
-                        <CheckBox x:Name="chkSecure" Content="Secure" IsChecked="True"/>
-                        <StackPanel Orientation="Horizontal" Spacing="8">
-                            <Button x:Name="btnConnect" Content="Connect" Click="btnConnect_Click"/>
-                            <Button x:Name="btnDisconnect" Content="Disconnect" Click="btnDisconnect_Click"/>
-                        </StackPanel>
-                    </StackPanel>
-                </Expander>
+                    <!-- Connection -->
+                    <Border Classes="sidebar-card">
+                        <Expander Classes="sidebar-section" x:Name="expConnection" Header="Connection" IsExpanded="True" HorizontalAlignment="Stretch">
+                            <StackPanel Spacing="2" Margin="8,4,8,8">
+                                <Grid ColumnDefinitions="80,*" RowDefinitions="Auto,Auto,Auto,Auto">
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Host" Foreground="{DynamicResource LabelFg}" VerticalAlignment="Center"/>
+                                    <TextBox Grid.Row="0" Grid.Column="1" x:Name="txtHost"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Port" Foreground="{DynamicResource LabelFg}" VerticalAlignment="Center" Margin="0,2,0,0"/>
+                                    <TextBox Grid.Row="1" Grid.Column="1" x:Name="txtPort" Text="444" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="User" Foreground="{DynamicResource LabelFg}" VerticalAlignment="Center" Margin="0,2,0,0"/>
+                                    <TextBox Grid.Row="2" Grid.Column="1" x:Name="txtUser" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Password" Foreground="{DynamicResource LabelFg}" VerticalAlignment="Center" Margin="0,2,0,0"/>
+                                    <TextBox Grid.Row="3" Grid.Column="1" x:Name="txtPassword" PasswordChar="*" Margin="0,2,0,0"/>
+                                </Grid>
+                                <CheckBox x:Name="chkSecure" Content="Secure" IsChecked="True"/>
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <Button x:Name="btnConnect" Content="Connect" Click="btnConnect_Click"/>
+                                    <Button x:Name="btnDisconnect" Content="Disconnect" Click="btnDisconnect_Click"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Expander>
+                    </Border>
 
-                <!-- Camera Control -->
-                <Expander x:Name="expCameraControl" Header="Camera Control" IsExpanded="True" HorizontalAlignment="Stretch">
-                    <StackPanel Spacing="4" Margin="4" x:Name="grpCameraControl" IsEnabled="False">
-                        <Grid ColumnDefinitions="34,34,34,*,34,34" RowDefinitions="34,34,34">
+                    <!-- Camera Control -->
+                    <Border Classes="sidebar-card">
+                        <Expander Classes="sidebar-section" x:Name="expCameraControl" Header="Camera Control" IsExpanded="True" HorizontalAlignment="Stretch">
+                            <StackPanel Spacing="4" Margin="8,4,8,8" x:Name="grpCameraControl" IsEnabled="False">
+                                <Grid ColumnDefinitions="34,34,34,*,34,34" RowDefinitions="34,34,34">
                             <!-- PTZ: row0=FocusNear/TiltUp/ZoomIn, row1=PanLeft/icon/PanRight, row2=FocusFar/TiltDown/ZoomOut -->
                             <Button Grid.Row="0" Grid.Column="0" x:Name="btnFocusNear" ToolTip.Tip="Focus Near" PointerPressed="OnControlCameraPointerPressed" PointerReleased="OnControlCameraPointerReleased" Width="30" Height="30" Padding="2">
                                 <Image x:Name="imgFocusNear" Classes="theme-icon" Width="20" Height="20"/>
@@ -69,58 +73,75 @@
                             <Button Grid.Row="1" Grid.Column="4" x:Name="btnCameraLock" ToolTip.Tip="Camera Lock" Click="btnCameraLock_Click" Width="30" Height="30" Padding="2">
                                 <Image x:Name="imgCameraLock" Classes="theme-icon" Width="20" Height="20"/>
                             </Button>
-                        </Grid>
-                        <TextBlock x:Name="lblCurrentCamera" Text="Camera : (No camera selected)" Foreground="{DynamicResource LabelFg}" FontSize="11"/>
-                    </StackPanel>
-                </Expander>
+                                </Grid>
+                                <TextBlock x:Name="lblCurrentCamera" Text="Camera : (No camera selected)" Foreground="{DynamicResource LabelFg}" FontSize="11"/>
+                            </StackPanel>
+                        </Expander>
+                    </Border>
 
-                <!-- Camera Selection -->
-                <Expander x:Name="expCameraSelection" Header="Camera Selection" IsExpanded="True" HorizontalAlignment="Stretch">
-                    <WrapPanel x:Name="pnlCameraSelectFlowPanel" Margin="4" IsEnabled="False"/>
-                </Expander>
+                    <!-- Camera Selection -->
+                    <Border Classes="sidebar-card">
+                        <Expander Classes="sidebar-section" x:Name="expCameraSelection" Header="Camera Selection" IsExpanded="True" HorizontalAlignment="Stretch">
+                            <WrapPanel x:Name="pnlCameraSelectFlowPanel" Margin="8,6,8,8" IsEnabled="False"/>
+                        </Expander>
+                    </Border>
 
-                <!-- Preset Selection -->
-                <Expander x:Name="expPresetSelection" Header="Preset Selection" IsExpanded="True" HorizontalAlignment="Stretch">
-                    <StackPanel x:Name="grpSelectPreset" Spacing="4" Margin="4" Orientation="Horizontal" IsEnabled="False">
-                        <ComboBox x:Name="selPreset" MinWidth="150"/>
-                        <Button x:Name="btnGotoPreset" Content="Go" Click="btnGotoPreset_Click"/>
-                    </StackPanel>
-                </Expander>
+                    <!-- Preset Selection -->
+                    <Border Classes="sidebar-card">
+                        <Expander Classes="sidebar-section" x:Name="expPresetSelection" Header="Preset Selection" IsExpanded="True" HorizontalAlignment="Stretch">
+                            <StackPanel x:Name="grpSelectPreset" Spacing="6" Margin="8,6,8,8" IsEnabled="False">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <ComboBox Grid.Column="0" x:Name="selPreset" MinWidth="0" HorizontalAlignment="Stretch"/>
+                                    <Button Grid.Column="1" x:Name="btnGotoPreset" Content="Go" Click="btnGotoPreset_Click" MinWidth="64" Margin="8,0,0,0" HorizontalAlignment="Stretch"/>
+                                </Grid>
+                            </StackPanel>
+                        </Expander>
+                    </Border>
 
-                <!-- Alarms -->
-                <Expander x:Name="expAlarms" Header="Alarms" IsExpanded="True" HorizontalAlignment="Stretch">
-                    <WrapPanel x:Name="pnlAlarms" Margin="4"/>
-                </Expander>
+                    <!-- Alarms -->
+                    <Border Classes="sidebar-card">
+                        <Expander Classes="sidebar-section" x:Name="expAlarms" Header="Alarms" IsExpanded="True" HorizontalAlignment="Stretch">
+                            <WrapPanel x:Name="pnlAlarms" Margin="8,6,8,8"/>
+                        </Expander>
+                    </Border>
 
-                <!-- Playback Selection -->
-                <Expander x:Name="expPlaybackSelection" Header="Playback Selection" IsExpanded="True" HorizontalAlignment="Stretch">
-                    <StackPanel x:Name="grpSelectPlayback" Spacing="4" Margin="4" IsEnabled="False">
-                        <ComboBox x:Name="selPlayback" MinWidth="200" SelectionChanged="selPlayback_SelectedIndexChanged"/>
-                        <StackPanel Orientation="Horizontal" Spacing="4">
-                            <Button x:Name="btnPlayPlayback" Content="Play" Click="btnPlayPlayback_Click"/>
-                            <Button x:Name="btnStopPlayback" Content="Stop" Click="btnStopPlayback_Click"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" Spacing="4">
-                            <DatePicker x:Name="datePickerPlayback"/>
-                            <TimePicker x:Name="timePickerPlayback" ClockIdentifier="24HourClock"/>
-                        </StackPanel>
-                        <Button x:Name="btnGotoTime" Content="Go to time" Click="btnGotoTime_Click"/>
-                    </StackPanel>
-                </Expander>
+                    <!-- Playback Selection -->
+                    <Border Classes="sidebar-card">
+                        <Expander Classes="sidebar-section" x:Name="expPlaybackSelection" Header="Playback Selection" IsExpanded="True" HorizontalAlignment="Stretch">
+                            <StackPanel x:Name="grpSelectPlayback" Spacing="8" Margin="8,6,8,8" IsEnabled="False" ClipToBounds="True">
+                                <ComboBox x:Name="selPlayback" MinWidth="0" HorizontalAlignment="Stretch" SelectionChanged="selPlayback_SelectedIndexChanged"/>
+                                <Grid ColumnDefinitions="*,*">
+                                    <Button Grid.Column="0" x:Name="btnPlayPlayback" Content="Play" Click="btnPlayPlayback_Click" HorizontalAlignment="Stretch"/>
+                                    <Button Grid.Column="1" x:Name="btnStopPlayback" Content="Stop" Click="btnStopPlayback_Click" Margin="8,0,0,0" HorizontalAlignment="Stretch"/>
+                                </Grid>
+                                <DatePicker x:Name="datePickerPlayback" HorizontalAlignment="Stretch"/>
+                                <TimePicker x:Name="timePickerPlayback" ClockIdentifier="24HourClock" HorizontalAlignment="Stretch"/>
+                                <Button x:Name="btnGotoTime" Content="Go to time" Click="btnGotoTime_Click" HorizontalAlignment="Stretch"/>
+                            </StackPanel>
+                        </Expander>
+                    </Border>
 
-                <!-- Download Recording -->
-                <Expander x:Name="expDownloadRecording" Header="Download Recording" IsExpanded="True" HorizontalAlignment="Stretch">
-                    <Button x:Name="btnDownload" Content="Download" Click="btnOpenDownloadWindow_Click" Margin="4"/>
-                </Expander>
+                    <!-- Download Recording -->
+                    <Border Classes="sidebar-card">
+                        <Expander Classes="sidebar-section" x:Name="expDownloadRecording" Header="Download Recording" IsExpanded="True" HorizontalAlignment="Stretch">
+                            <StackPanel Spacing="4" Margin="8,6,8,8">
+                                <TextBlock Text="Export video." Foreground="{DynamicResource LabelFg}" FontSize="11" TextWrapping="Wrap"/>
+                                <Button x:Name="btnDownload" Content="Open Download Window" Click="btnOpenDownloadWindow_Click" HorizontalAlignment="Left"/>
+                            </StackPanel>
+                        </Expander>
+                    </Border>
 
-                <!-- Settings -->
-                <Expander x:Name="expSettings" Header="Settings" IsExpanded="False" HorizontalAlignment="Stretch">
-                    <StackPanel Spacing="4" Margin="4">
-                        <CheckBox x:Name="chkDarkMode" Content="Dark Mode" IsChecked="True" Checked="chkDarkMode_Changed" Unchecked="chkDarkMode_Changed"/>
-                    </StackPanel>
-                </Expander>
+                    <!-- Settings -->
+                    <Border Classes="sidebar-card">
+                        <Expander Classes="sidebar-section" x:Name="expSettings" Header="Settings" IsExpanded="False" HorizontalAlignment="Stretch">
+                            <StackPanel Spacing="4" Margin="8,6,8,8">
+                                <CheckBox x:Name="chkDarkMode" Content="Dark Mode" IsChecked="True" Checked="chkDarkMode_Changed" Unchecked="chkDarkMode_Changed"/>
+                            </StackPanel>
+                        </Expander>
+                    </Border>
 
-            </StackPanel>
+                </StackPanel>
+            </Border>
         </ScrollViewer>
 
         <!-- Right panel - video + messages -->
