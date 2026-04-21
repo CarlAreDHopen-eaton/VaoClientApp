@@ -762,9 +762,21 @@ namespace Vao.Sample
          {
             try
             {
-               var date = datePickerPlayback.SelectedDate?.DateTime ?? DateTime.Now;
-               var time = timePickerPlayback.SelectedTime ?? TimeSpan.Zero;
-               var dateTimeObject = date.Date + time;
+               // Parse date from TextBox (format: YYYY-MM-DD)
+               DateTime date = DateTime.Now.Date;
+               if (!string.IsNullOrWhiteSpace(txtDatePlayback.Text) && DateTime.TryParse(txtDatePlayback.Text, out DateTime parsedDate))
+               {
+                  date = parsedDate.Date;
+               }
+
+               // Parse time from TextBox (format: HH:MM:SS or HH:MM)
+               TimeSpan time = TimeSpan.Zero;
+               if (!string.IsNullOrWhiteSpace(txtTimePlayback.Text) && TimeSpan.TryParse(txtTimePlayback.Text, out TimeSpan parsedTime))
+               {
+                  time = parsedTime;
+               }
+
+               var dateTimeObject = date + time;
                string startTimeParameter = $"?start={dateTimeObject:yyyyMMddHHmmss}";
                string url = recording.PlaybackUrl;
                if (!string.IsNullOrEmpty(url))
@@ -840,6 +852,89 @@ namespace Vao.Sample
          {
             FlexRApiClient.SendUnlockCamera(mCurrentCamera.ComponentNumber);
          }
+      }
+
+      private async void btnPickDate_Click(object sender, RoutedEventArgs e)
+      {
+         var picker = new DatePicker
+         {
+            SelectedDate = DateTime.TryParse(txtDatePlayback.Text, out DateTime currentDate) 
+               ? new DateTimeOffset(currentDate) 
+               : new DateTimeOffset(DateTime.Now)
+         };
+
+         var okButton = new Button
+         {
+            Content = "OK",
+            HorizontalAlignment = HorizontalAlignment.Right,
+            Margin = new Thickness(0, 10, 0, 0)
+         };
+
+         var dialog = new Window
+         {
+            Title = "Select Date",
+            Width = 320,
+            Height = 380,
+            Content = new StackPanel
+            {
+               Margin = new Thickness(10),
+               Children = { picker, okButton }
+            },
+            WindowStartupLocation = WindowStartupLocation.CenterOwner
+         };
+
+         okButton.Click += (s, args) =>
+         {
+            if (picker.SelectedDate.HasValue)
+            {
+               txtDatePlayback.Text = picker.SelectedDate.Value.ToString("yyyy-MM-dd");
+            }
+            dialog.Close();
+         };
+
+         await dialog.ShowDialog(this);
+      }
+
+      private async void btnPickTime_Click(object sender, RoutedEventArgs e)
+      {
+         var picker = new TimePicker
+         {
+            ClockIdentifier = "24HourClock",
+            SelectedTime = TimeSpan.TryParse(txtTimePlayback.Text, out TimeSpan currentTime)
+               ? currentTime
+               : DateTime.Now.TimeOfDay
+         };
+
+         var okButton = new Button
+         {
+            Content = "OK",
+            HorizontalAlignment = HorizontalAlignment.Right,
+            Margin = new Thickness(0, 10, 0, 0)
+         };
+
+         var dialog = new Window
+         {
+            Title = "Select Time",
+            Width = 320,
+            Height = 380,
+            Content = new StackPanel
+            {
+               Margin = new Thickness(10),
+               Children = { picker, okButton }
+            },
+            WindowStartupLocation = WindowStartupLocation.CenterOwner
+         };
+
+         okButton.Click += (s, args) =>
+         {
+            if (picker.SelectedTime.HasValue)
+            {
+               txtTimePlayback.Text = picker.SelectedTime.Value.ToString(@"hh\:mm\:ss");
+            }
+            dialog.Close();
+         };
+
+         await dialog.ShowDialog(this);
       }
    }
 

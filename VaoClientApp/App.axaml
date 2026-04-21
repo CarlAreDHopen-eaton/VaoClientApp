@@ -47,6 +47,33 @@
         <Style Selector="Image.theme-icon">
             <Setter Property="Opacity" Value="0.9"/>
         </Style>
+        <!-- Fix DatePicker and TimePicker internal text display -->
+        <Style Selector="DatePicker /template/ Button">
+            <Setter Property="MinHeight" Value="32"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        </Style>
+        <Style Selector="DatePicker /template/ Button Grid">
+            <Setter Property="MinWidth" Value="180"/>
+        </Style>
+        <Style Selector="DatePicker /template/ Button TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="MinWidth" Value="30"/>
+        </Style>
+        <Style Selector="TimePicker /template/ Button">
+            <Setter Property="MinHeight" Value="32"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        </Style>
+        <Style Selector="TimePicker /template/ Button Grid">
+            <Setter Property="MinWidth" Value="120"/>
+        </Style>
+        <Style Selector="TimePicker /template/ Button TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="MinWidth" Value="30"/>
+        </Style>
     </Application.Styles>
 
     <Application.Resources>
@@ -62,9 +89,9 @@
             <x:Double x:Key="ComboBoxMinHeight">0</x:Double>
             <Thickness x:Key="ComboBoxPadding">6,4,6,4</Thickness>
             <x:Double x:Key="CheckBoxMinHeight">0</x:Double>
-            <x:Double x:Key="DatePickerMinHeight">0</x:Double>
+            <x:Double x:Key="DatePickerMinHeight">32</x:Double>
             <Thickness x:Key="DatePickerFlyoutPresenterItemPadding">9,3,9,3</Thickness>
-            <x:Double x:Key="TimePickerMinHeight">0</x:Double>
+            <x:Double x:Key="TimePickerMinHeight">32</x:Double>
             <Thickness x:Key="TimePickerFlyoutPresenterItemPadding">9,3,9,3</Thickness>
 
             <ResourceDictionary.ThemeDictionaries>

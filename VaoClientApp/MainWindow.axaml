@@ -108,15 +108,27 @@
                     <!-- Playback Selection -->
                     <Border Classes="sidebar-card">
                         <Expander Classes="sidebar-section" x:Name="expPlaybackSelection" Header="Playback Selection" IsExpanded="True" HorizontalAlignment="Stretch">
-                            <StackPanel x:Name="grpSelectPlayback" Spacing="8" Margin="8,6,8,8" IsEnabled="False" ClipToBounds="True">
-                                <ComboBox x:Name="selPlayback" MinWidth="0" HorizontalAlignment="Stretch" SelectionChanged="selPlayback_SelectedIndexChanged"/>
-                                <Grid ColumnDefinitions="*,*">
-                                    <Button Grid.Column="0" x:Name="btnPlayPlayback" Content="Play" Click="btnPlayPlayback_Click" HorizontalAlignment="Stretch"/>
-                                    <Button Grid.Column="1" x:Name="btnStopPlayback" Content="Stop" Click="btnStopPlayback_Click" Margin="8,0,0,0" HorizontalAlignment="Stretch"/>
+                            <StackPanel x:Name="grpSelectPlayback" Spacing="12" Margin="12,10,12,12" IsEnabled="False">
+                                <ComboBox x:Name="selPlayback" MinWidth="200" HorizontalAlignment="Stretch" SelectionChanged="selPlayback_SelectedIndexChanged"/>
+                                <Grid ColumnDefinitions="*,8,*">
+                                    <Button Grid.Column="0" x:Name="btnPlayPlayback" Content="Play" Click="btnPlayPlayback_Click" HorizontalAlignment="Stretch" MinWidth="80"/>
+                                    <Button Grid.Column="2" x:Name="btnStopPlayback" Content="Stop" Click="btnStopPlayback_Click" HorizontalAlignment="Stretch" MinWidth="80"/>
                                 </Grid>
-                                <DatePicker x:Name="datePickerPlayback" HorizontalAlignment="Stretch"/>
-                                <TimePicker x:Name="timePickerPlayback" ClockIdentifier="24HourClock" HorizontalAlignment="Stretch"/>
-                                <Button x:Name="btnGotoTime" Content="Go to time" Click="btnGotoTime_Click" HorizontalAlignment="Stretch"/>
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="Date (YYYY-MM-DD)" FontSize="10" Foreground="{DynamicResource LabelFg}"/>
+                                    <Grid ColumnDefinitions="*,4,32">
+                                        <TextBox Grid.Column="0" x:Name="txtDatePlayback" Watermark="2024-01-15" HorizontalAlignment="Stretch"/>
+                                        <Button Grid.Column="2" x:Name="btnPickDate" Content="📅" FontSize="14" Padding="4" Click="btnPickDate_Click" ToolTip.Tip="Pick date"/>
+                                    </Grid>
+                                </StackPanel>
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="Time (HH:MM:SS)" FontSize="10" Foreground="{DynamicResource LabelFg}"/>
+                                    <Grid ColumnDefinitions="*,4,32">
+                                        <TextBox Grid.Column="0" x:Name="txtTimePlayback" Watermark="14:30:00" HorizontalAlignment="Stretch"/>
+                                        <Button Grid.Column="2" x:Name="btnPickTime" Content="🕐" FontSize="14" Padding="4" Click="btnPickTime_Click" ToolTip.Tip="Pick time"/>
+                                    </Grid>
+                                </StackPanel>
+                                <Button x:Name="btnGotoTime" Content="Go to time" Click="btnGotoTime_Click" HorizontalAlignment="Stretch" MinWidth="100"/>
                             </StackPanel>
                         </Expander>
                     </Border>
