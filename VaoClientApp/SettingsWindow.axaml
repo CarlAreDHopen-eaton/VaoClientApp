@@ -1,0 +1,113 @@
+<Window xmlns="https://github.com/avaloniaui"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		x:Class="Vao.Sample.SettingsWindow"
+		Title="Settings"
+		Width="500" Height="550" MinWidth="450" MinHeight="500"
+		Background="{DynamicResource AppBg}"
+		WindowStartupLocation="CenterOwner"
+		CanResize="False">
+
+	<Grid RowDefinitions="64,*,Auto">
+		<!-- Header -->
+		<Border Grid.Row="0" Background="{DynamicResource Primary}" BoxShadow="0 2 4 0 #40000000">
+			<Grid ColumnDefinitions="*,Auto" Margin="24,0">
+				<StackPanel VerticalAlignment="Center">
+					<TextBlock Text="Settings" 
+							   FontSize="20" 
+							   FontWeight="Medium"
+							   Foreground="White"/>
+					<TextBlock Text="Configure application preferences" 
+							   FontSize="12" 
+							   Foreground="White"
+							   Opacity="0.8"/>
+				</StackPanel>
+				<Button Grid.Column="1" 
+						Content="✕" 
+						FontSize="20"
+						Background="Transparent"
+						BorderThickness="0"
+						Foreground="White"
+						Padding="12"
+						VerticalAlignment="Center"
+						Click="btnClose_Click"
+						ToolTip.Tip="Close"/>
+			</Grid>
+		</Border>
+
+		<!-- Content -->
+		<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+			<StackPanel Margin="24,24,24,16" Spacing="24">
+
+				<!-- Connection Settings -->
+				<Border Classes="sidebar-card" Padding="16">
+					<StackPanel Spacing="16">
+						<TextBlock Text="Connection Settings" 
+								   FontSize="16" 
+								   FontWeight="SemiBold"
+								   Foreground="{DynamicResource SidebarHeaderFg}"/>
+
+						<StackPanel Spacing="12">
+								<Grid ColumnDefinitions="140,*">
+									<TextBlock Grid.Column="0" Text="Host" Foreground="{DynamicResource LabelFg}" VerticalAlignment="Center"/>
+									<TextBox Grid.Column="1" x:Name="txtHost" Watermark="Enter host address"/>
+								</Grid>
+								<Grid ColumnDefinitions="140,*">
+									<TextBlock Grid.Column="0" Text="Port" Foreground="{DynamicResource LabelFg}" VerticalAlignment="Center"/>
+									<TextBox Grid.Column="1" x:Name="txtPort" Watermark="444"/>
+								</Grid>
+								<Grid ColumnDefinitions="140,*">
+									<TextBlock Grid.Column="0" Text="Username" Foreground="{DynamicResource LabelFg}" VerticalAlignment="Center"/>
+									<TextBox Grid.Column="1" x:Name="txtUser" Watermark="Enter username"/>
+								</Grid>
+								<Grid ColumnDefinitions="140,*">
+									<TextBlock Grid.Column="0" Text="Password" Foreground="{DynamicResource LabelFg}" VerticalAlignment="Center"/>
+									<TextBox Grid.Column="1" x:Name="txtPassword" PasswordChar="*" Watermark="Enter password"/>
+								</Grid>
+									<CheckBox x:Name="chkSecure" Content="Use HTTPS (Secure)"/>
+									<CheckBox x:Name="chkAutoConnect" Content="Auto-connect on startup"/>
+								</StackPanel>
+					</StackPanel>
+				</Border>
+
+				<!-- Stream Settings -->
+				<Border Classes="sidebar-card" Padding="16">
+					<StackPanel Spacing="16">
+						<TextBlock Text="Stream Settings" 
+								   FontSize="16" 
+								   FontWeight="SemiBold"
+								   Foreground="{DynamicResource SidebarHeaderFg}"/>
+
+						<StackPanel Spacing="12">
+							<CheckBox x:Name="chkUseTcp" Content="Use TCP protocol (instead of UDP)"/>
+							<CheckBox x:Name="chkPreferSubChannel" Content="Prefer sub-channel for streaming"/>
+						</StackPanel>
+					</StackPanel>
+				</Border>
+
+				<!-- Appearance Settings -->
+				<Border Classes="sidebar-card" Padding="16">
+					<StackPanel Spacing="16">
+						<TextBlock Text="Appearance" 
+								   FontSize="16" 
+								   FontWeight="SemiBold"
+								   Foreground="{DynamicResource SidebarHeaderFg}"/>
+
+						<CheckBox x:Name="chkDarkMode" 
+								  Content="Dark Mode" 
+								  Checked="chkDarkMode_Changed" 
+								  Unchecked="chkDarkMode_Changed"/>
+					</StackPanel>
+				</Border>
+
+			</StackPanel>
+		</ScrollViewer>
+
+		<!-- Footer Actions -->
+		<Border Grid.Row="2" Background="{DynamicResource Surface1}" BorderBrush="{DynamicResource Divider}" BorderThickness="0,1,0,0" Padding="24,16">
+			<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12">
+				<Button Content="Cancel" Click="btnCancel_Click" MinWidth="100"/>
+				<Button Content="Save" Click="btnSave_Click" Classes="primary" MinWidth="100"/>
+			</StackPanel>
+		</Border>
+	</Grid>
+</Window>

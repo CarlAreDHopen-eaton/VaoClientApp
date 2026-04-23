@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -37,6 +38,8 @@ namespace Vao.Sample
       private MediaPlayer mMediaPlayer;
       private bool mIsVideoStarted = false;
       private bool mIsLoadingSettings;
+      private bool mIsMessagesCollapsed = false;
+      private GridLength mMessagesExpandedRowHeight = new GridLength(1, GridUnitType.Star);
 
       private ObservableCollection<MessageItem> mMessages = new();
 
@@ -90,8 +93,19 @@ namespace Vao.Sample
 
          UpdateEnabled();
          ApplyIcons();
+         UpdateUserInitial();
 
          Opened += MainWindow_Opened;
+         KeyDown += MainWindow_KeyDown;
+      }
+
+      private void MainWindow_KeyDown(object sender, KeyEventArgs e)
+      {
+         if (e.Key == Key.F9)
+         {
+            btnToggleSidebar_Click(null, null);
+            e.Handled = true;
+         }
       }
 
       private void MainWindow_Opened(object sender, EventArgs e)
@@ -99,14 +113,123 @@ namespace Vao.Sample
          Opened -= MainWindow_Opened;
 
          var s = AppSettings.Default;
-         expConnection.IsExpanded = s.IsConnectionExpanded;
          expCameraControl.IsExpanded = s.IsCameraControlExpanded;
          expCameraSelection.IsExpanded = s.IsCameraSelectionExpanded;
          expPresetSelection.IsExpanded = s.IsPresetSelectionExpanded;
          expAlarms.IsExpanded = s.IsAlarmsExpanded;
          expPlaybackSelection.IsExpanded = s.IsPlaybackSelectionExpanded;
          expDownloadRecording.IsExpanded = s.IsDownloadRecordingExpanded;
-         expSettings.IsExpanded = s.IsSettingsExpanded;
+
+         // Apply saved sidebar state
+         SetSidebarCollapsed(s.IsSidebarCollapsed);
+
+         // Restore messages split ratio and collapsed state
+         if (brdMessages.Parent is Grid mg && mg.RowDefinitions.Count > 2)
+         {
+            mg.RowDefinitions[0].Height = new GridLength(s.MessagesSplitVideoStars, GridUnitType.Star);
+            mg.RowDefinitions[2].Height = new GridLength(s.MessagesSplitMessagesStars, GridUnitType.Star);
+         }
+         if (s.IsMessagesCollapsed)
+         {
+            mIsMessagesCollapsed = false; // will be toggled to true
+            MessagesHeader_PointerPressed(null, null);
+         }
+
+         // Auto-connect if enabled
+         if (s.AutoConnectOnStartup)
+            btnConnect_Click(null, null);
+      }
+
+      private void btnToggleSidebar_Click(object sender, RoutedEventArgs e)
+      {
+         var isCurrentlyCollapsed = sidebarGrid.Width == 56;
+         SetSidebarCollapsed(!isCurrentlyCollapsed);
+         AppSettings.Default.IsSidebarCollapsed = !isCurrentlyCollapsed;
+         SaveSettings();
+      }
+
+      private void SetSidebarCollapsed(bool collapsed)
+      {
+         if (collapsed)
+         {
+            sidebarGrid.Width = 56;
+            narrowSidebar.IsVisible = true;
+            fullSidebar.IsVisible = false;
+         }
+         else
+         {
+            sidebarGrid.Width = 280;
+            narrowSidebar.IsVisible = false;
+            fullSidebar.IsVisible = true;
+         }
+      }
+
+      // Icon button handlers for narrow sidebar
+      private void btnExpandCameraControl_Click(object sender, RoutedEventArgs e)
+      {
+         SetSidebarCollapsed(false);
+         expCameraControl.IsExpanded = true;
+         AppSettings.Default.IsSidebarCollapsed = false;
+         SaveSettings();
+      }
+
+      private void btnExpandCameraSelection_Click(object sender, RoutedEventArgs e)
+      {
+         SetSidebarCollapsed(false);
+         expCameraSelection.IsExpanded = true;
+         AppSettings.Default.IsSidebarCollapsed = false;
+         SaveSettings();
+      }
+
+      private void btnExpandPresetSelection_Click(object sender, RoutedEventArgs e)
+      {
+         SetSidebarCollapsed(false);
+         expPresetSelection.IsExpanded = true;
+         AppSettings.Default.IsSidebarCollapsed = false;
+         SaveSettings();
+      }
+
+      private void btnExpandAlarms_Click(object sender, RoutedEventArgs e)
+      {
+         SetSidebarCollapsed(false);
+         expAlarms.IsExpanded = true;
+         AppSettings.Default.IsSidebarCollapsed = false;
+         SaveSettings();
+      }
+
+      private void btnExpandPlayback_Click(object sender, RoutedEventArgs e)
+      {
+         SetSidebarCollapsed(false);
+         expPlaybackSelection.IsExpanded = true;
+         AppSettings.Default.IsSidebarCollapsed = false;
+         SaveSettings();
+      }
+
+      private void btnExpandDownload_Click(object sender, RoutedEventArgs e)
+      {
+         SetSidebarCollapsed(false);
+         expDownloadRecording.IsExpanded = true;
+         AppSettings.Default.IsSidebarCollapsed = false;
+         SaveSettings();
+      }
+
+      private void narrowSidebar_PointerEntered(object sender, Avalonia.Input.PointerEventArgs e)
+      {
+         // Auto-expand on hover
+         if (sidebarGrid.Width == 56)
+         {
+            SetSidebarCollapsed(false);
+            // Don't save the state - this is just a temporary hover expand
+         }
+      }
+
+      private void fullSidebar_PointerExited(object sender, Avalonia.Input.PointerEventArgs e)
+      {
+         // Auto-collapse on mouse leave if the sidebar was opened via hover (not manually toggled)
+         if (AppSettings.Default.IsSidebarCollapsed && sidebarGrid.Width == 280)
+         {
+            SetSidebarCollapsed(true);
+         }
       }
 
       private static readonly string ResBase = "avares://VaoClientApp/Resources/";
@@ -129,13 +252,69 @@ namespace Vao.Sample
          imgCameraLock.Source = IconHelper.Load(ResBase + "cameraunlocked_black_24dp.png", invert);
       }
 
-      private void chkDarkMode_Changed(object sender, RoutedEventArgs e)
+      private void UpdateUserInitial()
       {
-         if (mIsLoadingSettings) return;
-         bool isDark = chkDarkMode.IsChecked == true;
-         ((App)Application.Current).SetTheme(isDark);
-         ApplyIcons();
-         SaveSettings();
+         string username = AppSettings.Default.User?.Trim() ?? "";
+         var menuItem = this.FindControl<MenuItem>("menuItemUsername");
+
+         if (string.IsNullOrEmpty(username))
+         {
+            txtUserInitial.Text = "U";
+            if (menuItem != null) menuItem.Header = "Not logged in";
+         }
+         else
+         {
+            txtUserInitial.Text = username.Substring(0, 1).ToUpper();
+            if (menuItem != null) menuItem.Header = username;
+         }
+
+         // Update tooltip with user, connection status, and server
+          var status = IsStarted ? "Connected" : "Disconnected";
+          var host = AppSettings.Default.Host1?.Trim() ?? "";
+          var tip = string.IsNullOrEmpty(username) ? "Not logged in" : username;
+          tip += $"\n{status}";
+          if (IsStarted && !string.IsNullOrEmpty(host))
+             tip += $"\nServer: {host}";
+          ToolTip.SetTip(btnUserProfile, tip);
+
+          // Gray circle when disconnected, themed color when connected
+          if (IsStarted)
+          {
+             if (this.TryFindResource("PrimaryDark", out var res) && res is IBrush brush)
+                btnUserProfile.Background = brush;
+             else
+                btnUserProfile.Background = new SolidColorBrush(Color.FromRgb(0, 90, 143));
+          }
+          else
+          {
+             btnUserProfile.Background = new SolidColorBrush(Color.FromRgb(128, 128, 128));
+          }
+       }
+
+      private void btnUserProfile_Click(object sender, RoutedEventArgs e)
+      {
+         // The flyout opens automatically when the button is clicked
+      }
+
+      private async void menuItemSettings_Click(object sender, RoutedEventArgs e)
+      {
+         var settingsWindow = new SettingsWindow();
+         await settingsWindow.ShowDialog(this);
+
+         if (settingsWindow.WereSettingsSaved())
+         {
+            // Reload settings into main window
+            LoadSettings();
+            UpdateUserInitial();
+         }
+      }
+
+      private void menuItemLogout_Click(object sender, RoutedEventArgs e)
+      {
+         if (IsStarted)
+         {
+            btnDisconnect_Click(sender, e);
+         }
       }
 
       private void StartInitializeVlc()
@@ -156,35 +335,26 @@ namespace Vao.Sample
       private void LoadSettings()
       {
          var s = AppSettings.Default;
-         if (!string.IsNullOrEmpty(s.Host1)) txtHost.Text = s.Host1;
-         if (!string.IsNullOrEmpty(s.User)) txtUser.Text = s.User;
-         if (!string.IsNullOrEmpty(s.ApiPort)) txtPort.Text = s.ApiPort;
-         if (!string.IsNullOrEmpty(s.Password)) txtPassword.Text = s.Password;
-         chkUseTcp.IsChecked = s.UseTcp;
-         chkPreferSubChannel.IsChecked = s.PreferSubChannel;
-         chkSecure.IsChecked = s.UseHttps;
-         chkDarkMode.IsChecked = s.IsDarkMode;
+         tglSubChannel.IsChecked = s.PreferSubChannel;
+         UpdateUserInitial();
       }
 
       private void SaveSettings()
       {
          var s = AppSettings.Default;
-         s.Host1 = txtHost.Text ?? "";
-         s.User = txtUser.Text ?? "";
-         s.ApiPort = txtPort.Text ?? "";
-         s.Password = txtPassword.Text ?? "";
          if (mCurrentCamera != null) s.CurrentCamera = mCurrentCamera.ComponentNumber;
-         s.UseTcp = chkUseTcp.IsChecked == true;
-         s.PreferSubChannel = chkPreferSubChannel.IsChecked == true;
-         s.UseHttps = chkSecure.IsChecked == true;
-         s.IsConnectionExpanded = expConnection.IsExpanded;
          s.IsCameraControlExpanded = expCameraControl.IsExpanded;
          s.IsCameraSelectionExpanded = expCameraSelection.IsExpanded;
          s.IsPresetSelectionExpanded = expPresetSelection.IsExpanded;
          s.IsAlarmsExpanded = expAlarms.IsExpanded;
          s.IsPlaybackSelectionExpanded = expPlaybackSelection.IsExpanded;
          s.IsDownloadRecordingExpanded = expDownloadRecording.IsExpanded;
-         s.IsSettingsExpanded = expSettings.IsExpanded;
+         s.IsMessagesCollapsed = mIsMessagesCollapsed;
+         if (brdMessages.Parent is Grid mg && mg.RowDefinitions.Count > 2 && !mIsMessagesCollapsed)
+         {
+            s.MessagesSplitVideoStars = mg.RowDefinitions[0].Height.Value;
+            s.MessagesSplitMessagesStars = mg.RowDefinitions[2].Height.Value;
+         }
          s.Save();
       }
 
@@ -196,9 +366,12 @@ namespace Vao.Sample
 
       public void UpdateEnabled()
       {
-         btnDisconnect.IsEnabled = IsStarted;
+         var menuDisconnect = this.FindControl<MenuItem>("menuItemDisconnect");
+         var menuConnect = this.FindControl<MenuItem>("menuItemConnect");
+         if (menuDisconnect != null) menuDisconnect.IsEnabled = IsStarted;
+         if (menuConnect != null) menuConnect.IsEnabled = !IsStarted;
          pnlCameraSelectFlowPanel.IsEnabled = IsStarted;
-         chkPreferSubChannel.IsEnabled = IsStarted && !IsPlayback;
+         tglSubChannel.IsEnabled = IsStarted && !IsPlayback && mCurrentCamera != null && !string.IsNullOrEmpty(mCurrentCamera?.Stream2Resolution);
          grpSelectPreset.IsEnabled = IsStarted;
          grpSelectPlayback.IsEnabled = IsStarted && ApiSupportsPlayback;
          grpCameraControl.IsEnabled = IsStarted && mCurrentCamera != null;
@@ -206,12 +379,6 @@ namespace Vao.Sample
          btnStopPlayback.IsEnabled = IsStarted && IsPlayback && ApiSupportsPlayback;
          btnPlayPlayback.IsEnabled = IsStarted && IsCameraSelected && !IsPlaybackStarted && ApiSupportsPlayback;
          btnGotoTime.IsEnabled = IsStarted && IsCameraSelected && ApiSupportsPlayback;
-         btnConnect.IsEnabled = !IsStarted;
-         txtHost.IsEnabled = !IsStarted;
-         txtPassword.IsEnabled = !IsStarted;
-         txtPort.IsEnabled = !IsStarted;
-         txtUser.IsEnabled = !IsStarted;
-         chkSecure.IsEnabled = !IsStarted;
          btnDownload.IsEnabled = IsStarted && ApiSupportsPlayback;
 
          UpdateCameraControl();
@@ -220,21 +387,22 @@ namespace Vao.Sample
       private void btnConnect_Click(object sender, RoutedEventArgs e)
       {
          SaveSettings();
-         if (!ValidateCanConnect()) return;
+          if (!ValidateCanConnect()) return;
 
+         var s = AppSettings.Default;
          IsStarted = true;
          moFlexRApiClient = new FlexRApiClient
          {
-            Host = txtHost.Text,
-            Port = txtPort.Text,
-            Password = txtPassword.Text,
-            User = txtUser.Text,
-            UseHttps = chkSecure.IsChecked == true,
+            Host = s.Host1,
+            Port = s.ApiPort,
+            Password = s.Password,
+            User = s.User,
+            UseHttps = s.UseHttps,
             IgnoreCertificateErrors = true
          };
          moFlexRApiClient.OnMessage += OnFlexRApiClientMessage;
          txtVideoHeader.Text = "No Camera Selected";
-         brdVideoHeader.Background = new SolidColorBrush(Color.FromRgb(66, 77, 95));
+         brdVideoHeader.Background = new SolidColorBrush(Color.FromRgb(29, 58, 74));
 
          if (moFlexRApiClient.StartClient())
          {
@@ -246,28 +414,30 @@ namespace Vao.Sample
             ClearRecordingDropdown();
             ClearPresetDropdown();
             UpdateEnabled();
+             UpdateUserInitial();
 
-            if (AppSettings.Default.CurrentCamera != 0)
-               SelectCamera(AppSettings.Default.CurrentCamera, chkPreferSubChannel.IsChecked == true ? 2 : 1);
-         }
-         else
-         {
-            WriteMessageLog(MessageSource.FlexApi, "Unable to start, no response.", LogLevel.Error);
-            btnDisconnect_Click(sender, e);
-            ClearPresetDropdown();
-            UpdateEnabled();
-         }
+             if (AppSettings.Default.CurrentCamera != 0)
+                SelectCamera(AppSettings.Default.CurrentCamera, AppSettings.Default.PreferSubChannel ? 2 : 1);
+          }
+          else
+          {
+             WriteMessageLog(MessageSource.FlexApi, "Unable to start, no response.", LogLevel.Error);
+             btnDisconnect_Click(sender, e);
+             ClearPresetDropdown();
+             UpdateEnabled();
+          }
       }
 
       private bool ValidateCanConnect()
       {
-         if (string.IsNullOrWhiteSpace(txtHost.Text))
+         var s = AppSettings.Default;
+         if (string.IsNullOrWhiteSpace(s.Host1))
          { WriteMessageLog(MessageSource.Config, "Missing host name", LogLevel.Error); return false; }
-         if (string.IsNullOrWhiteSpace(txtPassword.Text))
+         if (string.IsNullOrWhiteSpace(s.Password))
          { WriteMessageLog(MessageSource.Config, "Missing host password", LogLevel.Error); return false; }
-         if (string.IsNullOrWhiteSpace(txtUser.Text))
+         if (string.IsNullOrWhiteSpace(s.User))
          { WriteMessageLog(MessageSource.Config, "Missing user name", LogLevel.Error); return false; }
-         if (string.IsNullOrWhiteSpace(txtPort.Text))
+         if (string.IsNullOrWhiteSpace(s.ApiPort))
          { WriteMessageLog(MessageSource.Config, "Missing port", LogLevel.Error); return false; }
          return true;
       }
@@ -331,16 +501,17 @@ namespace Vao.Sample
          CurrentAlarm = null;
          txtCurrentRtspUrl.Text = string.Empty;
          txtVideoHeader.Text = "No Camera Selected";
-         brdVideoHeader.Background = new SolidColorBrush(Color.FromRgb(66, 77, 95));
+         brdVideoHeader.Background = new SolidColorBrush(Color.FromRgb(29, 58, 74));
          IsCameraSelected = false;
          ClearPresetDropdown();
-         ClearRecordingDropdown();
-         ClearCameraSelection();
-         ClearAlarmSelection();
-      }
+             ClearRecordingDropdown();
+                 ClearCameraSelection();
+                 ClearAlarmSelection();
+                 UpdateUserInitial();
+             }
 
-      private void StopRtspStream()
-      {
+         private void StopRtspStream()
+         {
          if (mMediaPlayer != null)
          {
             var mp = mMediaPlayer;
@@ -525,14 +696,23 @@ namespace Vao.Sample
          if (camera != null)
          {
             CurrentCamera = camera;
+            bool hasSubChannel = !string.IsNullOrEmpty(camera.Stream2Resolution);
+            // If sub requested but not available, fall back to main
+            if (streamNo == 2 && !hasSubChannel)
+               streamNo = 1;
             string url = camera.GetCameraLiveStreamUrl(streamNo);
             if (!string.IsNullOrEmpty(url))
             {
                txtCurrentRtspUrl.Text = GetMaskedUrl(url);
                txtVideoHeader.Text = $"LIVE - Camera {cameraNo}";
-               brdVideoHeader.Background = new SolidColorBrush(Color.FromRgb(65, 142, 62));
+               brdVideoHeader.Background = new SolidColorBrush(Color.FromRgb(76, 175, 80));
                StartRtspStream(url);
             }
+            // Update toggle to reflect actual stream without triggering save
+            mIsLoadingSettings = true;
+            tglSubChannel.IsChecked = (streamNo == 2);
+            tglSubChannel.IsEnabled = hasSubChannel && !IsPlayback;
+            mIsLoadingSettings = false;
          }
       }
 
@@ -569,18 +749,18 @@ namespace Vao.Sample
          if (mMediaPlayer == null)
          {
             var media = new Media(mLibVlc, uri);
-            mMediaPlayer = new MediaPlayer(media);
-            mMediaPlayer.EncounteredError += MediaPlayer_EncounteredError;
-            mMediaPlayer.Opening += MediaPlayer_Opening;
-            if (chkUseTcp.IsChecked == true) media.AddOption(":rtsp-tcp");
-            if (mVideoControl != null) mVideoControl.MediaPlayer = mMediaPlayer;
-            mMediaPlayer.Play();
-            mIsVideoStarted = true;
-         }
-         else
-         {
-            var media = new Media(mLibVlc, uri);
-            if (chkUseTcp.IsChecked == true) media.AddOption(":rtsp-tcp");
+             mMediaPlayer = new MediaPlayer(media);
+             mMediaPlayer.EncounteredError += MediaPlayer_EncounteredError;
+             mMediaPlayer.Opening += MediaPlayer_Opening;
+             if (AppSettings.Default.UseTcp) media.AddOption(":rtsp-tcp");
+             if (mVideoControl != null) mVideoControl.MediaPlayer = mMediaPlayer;
+             mMediaPlayer.Play();
+             mIsVideoStarted = true;
+          }
+          else
+          {
+             var media = new Media(mLibVlc, uri);
+             if (AppSettings.Default.UseTcp) media.AddOption(":rtsp-tcp");
             mMediaPlayer.Play(media);
             mIsVideoStarted = true;
          }
@@ -609,7 +789,7 @@ namespace Vao.Sample
       private void OnSelectCameraClicked(object sender, RoutedEventArgs e)
       {
          if (sender is Button button && button.Tag is Camera camera)
-            SelectCamera(camera.ComponentNumber, chkPreferSubChannel.IsChecked == true ? 2 : 1);
+            SelectCamera(camera.ComponentNumber, AppSettings.Default.PreferSubChannel ? 2 : 1);
       }
 
       private void OnSelectAlarmClicked(object sender, RoutedEventArgs e)
@@ -719,19 +899,55 @@ namespace Vao.Sample
             camera.PanTiltZoomStop();
       }
 
-      private void chkPreferSubChannel_CheckedChanged(object sender, RoutedEventArgs e)
+      private void tglSubChannel_CheckedChanged(object sender, RoutedEventArgs e)
       {
          if (mIsLoadingSettings) return;
          if (IsStarted)
          {
             if (mIsPlaybackStarted) btnPlayPlayback_Click(null, null);
             else if (mCurrentCamera != null)
-               SelectCamera(mCurrentCamera.ComponentNumber, chkPreferSubChannel.IsChecked == true ? 2 : 1);
+               SelectCamera(mCurrentCamera.ComponentNumber, tglSubChannel.IsChecked == true ? 2 : 1);
+         }
+      }
+
+      private void MessagesHeader_PointerPressed(object sender, PointerPressedEventArgs e)
+      {
+         mIsMessagesCollapsed = !mIsMessagesCollapsed;
+         var messagesGrid = brdMessages.Parent as Grid;
+         if (messagesGrid == null) return;
+         var messagesRow = messagesGrid.RowDefinitions[2];
+
+         if (mIsMessagesCollapsed)
+         {
+            mMessagesExpandedRowHeight = messagesRow.Height;
+            messagesRow.Height = GridLength.Auto;
+            brdMessages.MaxHeight = 36;
+            lstMessages.IsVisible = false;
+             txtMessagesToggle.Text = "▶";
+         }
+         else
+         {
+            brdMessages.MaxHeight = double.PositiveInfinity;
+            messagesRow.Height = mMessagesExpandedRowHeight;
+            lstMessages.IsVisible = true;
+             txtMessagesToggle.Text = "▼";
          }
          SaveSettings();
       }
 
       private void btnClearMessages_Click(object sender, RoutedEventArgs e) { mMessages.Clear(); }
+
+      private async void menuCopyMessages_Click(object sender, RoutedEventArgs e)
+      {
+         var text = string.Join(Environment.NewLine, mMessages.Select(m => m.Text));
+         if (Clipboard is { } clipboard)
+            await clipboard.SetTextAsync(text);
+      }
+
+      private void MessagesSplitter_DragCompleted(object sender, Avalonia.Input.VectorEventArgs e)
+      {
+         SaveSettings();
+      }
 
       private void btnGotoPreset_Click(object sender, RoutedEventArgs e)
       {
@@ -748,7 +964,7 @@ namespace Vao.Sample
                txtCurrentRtspUrl.Text = GetMaskedUrl(url);
                var cameraNo = mCurrentCamera?.ComponentNumber ?? 0;
                txtVideoHeader.Text = $"PLAYBACK - Camera {cameraNo}";
-               brdVideoHeader.Background = new SolidColorBrush(Color.FromRgb(142, 62, 62));
+               brdVideoHeader.Background = new SolidColorBrush(Color.FromRgb(211, 47, 47));
                StartRtspStream(url);
                IsPlaybackStarted = true;
                UpdateEnabled();
@@ -785,7 +1001,7 @@ namespace Vao.Sample
                   txtCurrentRtspUrl.Text = GetMaskedUrl(url);
                   var cameraNo = mCurrentCamera?.ComponentNumber ?? 0;
                   txtVideoHeader.Text = $"PLAYBACK - Camera {cameraNo}";
-                  brdVideoHeader.Background = new SolidColorBrush(Color.FromRgb(142, 62, 62));
+                  brdVideoHeader.Background = new SolidColorBrush(Color.FromRgb(211, 47, 47));
                   StartRtspStream(urlWithStartTime);
                   IsPlaybackStarted = true;
                   UpdateEnabled();
@@ -799,7 +1015,7 @@ namespace Vao.Sample
       {
          IsStarted = false;
          StopRtspStream();
-         SelectCamera(mCurrentCamera.ComponentNumber, chkPreferSubChannel.IsChecked == true ? 2 : 1);
+         SelectCamera(mCurrentCamera.ComponentNumber, tglSubChannel.IsChecked == true ? 2 : 1);
          IsStarted = true;
          IsPlaybackStarted = false;
          UpdateEnabled();
@@ -821,18 +1037,6 @@ namespace Vao.Sample
       {
          var downloadWindow = new DownloadWindow(FlexRApiClient);
          await downloadWindow.ShowDialog(this);
-      }
-
-      private void chkUseTcp_CheckedChanged(object sender, RoutedEventArgs e)
-      {
-         if (mIsLoadingSettings) return;
-         if (IsStarted)
-         {
-            if (mIsPlaybackStarted) btnPlayPlayback_Click(null, null);
-            else if (mCurrentCamera != null)
-               SelectCamera(mCurrentCamera.ComponentNumber, chkPreferSubChannel.IsChecked == true ? 2 : 1);
-         }
-         SaveSettings();
       }
 
       private async void btnOpenAbsolutePositionWindow_Click(object sender, RoutedEventArgs e)

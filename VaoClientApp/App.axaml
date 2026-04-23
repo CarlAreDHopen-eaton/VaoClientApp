@@ -3,51 +3,115 @@
              x:Class="Vao.Sample.App">
     <Application.Styles>
         <FluentTheme />
+
+        <!-- Brightlayer UI Sidebar Shell -->
         <Style Selector="Border.sidebar-shell">
             <Setter Property="Background" Value="{DynamicResource SidebarBg}"/>
-            <Setter Property="BorderBrush" Value="{DynamicResource SidebarBorder}"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="10"/>
-            <Setter Property="Padding" Value="6"/>
-            <Setter Property="Margin" Value="0,0,6,0"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="CornerRadius" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="0"/>
         </Style>
+
+        <!-- Brightlayer UI Card Style with Elevation -->
         <Style Selector="Border.sidebar-card">
             <Setter Property="Background" Value="{DynamicResource SidebarCardBg}"/>
-            <Setter Property="BorderBrush" Value="{DynamicResource SidebarBorder}"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource Divider}"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="CornerRadius" Value="0"/>
             <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
         </Style>
+
+        <!-- Brightlayer UI Expander Header (Blue on expand) -->
         <Style Selector="Expander /template/ ToggleButton">
-            <Setter Property="MinHeight" Value="24"/>
-            <Setter Property="Padding" Value="6,1,6,1"/>
+            <Setter Property="MinHeight" Value="48"/>
+            <Setter Property="Padding" Value="16,12,16,12"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
         </Style>
+
         <Style Selector="Expander.sidebar-section /template/ ToggleButton">
-            <Setter Property="Background" Value="{DynamicResource SidebarCardBg}"/>
+            <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="{DynamicResource SidebarHeaderFg}"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Padding" Value="10,5,10,5"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="20,14,20,14"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
         </Style>
+
+        <!-- Active/Expanded section gets blue accent -->
+        <Style Selector="Expander.sidebar-section:expanded /template/ ToggleButton">
+            <Setter Property="Background" Value="{DynamicResource Primary}"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <!-- Collapsed expander content hidden -->
+        <Style Selector="Expander:not(:expanded) /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="IsVisible" Value="False"/>
+        </Style>
+
         <Style Selector="Expander /template/ ToggleButton /template/ Border">
             <Setter Property="MinHeight" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
         </Style>
+
         <Style Selector="Expander.sidebar-section /template/ ToggleButton /template/ Border">
-            <Setter Property="Background" Value="{DynamicResource SidebarCardBg}"/>
+            <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
-            <Setter Property="CornerRadius" Value="8,8,0,0"/>
+            <Setter Property="CornerRadius" Value="0"/>
         </Style>
+
         <Style Selector="Expander /template/ ToggleButton ContentPresenter">
             <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
         </Style>
+
+        <!-- Expander header text with icon alignment -->
+        <Style Selector="Expander.sidebar-section /template/ ToggleButton">
+            <Setter Property="Padding" Value="16,12,16,12"/>
+        </Style>
+
+        <!-- Brightlayer UI List Items -->
         <Style Selector="ListBoxItem">
-            <Setter Property="Padding" Value="4,1"/>
+            <Setter Property="Padding" Value="8,4"/>
             <Setter Property="MinHeight" Value="0"/>
         </Style>
-        <!-- Invert black icons in dark mode by rendering them as white -->
-        <Style Selector="Image.theme-icon">
-            <Setter Property="Opacity" Value="0.9"/>
+
+        <!-- Brightlayer UI Buttons -->
+        <Style Selector="Button">
+            <Setter Property="MinHeight" Value="36"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="CornerRadius" Value="4"/>
         </Style>
-        <!-- Fix DatePicker and TimePicker internal text display -->
+
+        <!-- Primary Button Style (Eaton Blue) -->
+        <Style Selector="Button.primary">
+            <Setter Property="Background" Value="{DynamicResource Primary}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        <Style Selector="Button.primary:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource PrimaryLight}"/>
+        </Style>
+        <Style Selector="Button.primary:pressed /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource PrimaryDark}"/>
+        </Style>
+
+        <!-- Secondary/Default Button -->
+        <Style Selector="Button /template/ ContentPresenter">
+            <Setter Property="CornerRadius" Value="4"/>
+        </Style>
+
+        <!-- Icon buttons -->
+        <Style Selector="Image.theme-icon">
+            <Setter Property="Opacity" Value="0.87"/>
+        </Style>
+
+        <!-- DatePicker and TimePicker fixes -->
         <Style Selector="DatePicker /template/ Button">
             <Setter Property="MinHeight" Value="32"/>
             <Setter Property="Height" Value="32"/>
@@ -78,42 +142,97 @@
 
     <Application.Resources>
         <ResourceDictionary>
+            <!-- Brightlayer UI Spacing (8px grid) -->
+            <x:Double x:Key="Spacing-xs">4</x:Double>
+            <x:Double x:Key="Spacing-sm">8</x:Double>
+            <x:Double x:Key="Spacing-md">16</x:Double>
+            <x:Double x:Key="Spacing-lg">24</x:Double>
+            <x:Double x:Key="Spacing-xl">32</x:Double>
+
+            <!-- Component sizes -->
             <x:Double x:Key="ExpanderMinHeight">0</x:Double>
             <x:Double x:Key="ExpanderHeaderMinHeight">0</x:Double>
-            <Thickness x:Key="ExpanderHeaderPadding">6,1,6,1</Thickness>
+            <Thickness x:Key="ExpanderHeaderPadding">16,8,16,8</Thickness>
             <x:Double x:Key="ExpanderChevronButtonSize">20</x:Double>
-            <Thickness x:Key="ButtonPadding">8,4,8,4</Thickness>
-            <x:Double x:Key="ButtonMinHeight">0</x:Double>
-            <x:Double x:Key="TextBoxMinHeight">0</x:Double>
-            <Thickness x:Key="TextBoxPadding">6,4,6,4</Thickness>
-            <x:Double x:Key="ComboBoxMinHeight">0</x:Double>
-            <Thickness x:Key="ComboBoxPadding">6,4,6,4</Thickness>
+            <Thickness x:Key="ButtonPadding">16,8,16,8</Thickness>
+            <x:Double x:Key="ButtonMinHeight">32</x:Double>
+            <x:Double x:Key="TextBoxMinHeight">32</x:Double>
+            <Thickness x:Key="TextBoxPadding">12,6,12,6</Thickness>
+            <x:Double x:Key="ComboBoxMinHeight">32</x:Double>
+            <Thickness x:Key="ComboBoxPadding">12,6,12,6</Thickness>
             <x:Double x:Key="CheckBoxMinHeight">0</x:Double>
             <x:Double x:Key="DatePickerMinHeight">32</x:Double>
-            <Thickness x:Key="DatePickerFlyoutPresenterItemPadding">9,3,9,3</Thickness>
+            <Thickness x:Key="DatePickerFlyoutPresenterItemPadding">12,6,12,6</Thickness>
             <x:Double x:Key="TimePickerMinHeight">32</x:Double>
-            <Thickness x:Key="TimePickerFlyoutPresenterItemPadding">9,3,9,3</Thickness>
+            <Thickness x:Key="TimePickerFlyoutPresenterItemPadding">12,6,12,6</Thickness>
 
             <ResourceDictionary.ThemeDictionaries>
+                <!-- Brightlayer UI Dark Theme -->
                 <ResourceDictionary x:Key="Dark">
-                    <SolidColorBrush x:Key="AppBg" Color="#404040" />
-                    <SolidColorBrush x:Key="SectionBg" Color="#2D2D30" />
-                    <SolidColorBrush x:Key="LabelFg" Color="#C0C0C0" />
-                    <SolidColorBrush x:Key="VideoBg" Color="#3A3A3A" />
-                    <SolidColorBrush x:Key="SidebarBg" Color="#262A31" />
-                    <SolidColorBrush x:Key="SidebarCardBg" Color="#313740" />
-                    <SolidColorBrush x:Key="SidebarBorder" Color="#4D5563" />
-                    <SolidColorBrush x:Key="SidebarHeaderFg" Color="#F2F4F8" />
+                    <!-- Background Colors - Layered depth -->
+                    <SolidColorBrush x:Key="AppBg" Color="#151C26" /> <!-- Brightlayer UI app background -->
+                    <SolidColorBrush x:Key="SectionBg" Color="#1E2A3A" /> <!-- Brightlayer UI content background -->
+                    <SolidColorBrush x:Key="SidebarBg" Color="#0D1929" /> <!-- Brightlayer UI drawer dark -->
+                    <SolidColorBrush x:Key="SidebarCardBg" Color="#1E2A3A" /> <!-- Brightlayer UI surface -->
+                    <SolidColorBrush x:Key="VideoBg" Color="#000000" />
+                    <SolidColorBrush x:Key="CardElevation" Color="#000000" Opacity="0.24" /> <!-- Card shadow -->
+
+                    <!-- Border Colors -->
+                    <SolidColorBrush x:Key="SidebarBorder" Color="#FFFFFF" Opacity="0.12" /> <!-- Subtle divider -->
+                    <SolidColorBrush x:Key="Divider" Color="#FFFFFF" Opacity="0.12" />
+
+                    <!-- Text Colors (Brightlayer UI) -->
+                    <SolidColorBrush x:Key="SidebarHeaderFg" Color="#FFFFFF" Opacity="0.95" /> <!-- High emphasis -->
+                    <SolidColorBrush x:Key="LabelFg" Color="#FFFFFF" Opacity="0.60" /> <!-- Medium emphasis -->
+                    <SolidColorBrush x:Key="TextSecondary" Color="#FFFFFF" Opacity="0.38" /> <!-- Disabled/hint -->
+
+                    <!-- Brand Colors -->
+                    <SolidColorBrush x:Key="Primary" Color="#007BC1" /> <!-- Eaton Blue -->
+                    <SolidColorBrush x:Key="PrimaryLight" Color="#0091E6" /> <!-- Lighter blue for hover -->
+                    <SolidColorBrush x:Key="PrimaryDark" Color="#005A8F" /> <!-- Darker blue -->
+                    <SolidColorBrush x:Key="Success" Color="#4CAF50" /> <!-- Green for live -->
+                    <SolidColorBrush x:Key="Warning" Color="#FF9800" /> <!-- Orange for warnings -->
+                    <SolidColorBrush x:Key="Error" Color="#D32F2F" /> <!-- Red for errors/playback -->
+                    <SolidColorBrush x:Key="Info" Color="#2196F3" /> <!-- Info blue -->
+
+                    <!-- Surface variations -->
+                    <SolidColorBrush x:Key="Surface1" Color="#1E2A3A" />
+                    <SolidColorBrush x:Key="Surface2" Color="#273645" />
+                    <SolidColorBrush x:Key="Surface3" Color="#2F4152" />
                 </ResourceDictionary>
+
+                <!-- Brightlayer UI Light Theme -->
                 <ResourceDictionary x:Key="Light">
-                    <SolidColorBrush x:Key="AppBg" Color="#F0F0F0" />
+                    <!-- Background Colors -->
+                    <SolidColorBrush x:Key="AppBg" Color="#F5F5F5" /> <!-- Brightlayer UI light background -->
                     <SolidColorBrush x:Key="SectionBg" Color="#FFFFFF" />
-                    <SolidColorBrush x:Key="LabelFg" Color="#333333" />
-                    <SolidColorBrush x:Key="VideoBg" Color="#B0B0B0" />
-                    <SolidColorBrush x:Key="SidebarBg" Color="#E5E7EB" />
-                    <SolidColorBrush x:Key="SidebarCardBg" Color="#F9FAFB" />
-                    <SolidColorBrush x:Key="SidebarBorder" Color="#C5CAD3" />
-                    <SolidColorBrush x:Key="SidebarHeaderFg" Color="#1F2937" />
+                    <SolidColorBrush x:Key="SidebarBg" Color="#FAFAFA" />
+                    <SolidColorBrush x:Key="SidebarCardBg" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="VideoBg" Color="#E0E0E0" />
+                    <SolidColorBrush x:Key="CardElevation" Color="#000000" Opacity="0.12" />
+
+                    <!-- Border Colors -->
+                    <SolidColorBrush x:Key="SidebarBorder" Color="#E0E0E0" />
+                    <SolidColorBrush x:Key="Divider" Color="#000000" Opacity="0.12" />
+
+                    <!-- Text Colors (Brightlayer UI) -->
+                    <SolidColorBrush x:Key="SidebarHeaderFg" Color="#000000" Opacity="0.87" />
+                    <SolidColorBrush x:Key="LabelFg" Color="#000000" Opacity="0.60" />
+                    <SolidColorBrush x:Key="TextSecondary" Color="#000000" Opacity="0.38" />
+
+                    <!-- Brand Colors -->
+                    <SolidColorBrush x:Key="Primary" Color="#007BC1" />
+                    <SolidColorBrush x:Key="PrimaryLight" Color="#0091E6" />
+                    <SolidColorBrush x:Key="PrimaryDark" Color="#005A8F" />
+                    <SolidColorBrush x:Key="Success" Color="#4CAF50" />
+                    <SolidColorBrush x:Key="Warning" Color="#FF9800" />
+                    <SolidColorBrush x:Key="Error" Color="#D32F2F" />
+                    <SolidColorBrush x:Key="Info" Color="#2196F3" />
+
+                    <!-- Surface variations -->
+                    <SolidColorBrush x:Key="Surface1" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="Surface2" Color="#FAFAFA" />
+                    <SolidColorBrush x:Key="Surface3" Color="#F5F5F5" />
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>

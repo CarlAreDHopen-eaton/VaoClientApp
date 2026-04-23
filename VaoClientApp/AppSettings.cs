@@ -24,8 +24,10 @@ namespace Vao.Sample
       public string FTPPassword { get; set; } = "";
       public int CurrentCamera { get; set; } = 0;
       public bool UseTcp { get; set; } = false;
+      public bool AutoConnectOnStartup { get; set; } = false;
       public bool PreferSubChannel { get; set; } = true;
       public bool IsDarkMode { get; set; } = true;
+      public bool IsSidebarCollapsed { get; set; } = false;
 
       public bool IsConnectionExpanded { get; set; } = true;
       public bool IsCameraControlExpanded { get; set; } = true;
@@ -35,6 +37,9 @@ namespace Vao.Sample
       public bool IsPlaybackSelectionExpanded { get; set; } = true;
       public bool IsDownloadRecordingExpanded { get; set; } = true;
       public bool IsSettingsExpanded { get; set; } = false;
+      public bool IsMessagesCollapsed { get; set; } = false;
+      public double MessagesSplitVideoStars { get; set; } = 3.0;
+      public double MessagesSplitMessagesStars { get; set; } = 1.0;
 
       public void Save()
       {
