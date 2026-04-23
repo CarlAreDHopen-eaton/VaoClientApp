@@ -47,6 +47,34 @@
             <Setter Property="Foreground" Value="White"/>
         </Style>
 
+        <!-- Ensure expander content text has proper foreground color (not inherited from header) -->
+        <Style Selector="Expander.sidebar-section > StackPanel">
+            <Setter Property="TextElement.Foreground" Value="{DynamicResource SidebarHeaderFg}"/>
+        </Style>
+        <Style Selector="Expander.sidebar-section > StackPanel TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource SidebarHeaderFg}"/>
+        </Style>
+        <Style Selector="Expander.sidebar-section > WrapPanel">
+            <Setter Property="TextElement.Foreground" Value="{DynamicResource SidebarHeaderFg}"/>
+        </Style>
+        <Style Selector="Expander.sidebar-section > WrapPanel TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource SidebarHeaderFg}"/>
+        </Style>
+        <Style Selector="Expander.sidebar-section > Grid">
+            <Setter Property="TextElement.Foreground" Value="{DynamicResource SidebarHeaderFg}"/>
+        </Style>
+        <Style Selector="Expander.sidebar-section > Grid TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource SidebarHeaderFg}"/>
+        </Style>
+        
+        <!-- Ensure ComboBox text is readable in both themes -->
+        <Style Selector="Expander.sidebar-section ComboBox">
+            <Setter Property="Foreground" Value="{DynamicResource SidebarHeaderFg}"/>
+        </Style>
+        <Style Selector="Expander.sidebar-section TextBox">
+            <Setter Property="Foreground" Value="{DynamicResource SidebarHeaderFg}"/>
+        </Style>
+
         <!-- Collapsed expander content hidden -->
         <Style Selector="Expander:not(:expanded) /template/ ContentPresenter#PART_ContentPresenter">
             <Setter Property="IsVisible" Value="False"/>
