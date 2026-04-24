@@ -42,6 +42,13 @@ namespace Vao.Sample
       private GridLength mMessagesExpandedRowHeight = new GridLength(1, GridUnitType.Star);
 
       private ObservableCollection<MessageItem> mMessages = new();
+      private ObservableCollection<MessageItem> mFilteredMessages = new();
+      private Dictionary<MessageSource, bool> mSourceFilters = new()
+      {
+         { MessageSource.FlexApi, true },
+         { MessageSource.LibVlc, true },
+         { MessageSource.Config, true }
+      };
 
       public FlexRApiClient FlexRApiClient => moFlexRApiClient;
 
@@ -81,7 +88,7 @@ namespace Vao.Sample
       {
          InitializeComponent();
 
-         lstMessages.ItemsSource = mMessages;
+         lstMessages.ItemsSource = mFilteredMessages;
 
          StartInitializeVlc();
          ClearPresetDropdown();
@@ -487,8 +494,6 @@ namespace Vao.Sample
          }
       }
 
-      private enum MessageSource { FlexApi, LibVlc, Config }
-
       private void WriteMessageLog(MessageSource source, string strMessage, LogLevel level)
       {
          if (!Dispatcher.UIThread.CheckAccess())
@@ -511,10 +516,17 @@ namespace Vao.Sample
          };
 
          if (strMessage != "drawable Warning: unsupported control query 3")
-         {
-            mMessages.Add(new MessageItem { Text = strMsg, Color = color });
-            lstMessages.ScrollIntoView(mMessages.Count - 1);
-         }
+          {
+             var item = new MessageItem { Text = strMsg, Color = color, Source = source };
+             mMessages.Add(item);
+             if (mSourceFilters.TryGetValue(source, out bool visible) && visible)
+             {
+                bool wasAtEnd = mFilteredMessages.Count == 0 || IsScrolledToEnd();
+                mFilteredMessages.Add(item);
+                if (wasAtEnd)
+                   lstMessages.ScrollIntoView(mFilteredMessages.Count - 1);
+             }
+          }
       }
 
       private void btnDisconnect_Click(object sender, RoutedEventArgs e)
@@ -983,13 +995,83 @@ namespace Vao.Sample
          SaveSettings();
       }
 
-      private void btnClearMessages_Click(object sender, RoutedEventArgs e) { mMessages.Clear(); }
+      private bool IsScrolledToEnd()
+      {
+         var scrollViewer = FindScrollViewer(lstMessages);
+         if (scrollViewer != null)
+            return scrollViewer.Offset.Y >= scrollViewer.Extent.Height - scrollViewer.Viewport.Height - 20;
+         return true;
+      }
+
+      private Avalonia.Controls.ScrollViewer FindScrollViewer(Avalonia.Controls.Control parent)
+      {
+         if (parent is Avalonia.Controls.ScrollViewer sv) return sv;
+         foreach (var child in Avalonia.VisualTree.VisualExtensions.GetVisualChildren(parent))
+         {
+            if (child is Avalonia.Controls.Control c)
+            {
+               var result = FindScrollViewer(c);
+               if (result != null) return result;
+            }
+         }
+         return null;
+      }
+
+      private void ApplyMessageFilter()
+      {
+         mFilteredMessages.Clear();
+         foreach (var msg in mMessages)
+         {
+            if (mSourceFilters.TryGetValue(msg.Source, out bool visible) && visible)
+               mFilteredMessages.Add(msg);
+         }
+         if (mFilteredMessages.Count > 0)
+            lstMessages.ScrollIntoView(mFilteredMessages.Count - 1);
+      }
+
+      private void OnSourceFilterChanged(MessageSource source, bool isChecked)
+      {
+         mSourceFilters[source] = isChecked;
+         ApplyMessageFilter();
+      }
+
+      private void btnClearMessages_Click(object sender, RoutedEventArgs e) { mMessages.Clear(); mFilteredMessages.Clear(); }
 
       private async void menuCopyMessages_Click(object sender, RoutedEventArgs e)
       {
-         var text = string.Join(Environment.NewLine, mMessages.Select(m => m.Text));
+         var text = string.Join(Environment.NewLine, mFilteredMessages.Select(m => m.Text));
          if (Clipboard is { } clipboard)
             await clipboard.SetTextAsync(text);
+      }
+
+      private void menuScrollToEnd_Click(object sender, RoutedEventArgs e)
+      {
+         if (mFilteredMessages.Count > 0)
+            lstMessages.ScrollIntoView(mFilteredMessages.Count - 1);
+      }
+
+      private void menuFilterFlexApi_Click(object sender, RoutedEventArgs e)
+      {
+         ToggleSourceFilter(sender, MessageSource.FlexApi);
+      }
+
+      private void menuFilterLibVlc_Click(object sender, RoutedEventArgs e)
+      {
+         ToggleSourceFilter(sender, MessageSource.LibVlc);
+      }
+
+      private void menuFilterConfig_Click(object sender, RoutedEventArgs e)
+      {
+         ToggleSourceFilter(sender, MessageSource.Config);
+      }
+
+      private void ToggleSourceFilter(object sender, MessageSource source)
+      {
+         if (sender is MenuItem menuItem && menuItem.Icon is CheckBox cb)
+         {
+            cb.IsChecked = !(cb.IsChecked ?? false);
+            OnSourceFilterChanged(source, cb.IsChecked ?? false);
+         }
       }
 
       private void MessagesSplitter_DragCompleted(object sender, Avalonia.Input.VectorEventArgs e)
@@ -1190,9 +1272,12 @@ namespace Vao.Sample
       }
    }
 
+   public enum MessageSource { FlexApi, LibVlc, Config }
+
    public class MessageItem
    {
       public string Text { get; set; }
       public IBrush Color { get; set; }
+      public MessageSource Source { get; set; }
    }
 }

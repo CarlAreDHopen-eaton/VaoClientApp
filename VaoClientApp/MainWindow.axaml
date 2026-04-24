@@ -334,8 +334,26 @@
                             </ListBox.Styles>
                             <ListBox.ContextMenu>
                                 <ContextMenu>
+                                    <MenuItem Header="Scroll to End" Click="menuScrollToEnd_Click"/>
+                                    <Separator/>
                                     <MenuItem Header="Copy All" Click="menuCopyMessages_Click"/>
                                     <MenuItem Header="Clear" Click="btnClearMessages_Click"/>
+                                    <Separator/>
+                                    <MenuItem x:Name="menuFilterFlexApi" Header="Show FlexApi" Click="menuFilterFlexApi_Click">
+                                        <MenuItem.Icon>
+                                            <CheckBox IsChecked="True" IsHitTestVisible="False"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem x:Name="menuFilterLibVlc" Header="Show LibVlc" Click="menuFilterLibVlc_Click">
+                                        <MenuItem.Icon>
+                                            <CheckBox IsChecked="True" IsHitTestVisible="False"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem x:Name="menuFilterConfig" Header="Show Config" Click="menuFilterConfig_Click">
+                                        <MenuItem.Icon>
+                                            <CheckBox IsChecked="True" IsHitTestVisible="False"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
                                 </ContextMenu>
                             </ListBox.ContextMenu>
                             <ListBox.ItemTemplate>
