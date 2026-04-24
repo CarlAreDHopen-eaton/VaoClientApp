@@ -291,23 +291,23 @@
                     <Grid RowDefinitions="Auto,*,Auto">
                         <Border Grid.Row="0" x:Name="brdVideoHeader" Background="{DynamicResource VideoHeaderBg}" CornerRadius="4,4,0,0">
                             <Grid ColumnDefinitions="*,Auto">
-                                <TextBlock x:Name="txtVideoHeader" Text="No Camera Selected" FontWeight="SemiBold" FontSize="14" Foreground="White" Margin="16,12" Opacity="0.87" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="txtVideoHeader" Text="No Camera Selected" FontWeight="SemiBold" FontSize="14" Foreground="White" Margin="16,6" Opacity="0.87" VerticalAlignment="Center"/>
                                 <ToggleSwitch x:Name="tglSubChannel" Grid.Column="1" 
                                               OnContent="Sub" OffContent="Main"
                                               IsChecked="True" 
                                               Checked="tglSubChannel_CheckedChanged" 
                                               Unchecked="tglSubChannel_CheckedChanged"
-                                              Margin="0,0,12,0" VerticalAlignment="Center"
+                                              Margin="0,0,12,0" VerticalAlignment="Center" MinHeight="0"
                                               Foreground="White"/>
                             </Grid>
                         </Border>
                         <Panel Grid.Row="1" x:Name="pnlVideo" Background="{DynamicResource VideoBg}"/>
-                        <TextBox Grid.Row="2" x:Name="txtCurrentRtspUrl" IsReadOnly="True" FontSize="11" Margin="16,8,16,12" Background="Transparent" BorderThickness="0" Foreground="{DynamicResource LabelFg}"/>
+                        <TextBox Grid.Row="2" x:Name="txtCurrentRtspUrl" IsReadOnly="True" FontSize="11" Margin="16,8,16,12" Background="Transparent" BorderThickness="0" Foreground="{DynamicResource LabelFg}" IsVisible="False"/>
                     </Grid>
                 </Border>
 
                 <!-- Splitter between video and messages -->
-                <GridSplitter Grid.Row="1" Height="6" HorizontalAlignment="Stretch" 
+                <GridSplitter Grid.Row="1" x:Name="messagesSplitter" Height="6" HorizontalAlignment="Stretch" 
                               Background="Transparent" Margin="0,2"
                               ResizeDirection="Rows"
                               DragCompleted="MessagesSplitter_DragCompleted"/>
@@ -325,6 +325,13 @@
                             </Grid>
                         </Border>
                         <ListBox Grid.Row="1" x:Name="lstMessages" Background="Transparent" FontFamily="{StaticResource MonospaceFont}" FontSize="11" Margin="12,8">
+                            <ListBox.Styles>
+                                <Style Selector="ListBoxItem">
+                                    <Setter Property="Padding" Value="4,0"/>
+                                    <Setter Property="MinHeight" Value="0"/>
+                                    <Setter Property="Margin" Value="0"/>
+                                </Style>
+                            </ListBox.Styles>
                             <ListBox.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Header="Copy All" Click="menuCopyMessages_Click"/>

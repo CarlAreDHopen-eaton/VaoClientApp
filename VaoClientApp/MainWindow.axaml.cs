@@ -955,6 +955,7 @@ namespace Vao.Sample
             messagesRow.Height = GridLength.Auto;
             brdMessages.MaxHeight = 36;
             lstMessages.IsVisible = false;
+            messagesSplitter.IsEnabled = false;
              txtMessagesToggle.Text = "▶";
          }
          else
@@ -962,6 +963,7 @@ namespace Vao.Sample
             brdMessages.MaxHeight = double.PositiveInfinity;
             messagesRow.Height = mMessagesExpandedRowHeight;
             lstMessages.IsVisible = true;
+            messagesSplitter.IsEnabled = true;
              txtMessagesToggle.Text = "▼";
          }
          SaveSettings();
