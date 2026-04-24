@@ -118,6 +118,7 @@ namespace Vao.Sample
          {
             var app = (App)Avalonia.Application.Current;
             app.SetTheme(!IsDarkMode);
+            RefreshMessageColors();
             SaveSettings();
             e.Handled = true;
          }
@@ -351,6 +352,7 @@ namespace Vao.Sample
             // Reload settings into main window
             LoadSettings();
             UpdateUserInitial();
+            RefreshMessageColors();
          }
       }
 
@@ -515,17 +517,11 @@ namespace Vao.Sample
          var strLevel = level.ToString().PadRight(7);
          var strMsg = $"{strTime} [{strLevel}][{strSource}] - {strMessage}";
 
-         IBrush color = level switch
-         {
-            LogLevel.Error => Brushes.Red,
-            LogLevel.Warning => new SolidColorBrush(IsDarkMode ? Colors.Orange : Color.FromRgb(200, 120, 0)),
-            LogLevel.Debug => new SolidColorBrush(IsDarkMode ? Colors.LightBlue : Color.FromRgb(0, 100, 180)),
-            _ => new SolidColorBrush(IsDarkMode ? Colors.White : Colors.Black),
-         };
+         IBrush color = GetColorForLogLevel(level);
 
          if (strMessage != "drawable Warning: unsupported control query 3")
           {
-             var item = new MessageItem { Text = strMsg, Color = color, Source = source };
+             var item = new MessageItem { Text = strMsg, Color = color, Source = source, Level = level };
              mMessages.Add(item);
              if (mSourceFilters.TryGetValue(source, out bool visible) && visible)
              {
@@ -535,6 +531,25 @@ namespace Vao.Sample
                    lstMessages.ScrollIntoView(mFilteredMessages.Count - 1);
              }
           }
+      }
+
+      private IBrush GetColorForLogLevel(LogLevel level)
+      {
+         return level switch
+         {
+            LogLevel.Error => Brushes.Red,
+            LogLevel.Warning => new SolidColorBrush(IsDarkMode ? Colors.Orange : Color.FromRgb(120, 63, 0)),
+            LogLevel.Debug => new SolidColorBrush(IsDarkMode ? Colors.LightBlue : Color.FromRgb(0, 67, 122)),
+            _ => new SolidColorBrush(IsDarkMode ? Colors.White : Colors.Black),
+         };
+      }
+
+      private void RefreshMessageColors()
+      {
+         foreach (var item in mMessages)
+         {
+            item.Color = GetColorForLogLevel(item.Level);
+         }
       }
 
       private void btnDisconnect_Click(object sender, RoutedEventArgs e)
@@ -1425,10 +1440,36 @@ namespace Vao.Sample
 
    public enum MessageSource { FlexApi, LibVlc, Config }
 
-   public class MessageItem
+   public class MessageItem : INotifyPropertyChanged
    {
-      public string Text { get; set; }
-      public IBrush Color { get; set; }
+      private string mText;
+      private IBrush mColor;
+
+      public string Text
+      {
+         get => mText;
+         set
+         {
+            if (mText == value) return;
+            mText = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Text)));
+         }
+      }
+
+      public IBrush Color
+      {
+         get => mColor;
+         set
+         {
+            if (mColor == value) return;
+            mColor = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Color)));
+         }
+      }
+
       public MessageSource Source { get; set; }
+      public LogLevel Level { get; set; }
+
+      public event PropertyChangedEventHandler PropertyChanged;
    }
 }
