@@ -2,104 +2,99 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="Vao.Sample.DownloadWindow"
         Title="Download Recording"
-        Width="1118" Height="573" MinWidth="600" MinHeight="200"
+        Width="1118" Height="637" MinWidth="600" MinHeight="400"
         Background="{DynamicResource AppBg}"
         WindowStartupLocation="CenterOwner">
 
-    <Grid ColumnDefinitions="420,*">
-        <!-- Left panel -->
-        <ScrollViewer Grid.Column="0" HorizontalScrollBarVisibility="Disabled">
-            <StackPanel Spacing="6" Margin="10">
-
-                <!-- FTP Connection -->
-                <Border Background="{DynamicResource SectionBg}" CornerRadius="4" Padding="10">
-                    <StackPanel Spacing="6">
-                        <TextBlock Text="FTP Connection" FontWeight="SemiBold"/>
-                        <Grid ColumnDefinitions="80,*" RowDefinitions="Auto,Auto">
-                            <TextBlock Grid.Row="0" Grid.Column="0" Text="User" Foreground="{DynamicResource LabelFg}" VerticalAlignment="Center"/>
-                            <TextBox Grid.Row="0" Grid.Column="1" x:Name="txtFTPUser" TextChanged="txtFTPCredential_TextChanged"/>
-                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Password" Foreground="{DynamicResource LabelFg}" VerticalAlignment="Center" Margin="0,4,0,0"/>
-                            <TextBox Grid.Row="1" Grid.Column="1" x:Name="txtFTPPassword" PasswordChar="*" TextChanged="txtFTPCredential_TextChanged" Margin="0,4,0,0"/>
-                        </Grid>
-                    </StackPanel>
-                </Border>
-
-                <!-- Download Path -->
-                <Border Background="{DynamicResource SectionBg}" CornerRadius="4" Padding="10">
-                    <StackPanel Spacing="6">
-                        <TextBlock Text="Download path" FontWeight="SemiBold"/>
-                        <TextBox x:Name="txtDownloadPath" Text="C:\"/>
-                        <Button x:Name="btnBrowse" Content="Browse" Click="btnBrowseDownloadPath_Click"/>
-                    </StackPanel>
-                </Border>
-
-                <!-- Available Recordings -->
-                <Border Background="{DynamicResource SectionBg}" CornerRadius="4" Padding="10" x:Name="grpSelectRecording">
-                    <StackPanel Spacing="6">
-                        <TextBlock Text="Available Recordings" FontWeight="SemiBold"/>
-                        <Grid ColumnDefinitions="80,*" RowDefinitions="Auto,Auto">
-                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Camera" Foreground="{DynamicResource LabelFg}" VerticalAlignment="Center"/>
-                            <ComboBox Grid.Row="0" Grid.Column="1" x:Name="selCamera" SelectionChanged="selCamera_SelectedIndexChanged" HorizontalAlignment="Stretch"/>
-                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Recordings" Foreground="{DynamicResource LabelFg}" VerticalAlignment="Center" Margin="0,4,0,0"/>
-                            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="selRecording" SelectionChanged="selRecording_SelectedIndexChanged" HorizontalAlignment="Stretch" Margin="0,4,0,0"/>
-                        </Grid>
-                    </StackPanel>
-                </Border>
-
-                <!-- Request Download -->
-                <Border Background="{DynamicResource SectionBg}" CornerRadius="4" Padding="10" x:Name="grpDownload">
-                    <StackPanel Spacing="6">
-                        <TextBlock Text="Request Download" FontWeight="SemiBold"/>
-                        <Grid ColumnDefinitions="80,*" RowDefinitions="Auto,Auto">
-                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Recorder" Foreground="{DynamicResource LabelFg}" VerticalAlignment="Center"/>
-                            <TextBox Grid.Row="0" Grid.Column="1" x:Name="txtRecorderAddress"/>
-                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Stream" Foreground="{DynamicResource LabelFg}" VerticalAlignment="Center" Margin="0,4,0,0"/>
-                            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="selStreamNumber" HorizontalAlignment="Stretch" Margin="0,4,0,0"/>
-                        </Grid>
-                        <TextBlock Text="Start time" Foreground="{DynamicResource LabelFg}" Margin="0,2,0,0"/>
-                        <Grid ColumnDefinitions="*,*">
-                            <DatePicker Grid.Column="0" x:Name="startDatePicker" HorizontalAlignment="Stretch" Margin="0,0,3,0"/>
-                            <TimePicker Grid.Column="1" x:Name="startTimePicker" ClockIdentifier="24HourClock" HorizontalAlignment="Stretch" Margin="3,0,0,0"/>
-                        </Grid>
-                        <Grid ColumnDefinitions="80,*">
-                            <TextBlock Grid.Column="0" Text="Duration" Foreground="{DynamicResource LabelFg}" VerticalAlignment="Center"/>
-                            <ComboBox Grid.Column="1" x:Name="selDuration" HorizontalAlignment="Stretch"/>
-                        </Grid>
-                        <Button x:Name="btnDownloadRequest" Content="Download" Click="btnDownloadRequest_Click" Margin="0,4,0,0"/>
-                    </StackPanel>
-                </Border>
-
+    <Grid RowDefinitions="64,*">
+        <!-- Header (64px per Brightlayer UI Dialog spec) -->
+        <Border Grid.Row="0" Background="{DynamicResource Primary}" BoxShadow="0 2 4 0 #40000000">
+            <StackPanel VerticalAlignment="Center" Margin="24,0">
+                <TextBlock Text="Download Recording"
+                           FontSize="20"
+                           FontWeight="Medium"
+                           Foreground="White"/>
+                <TextBlock Text="Export video recordings from recorders"
+                           FontSize="12"
+                           Foreground="White"
+                           Opacity="0.7"/>
             </StackPanel>
-        </ScrollViewer>
+        </Border>
 
-        <!-- Right panel -->
-        <Grid Grid.Column="1" RowDefinitions="*,*,*" Margin="10">
-            <!-- Pending Downloads -->
-            <Border Grid.Row="0" Background="{DynamicResource SectionBg}" CornerRadius="4" Padding="10" Margin="0,0,0,3">
-                <Grid RowDefinitions="Auto,*,Auto">
-                    <TextBlock Grid.Row="0" Text="Pending Downloads" FontWeight="SemiBold"/>
-                    <ListBox Grid.Row="1" x:Name="lstPendingDownloads" Background="Transparent" Margin="0,4"/>
-                    <Button Grid.Row="2" Content="Clear" Click="btnClearPendingDownloads_Click" HorizontalAlignment="Right"/>
-                </Grid>
-            </Border>
+        <!-- Content -->
+        <Grid Grid.Row="1" ColumnDefinitions="420,*">
+            <!-- Left panel -->
+            <ScrollViewer Grid.Column="0" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel Spacing="0" Margin="0">
 
-            <!-- Finished Downloads -->
-            <Border Grid.Row="1" Background="{DynamicResource SectionBg}" CornerRadius="4" Padding="10" Margin="0,3">
-                <Grid RowDefinitions="Auto,*,Auto">
-                    <TextBlock Grid.Row="0" Text="Finished Downloads" FontWeight="SemiBold"/>
-                    <ListBox Grid.Row="1" x:Name="lstFinishedDownloads" Background="Transparent" Margin="0,4"/>
-                    <Button Grid.Row="2" Content="Clear" Click="btnClearFinishedDownloads_Click" HorizontalAlignment="Right"/>
-                </Grid>
-            </Border>
+                    <!-- Available Recordings -->
+                    <Border Background="{DynamicResource SectionBg}" BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1" Padding="16" x:Name="grpSelectRecording">
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="Available Recordings" Classes="section-header"/>
+                            <Grid ColumnDefinitions="80,*" RowDefinitions="Auto,Auto">
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Camera" Classes="label" VerticalAlignment="Center"/>
+                                <ComboBox Grid.Row="0" Grid.Column="1" x:Name="selCamera" SelectionChanged="selCamera_SelectedIndexChanged" HorizontalAlignment="Stretch"/>
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Recordings" Classes="label" VerticalAlignment="Center" Margin="0,8,0,0"/>
+                                <ComboBox Grid.Row="1" Grid.Column="1" x:Name="selRecording" SelectionChanged="selRecording_SelectedIndexChanged" HorizontalAlignment="Stretch" Margin="0,8,0,0"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
 
-            <!-- Messages -->
-            <Border Grid.Row="2" Background="{DynamicResource SectionBg}" CornerRadius="4" Padding="10" Margin="0,3,0,0">
-                <Grid RowDefinitions="Auto,*,Auto">
-                    <TextBlock Grid.Row="0" Text="Messages" FontWeight="SemiBold"/>
-                    <ListBox Grid.Row="1" x:Name="lstDownloadMessages" Background="Transparent" Margin="0,4"/>
-                    <Button Grid.Row="2" Content="Clear" Click="btnClearDownloadMessages_Click" HorizontalAlignment="Right"/>
-                </Grid>
-            </Border>
+                    <!-- Request Download -->
+                    <Border Background="{DynamicResource SectionBg}" BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1" Padding="16" x:Name="grpDownload">
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="Request Download" Classes="section-header"/>
+                            <Grid ColumnDefinitions="80,*" RowDefinitions="Auto,Auto">
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Recorder" Classes="label" VerticalAlignment="Center"/>
+                                <TextBox Grid.Row="0" Grid.Column="1" x:Name="txtRecorderAddress"/>
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Stream" Classes="label" VerticalAlignment="Center" Margin="0,8,0,0"/>
+                                <ComboBox Grid.Row="1" Grid.Column="1" x:Name="selStreamNumber" HorizontalAlignment="Stretch" Margin="0,8,0,0"/>
+                            </Grid>
+                            <TextBlock Text="Start time" Classes="label" Margin="0,8,0,0"/>
+                            <Grid ColumnDefinitions="*,8,*">
+                                <DatePicker Grid.Column="0" x:Name="startDatePicker" HorizontalAlignment="Stretch"/>
+                                <TimePicker Grid.Column="2" x:Name="startTimePicker" ClockIdentifier="24HourClock" HorizontalAlignment="Stretch"/>
+                            </Grid>
+                            <Grid ColumnDefinitions="80,*">
+                                <TextBlock Grid.Column="0" Text="Duration" Classes="label" VerticalAlignment="Center"/>
+                                <ComboBox Grid.Column="1" x:Name="selDuration" HorizontalAlignment="Stretch"/>
+                            </Grid>
+                            <Button x:Name="btnDownloadRequest" Content="Download" Click="btnDownloadRequest_Click" Margin="0,8,0,0" Classes="primary" HorizontalAlignment="Stretch"/>
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- Right panel -->
+            <Grid Grid.Column="1" RowDefinitions="*,*,*" Margin="0">
+                <!-- Pending Downloads -->
+                <Border Grid.Row="0" Background="{DynamicResource SectionBg}" BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1" Padding="16">
+                    <Grid RowDefinitions="Auto,*,Auto">
+                        <TextBlock Grid.Row="0" Text="Pending Downloads" Classes="section-header"/>
+                        <ListBox Grid.Row="1" x:Name="lstPendingDownloads" Background="Transparent" Margin="0,8"/>
+                        <Button Grid.Row="2" Content="Clear" Click="btnClearPendingDownloads_Click" HorizontalAlignment="Right" Classes="outlined"/>
+                    </Grid>
+                </Border>
+
+                <!-- Finished Downloads -->
+                <Border Grid.Row="1" Background="{DynamicResource SectionBg}" BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1" Padding="16">
+                    <Grid RowDefinitions="Auto,*,Auto">
+                        <TextBlock Grid.Row="0" Text="Finished Downloads" Classes="section-header"/>
+                        <ListBox Grid.Row="1" x:Name="lstFinishedDownloads" Background="Transparent" Margin="0,8"/>
+                        <Button Grid.Row="2" Content="Clear" Click="btnClearFinishedDownloads_Click" HorizontalAlignment="Right" Classes="outlined"/>
+                    </Grid>
+                </Border>
+
+                <!-- Messages -->
+                <Border Grid.Row="2" Background="{DynamicResource SectionBg}" Padding="16">
+                    <Grid RowDefinitions="Auto,*,Auto">
+                        <TextBlock Grid.Row="0" Text="Messages" Classes="section-header"/>
+                        <ListBox Grid.Row="1" x:Name="lstDownloadMessages" Background="Transparent" FontFamily="{StaticResource MonospaceFont}" FontSize="11" Margin="0,8"/>
+                        <Button Grid.Row="2" Content="Clear" Click="btnClearDownloadMessages_Click" HorizontalAlignment="Right" Classes="outlined"/>
+                    </Grid>
+                </Border>
+            </Grid>
         </Grid>
     </Grid>
 </Window>

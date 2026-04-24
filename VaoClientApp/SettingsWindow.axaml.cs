@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Platform.Storage;
 using System;
 
 namespace Vao.Sample
@@ -33,6 +34,9 @@ namespace Vao.Sample
             var chkPreferSubChannel = this.FindControl<CheckBox>("chkPreferSubChannel");
             var chkDarkMode = this.FindControl<CheckBox>("chkDarkMode");
             var chkAutoConnect = this.FindControl<CheckBox>("chkAutoConnect");
+            var txtFTPUser = this.FindControl<TextBox>("txtFTPUser");
+            var txtFTPPassword = this.FindControl<TextBox>("txtFTPPassword");
+            var txtDownloadPath = this.FindControl<TextBox>("txtDownloadPath");
 
             txtHost.Text = s.Host1;
             txtPort.Text = s.ApiPort;
@@ -43,6 +47,9 @@ namespace Vao.Sample
             chkPreferSubChannel.IsChecked = s.PreferSubChannel;
             chkDarkMode.IsChecked = s.IsDarkMode;
             chkAutoConnect.IsChecked = s.AutoConnectOnStartup;
+            txtFTPUser.Text = s.FTPUser;
+            txtFTPPassword.Text = s.FTPPassword;
+            txtDownloadPath.Text = s.DownloadPath;
         }
 
         private void SaveSettings()
@@ -57,6 +64,9 @@ namespace Vao.Sample
             var chkPreferSubChannel = this.FindControl<CheckBox>("chkPreferSubChannel");
             var chkDarkMode = this.FindControl<CheckBox>("chkDarkMode");
             var chkAutoConnect = this.FindControl<CheckBox>("chkAutoConnect");
+            var txtFTPUser = this.FindControl<TextBox>("txtFTPUser");
+            var txtFTPPassword = this.FindControl<TextBox>("txtFTPPassword");
+            var txtDownloadPath = this.FindControl<TextBox>("txtDownloadPath");
 
             s.Host1 = txtHost.Text ?? "";
             s.ApiPort = txtPort.Text ?? "";
@@ -67,6 +77,9 @@ namespace Vao.Sample
             s.PreferSubChannel = chkPreferSubChannel.IsChecked == true;
             s.IsDarkMode = chkDarkMode.IsChecked == true;
             s.AutoConnectOnStartup = chkAutoConnect.IsChecked == true;
+            s.FTPUser = txtFTPUser.Text ?? "";
+            s.FTPPassword = txtFTPPassword.Text ?? "";
+            s.DownloadPath = txtDownloadPath.Text ?? "";
             s.Save();
             _settingsSaved = true;
         }
@@ -95,6 +108,21 @@ namespace Vao.Sample
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
             btnCancel_Click(sender, e);
+        }
+
+        private async void btnBrowseDownloadPath_Click(object sender, RoutedEventArgs e)
+        {
+            var topLevel = TopLevel.GetTopLevel(this);
+            var folders = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+            {
+                Title = "Select download path",
+                AllowMultiple = false
+            });
+            if (folders.Count > 0)
+            {
+                var txtDownloadPath = this.FindControl<TextBox>("txtDownloadPath");
+                txtDownloadPath.Text = folders[0].Path.LocalPath;
+            }
         }
 
         public bool WereSettingsSaved()

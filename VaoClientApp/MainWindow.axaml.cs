@@ -232,41 +232,35 @@ namespace Vao.Sample
          }
       }
 
-      private static readonly string ResBase = "avares://VaoClientApp/Resources/";
-
       private bool IsDarkMode => AppSettings.Default.IsDarkMode;
 
       private void ApplyIcons()
       {
-         bool invert = IsDarkMode;
-         imgFocusNear.Source = IconHelper.Load(ResBase + "flip_to_front_black_24dp.png", invert);
-         imgTiltUp.Source = IconHelper.Load(ResBase + "arrow_upward_black_24dp.png", invert);
-         imgZoomIn.Source = IconHelper.Load(ResBase + "zoom_in_black_24dp.png", invert);
-         imgPanLeft.Source = IconHelper.Load(ResBase + "arrow_back_black_24dp.png", invert);
-         imgCenterCamera.Source = IconHelper.Load(ResBase + "control_camera_black_24dp.png", invert);
-         imgPanRight.Source = IconHelper.Load(ResBase + "arrow_forward_black_24dp.png", invert);
-         imgFocusFar.Source = IconHelper.Load(ResBase + "flip_to_back_black_24dp.png", invert);
-         imgTiltDown.Source = IconHelper.Load(ResBase + "arrow_downward_black_24dp.png", invert);
-         imgZoomOut.Source = IconHelper.Load(ResBase + "zoom_out_black_24dp.png", invert);
-         imgAbsolutePosition.Source = IconHelper.Load(ResBase + "absoluteposition_black_24dp.png", invert);
-         imgCameraLock.Source = IconHelper.Load(ResBase + "cameraunlocked_black_24dp.png", invert);
+         // Icons are now rendered via Material Symbols font in AXAML.
+         // No bitmap loading needed. Camera lock icon state is managed in Camera_LockStatusChanged.
       }
 
       private void UpdateUserInitial()
       {
          string username = AppSettings.Default.User?.Trim() ?? "";
-         var menuItem = this.FindControl<MenuItem>("menuItemUsername");
+         var txtMenuUsername = this.FindControl<TextBlock>("txtMenuUsername");
+         var menuItemLogin = this.FindControl<MenuItem>("menuItemLogin");
+         var menuItemLogout = this.FindControl<MenuItem>("menuItemLogout");
 
          if (string.IsNullOrEmpty(username))
          {
             txtUserInitial.Text = "U";
-            if (menuItem != null) menuItem.Header = "Not logged in";
+            if (txtMenuUsername != null) txtMenuUsername.Text = "Not logged in";
          }
          else
          {
             txtUserInitial.Text = username.Substring(0, 1).ToUpper();
-            if (menuItem != null) menuItem.Header = username;
+            if (txtMenuUsername != null) txtMenuUsername.Text = username;
          }
+
+         // Update Login/Logout enabled state based on connection
+         if (menuItemLogin != null) menuItemLogin.IsEnabled = !IsStarted;
+         if (menuItemLogout != null) menuItemLogout.IsEnabled = IsStarted;
 
          // Update tooltip with user, connection status, and server
           var status = IsStarted ? "Connected" : "Disconnected";
@@ -294,6 +288,31 @@ namespace Vao.Sample
       private void btnUserProfile_Click(object sender, RoutedEventArgs e)
       {
          // The flyout opens automatically when the button is clicked
+      }
+
+      private async void menuItemLogin_Click(object sender, RoutedEventArgs e)
+      {
+         var s = AppSettings.Default;
+         // Check if credentials are configured
+         if (string.IsNullOrWhiteSpace(s.Host1) || string.IsNullOrWhiteSpace(s.User) || string.IsNullOrWhiteSpace(s.Password))
+         {
+            // Open settings first if not configured
+            var settingsWindow = new SettingsWindow();
+            await settingsWindow.ShowDialog(this);
+
+            if (settingsWindow.WereSettingsSaved())
+            {
+               LoadSettings();
+               UpdateUserInitial();
+               // After settings saved, attempt to connect
+               btnConnect_Click(sender, e);
+            }
+         }
+         else
+         {
+            // Credentials configured, just connect
+            btnConnect_Click(sender, e);
+         }
       }
 
       private async void menuItemSettings_Click(object sender, RoutedEventArgs e)
@@ -366,10 +385,10 @@ namespace Vao.Sample
 
       public void UpdateEnabled()
       {
-         var menuDisconnect = this.FindControl<MenuItem>("menuItemDisconnect");
-         var menuConnect = this.FindControl<MenuItem>("menuItemConnect");
-         if (menuDisconnect != null) menuDisconnect.IsEnabled = IsStarted;
-         if (menuConnect != null) menuConnect.IsEnabled = !IsStarted;
+         var menuItemLogin = this.FindControl<MenuItem>("menuItemLogin");
+         var menuItemLogout = this.FindControl<MenuItem>("menuItemLogout");
+         if (menuItemLogin != null) menuItemLogin.IsEnabled = !IsStarted;
+         if (menuItemLogout != null) menuItemLogout.IsEnabled = IsStarted;
          pnlCameraSelectFlowPanel.IsEnabled = IsStarted;
          tglSubChannel.IsEnabled = IsStarted && !IsPlayback && mCurrentCamera != null && !string.IsNullOrEmpty(mCurrentCamera?.Stream2Resolution);
          grpSelectPreset.IsEnabled = IsStarted;
@@ -614,23 +633,36 @@ namespace Vao.Sample
       private void Camera_LockStatusChanged(object sender, EventArgs e)
       {
          Dispatcher.UIThread.Post(() =>
-         {
-            bool invert = IsDarkMode;
-            if (mCurrentCamera != null && mCurrentCamera.IsLocked && mCurrentCamera.LockOwner == "Alarm")
-            {
-               imgCameraLock.Source = IconHelper.Load(ResBase + "cameralocked_red_24dp.png", invert);
-               btnCameraLock.IsEnabled = true;
-            }
-            else if (mCurrentCamera != null && mCurrentCamera.IsLocked)
-            {
-               imgCameraLock.Source = IconHelper.Load(ResBase + "cameralocked_yellow_24dp.png", invert);
-               btnCameraLock.IsEnabled = true;
-            }
-            else if (mCurrentCamera != null && !mCurrentCamera.IsLocked)
-            {
-               imgCameraLock.Source = IconHelper.Load(ResBase + "cameraunlocked_black_24dp.png", invert);
-               btnCameraLock.IsEnabled = true;
-            }
+          {
+             var iconCameraLock = this.FindControl<TextBlock>("iconCameraLock");
+             if (mCurrentCamera != null && mCurrentCamera.IsLocked && mCurrentCamera.LockOwner == "Alarm")
+             {
+                if (iconCameraLock != null)
+                {
+                   iconCameraLock.Text = "\uE899"; // lock
+                   iconCameraLock.Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#CA3C3D"));
+                }
+                btnCameraLock.IsEnabled = true;
+             }
+             else if (mCurrentCamera != null && mCurrentCamera.IsLocked)
+             {
+                if (iconCameraLock != null)
+                {
+                   iconCameraLock.Text = "\uE899"; // lock
+                   iconCameraLock.Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#F0AA1F"));
+                }
+                btnCameraLock.IsEnabled = true;
+             }
+             else if (mCurrentCamera != null && !mCurrentCamera.IsLocked)
+             {
+                if (iconCameraLock != null)
+                {
+                   iconCameraLock.Text = "\uE898"; // lock_open
+                   if (this.TryFindResource("SidebarHeaderFg", this.ActualThemeVariant, out var brush) && brush is Avalonia.Media.IBrush b)
+                      iconCameraLock.Foreground = b;
+                }
+                btnCameraLock.IsEnabled = true;
+             }
 
             if (mCurrentCamera != null && mCurrentCamera.CanUnlock == false)
             {

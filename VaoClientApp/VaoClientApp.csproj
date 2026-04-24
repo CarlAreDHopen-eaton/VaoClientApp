@@ -24,6 +24,11 @@
     <AvaloniaResource Include="Resources\**" />
   </ItemGroup>
 
+  <!-- Embedded Open Sans Fonts for Brightlayer UI -->
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\Fonts\*.ttf" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\VaoClient\VaoClient.csproj" />
   </ItemGroup>

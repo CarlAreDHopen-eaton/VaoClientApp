@@ -7,19 +7,17 @@
         Background="{DynamicResource AppBg}">
 
     <Grid RowDefinitions="64,*">
-        <!-- Top App Bar -->
+        <!-- Top App Bar (64px per Brightlayer UI) -->
         <Border Grid.Row="0" Background="{DynamicResource Primary}" BoxShadow="0 2 4 0 #40000000">
             <Grid ColumnDefinitions="Auto,*,Auto" Margin="0">
                 <!-- Left: Hamburger + App Title + Subtitle -->
                 <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="16" VerticalAlignment="Center" Margin="8,0,0,0">
                     <Button x:Name="btnToggleSidebarAppBar" 
                             Click="btnToggleSidebar_Click"
-                            Background="Transparent"
-                            BorderThickness="0"
-                            Padding="12"
+                            Classes="icon"
                             ToolTip.Tip="Toggle sidebar (F9)"
                             VerticalAlignment="Center">
-                        <TextBlock Text="☰" FontSize="24" Foreground="White"/>
+                        <TextBlock Text="&#xE5D2;" Classes="ms-icon" FontSize="24" Foreground="White"/>
                     </Button>
                     <StackPanel VerticalAlignment="Center" Spacing="2">
                         <TextBlock Text="HERNIS FLEX VAO" 
@@ -29,7 +27,7 @@
                         <TextBlock Text="Test application for the HERNIS FLEX API" 
                                    FontSize="12" 
                                    Foreground="White"
-                                   Opacity="0.8"/>
+                                   Opacity="0.7"/>
                     </StackPanel>
                 </StackPanel>
 
@@ -53,33 +51,28 @@
                                    VerticalAlignment="Center"/>
                         <Button.Flyout>
                             <MenuFlyout Placement="BottomEdgeAlignedRight">
-                                <MenuItem Header="Profile" IsEnabled="False">
+                                <MenuItem x:Name="menuItemUsername" IsEnabled="False">
                                     <MenuItem.Icon>
-                                        <TextBlock Text="👤" FontSize="16"/>
+                                        <TextBlock Text="&#xF0D3;" Classes="ms-icon" FontSize="18"/>
                                     </MenuItem.Icon>
+                                    <MenuItem.Header>
+                                        <TextBlock x:Name="txtMenuUsername" Text="Not logged in"/>
+                                    </MenuItem.Header>
                                 </MenuItem>
                                 <Separator/>
-                                <MenuItem x:Name="menuItemUsername" Header="Not logged in" IsEnabled="False"/>
-                                <Separator/>
-                                <MenuItem x:Name="menuItemConnect" Header="Connect" Click="btnConnect_Click">
+                                <MenuItem x:Name="menuItemLogin" Header="Login" Click="menuItemLogin_Click">
                                     <MenuItem.Icon>
-                                        <TextBlock Text="🔌" FontSize="16"/>
+                                        <TextBlock Text="&#xE73C;" Classes="ms-icon" FontSize="18"/>
                                     </MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem x:Name="menuItemDisconnect" Header="Disconnect" Click="btnDisconnect_Click" IsEnabled="False">
-                                    <MenuItem.Icon>
-                                        <TextBlock Text="⏏" FontSize="16"/>
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                                <Separator/>
                                 <MenuItem Header="Settings" Click="menuItemSettings_Click">
                                     <MenuItem.Icon>
-                                        <TextBlock Text="⚙" FontSize="16"/>
+                                        <TextBlock Text="&#xE8B8;" Classes="ms-icon" FontSize="18"/>
                                     </MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="Logout" Click="menuItemLogout_Click">
+                                <MenuItem x:Name="menuItemLogout" Header="Logout" Click="menuItemLogout_Click">
                                     <MenuItem.Icon>
-                                        <TextBlock Text="🚪" FontSize="16"/>
+                                        <TextBlock Text="&#xE9BA;" Classes="ms-icon" FontSize="18"/>
                                     </MenuItem.Icon>
                                 </MenuItem>
                             </MenuFlyout>
@@ -91,274 +84,262 @@
 
         <!-- Main Content Area -->
         <Grid Grid.Row="1" ColumnDefinitions="Auto,*">
-        <!-- Left panel - collapsible sidebar -->
-        <Grid Grid.Column="0" x:Name="sidebarGrid" Width="280">
-            <!-- Narrow icon rail (visible when collapsed) -->
-            <Border x:Name="narrowSidebar" IsVisible="False" Background="{DynamicResource Surface1}">
-                <StackPanel Spacing="2" Margin="0,8" HorizontalAlignment="Center">
-                    <Button Background="Transparent" BorderThickness="0" Width="42" Height="42"
-                            Click="btnExpandCameraControl_Click" ToolTip.Tip="Camera Control" Padding="0"
-                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
-                        <TextBlock Text="🎮" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Button>
-                    <Button Background="Transparent" BorderThickness="0" Width="42" Height="42" 
-                            Click="btnExpandCameraSelection_Click" ToolTip.Tip="Camera Selection" Padding="0"
-                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
-                        <TextBlock Text="📷" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Button>
-                    <Button Background="Transparent" BorderThickness="0" Width="42" Height="42" 
-                            Click="btnExpandPresetSelection_Click" ToolTip.Tip="Preset Selection" Padding="0"
-                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
-                        <TextBlock Text="📍" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Button>
-                    <Button Background="Transparent" BorderThickness="0" Width="42" Height="42" 
-                            Click="btnExpandAlarms_Click" ToolTip.Tip="Alarms" Padding="0"
-                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
-                        <TextBlock Text="🔔" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Button>
-                    <Button Background="Transparent" BorderThickness="0" Width="42" Height="42" 
-                            Click="btnExpandPlayback_Click" ToolTip.Tip="Playback Selection" Padding="0"
-                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
-                        <TextBlock Text="▶" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Button>
-                    <Button Background="Transparent" BorderThickness="0" Width="42" Height="42" 
-                            Click="btnExpandDownload_Click" ToolTip.Tip="Download Recording" Padding="0"
-                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
-                        <TextBlock Text="💾" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Button>
-                </StackPanel>
-            </Border>
+            <!-- Left panel - collapsible sidebar (280px expanded, 56px collapsed) -->
+            <Grid Grid.Column="0" x:Name="sidebarGrid" Width="280">
+                <!-- Narrow icon rail (visible when collapsed) -->
+                <Border x:Name="narrowSidebar" IsVisible="False" Background="{DynamicResource Surface1}">
+                    <StackPanel Spacing="4" Margin="0,8" HorizontalAlignment="Center">
+                        <Button Classes="icon" Click="btnExpandCameraControl_Click" ToolTip.Tip="Camera Control">
+                            <TextBlock Text="&#xE30F;" Classes="ms-icon"/>
+                        </Button>
+                        <Button Classes="icon" Click="btnExpandCameraSelection_Click" ToolTip.Tip="Camera Selection">
+                            <TextBlock Text="&#xE412;" Classes="ms-icon"/>
+                        </Button>
+                        <Button Classes="icon" Click="btnExpandPresetSelection_Click" ToolTip.Tip="Preset Selection">
+                            <TextBlock Text="&#xE55E;" Classes="ms-icon"/>
+                        </Button>
+                        <Button Classes="icon" Click="btnExpandAlarms_Click" ToolTip.Tip="Alarms">
+                            <TextBlock Text="&#xE7F5;" Classes="ms-icon"/>
+                        </Button>
+                        <Button Classes="icon" Click="btnExpandPlayback_Click" ToolTip.Tip="Playback Selection">
+                            <TextBlock Text="&#xE037;" Classes="ms-icon"/>
+                        </Button>
+                        <Button Classes="icon" Click="btnExpandDownload_Click" ToolTip.Tip="Download Recording">
+                            <TextBlock Text="&#xF090;" Classes="ms-icon"/>
+                        </Button>
+                    </StackPanel>
+                </Border>
 
-            <!-- Full sidebar content (visible when expanded) -->
-            <ScrollViewer x:Name="fullSidebar" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                <Border Classes="sidebar-shell">
-                    <StackPanel Spacing="0" x:Name="sidebarContent">
+                <!-- Full sidebar content (visible when expanded) -->
+                <ScrollViewer x:Name="fullSidebar" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <Border Classes="sidebar-shell">
+                        <StackPanel Spacing="0" x:Name="sidebarContent">
 
-                    <!-- Camera Control -->
-                    <Border Classes="sidebar-card">
-                        <Expander Classes="sidebar-section" x:Name="expCameraControl" IsExpanded="True" HorizontalAlignment="Stretch">
-                            <Expander.Header>
-                                <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <TextBlock Text="🎮" FontSize="16" VerticalAlignment="Center"/>
-                                    <TextBlock Text="Camera Control" VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </Expander.Header>
-                            <StackPanel Spacing="8" Margin="16,8,16,16" x:Name="grpCameraControl" IsEnabled="False">
-                                <Grid ColumnDefinitions="34,34,34,*,34,34" RowDefinitions="34,34,34">
-                            <!-- PTZ: row0=FocusNear/TiltUp/ZoomIn, row1=PanLeft/icon/PanRight, row2=FocusFar/TiltDown/ZoomOut -->
-                            <Button Grid.Row="0" Grid.Column="0" x:Name="btnFocusNear" ToolTip.Tip="Focus Near" PointerPressed="OnControlCameraPointerPressed" PointerReleased="OnControlCameraPointerReleased" Width="30" Height="30" Padding="2">
-                                <Image x:Name="imgFocusNear" Classes="theme-icon" Width="20" Height="20"/>
-                            </Button>
-                            <Button Grid.Row="0" Grid.Column="1" x:Name="btnTiltUp" ToolTip.Tip="Tilt Up" PointerPressed="OnControlCameraPointerPressed" PointerReleased="OnControlCameraPointerReleased" Width="30" Height="30" Padding="2">
-                                <Image x:Name="imgTiltUp" Classes="theme-icon" Width="20" Height="20"/>
-                            </Button>
-                            <Button Grid.Row="0" Grid.Column="2" x:Name="btnZoomIn" ToolTip.Tip="Zoom In" PointerPressed="OnControlCameraPointerPressed" PointerReleased="OnControlCameraPointerReleased" Width="30" Height="30" Padding="2">
-                                <Image x:Name="imgZoomIn" Classes="theme-icon" Width="20" Height="20"/>
-                            </Button>
-                            <Button Grid.Row="1" Grid.Column="0" x:Name="btnPanLeft" ToolTip.Tip="Pan Left" PointerPressed="OnControlCameraPointerPressed" PointerReleased="OnControlCameraPointerReleased" Width="30" Height="30" Padding="2">
-                                <Image x:Name="imgPanLeft" Classes="theme-icon" Width="20" Height="20"/>
-                            </Button>
-                            <Image Grid.Row="1" Grid.Column="1" x:Name="imgCenterCamera" Classes="theme-icon" Width="22" Height="22" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                            <Button Grid.Row="1" Grid.Column="2" x:Name="btnPanRight" ToolTip.Tip="Pan Right" PointerPressed="OnControlCameraPointerPressed" PointerReleased="OnControlCameraPointerReleased" Width="30" Height="30" Padding="2">
-                                <Image x:Name="imgPanRight" Classes="theme-icon" Width="20" Height="20"/>
-                            </Button>
-                            <Button Grid.Row="2" Grid.Column="0" x:Name="btnFocusFar" ToolTip.Tip="Focus Far" PointerPressed="OnControlCameraPointerPressed" PointerReleased="OnControlCameraPointerReleased" Width="30" Height="30" Padding="2">
-                                <Image x:Name="imgFocusFar" Classes="theme-icon" Width="20" Height="20"/>
-                            </Button>
-                            <Button Grid.Row="2" Grid.Column="1" x:Name="btnTiltDown" ToolTip.Tip="Tilt Down" PointerPressed="OnControlCameraPointerPressed" PointerReleased="OnControlCameraPointerReleased" Width="30" Height="30" Padding="2">
-                                <Image x:Name="imgTiltDown" Classes="theme-icon" Width="20" Height="20"/>
-                            </Button>
-                            <Button Grid.Row="2" Grid.Column="2" x:Name="btnZoomOut" ToolTip.Tip="Zoom Out" PointerPressed="OnControlCameraPointerPressed" PointerReleased="OnControlCameraPointerReleased" Width="30" Height="30" Padding="2">
-                                <Image x:Name="imgZoomOut" Classes="theme-icon" Width="20" Height="20"/>
-                            </Button>
-                            <!-- Extra controls on right side -->
-                            <Button Grid.Row="0" Grid.Column="4" x:Name="btnAbsolutePosition" ToolTip.Tip="Absolute Position" Click="btnOpenAbsolutePositionWindow_Click" Width="30" Height="30" Padding="2">
-                                <Image x:Name="imgAbsolutePosition" Classes="theme-icon" Width="20" Height="20"/>
-                            </Button>
-                            <Button Grid.Row="1" Grid.Column="4" x:Name="btnCameraLock" ToolTip.Tip="Camera Lock" Click="btnCameraLock_Click" Width="30" Height="30" Padding="2">
-                                <Image x:Name="imgCameraLock" Classes="theme-icon" Width="20" Height="20"/>
-                            </Button>
-                                </Grid>
-                                <TextBlock x:Name="lblCurrentCamera" Text="Camera : (No camera selected)" Foreground="{DynamicResource LabelFg}" FontSize="11"/>
-                            </StackPanel>
-                        </Expander>
+                            <!-- Camera Control -->
+                            <Border Classes="sidebar-card">
+                                <Expander Classes="sidebar-section" x:Name="expCameraControl" IsExpanded="True" HorizontalAlignment="Stretch">
+                                    <Expander.Header>
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <TextBlock Text="&#xE30F;" Classes="ms-icon" FontSize="20" VerticalAlignment="Center"/>
+                                            <TextBlock Text="Camera Control" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Expander.Header>
+                                    <StackPanel Spacing="8" Margin="16,8,16,16" x:Name="grpCameraControl" IsEnabled="False">
+                                        <Grid ColumnDefinitions="40,40,40,*,40,40" RowDefinitions="40,40,40">
+                                            <!-- PTZ Controls -->
+                                            <Button Grid.Row="0" Grid.Column="0" x:Name="btnFocusNear" ToolTip.Tip="Focus Near" PointerPressed="OnControlCameraPointerPressed" PointerReleased="OnControlCameraPointerReleased" Width="36" Height="36" Padding="2" Classes="icon">
+                                                <TextBlock x:Name="iconFocusNear" Text="&#xE883;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
+                                            </Button>
+                                            <Button Grid.Row="0" Grid.Column="1" x:Name="btnTiltUp" ToolTip.Tip="Tilt Up" PointerPressed="OnControlCameraPointerPressed" PointerReleased="OnControlCameraPointerReleased" Width="36" Height="36" Padding="2" Classes="icon">
+                                                <TextBlock x:Name="iconTiltUp" Text="&#xE5D8;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
+                                            </Button>
+                                            <Button Grid.Row="0" Grid.Column="2" x:Name="btnZoomIn" ToolTip.Tip="Zoom In" PointerPressed="OnControlCameraPointerPressed" PointerReleased="OnControlCameraPointerReleased" Width="36" Height="36" Padding="2" Classes="icon">
+                                                <TextBlock x:Name="iconZoomIn" Text="&#xE8FF;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
+                                            </Button>
+                                            <Button Grid.Row="1" Grid.Column="0" x:Name="btnPanLeft" ToolTip.Tip="Pan Left" PointerPressed="OnControlCameraPointerPressed" PointerReleased="OnControlCameraPointerReleased" Width="36" Height="36" Padding="2" Classes="icon">
+                                                <TextBlock x:Name="iconPanLeft" Text="&#xE5C4;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
+                                            </Button>
+                                            <TextBlock Grid.Row="1" Grid.Column="1" x:Name="iconCenterCamera" Text="&#xE074;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                            <Button Grid.Row="1" Grid.Column="2" x:Name="btnPanRight" ToolTip.Tip="Pan Right" PointerPressed="OnControlCameraPointerPressed" PointerReleased="OnControlCameraPointerReleased" Width="36" Height="36" Padding="2" Classes="icon">
+                                                <TextBlock x:Name="iconPanRight" Text="&#xE5C8;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
+                                            </Button>
+                                            <Button Grid.Row="2" Grid.Column="0" x:Name="btnFocusFar" ToolTip.Tip="Focus Far" PointerPressed="OnControlCameraPointerPressed" PointerReleased="OnControlCameraPointerReleased" Width="36" Height="36" Padding="2" Classes="icon">
+                                                <TextBlock x:Name="iconFocusFar" Text="&#xE882;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
+                                            </Button>
+                                            <Button Grid.Row="2" Grid.Column="1" x:Name="btnTiltDown" ToolTip.Tip="Tilt Down" PointerPressed="OnControlCameraPointerPressed" PointerReleased="OnControlCameraPointerReleased" Width="36" Height="36" Padding="2" Classes="icon">
+                                                <TextBlock x:Name="iconTiltDown" Text="&#xE5DB;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
+                                            </Button>
+                                            <Button Grid.Row="2" Grid.Column="2" x:Name="btnZoomOut" ToolTip.Tip="Zoom Out" PointerPressed="OnControlCameraPointerPressed" PointerReleased="OnControlCameraPointerReleased" Width="36" Height="36" Padding="2" Classes="icon">
+                                                <TextBlock x:Name="iconZoomOut" Text="&#xE900;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
+                                            </Button>
+                                            <!-- Extra controls -->
+                                            <Button Grid.Row="0" Grid.Column="4" x:Name="btnAbsolutePosition" ToolTip.Tip="Absolute Position" Click="btnOpenAbsolutePositionWindow_Click" Width="36" Height="36" Padding="2" Classes="icon">
+                                                <TextBlock x:Name="iconAbsolutePosition" Text="&#xE074;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
+                                            </Button>
+                                            <Button Grid.Row="1" Grid.Column="4" x:Name="btnCameraLock" ToolTip.Tip="Camera Lock" Click="btnCameraLock_Click" Width="36" Height="36" Padding="2" Classes="icon">
+                                                <TextBlock x:Name="iconCameraLock" Text="&#xE898;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
+                                            </Button>
+                                        </Grid>
+                                        <TextBlock x:Name="lblCurrentCamera" Text="Camera: (No camera selected)" Foreground="{DynamicResource LabelFg}" FontSize="12"/>
+                                    </StackPanel>
+                                </Expander>
+                            </Border>
+
+                            <!-- Camera Selection -->
+                            <Border Classes="sidebar-card">
+                                <Expander Classes="sidebar-section" x:Name="expCameraSelection" IsExpanded="True" HorizontalAlignment="Stretch">
+                                    <Expander.Header>
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <TextBlock Text="&#xE412;" Classes="ms-icon" FontSize="20" VerticalAlignment="Center"/>
+                                            <TextBlock Text="Camera Selection" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Expander.Header>
+                                    <WrapPanel x:Name="pnlCameraSelectFlowPanel" Margin="16,8,16,16" IsEnabled="False"/>
+                                </Expander>
+                            </Border>
+
+                            <!-- Preset Selection -->
+                            <Border Classes="sidebar-card">
+                                <Expander Classes="sidebar-section" x:Name="expPresetSelection" IsExpanded="True" HorizontalAlignment="Stretch">
+                                    <Expander.Header>
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <TextBlock Text="&#xE55E;" Classes="ms-icon" FontSize="20" VerticalAlignment="Center"/>
+                                            <TextBlock Text="Preset Selection" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Expander.Header>
+                                    <StackPanel x:Name="grpSelectPreset" Spacing="8" Margin="16,8,16,16" IsEnabled="False">
+                                        <Grid ColumnDefinitions="*,Auto">
+                                            <ComboBox Grid.Column="0" x:Name="selPreset" MinWidth="0" HorizontalAlignment="Stretch"/>
+                                            <Button Grid.Column="1" x:Name="btnGotoPreset" Content="Go" Click="btnGotoPreset_Click" MinWidth="64" Margin="8,0,0,0" Classes="primary"/>
+                                        </Grid>
+                                    </StackPanel>
+                                </Expander>
+                            </Border>
+
+                            <!-- Alarms -->
+                            <Border Classes="sidebar-card">
+                                <Expander Classes="sidebar-section" x:Name="expAlarms" IsExpanded="True" HorizontalAlignment="Stretch">
+                                    <Expander.Header>
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <TextBlock Text="&#xE7F5;" Classes="ms-icon" FontSize="20" VerticalAlignment="Center"/>
+                                            <TextBlock Text="Alarms" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Expander.Header>
+                                    <WrapPanel x:Name="pnlAlarms" Margin="16,8,16,16"/>
+                                </Expander>
+                            </Border>
+
+                            <!-- Playback Selection -->
+                            <Border Classes="sidebar-card">
+                                <Expander Classes="sidebar-section" x:Name="expPlaybackSelection" IsExpanded="True" HorizontalAlignment="Stretch">
+                                    <Expander.Header>
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <TextBlock Text="&#xE037;" Classes="ms-icon" FontSize="20" VerticalAlignment="Center"/>
+                                            <TextBlock Text="Playback Selection" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Expander.Header>
+                                    <StackPanel x:Name="grpSelectPlayback" Spacing="16" Margin="16,8,16,16" IsEnabled="False">
+                                        <ComboBox x:Name="selPlayback" MinWidth="200" HorizontalAlignment="Stretch" SelectionChanged="selPlayback_SelectedIndexChanged"/>
+                                        <Grid ColumnDefinitions="*,8,*">
+                                            <!-- Play = Primary (high emphasis), Stop = Outlined (medium emphasis) -->
+                                            <Button Grid.Column="0" x:Name="btnPlayPlayback" Content="Play" Click="btnPlayPlayback_Click" HorizontalAlignment="Stretch" Classes="primary"/>
+                                            <Button Grid.Column="2" x:Name="btnStopPlayback" Content="Stop" Click="btnStopPlayback_Click" HorizontalAlignment="Stretch" Classes="outlined"/>
+                                        </Grid>
+                                        <StackPanel Spacing="4">
+                                            <TextBlock Text="Date (YYYY-MM-DD)" Classes="label"/>
+                                            <Grid ColumnDefinitions="*,8,36">
+                                                <TextBox Grid.Column="0" x:Name="txtDatePlayback" Watermark="2024-01-15" HorizontalAlignment="Stretch"/>
+                                                <Button Grid.Column="2" x:Name="btnPickDate" Click="btnPickDate_Click" ToolTip.Tip="Pick date" Classes="icon" Width="36" Height="36">
+                                                                                                    <TextBlock Text="&#xE935;" Classes="ms-icon" FontSize="20"/>
+                                                                                                </Button>
+                                            </Grid>
+                                        </StackPanel>
+                                        <StackPanel Spacing="4">
+                                            <TextBlock Text="Time (HH:MM:SS)" Classes="label"/>
+                                            <Grid ColumnDefinitions="*,8,36">
+                                                <TextBox Grid.Column="0" x:Name="txtTimePlayback" Watermark="14:30:00" HorizontalAlignment="Stretch"/>
+                                                <Button Grid.Column="2" x:Name="btnPickTime" Click="btnPickTime_Click" ToolTip.Tip="Pick time" Classes="icon" Width="36" Height="36">
+                                                                                                    <TextBlock Text="&#xE8B5;" Classes="ms-icon" FontSize="20"/>
+                                                                                                </Button>
+                                            </Grid>
+                                        </StackPanel>
+                                        <Button x:Name="btnGotoTime" Content="Go to Time" Click="btnGotoTime_Click" HorizontalAlignment="Stretch" Classes="primary"/>
+                                    </StackPanel>
+                                </Expander>
+                            </Border>
+
+                            <!-- Download Recording -->
+                            <Border Classes="sidebar-card">
+                                <Expander Classes="sidebar-section" x:Name="expDownloadRecording" IsExpanded="True" HorizontalAlignment="Stretch">
+                                    <Expander.Header>
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <TextBlock Text="&#xF090;" Classes="ms-icon" FontSize="20" VerticalAlignment="Center"/>
+                                            <TextBlock Text="Download Recording" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Expander.Header>
+                                    <StackPanel Spacing="8" Margin="16,8,16,16">
+                                        <TextBlock Text="Export video recordings." Classes="label" TextWrapping="Wrap"/>
+                                        <Button x:Name="btnDownload" Content="Download" Click="btnOpenDownloadWindow_Click" HorizontalAlignment="Stretch" Classes="outlined"/>
+                                    </StackPanel>
+                                </Expander>
+                            </Border>
+
+                        </StackPanel>
                     </Border>
+                </ScrollViewer>
+            </Grid>
 
-                    <!-- Camera Selection -->
-                    <Border Classes="sidebar-card">
-                        <Expander Classes="sidebar-section" x:Name="expCameraSelection" IsExpanded="True" HorizontalAlignment="Stretch">
-                            <Expander.Header>
-                                <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <TextBlock Text="📷" FontSize="16" VerticalAlignment="Center"/>
-                                    <TextBlock Text="Camera Selection" VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </Expander.Header>
-                            <WrapPanel x:Name="pnlCameraSelectFlowPanel" Margin="16,8,16,16" IsEnabled="False"/>
-                        </Expander>
-                    </Border>
+            <!-- Right panel - video + messages -->
+            <Grid Grid.Column="1" RowDefinitions="3*,Auto,*" Margin="8">
+                <!-- Floating hamburger button (when sidebar collapsed) -->
+                <Button x:Name="btnOpenSidebar" 
+                        Click="btnToggleSidebar_Click"
+                        Classes="fab"
+                        Width="48" Height="48"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Margin="16"
+                        IsVisible="False"
+                        ToolTip.Tip="Open sidebar"
+                        Grid.Row="0"
+                        ZIndex="100">
+                    <TextBlock Text="&#xE5D2;" Classes="ms-icon" FontSize="20" Foreground="White"/>
+                </Button>
 
-                    <!-- Preset Selection -->
-                    <Border Classes="sidebar-card">
-                        <Expander Classes="sidebar-section" x:Name="expPresetSelection" IsExpanded="True" HorizontalAlignment="Stretch">
-                            <Expander.Header>
-                                <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <TextBlock Text="📍" FontSize="16" VerticalAlignment="Center"/>
-                                    <TextBlock Text="Preset Selection" VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </Expander.Header>
-                            <StackPanel x:Name="grpSelectPreset" Spacing="8" Margin="16,8,16,16" IsEnabled="False">
-                                <Grid ColumnDefinitions="*,Auto">
-                                    <ComboBox Grid.Column="0" x:Name="selPreset" MinWidth="0" HorizontalAlignment="Stretch"/>
-                                    <Button Grid.Column="1" x:Name="btnGotoPreset" Content="Go" Click="btnGotoPreset_Click" MinWidth="64" Margin="8,0,0,0" HorizontalAlignment="Stretch" Classes="primary"/>
-                                </Grid>
-                            </StackPanel>
-                        </Expander>
-                    </Border>
+                <!-- Video area -->
+                <Border Grid.Row="0" x:Name="grpVideoControl" Background="{DynamicResource SectionBg}" CornerRadius="4">
+                    <Grid RowDefinitions="Auto,*,Auto">
+                        <Border Grid.Row="0" x:Name="brdVideoHeader" Background="{DynamicResource VideoHeaderBg}" CornerRadius="4,4,0,0">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock x:Name="txtVideoHeader" Text="No Camera Selected" FontWeight="SemiBold" FontSize="14" Foreground="White" Margin="16,12" Opacity="0.87" VerticalAlignment="Center"/>
+                                <ToggleSwitch x:Name="tglSubChannel" Grid.Column="1" 
+                                              OnContent="Sub" OffContent="Main"
+                                              IsChecked="True" 
+                                              Checked="tglSubChannel_CheckedChanged" 
+                                              Unchecked="tglSubChannel_CheckedChanged"
+                                              Margin="0,0,12,0" VerticalAlignment="Center"
+                                              Foreground="White"/>
+                            </Grid>
+                        </Border>
+                        <Panel Grid.Row="1" x:Name="pnlVideo" Background="{DynamicResource VideoBg}"/>
+                        <TextBox Grid.Row="2" x:Name="txtCurrentRtspUrl" IsReadOnly="True" FontSize="11" Margin="16,8,16,12" Background="Transparent" BorderThickness="0" Foreground="{DynamicResource LabelFg}"/>
+                    </Grid>
+                </Border>
 
-                    <!-- Alarms -->
-                    <Border Classes="sidebar-card">
-                        <Expander Classes="sidebar-section" x:Name="expAlarms" IsExpanded="True" HorizontalAlignment="Stretch">
-                            <Expander.Header>
-                                <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <TextBlock Text="🔔" FontSize="16" VerticalAlignment="Center"/>
-                                    <TextBlock Text="Alarms" VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </Expander.Header>
-                            <WrapPanel x:Name="pnlAlarms" Margin="16,8,16,16"/>
-                        </Expander>
-                    </Border>
+                <!-- Splitter between video and messages -->
+                <GridSplitter Grid.Row="1" Height="6" HorizontalAlignment="Stretch" 
+                              Background="Transparent" Margin="0,2"
+                              ResizeDirection="Rows"
+                              DragCompleted="MessagesSplitter_DragCompleted"/>
 
-                    <!-- Playback Selection -->
-                    <Border Classes="sidebar-card">
-                        <Expander Classes="sidebar-section" x:Name="expPlaybackSelection" IsExpanded="True" HorizontalAlignment="Stretch">
-                            <Expander.Header>
-                                <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <TextBlock Text="▶" FontSize="16" VerticalAlignment="Center"/>
-                                    <TextBlock Text="Playback Selection" VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </Expander.Header>
-                            <StackPanel x:Name="grpSelectPlayback" Spacing="16" Margin="16,8,16,16" IsEnabled="False">
-                                <ComboBox x:Name="selPlayback" MinWidth="200" HorizontalAlignment="Stretch" SelectionChanged="selPlayback_SelectedIndexChanged"/>
-                                <Grid ColumnDefinitions="*,8,*">
-                                    <Button Grid.Column="0" x:Name="btnPlayPlayback" Content="Play" Click="btnPlayPlayback_Click" HorizontalAlignment="Stretch" MinWidth="80" Classes="primary"/>
-                                    <Button Grid.Column="2" x:Name="btnStopPlayback" Content="Stop" Click="btnStopPlayback_Click" HorizontalAlignment="Stretch" MinWidth="80"/>
-                                </Grid>
-                                <StackPanel Spacing="4">
-                                    <TextBlock Text="Date (YYYY-MM-DD)" FontSize="11" Foreground="{DynamicResource LabelFg}"/>
-                                    <Grid ColumnDefinitions="*,4,32">
-                                        <TextBox Grid.Column="0" x:Name="txtDatePlayback" Watermark="2024-01-15" HorizontalAlignment="Stretch"/>
-                                        <Button Grid.Column="2" x:Name="btnPickDate" Content="📅" FontSize="14" Padding="4" Click="btnPickDate_Click" ToolTip.Tip="Pick date"/>
-                                    </Grid>
-                                </StackPanel>
-                                <StackPanel Spacing="4">
-                                    <TextBlock Text="Time (HH:MM:SS)" FontSize="11" Foreground="{DynamicResource LabelFg}"/>
-                                    <Grid ColumnDefinitions="*,4,32">
-                                        <TextBox Grid.Column="0" x:Name="txtTimePlayback" Watermark="14:30:00" HorizontalAlignment="Stretch"/>
-                                        <Button Grid.Column="2" x:Name="btnPickTime" Content="🕐" FontSize="14" Padding="4" Click="btnPickTime_Click" ToolTip.Tip="Pick time"/>
-                                    </Grid>
-                                </StackPanel>
-                                <Button x:Name="btnGotoTime" Content="Go to time" Click="btnGotoTime_Click" HorizontalAlignment="Stretch" MinWidth="100" Classes="primary"/>
-                            </StackPanel>
-                        </Expander>
-                    </Border>
-
-                    <!-- Download Recording -->
-                    <Border Classes="sidebar-card">
-                        <Expander Classes="sidebar-section" x:Name="expDownloadRecording" IsExpanded="True" HorizontalAlignment="Stretch">
-                            <Expander.Header>
-                                <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <TextBlock Text="💾" FontSize="16" VerticalAlignment="Center"/>
-                                    <TextBlock Text="Download Recording" VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </Expander.Header>
-                            <StackPanel Spacing="8" Margin="16,8,16,16">
-                                <TextBlock Text="Export video." Foreground="{DynamicResource LabelFg}" FontSize="12" TextWrapping="Wrap"/>
-                                <Button x:Name="btnDownload" Content="Open Download Window" Click="btnOpenDownloadWindow_Click" HorizontalAlignment="Stretch"/>
-                            </StackPanel>
-                        </Expander>
-                    </Border>
-
-                </StackPanel>
-            </Border>
-        </ScrollViewer>
-        </Grid>
-
-        <!-- Right panel - video + messages -->
-        <Grid Grid.Column="1" RowDefinitions="3*,Auto,*" Margin="8">
-            <!-- Floating hamburger button (when sidebar collapsed) -->
-            <Button x:Name="btnOpenSidebar" 
-                    Click="btnToggleSidebar_Click"
-                    Background="{DynamicResource Primary}"
-                    Foreground="White"
-                    BorderThickness="0"
-                    CornerRadius="4"
-                    Width="48"
-                    Height="48"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Margin="16"
-                    Padding="0"
-                    IsVisible="False"
-                    ToolTip.Tip="Open sidebar"
-                    Grid.Row="0"
-                    ZIndex="100">
-                <TextBlock Text="☰" FontSize="20"/>
-            </Button>
-
-            <!-- Video area -->
-            <Border Grid.Row="0" x:Name="grpVideoControl" Background="{DynamicResource SectionBg}" CornerRadius="4">
-                <Grid RowDefinitions="Auto,*,Auto">
-                    <Border Grid.Row="0" x:Name="brdVideoHeader" Background="#1D3A4A" CornerRadius="4,4,0,0">
-                        <Grid ColumnDefinitions="*,Auto">
-                            <TextBlock x:Name="txtVideoHeader" Text="No Camera Selected" FontWeight="SemiBold" FontSize="14" Foreground="White" Margin="16,12" Opacity="0.87" VerticalAlignment="Center"/>
-                            <ToggleSwitch x:Name="tglSubChannel" Grid.Column="1" 
-                                          OnContent="Sub" OffContent="Main"
-                                          IsChecked="True" 
-                                          Checked="tglSubChannel_CheckedChanged" 
-                                          Unchecked="tglSubChannel_CheckedChanged"
-                                          Margin="0,0,12,0" VerticalAlignment="Center"
-                                          Foreground="White"/>
-                        </Grid>
-                    </Border>
-                    <Panel Grid.Row="1" x:Name="pnlVideo" Background="{DynamicResource VideoBg}"/>
-                    <TextBox Grid.Row="2" x:Name="txtCurrentRtspUrl" IsReadOnly="True" FontSize="11" Margin="16,0,16,12" Background="Transparent" BorderThickness="0"/>
-                </Grid>
-            </Border>
-
-            <!-- Splitter between video and messages -->
-            <GridSplitter Grid.Row="1" Height="6" HorizontalAlignment="Stretch" 
-                          Background="Transparent" Margin="0,2"
-                          ResizeDirection="Rows"
-                          DragCompleted="MessagesSplitter_DragCompleted"/>
-
-            <!-- Messages -->
-            <Border Grid.Row="2" x:Name="brdMessages" Background="{DynamicResource SectionBg}" CornerRadius="4" MinHeight="36">
-                <Grid RowDefinitions="Auto,*">
-                    <Border Grid.Row="0" Background="{DynamicResource Surface2}" CornerRadius="4,4,0,0" 
-                            Cursor="Hand" PointerPressed="MessagesHeader_PointerPressed">
-                        <Grid ColumnDefinitions="Auto,*">
-                            <TextBlock x:Name="txtMessagesToggle" Text="▼" FontSize="12" Foreground="{DynamicResource SidebarHeaderFg}" 
-                                       Margin="16,12,4,12" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="1" Text="Messages" FontWeight="SemiBold" FontSize="14" 
-                                       Foreground="{DynamicResource SidebarHeaderFg}" Margin="4,12,16,12"/>
-                        </Grid>
-                    </Border>
-                    <ListBox Grid.Row="1" x:Name="lstMessages" Background="Transparent" FontFamily="Consolas" FontSize="11" Margin="12,8">
-                        <ListBox.ContextMenu>
-                            <ContextMenu>
-                                <MenuItem Header="Copy All" Click="menuCopyMessages_Click"/>
-                                <MenuItem Header="Clear" Click="btnClearMessages_Click"/>
-                            </ContextMenu>
-                        </ListBox.ContextMenu>
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Text}" Foreground="{Binding Color}"/>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </Grid>
-            </Border>
-        </Grid>
+                <!-- Messages -->
+                <Border Grid.Row="2" x:Name="brdMessages" Background="{DynamicResource SectionBg}" CornerRadius="4" MinHeight="36">
+                    <Grid RowDefinitions="Auto,*">
+                        <Border Grid.Row="0" Background="{DynamicResource Surface2}" CornerRadius="4,4,0,0" 
+                                Cursor="Hand" PointerPressed="MessagesHeader_PointerPressed">
+                            <Grid ColumnDefinitions="Auto,*">
+                                <TextBlock x:Name="txtMessagesToggle" Text="▼" FontSize="12" Foreground="{DynamicResource SidebarHeaderFg}" 
+                                           Margin="16,12,4,12" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Text="Messages" FontWeight="SemiBold" FontSize="14" 
+                                           Foreground="{DynamicResource SidebarHeaderFg}" Margin="4,12,16,12"/>
+                            </Grid>
+                        </Border>
+                        <ListBox Grid.Row="1" x:Name="lstMessages" Background="Transparent" FontFamily="{StaticResource MonospaceFont}" FontSize="11" Margin="12,8">
+                            <ListBox.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Copy All" Click="menuCopyMessages_Click"/>
+                                    <MenuItem Header="Clear" Click="btnClearMessages_Click"/>
+                                </ContextMenu>
+                            </ListBox.ContextMenu>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Text}" Foreground="{Binding Color}"/>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Grid>
+                </Border>
+            </Grid>
         </Grid>
     </Grid>
 </Window>

@@ -19,7 +19,6 @@ namespace Vao.Sample
 {
    public partial class DownloadWindow : Window
    {
-      private bool mIsDownloadPathSet = false;
       private bool mIsFtpConnected = false;
       private readonly FlexRApiClient mFlexRApiClient;
       private FtpClient mFTPClient;
@@ -47,16 +46,11 @@ namespace Vao.Sample
          FillStreamSelectionList();
          FillDurationSelectionList();
          FillCameraSelectionList();
-         LoadSettings();
          UpdateEnabled();
          UpdateEnabledDownloadButton();
       }
 
-      private bool IsDownloadPathSet
-      {
-         get => mIsDownloadPathSet;
-         set { mIsDownloadPathSet = value; UpdateEnabled(); UpdateEnabledDownloadButton(); }
-      }
+      private bool IsDownloadPathSet => !string.IsNullOrEmpty(AppSettings.Default.DownloadPath);
 
       private bool IsFtpConnected
       {
@@ -73,28 +67,6 @@ namespace Vao.Sample
          selStreamNumber.IsEnabled = IsDownloadPathSet;
          selDuration.IsEnabled = IsDownloadPathSet;
          txtRecorderAddress.IsEnabled = IsDownloadPathSet;
-      }
-
-      private void LoadSettings()
-      {
-         var s = AppSettings.Default;
-         if (!string.IsNullOrEmpty(s.FTPUser)) txtFTPUser.Text = s.FTPUser;
-         if (!string.IsNullOrEmpty(s.FTPPassword)) txtFTPPassword.Text = s.FTPPassword;
-         if (!string.IsNullOrEmpty(s.DownloadPath))
-         {
-            txtDownloadPath.Text = s.DownloadPath;
-            IsDownloadPathSet = true;
-         }
-      }
-
-      private void SaveSettings()
-      {
-         var s = AppSettings.Default;
-         s.FTPUser = txtFTPUser.Text ?? "";
-         s.FTPPassword = txtFTPPassword.Text ?? "";
-         s.DownloadPath = txtDownloadPath.Text ?? "";
-         s.Save();
-         IsDownloadPathSet = true;
       }
 
       private void WriteMessageLog(string source, string message, LogLevel level)
@@ -161,7 +133,8 @@ namespace Vao.Sample
 
          if (!IsFtpConnected) return;
 
-         string downloadPath = txtDownloadPath.Text ?? "C:\\";
+         string downloadPath = AppSettings.Default.DownloadPath;
+         if (string.IsNullOrEmpty(downloadPath)) downloadPath = "C:\\";
          if (File.Exists($@"{downloadPath}\{downloadName}.{fileType}"))
          {
             for (int i = 1; ; ++i)
@@ -245,8 +218,9 @@ namespace Vao.Sample
 
       private bool ConnectToFtpServer(string recorderAddress)
       {
+         var s = AppSettings.Default;
          var ftpConfig = new FtpConfig { EncryptionMode = FtpEncryptionMode.Explicit, ValidateAnyCertificate = true };
-         mFTPClient = new FtpClient(recorderAddress, txtFTPUser.Text ?? "", txtFTPPassword.Text ?? "", 0, ftpConfig);
+         mFTPClient = new FtpClient(recorderAddress, s.FTPUser ?? "", s.FTPPassword ?? "", 0, ftpConfig);
          try
          {
             WriteMessageLog("FTP", $"Connecting to FTP server {recorderAddress}", LogLevel.Notice);
@@ -299,7 +273,6 @@ namespace Vao.Sample
 
       private void btnDownloadRequest_Click(object sender, RoutedEventArgs e)
       {
-         SaveSettings();
          if (mCurrentCamera == null) return;
 
          int streamNumber = (selStreamNumber.SelectedItem as string) == "Main Channel" ? 1 : 2;
@@ -326,31 +299,15 @@ namespace Vao.Sample
          }
       }
 
-      private async void btnBrowseDownloadPath_Click(object sender, RoutedEventArgs e)
-      {
-         var topLevel = TopLevel.GetTopLevel(this);
-         var folders = await topLevel.StorageProvider.OpenFolderPickerAsync(new Avalonia.Platform.Storage.FolderPickerOpenOptions
-         {
-            Title = "Select download path",
-            AllowMultiple = false
-         });
-         if (folders.Count > 0)
-         {
-            txtDownloadPath.Text = folders[0].Path.LocalPath;
-            SaveSettings();
-         }
-      }
-
       private void btnClearPendingDownloads_Click(object sender, RoutedEventArgs e) => mPendingDownloads.Clear();
       private void btnClearFinishedDownloads_Click(object sender, RoutedEventArgs e) => mFinishedDownloads.Clear();
       private void btnClearDownloadMessages_Click(object sender, RoutedEventArgs e) => mDownloadMessages.Clear();
 
-      private void txtFTPCredential_TextChanged(object sender, TextChangedEventArgs e) => UpdateEnabledDownloadButton();
-
       private void UpdateEnabledDownloadButton()
       {
          if (btnDownloadRequest == null) return;
-         btnDownloadRequest.IsEnabled = !string.IsNullOrEmpty(txtFTPPassword.Text) && !string.IsNullOrEmpty(txtFTPUser.Text) && IsDownloadPathSet;
+         var s = AppSettings.Default;
+         btnDownloadRequest.IsEnabled = !string.IsNullOrEmpty(s.FTPPassword) && !string.IsNullOrEmpty(s.FTPUser) && IsDownloadPathSet;
       }
    }
 
