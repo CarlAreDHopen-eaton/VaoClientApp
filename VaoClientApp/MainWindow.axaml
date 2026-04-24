@@ -324,7 +324,7 @@
                                            Foreground="{DynamicResource SidebarHeaderFg}" Margin="4,12,16,12"/>
                             </Grid>
                         </Border>
-                        <ListBox Grid.Row="1" x:Name="lstMessages" Background="Transparent" FontFamily="{StaticResource MonospaceFont}" FontSize="11" Margin="12,8">
+                        <ListBox Grid.Row="1" x:Name="lstMessages" Background="Transparent" FontFamily="{StaticResource MonospaceFont}" FontSize="11" Margin="12,8" SelectionMode="Multiple">
                             <ListBox.Styles>
                                 <Style Selector="ListBoxItem">
                                     <Setter Property="Padding" Value="4,0"/>
@@ -336,6 +336,7 @@
                                 <ContextMenu>
                                     <MenuItem Header="Scroll to End" Click="menuScrollToEnd_Click"/>
                                     <Separator/>
+                                    <MenuItem Header="Copy Selected" Click="menuCopySelectedMessages_Click"/>
                                     <MenuItem Header="Copy All" Click="menuCopyMessages_Click"/>
                                     <MenuItem Header="Clear" Click="btnClearMessages_Click"/>
                                     <Separator/>
