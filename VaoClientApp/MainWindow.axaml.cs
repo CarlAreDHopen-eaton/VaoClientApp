@@ -88,6 +88,7 @@ namespace Vao.Sample
       public MainWindow()
       {
          InitializeComponent();
+         EnsureVideoContextMenu();
 
          lstMessages.ItemsSource = mFilteredMessages;
 
@@ -873,57 +874,69 @@ namespace Vao.Sample
 
       private const int MaxCamerasPerSubmenu = 25;
 
-      private void videoContextMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+      private List<object> BuildVideoContextMenuItems()
       {
-         mVideoContextMenu.Items.Clear();
+         var rootItems = new List<object>();
 
          if (moFlexRApiClient == null)
          {
-            var noConnection = new MenuItem { Header = "Not connected", IsEnabled = false };
-            mVideoContextMenu.Items.Add(noConnection);
-            return;
+            rootItems.Add(new MenuItem { Header = "Not connected", IsEnabled = false });
+            return rootItems;
          }
 
-         List<Camera> cameraList = moFlexRApiClient.GetCameraList();
+         List<Camera> cameraList = GetAvailableCamerasForMenu();
          if (cameraList == null || cameraList.Count == 0)
          {
-            var noCameras = new MenuItem { Header = "No cameras available", IsEnabled = false };
-            mVideoContextMenu.Items.Add(noCameras);
-            return;
+            rootItems.Add(new MenuItem { Header = "No cameras available", IsEnabled = false });
+            return rootItems;
          }
-
-         var selectCameraMenu = new MenuItem { Header = "Select Camera" };
 
          if (cameraList.Count <= MaxCamerasPerSubmenu)
          {
             foreach (var camera in cameraList)
             {
-               var item = CreateCameraMenuItem(camera);
-               selectCameraMenu.Items.Add(item);
+               rootItems.Add(CreateCameraMenuItem(camera));
             }
          }
          else
          {
-            // Split into sub-menus of MaxCamerasPerSubmenu each
             for (int i = 0; i < cameraList.Count; i += MaxCamerasPerSubmenu)
             {
                int end = Math.Min(i + MaxCamerasPerSubmenu, cameraList.Count);
                var batch = cameraList.GetRange(i, end - i);
                var first = batch.First();
                var last = batch.Last();
-               var rangeMenu = new MenuItem { Header = $"{first.Name} – {last.Name}" };
+               var rangeItems = new List<object>();
+               var rangeMenu = new MenuItem { Header = $"{first.Name} – {last.Name}", ItemsSource = rangeItems };
 
                foreach (var camera in batch)
                {
-                  var item = CreateCameraMenuItem(camera);
-                  rangeMenu.Items.Add(item);
+                  rangeItems.Add(CreateCameraMenuItem(camera));
                }
 
-               selectCameraMenu.Items.Add(rangeMenu);
+               rootItems.Add(rangeMenu);
             }
          }
+         return rootItems;
+      }
 
-         mVideoContextMenu.Items.Add(selectCameraMenu);
+      private List<Camera> GetAvailableCamerasForMenu()
+      {
+         var cameraList = moFlexRApiClient?.GetCameraList();
+         if (cameraList != null && cameraList.Count > 0)
+            return cameraList;
+
+         // Fallback: use cameras already loaded in the sidebar selection panel.
+         var fallback = pnlCameraSelectFlowPanel.Children
+            .OfType<Button>()
+            .Select(b => b.Tag as Camera)
+            .Where(c => c != null)
+            .GroupBy(c => c.ComponentNumber)
+            .Select(g => g.First())
+            .OrderBy(c => c.ComponentNumber)
+            .ToList();
+
+         return fallback;
       }
 
       private MenuItem CreateCameraMenuItem(Camera camera)
@@ -991,16 +1004,36 @@ namespace Vao.Sample
 
       private void InitVideoControl()
       {
-         if (mVideoContextMenu == null)
-         {
-            mVideoContextMenu = new ContextMenu();
-            mVideoContextMenu.Opening += videoContextMenu_Opening;
-            brdVideoHeader.ContextMenu = mVideoContextMenu;
-         }
+         EnsureVideoContextMenu();
          if (mVideoControl == null)
          {
             mVideoControl = new VideoView();
             pnlVideo.Children.Add(mVideoControl);
+         }
+      }
+
+      private void EnsureVideoContextMenu()
+      {
+         if (mVideoContextMenu != null)
+            return;
+
+         mVideoContextMenu = new ContextMenu();
+      }
+
+      private void VideoMenuButton_Click(object sender, RoutedEventArgs e)
+      {
+         try
+         {
+            EnsureVideoContextMenu();
+            mVideoContextMenu.ItemsSource = BuildVideoContextMenuItems();
+            var target = sender as Control ?? brdVideoHeader;
+            target.ContextMenu = mVideoContextMenu;
+            mVideoContextMenu.PlacementTarget = target;
+            target.ContextMenu.Open();
+         }
+         catch (Exception ex)
+         {
+            WriteMessageLog(MessageSource.Config, $"Failed to open video menu: {ex.Message}", LogLevel.Error);
          }
       }
 
