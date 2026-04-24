@@ -1220,7 +1220,21 @@ namespace Vao.Sample
 
       private async void menuCopySelectedMessages_Click(object sender, RoutedEventArgs e)
       {
-         var selectedText = string.Join(Environment.NewLine, 
+         await CopySelectedMessagesAsync();
+      }
+
+      private async void lstMessages_KeyDown(object sender, KeyEventArgs e)
+      {
+         if (e.Key == Key.C && (e.KeyModifiers & KeyModifiers.Control) == KeyModifiers.Control)
+         {
+            await CopySelectedMessagesAsync();
+            e.Handled = true;
+         }
+      }
+
+      private async Task CopySelectedMessagesAsync()
+      {
+         var selectedText = string.Join(Environment.NewLine,
             lstMessages.SelectedItems.Cast<MessageItem>().Select(m => m.Text));
          if (!string.IsNullOrEmpty(selectedText) && Clipboard is { } clipboard)
             await clipboard.SetTextAsync(selectedText);

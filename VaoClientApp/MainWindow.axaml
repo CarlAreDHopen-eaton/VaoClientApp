@@ -324,7 +324,7 @@
                                            Foreground="{DynamicResource SidebarHeaderFg}" Margin="4,12,16,12"/>
                             </Grid>
                         </Border>
-                        <ListBox Grid.Row="1" x:Name="lstMessages" Background="Transparent" FontFamily="{StaticResource MonospaceFont}" FontSize="12" Margin="12,8" SelectionMode="Multiple">
+                        <ListBox Grid.Row="1" x:Name="lstMessages" Background="Transparent" FontFamily="{StaticResource MonospaceFont}" FontSize="12" Margin="12,8" SelectionMode="Multiple" KeyDown="lstMessages_KeyDown">
                             <ListBox.Styles>
                                 <Style Selector="ListBoxItem">
                                     <Setter Property="Padding" Value="4,1"/>
