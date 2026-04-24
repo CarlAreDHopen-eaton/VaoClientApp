@@ -34,6 +34,7 @@ namespace Vao.Sample
       private Alarm mCurrentAlarm;
       private User mCurrentLoggedInUser;
       private Button mCurrentCameraButton;
+      private ContextMenu mVideoContextMenu;
       private LibVLC mLibVlc;
       private MediaPlayer mMediaPlayer;
       private bool mIsVideoStarted = false;
@@ -111,6 +112,13 @@ namespace Vao.Sample
          if (e.Key == Key.F9)
          {
             btnToggleSidebar_Click(null, null);
+            e.Handled = true;
+         }
+         else if (e.Key == Key.F10)
+         {
+            var app = (App)Avalonia.Application.Current;
+            app.SetTheme(!IsDarkMode);
+            SaveSettings();
             e.Handled = true;
          }
       }
@@ -777,6 +785,80 @@ namespace Vao.Sample
          if (alarm != null) CurrentAlarm = alarm;
       }
 
+      private const int MaxCamerasPerSubmenu = 25;
+
+      private void videoContextMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+      {
+         mVideoContextMenu.Items.Clear();
+
+         if (moFlexRApiClient == null)
+         {
+            var noConnection = new MenuItem { Header = "Not connected", IsEnabled = false };
+            mVideoContextMenu.Items.Add(noConnection);
+            return;
+         }
+
+         List<Camera> cameraList = moFlexRApiClient.GetCameraList();
+         if (cameraList == null || cameraList.Count == 0)
+         {
+            var noCameras = new MenuItem { Header = "No cameras available", IsEnabled = false };
+            mVideoContextMenu.Items.Add(noCameras);
+            return;
+         }
+
+         var selectCameraMenu = new MenuItem { Header = "Select Camera" };
+
+         if (cameraList.Count <= MaxCamerasPerSubmenu)
+         {
+            foreach (var camera in cameraList)
+            {
+               var item = CreateCameraMenuItem(camera);
+               selectCameraMenu.Items.Add(item);
+            }
+         }
+         else
+         {
+            // Split into sub-menus of MaxCamerasPerSubmenu each
+            for (int i = 0; i < cameraList.Count; i += MaxCamerasPerSubmenu)
+            {
+               int end = Math.Min(i + MaxCamerasPerSubmenu, cameraList.Count);
+               var batch = cameraList.GetRange(i, end - i);
+               var first = batch.First();
+               var last = batch.Last();
+               var rangeMenu = new MenuItem { Header = $"{first.Name} – {last.Name}" };
+
+               foreach (var camera in batch)
+               {
+                  var item = CreateCameraMenuItem(camera);
+                  rangeMenu.Items.Add(item);
+               }
+
+               selectCameraMenu.Items.Add(rangeMenu);
+            }
+         }
+
+         mVideoContextMenu.Items.Add(selectCameraMenu);
+      }
+
+      private MenuItem CreateCameraMenuItem(Camera camera)
+      {
+         var item = new MenuItem
+         {
+            Header = camera.Name,
+            Tag = camera
+         };
+         if (mCurrentCamera == camera)
+         {
+            item.Icon = new CheckBox { IsChecked = true, IsHitTestVisible = false };
+         }
+         item.Click += (s, e) =>
+         {
+            int streamNo = tglSubChannel.IsChecked == true ? 2 : 1;
+            SelectCamera(camera.ComponentNumber, streamNo);
+         };
+         return item;
+      }
+
       private void CheckApiVersion()
       {
          ApiVersion apiversion = moFlexRApiClient.GetApiVersion();
@@ -823,6 +905,12 @@ namespace Vao.Sample
 
       private void InitVideoControl()
       {
+         if (mVideoContextMenu == null)
+         {
+            mVideoContextMenu = new ContextMenu();
+            mVideoContextMenu.Opening += videoContextMenu_Opening;
+            brdVideoHeader.ContextMenu = mVideoContextMenu;
+         }
          if (mVideoControl == null)
          {
             mVideoControl = new VideoView();
