@@ -174,7 +174,7 @@
                                             <TextBlock Text="Camera Selection" VerticalAlignment="Center"/>
                                         </StackPanel>
                                     </Expander.Header>
-                                    <WrapPanel x:Name="pnlCameraSelectFlowPanel" Margin="16,8,16,16" IsEnabled="False"/>
+                                    <UniformGrid x:Name="pnlCameraSelectFlowPanel" Columns="3" Margin="8,8,8,16" IsEnabled="False"/>
                                 </Expander>
                             </Border>
 

@@ -573,7 +573,7 @@ namespace Vao.Sample
          set
          {
             if (mCurrentCameraButton != null)
-               mCurrentCameraButton.Background = null;
+               mCurrentCameraButton.Classes.Remove("camera-selected");
 
             if (mCurrentCamera != null)
             {
@@ -591,7 +591,7 @@ namespace Vao.Sample
 
             mCurrentCameraButton = GetCameraButton(mCurrentCamera);
             if (mCurrentCameraButton != null)
-               mCurrentCameraButton.Background = Brushes.Goldenrod;
+               mCurrentCameraButton.Classes.Add("camera-selected");
 
             if (mCurrentCamera != null)
             {
@@ -845,7 +845,7 @@ namespace Vao.Sample
          }
       }
 
-      private void FillSelectCameraButtonList()
+       private void FillSelectCameraButtonList()
       {
          ClearCameraSelection();
          List<Camera> cameraList = moFlexRApiClient.GetCameraList();
@@ -855,11 +855,14 @@ namespace Vao.Sample
             {
                var button = new Button
                {
-                  Content = "Cam " + camera.ComponentNumber,
-                  Height = 30,
-                  Width = 60,
+                  Content = camera.Name,
+                  Height = 28,
                   Tag = camera,
-                  Margin = new Thickness(2)
+                  Margin = new Thickness(2),
+                  Padding = new Thickness(4, 2),
+                  FontSize = 11,
+                  HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch,
+                  HorizontalContentAlignment = Avalonia.Layout.HorizontalAlignment.Center
                };
                ToolTip.SetTip(button, camera.Name);
                button.Click += OnSelectCameraClicked;

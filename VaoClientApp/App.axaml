@@ -279,6 +279,18 @@
             <Setter Property="Background" Value="{DynamicResource PrimaryDark}"/>
         </Style>
 
+        <!-- Camera selection button (selected state) -->
+        <Style Selector="Button.camera-selected">
+            <Setter Property="Background" Value="Goldenrod"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style Selector="Button.camera-selected:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="DarkGoldenrod"/>
+        </Style>
+        <Style Selector="Button.camera-selected /template/ ContentPresenter">
+            <Setter Property="Background" Value="Goldenrod"/>
+        </Style>
+
         <!-- ===========================================
              LIST ITEMS
              =========================================== -->
