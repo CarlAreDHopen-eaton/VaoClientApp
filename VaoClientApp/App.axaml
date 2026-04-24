@@ -262,6 +262,23 @@
             <Setter Property="Background" Value="{DynamicResource Surface3}"/>
         </Style>
 
+        <!-- APP BAR ICON BUTTON - tuned for top blue app bar -->
+        <Style Selector="Button.appbar-icon">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="MinHeight" Value="40"/>
+            <Setter Property="MinWidth" Value="40"/>
+            <Setter Property="CornerRadius" Value="20"/>
+        </Style>
+        <Style Selector="Button.appbar-icon:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#1FFFFFFF"/>
+        </Style>
+        <Style Selector="Button.appbar-icon:pressed /template/ ContentPresenter">
+            <Setter Property="Background" Value="#33FFFFFF"/>
+        </Style>
+
         <!-- FAB (Floating Action Button) -->
         <Style Selector="Button.fab">
             <Setter Property="Background" Value="{DynamicResource Primary}"/>
@@ -516,21 +533,21 @@
                      =========================================== -->
                 <ResourceDictionary x:Key="Light">
                     <!-- Background Colors -->
-                    <SolidColorBrush x:Key="AppBg" Color="#F4F4F4" />
-                    <SolidColorBrush x:Key="SectionBg" Color="#FFFFFF" />
-                    <SolidColorBrush x:Key="SidebarBg" Color="#FFFFFF" />
-                    <SolidColorBrush x:Key="SidebarCardBg" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="AppBg" Color="#EEEEEE" />
+                    <SolidColorBrush x:Key="SectionBg" Color="#FAFAFA" />
+                    <SolidColorBrush x:Key="SidebarBg" Color="#F6F6F6" />
+                    <SolidColorBrush x:Key="SidebarCardBg" Color="#F3F3F3" />
                     <SolidColorBrush x:Key="VideoBg" Color="#E0E0E0" />
                     <SolidColorBrush x:Key="VideoHeaderBg" Color="#007BC1" />
 
                     <!-- Surface Elevation -->
-                    <SolidColorBrush x:Key="Surface1" Color="#FFFFFF" />
-                    <SolidColorBrush x:Key="Surface2" Color="#F4F4F4" />
-                    <SolidColorBrush x:Key="Surface3" Color="#EBEBEB" />
+                    <SolidColorBrush x:Key="Surface1" Color="#FAFAFA" />
+                    <SolidColorBrush x:Key="Surface2" Color="#EFEFEF" />
+                    <SolidColorBrush x:Key="Surface3" Color="#E3E3E3" />
 
                     <!-- Border/Divider Colors -->
                     <SolidColorBrush x:Key="Divider" Color="#000000" Opacity="0.12" />
-                    <SolidColorBrush x:Key="SidebarBorder" Color="#E0E0E0" />
+                    <SolidColorBrush x:Key="SidebarBorder" Color="#D4D4D4" />
 
                     <!-- Text Colors - Brightlayer UI Opacity System -->
                     <SolidColorBrush x:Key="SidebarHeaderFg" Color="#000000" Opacity="0.87" />

@@ -14,7 +14,7 @@
                 <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="16" VerticalAlignment="Center" Margin="8,0,0,0">
                     <Button x:Name="btnToggleSidebarAppBar" 
                             Click="btnToggleSidebar_Click"
-                            Classes="icon"
+                            Classes="appbar-icon"
                             ToolTip.Tip="Toggle sidebar (F9)"
                             VerticalAlignment="Center">
                         <TextBlock Text="&#xE5D2;" Classes="ms-icon" FontSize="24" Foreground="White"/>
@@ -90,22 +90,22 @@
                 <Border x:Name="narrowSidebar" IsVisible="False" Background="{DynamicResource Surface1}">
                     <StackPanel Spacing="4" Margin="0,8" HorizontalAlignment="Center">
                         <Button Classes="icon" Click="btnExpandCameraControl_Click" ToolTip.Tip="Camera Control">
-                            <TextBlock Text="&#xE30F;" Classes="ms-icon"/>
+                            <TextBlock Text="&#xE30F;" Classes="ms-icon" FontSize="20" Foreground="{DynamicResource SidebarHeaderFg}"/>
                         </Button>
                         <Button Classes="icon" Click="btnExpandCameraSelection_Click" ToolTip.Tip="Camera Selection">
-                            <TextBlock Text="&#xE412;" Classes="ms-icon"/>
+                            <TextBlock Text="&#xE412;" Classes="ms-icon" FontSize="20" Foreground="{DynamicResource SidebarHeaderFg}"/>
                         </Button>
                         <Button Classes="icon" Click="btnExpandPresetSelection_Click" ToolTip.Tip="Preset Selection">
-                            <TextBlock Text="&#xE55E;" Classes="ms-icon"/>
+                            <TextBlock Text="&#xE55E;" Classes="ms-icon" FontSize="20" Foreground="{DynamicResource SidebarHeaderFg}"/>
                         </Button>
                         <Button Classes="icon" Click="btnExpandAlarms_Click" ToolTip.Tip="Alarms">
-                            <TextBlock Text="&#xE7F5;" Classes="ms-icon"/>
+                            <TextBlock Text="&#xE7F5;" Classes="ms-icon" FontSize="20" Foreground="{DynamicResource SidebarHeaderFg}"/>
                         </Button>
                         <Button Classes="icon" Click="btnExpandPlayback_Click" ToolTip.Tip="Playback Selection">
-                            <TextBlock Text="&#xE037;" Classes="ms-icon"/>
+                            <TextBlock Text="&#xE037;" Classes="ms-icon" FontSize="20" Foreground="{DynamicResource SidebarHeaderFg}"/>
                         </Button>
                         <Button Classes="icon" Click="btnExpandDownload_Click" ToolTip.Tip="Download Recording">
-                            <TextBlock Text="&#xF090;" Classes="ms-icon"/>
+                            <TextBlock Text="&#xF090;" Classes="ms-icon" FontSize="20" Foreground="{DynamicResource SidebarHeaderFg}"/>
                         </Button>
                     </StackPanel>
                 </Border>
@@ -313,9 +313,9 @@
                               DragCompleted="MessagesSplitter_DragCompleted"/>
 
                 <!-- Messages -->
-                <Border Grid.Row="2" x:Name="brdMessages" Background="{DynamicResource SectionBg}" CornerRadius="4" MinHeight="36">
+                <Border Grid.Row="2" x:Name="brdMessages" Background="{DynamicResource SectionBg}" BorderBrush="{DynamicResource Divider}" BorderThickness="1" CornerRadius="4" MinHeight="36">
                     <Grid RowDefinitions="Auto,*">
-                        <Border Grid.Row="0" Background="{DynamicResource Surface2}" CornerRadius="4,4,0,0" 
+                    <Border Grid.Row="0" Background="{DynamicResource Surface3}" CornerRadius="4,4,0,0" 
                                 Cursor="Hand" PointerPressed="MessagesHeader_PointerPressed">
                             <Grid ColumnDefinitions="Auto,*">
                                 <TextBlock x:Name="txtMessagesToggle" Text="▼" FontSize="12" Foreground="{DynamicResource SidebarHeaderFg}" 
@@ -324,10 +324,10 @@
                                            Foreground="{DynamicResource SidebarHeaderFg}" Margin="4,12,16,12"/>
                             </Grid>
                         </Border>
-                        <ListBox Grid.Row="1" x:Name="lstMessages" Background="Transparent" FontFamily="{StaticResource MonospaceFont}" FontSize="11" Margin="12,8" SelectionMode="Multiple">
+                        <ListBox Grid.Row="1" x:Name="lstMessages" Background="Transparent" FontFamily="{StaticResource MonospaceFont}" FontSize="12" Margin="12,8" SelectionMode="Multiple">
                             <ListBox.Styles>
                                 <Style Selector="ListBoxItem">
-                                    <Setter Property="Padding" Value="4,0"/>
+                                    <Setter Property="Padding" Value="4,1"/>
                                     <Setter Property="MinHeight" Value="0"/>
                                     <Setter Property="Margin" Value="0"/>
                                 </Style>
@@ -359,7 +359,9 @@
                             </ListBox.ContextMenu>
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding Text}" Foreground="{Binding Color}"/>
+                                    <Border Background="{Binding Background}" CornerRadius="2" Padding="4,1">
+                                        <TextBlock Text="{Binding Text}" Foreground="{Binding Color}"/>
+                                    </Border>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>

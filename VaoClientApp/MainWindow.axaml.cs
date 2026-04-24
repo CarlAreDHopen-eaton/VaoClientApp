@@ -119,6 +119,7 @@ namespace Vao.Sample
             var app = (App)Avalonia.Application.Current;
             app.SetTheme(!IsDarkMode);
             RefreshMessageColors();
+            RefreshVideoHeaderState();
             SaveSettings();
             e.Handled = true;
          }
@@ -353,6 +354,7 @@ namespace Vao.Sample
             LoadSettings();
             UpdateUserInitial();
             RefreshMessageColors();
+            RefreshVideoHeaderState();
          }
       }
 
@@ -449,7 +451,7 @@ namespace Vao.Sample
          };
          moFlexRApiClient.OnMessage += OnFlexRApiClientMessage;
          txtVideoHeader.Text = "No Camera Selected";
-         brdVideoHeader.Background = new SolidColorBrush(Color.FromRgb(29, 58, 74));
+         brdVideoHeader.Background = GetNeutralHeaderBrush();
 
          if (moFlexRApiClient.StartClient())
          {
@@ -521,7 +523,14 @@ namespace Vao.Sample
 
          if (strMessage != "drawable Warning: unsupported control query 3")
           {
-             var item = new MessageItem { Text = strMsg, Color = color, Source = source, Level = level };
+             var item = new MessageItem
+             {
+                Text = strMsg,
+                Color = color,
+                Background = GetBackgroundForLogLevel(level),
+                Source = source,
+                Level = level
+             };
              mMessages.Add(item);
              if (mSourceFilters.TryGetValue(source, out bool visible) && visible)
              {
@@ -544,11 +553,73 @@ namespace Vao.Sample
          };
       }
 
+      private IBrush GetBackgroundForLogLevel(LogLevel level)
+      {
+         if (IsDarkMode)
+            return Brushes.Transparent;
+
+         return level switch
+         {
+            LogLevel.Error => new SolidColorBrush(Color.FromRgb(255, 238, 238)),
+            LogLevel.Warning => new SolidColorBrush(Color.FromRgb(255, 245, 230)),
+            LogLevel.Debug => new SolidColorBrush(Color.FromRgb(236, 245, 252)),
+            _ => Brushes.Transparent,
+         };
+      }
+
+      private void RefreshVideoHeaderState()
+      {
+         if (!IsStarted || mCurrentCamera == null)
+         {
+            txtVideoHeader.Text = "No Camera Selected";
+            brdVideoHeader.Background = GetNeutralHeaderBrush();
+            return;
+         }
+
+         var cameraNo = mCurrentCamera.ComponentNumber;
+         if (IsPlayback || IsPlaybackStarted)
+         {
+            txtVideoHeader.Text = $"PLAYBACK - Camera {cameraNo}";
+            brdVideoHeader.Background = GetPlaybackHeaderBrush();
+         }
+         else
+         {
+            txtVideoHeader.Text = $"LIVE - Camera {cameraNo}";
+            brdVideoHeader.Background = GetLiveHeaderBrush();
+         }
+      }
+
+      private IBrush GetNeutralHeaderBrush()
+      {
+         if (this.TryFindResource("VideoHeaderBg", this.ActualThemeVariant, out var brush) && brush is IBrush b)
+            return b;
+         return new SolidColorBrush(Color.FromRgb(29, 58, 74));
+      }
+
+      private IBrush GetLiveHeaderBrush()
+      {
+         if (!IsDarkMode)
+            return new SolidColorBrush(Color.FromRgb(46, 125, 50));
+         if (this.TryFindResource("Success", this.ActualThemeVariant, out var brush) && brush is IBrush b)
+            return b;
+         return new SolidColorBrush(Color.FromRgb(57, 182, 32));
+      }
+
+      private IBrush GetPlaybackHeaderBrush()
+      {
+         if (!IsDarkMode)
+            return new SolidColorBrush(Color.FromRgb(183, 28, 28));
+         if (this.TryFindResource("Error", this.ActualThemeVariant, out var brush) && brush is IBrush b)
+            return b;
+         return new SolidColorBrush(Color.FromRgb(202, 60, 61));
+      }
+
       private void RefreshMessageColors()
       {
          foreach (var item in mMessages)
          {
             item.Color = GetColorForLogLevel(item.Level);
+            item.Background = GetBackgroundForLogLevel(item.Level);
          }
       }
 
@@ -566,7 +637,7 @@ namespace Vao.Sample
          CurrentAlarm = null;
          txtCurrentRtspUrl.Text = string.Empty;
          txtVideoHeader.Text = "No Camera Selected";
-         brdVideoHeader.Background = new SolidColorBrush(Color.FromRgb(29, 58, 74));
+         brdVideoHeader.Background = GetNeutralHeaderBrush();
          IsCameraSelected = false;
          ClearPresetDropdown();
              ClearRecordingDropdown();
@@ -783,7 +854,7 @@ namespace Vao.Sample
             {
                txtCurrentRtspUrl.Text = GetMaskedUrl(url);
                txtVideoHeader.Text = $"LIVE - Camera {cameraNo}";
-               brdVideoHeader.Background = new SolidColorBrush(Color.FromRgb(76, 175, 80));
+               brdVideoHeader.Background = GetLiveHeaderBrush();
                StartRtspStream(url);
             }
             // Update toggle to reflect actual stream without triggering save
@@ -1205,7 +1276,7 @@ namespace Vao.Sample
                txtCurrentRtspUrl.Text = GetMaskedUrl(url);
                var cameraNo = mCurrentCamera?.ComponentNumber ?? 0;
                txtVideoHeader.Text = $"PLAYBACK - Camera {cameraNo}";
-               brdVideoHeader.Background = new SolidColorBrush(Color.FromRgb(211, 47, 47));
+               brdVideoHeader.Background = GetPlaybackHeaderBrush();
                StartRtspStream(url);
                IsPlaybackStarted = true;
                UpdateEnabled();
@@ -1242,7 +1313,7 @@ namespace Vao.Sample
                   txtCurrentRtspUrl.Text = GetMaskedUrl(url);
                   var cameraNo = mCurrentCamera?.ComponentNumber ?? 0;
                   txtVideoHeader.Text = $"PLAYBACK - Camera {cameraNo}";
-                  brdVideoHeader.Background = new SolidColorBrush(Color.FromRgb(211, 47, 47));
+                  brdVideoHeader.Background = GetPlaybackHeaderBrush();
                   StartRtspStream(urlWithStartTime);
                   IsPlaybackStarted = true;
                   UpdateEnabled();
@@ -1444,6 +1515,7 @@ namespace Vao.Sample
    {
       private string mText;
       private IBrush mColor;
+      private IBrush mBackground;
 
       public string Text
       {
@@ -1464,6 +1536,17 @@ namespace Vao.Sample
             if (mColor == value) return;
             mColor = value;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Color)));
+         }
+      }
+
+      public IBrush Background
+      {
+         get => mBackground;
+         set
+         {
+            if (mBackground == value) return;
+            mBackground = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Background)));
          }
       }
 
