@@ -164,11 +164,22 @@ namespace Vao.Sample
          }
       }
 
+      private void CollapseAllExpandersExcept(Expander target)
+      {
+         var allExpanders = new[] { expCameraControl, expCameraSelection, expPresetSelection, expAlarms, expPlaybackSelection, expDownloadRecording };
+         foreach (var exp in allExpanders)
+         {
+            if (exp != target)
+               exp.IsExpanded = false;
+         }
+         target.IsExpanded = true;
+      }
+
       // Icon button handlers for narrow sidebar
       private void btnExpandCameraControl_Click(object sender, RoutedEventArgs e)
       {
          SetSidebarCollapsed(false);
-         expCameraControl.IsExpanded = true;
+         CollapseAllExpandersExcept(expCameraControl);
          AppSettings.Default.IsSidebarCollapsed = false;
          SaveSettings();
       }
@@ -176,7 +187,7 @@ namespace Vao.Sample
       private void btnExpandCameraSelection_Click(object sender, RoutedEventArgs e)
       {
          SetSidebarCollapsed(false);
-         expCameraSelection.IsExpanded = true;
+         CollapseAllExpandersExcept(expCameraSelection);
          AppSettings.Default.IsSidebarCollapsed = false;
          SaveSettings();
       }
@@ -184,7 +195,7 @@ namespace Vao.Sample
       private void btnExpandPresetSelection_Click(object sender, RoutedEventArgs e)
       {
          SetSidebarCollapsed(false);
-         expPresetSelection.IsExpanded = true;
+         CollapseAllExpandersExcept(expPresetSelection);
          AppSettings.Default.IsSidebarCollapsed = false;
          SaveSettings();
       }
@@ -192,7 +203,7 @@ namespace Vao.Sample
       private void btnExpandAlarms_Click(object sender, RoutedEventArgs e)
       {
          SetSidebarCollapsed(false);
-         expAlarms.IsExpanded = true;
+         CollapseAllExpandersExcept(expAlarms);
          AppSettings.Default.IsSidebarCollapsed = false;
          SaveSettings();
       }
@@ -200,7 +211,7 @@ namespace Vao.Sample
       private void btnExpandPlayback_Click(object sender, RoutedEventArgs e)
       {
          SetSidebarCollapsed(false);
-         expPlaybackSelection.IsExpanded = true;
+         CollapseAllExpandersExcept(expPlaybackSelection);
          AppSettings.Default.IsSidebarCollapsed = false;
          SaveSettings();
       }
@@ -208,7 +219,7 @@ namespace Vao.Sample
       private void btnExpandDownload_Click(object sender, RoutedEventArgs e)
       {
          SetSidebarCollapsed(false);
-         expDownloadRecording.IsExpanded = true;
+         CollapseAllExpandersExcept(expDownloadRecording);
          AppSettings.Default.IsSidebarCollapsed = false;
          SaveSettings();
       }
