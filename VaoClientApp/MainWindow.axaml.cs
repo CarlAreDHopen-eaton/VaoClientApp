@@ -1132,6 +1132,14 @@ namespace Vao.Sample
             await clipboard.SetTextAsync(text);
       }
 
+      private async void menuCopySelectedMessages_Click(object sender, RoutedEventArgs e)
+      {
+         var selectedText = string.Join(Environment.NewLine, 
+            lstMessages.SelectedItems.Cast<MessageItem>().Select(m => m.Text));
+         if (!string.IsNullOrEmpty(selectedText) && Clipboard is { } clipboard)
+            await clipboard.SetTextAsync(selectedText);
+      }
+
       private void menuScrollToEnd_Click(object sender, RoutedEventArgs e)
       {
          if (mFilteredMessages.Count > 0)

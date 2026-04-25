@@ -30,3 +30,51 @@ The application allows the user to select and control cameras. The video streams
 
 # Build
 Built using Visual Studio 2019
+
+# Linux Setup (Fedora)
+If you run the Avalonia client on Fedora, VLC/LibVLC must have working H.264 codec support.
+
+## 1. Install required runtime packages
+```bash
+sudo dnf install vlc vlc-plugin-ffmpeg ffmpeg-free libavcodec-free
+```
+
+## 2. Ensure real OpenH264 is installed (important)
+Some Fedora installs have `noopenh264` (stub package), which causes errors such as:
+
+- `cannot start codec (libopenh264)`
+- `VLC could not decode the format "h264"`
+
+Replace stub package with the real codec package:
+
+```bash
+sudo dnf swap noopenh264 openh264 -y
+```
+
+## 3. Update multimedia packages
+```bash
+sudo dnf upgrade ffmpeg-free libavcodec-free vlc vlc-plugin-ffmpeg -y
+```
+
+## 4. Clear VLC cache
+```bash
+rm -rf ~/.cache/vlc ~/.vlc
+```
+
+## 5. Verify codec package state
+```bash
+rpm -q openh264 noopenh264
+```
+
+Expected result:
+- `openh264` installed
+- `noopenh264` not installed
+
+## 6. Run the app
+Start the application normally after the package changes.
+
+If playback still fails, validate in standalone VLC first with the same RTSP URL:
+
+```bash
+vlc "rtsp://user:password@host:554/path"
+```
