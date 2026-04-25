@@ -105,7 +105,7 @@ namespace Vao.Sample
          UpdateUserInitial();
 
          Opened += MainWindow_Opened;
-         KeyDown += MainWindow_KeyDown;
+         AddHandler(KeyDownEvent, MainWindow_KeyDown, handledEventsToo: true);
       }
 
       private void MainWindow_KeyDown(object sender, KeyEventArgs e)
@@ -123,6 +123,26 @@ namespace Vao.Sample
             RefreshVideoHeaderState();
             SaveSettings();
             e.Handled = true;
+         }
+         
+         // Check for Shift+Ctrl+, (previous camera) or Shift+Ctrl+. (next camera)
+         var isShiftCtrl = (e.KeyModifiers & KeyModifiers.Shift) != 0 && 
+                           (e.KeyModifiers & KeyModifiers.Control) != 0;
+         
+         if (isShiftCtrl)
+         {
+            var keySymbol = e.KeySymbol ?? string.Empty;
+
+            if (keySymbol == "," || keySymbol == "<" || e.PhysicalKey == PhysicalKey.Comma)
+            {
+               NavigateToPreviousCamera();
+               e.Handled = true;
+            }
+            else if (keySymbol == "." || keySymbol == ">" || e.PhysicalKey == PhysicalKey.Period)
+            {
+               NavigateToNextCamera();
+               e.Handled = true;
+            }
          }
       }
 
@@ -864,6 +884,36 @@ namespace Vao.Sample
             tglSubChannel.IsEnabled = hasSubChannel && !IsPlayback;
             mIsLoadingSettings = false;
          }
+      }
+
+      private void NavigateToPreviousCamera()
+      {
+         if (!IsStarted || mCurrentCamera == null) return;
+
+         List<Camera> cameraList = moFlexRApiClient.GetCameraList();
+         if (cameraList == null || cameraList.Count == 0) return;
+
+         int currentIndex = cameraList.FindIndex(c => c.ComponentNumber == mCurrentCamera.ComponentNumber);
+         if (currentIndex < 0) return;
+
+         int newIndex = currentIndex > 0 ? currentIndex - 1 : cameraList.Count - 1;
+         int streamNo = tglSubChannel.IsChecked == true ? 2 : 1;
+         SelectCamera(cameraList[newIndex].ComponentNumber, streamNo);
+      }
+
+      private void NavigateToNextCamera()
+      {
+         if (!IsStarted || mCurrentCamera == null) return;
+
+         List<Camera> cameraList = moFlexRApiClient.GetCameraList();
+         if (cameraList == null || cameraList.Count == 0) return;
+
+         int currentIndex = cameraList.FindIndex(c => c.ComponentNumber == mCurrentCamera.ComponentNumber);
+         if (currentIndex < 0) return;
+
+         int newIndex = currentIndex < cameraList.Count - 1 ? currentIndex + 1 : 0;
+         int streamNo = tglSubChannel.IsChecked == true ? 2 : 1;
+         SelectCamera(cameraList[newIndex].ComponentNumber, streamNo);
       }
 
       private void SelectAlarm(int alarmNo)
