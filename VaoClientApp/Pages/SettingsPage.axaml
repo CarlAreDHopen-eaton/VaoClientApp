@@ -1,0 +1,132 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Vao.Sample.Pages.SettingsPage"
+             Background="{DynamicResource AppBg}">
+
+    <Grid RowDefinitions="64,*,Auto">
+                <Border Grid.Row="0" Height="64" Background="{DynamicResource Primary}" BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1" Padding="16,0">
+                    <Grid ColumnDefinitions="Auto,*">
+                        <Button Grid.Column="0"
+                                x:Name="btnBack"
+                                Click="btnBack_Click"
+                                ToolTip.Tip="Go Back"
+                                Width="40" Height="40"
+                                Padding="0"
+                                Background="Transparent"
+                                BorderThickness="0">
+                            <TextBlock Text="&#xE5C4;" Classes="ms-icon" FontSize="20" Foreground="White"/>
+                        </Button>
+
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="12,0,0,0" Spacing="2">
+                            <TextBlock Text="Settings"
+                                       FontSize="20"
+                                       FontWeight="SemiBold"
+                                       Foreground="White"/>
+                            <TextBlock Text="Configure application preferences"
+                                       FontSize="12"
+                                       Foreground="White"
+                                       Opacity="0.7"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel Margin="24" Spacing="24">
+
+                <!-- Connection Settings Section -->
+                <StackPanel Spacing="16">
+                    <TextBlock Text="Connection Settings" Classes="section-header" FontSize="16" FontWeight="SemiBold"/>
+
+                    <StackPanel Spacing="12">
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Host" Classes="label"/>
+                            <TextBox x:Name="txtHost" Watermark="Enter host address" MinHeight="44" Padding="12,8"/>
+                        </StackPanel>
+                        
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Port" Classes="label"/>
+                            <TextBox x:Name="txtPort" Watermark="444" MinHeight="44" Padding="12,8"/>
+                        </StackPanel>
+                        
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Username" Classes="label"/>
+                            <TextBox x:Name="txtUser" Watermark="Enter username" MinHeight="44" Padding="12,8"/>
+                        </StackPanel>
+                        
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Password" Classes="label"/>
+                            <TextBox x:Name="txtPassword" PasswordChar="*" Watermark="Enter password" MinHeight="44" Padding="12,8"/>
+                        </StackPanel>
+                        
+                        <CheckBox x:Name="chkSecure" Content="Use HTTPS (Secure)" MinHeight="44" Padding="12" FontSize="14"/>
+                        <CheckBox x:Name="chkAutoConnect" Content="Auto-connect on startup" MinHeight="44" Padding="12" FontSize="14"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Divider -->
+                <Border Height="1" Background="{DynamicResource Divider}"/>
+
+                <!-- Stream Settings Section -->
+                <StackPanel Spacing="16">
+                    <TextBlock Text="Stream Settings" Classes="section-header" FontSize="16" FontWeight="SemiBold"/>
+
+                    <StackPanel Spacing="12">
+                        <CheckBox x:Name="chkUseTcp" Content="Use TCP protocol (instead of UDP)" MinHeight="44" Padding="12" FontSize="14"/>
+                        <CheckBox x:Name="chkPreferSubChannel" Content="Prefer sub-channel for streaming" MinHeight="44" Padding="12" FontSize="14"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Divider -->
+                <Border Height="1" Background="{DynamicResource Divider}"/>
+
+                <!-- Download Settings Section -->
+                <StackPanel Spacing="16">
+                    <TextBlock Text="Download Settings" Classes="section-header" FontSize="16" FontWeight="SemiBold"/>
+
+                    <StackPanel Spacing="12">
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="FTP User" Classes="label"/>
+                            <TextBox x:Name="txtFTPUser" Watermark="Enter FTP username" MinHeight="44" Padding="12,8"/>
+                        </StackPanel>
+                        
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="FTP Password" Classes="label"/>
+                            <TextBox x:Name="txtFTPPassword" PasswordChar="*" Watermark="Enter FTP password" MinHeight="44" Padding="12,8"/>
+                        </StackPanel>
+                        
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Download Path" Classes="label"/>
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBox Grid.Column="0" x:Name="txtDownloadPath" Watermark="Select download folder" MinHeight="44" Padding="12,8" Margin="0,0,8,0"/>
+                                <Button Grid.Column="1" Content="Browse" Click="btnBrowseDownloadPath_Click" Classes="outlined" Width="90" Height="44" MinWidth="0" VerticalAlignment="Center"/>
+                            </Grid>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Divider -->
+                <Border Height="1" Background="{DynamicResource Divider}"/>
+
+                <!-- Appearance Section -->
+                <StackPanel Spacing="16">
+                    <TextBlock Text="Appearance" Classes="section-header" FontSize="16" FontWeight="SemiBold"/>
+
+                    <CheckBox x:Name="chkDarkMode" 
+                              Content="Dark Mode" 
+                              Checked="chkDarkMode_Changed" 
+                              Unchecked="chkDarkMode_Changed"
+                              MinHeight="44" Padding="12" FontSize="14"/>
+                </StackPanel>
+                
+                        <Border Height="20"/>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <Border Grid.Row="2" Background="{DynamicResource Surface1}" BorderBrush="{DynamicResource Divider}" BorderThickness="0,1,0,0" Padding="24,16">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12">
+                        <Button Content="Cancel" Click="btnCancel_Click" Classes="outlined" MinWidth="120" MinHeight="48" FontSize="14"/>
+                        <Button Content="Save" Click="btnSave_Click" Classes="primary" MinWidth="120" MinHeight="48" FontSize="14"/>
+                    </StackPanel>
+                </Border>
+    </Grid>
+</UserControl>

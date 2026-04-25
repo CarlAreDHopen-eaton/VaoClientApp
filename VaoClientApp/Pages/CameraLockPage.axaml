@@ -1,0 +1,77 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Vao.Sample.Pages.CameraLockPage"
+             Background="{DynamicResource AppBg}">
+
+    <Grid RowDefinitions="64,*,Auto">
+                <Border Grid.Row="0" Height="64" Background="{DynamicResource Primary}" BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1" Padding="16,0">
+                    <Grid ColumnDefinitions="Auto,*">
+                        <Button Grid.Column="0"
+                                x:Name="btnBack"
+                                Click="btnBack_Click"
+                                Width="40" Height="40"
+                                Padding="0"
+                                Background="Transparent"
+                                BorderThickness="0">
+                            <TextBlock Text="&#xE5C4;" Classes="ms-icon" FontSize="20" Foreground="White"/>
+                        </Button>
+
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="12,0,0,0">
+                            <TextBlock Text="Camera Lock"
+                                       FontSize="20"
+                                       FontWeight="SemiBold"
+                                       Foreground="White"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <StackPanel Grid.Row="1" Spacing="24" Margin="24" VerticalAlignment="Top">
+            <TextBlock Text="Set camera lock timeout" FontSize="16" FontWeight="Medium"/>
+            
+            <!-- Time picker - Responsive grid -->
+            <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto">
+                <!-- Hours -->
+                <StackPanel Grid.Row="0" Grid.Column="0" Spacing="8">
+                    <TextBlock Text="Hours" FontSize="14" FontWeight="Medium" HorizontalAlignment="Center"/>
+                    <NumericUpDown x:Name="numUpDownHour" 
+                                   Minimum="0" Maximum="24" Value="0" 
+                                   FormatString="0" 
+                                   ValueChanged="numUpDown_ValueChanged"
+                                   MinHeight="44"
+                                   Classes="numeric-updown"/>
+                </StackPanel>
+
+                <!-- Minutes -->
+                <StackPanel Grid.Row="0" Grid.Column="1" Spacing="8">
+                    <TextBlock Text="Minutes" FontSize="14" FontWeight="Medium" HorizontalAlignment="Center"/>
+                    <NumericUpDown x:Name="numUpDownMin" 
+                                   Minimum="0" Maximum="59" Value="0" 
+                                   FormatString="0" 
+                                   ValueChanged="numUpDown_ValueChanged"
+                                   MinHeight="44"
+                                   Classes="numeric-updown"/>
+                </StackPanel>
+
+                <!-- Seconds -->
+                <StackPanel Grid.Row="0" Grid.Column="2" Spacing="8">
+                    <TextBlock Text="Seconds" FontSize="14" FontWeight="Medium" HorizontalAlignment="Center"/>
+                    <NumericUpDown x:Name="numUpDownSec" 
+                                   Minimum="0" Maximum="59" Value="0" 
+                                   FormatString="0" 
+                                   ValueChanged="numUpDown_ValueChanged"
+                                   MinHeight="44"
+                                   Classes="numeric-updown"/>
+                </StackPanel>
+            </Grid>
+
+            <TextBlock Text="Set all values to 0 to unlock immediately" FontSize="12" Opacity="0.7" FontStyle="Italic"/>
+                </StackPanel>
+
+                <Border Grid.Row="2" Background="{DynamicResource Surface1}" BorderBrush="{DynamicResource Divider}" BorderThickness="0,1,0,0" Padding="24,16">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12">
+                        <Button Content="Cancel" Click="btnCancel_Click" Classes="outlined" MinWidth="120" MinHeight="48" FontSize="14"/>
+                        <Button x:Name="btnSend" Content="Send" Click="btnSend_Click" Classes="primary" MinWidth="120" MinHeight="48" FontSize="14"/>
+                    </StackPanel>
+                </Border>
+    </Grid>
+</UserControl>

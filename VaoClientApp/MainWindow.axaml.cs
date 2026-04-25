@@ -17,6 +17,8 @@ using LibVLCSharp.Shared;
 using Vao.Client;
 using Vao.Client.Components;
 using Vao.Client.Enum;
+using Vao.Sample.Navigation;
+using Vao.Sample.Pages;
 
 namespace Vao.Sample
 {
@@ -41,6 +43,10 @@ namespace Vao.Sample
       private bool mIsLoadingSettings;
       private bool mIsMessagesCollapsed = false;
       private GridLength mMessagesExpandedRowHeight = new GridLength(1, GridUnitType.Star);
+      private bool mIsVideoTemporarilyDetached = false;
+
+      // Navigation service for tablet/mobile compatibility
+      private NavigationService mNavigationService;
 
       private ObservableCollection<MessageItem> mMessages = new();
       private ObservableCollection<MessageItem> mFilteredMessages = new();
@@ -96,6 +102,9 @@ namespace Vao.Sample
          ClearPresetDropdown();
          ClearRecordingDropdown();
 
+         // Initialize navigation service for pages/dialogs
+         InitializeNavigationService();
+
          mIsLoadingSettings = true;
          LoadSettings();
          mIsLoadingSettings = false;
@@ -106,6 +115,79 @@ namespace Vao.Sample
 
          Opened += MainWindow_Opened;
          AddHandler(KeyDownEvent, MainWindow_KeyDown, handledEventsToo: true);
+      }
+
+      private void InitializeNavigationService()
+      {
+         mNavigationService = new NavigationService();
+         var navigationHost = this.FindControl<ContentControl>("navigationHost");
+         if (navigationHost != null)
+         {
+            mNavigationService.Initialize(navigationHost);
+            mNavigationService.NavigationChanged += NavigationService_NavigationChanged;
+         }
+      }
+
+      private void NavigationService_NavigationChanged(object sender, NavigationChangedEventArgs e)
+      {
+         SetNavigationOverlayState(e.IsOverlayVisible);
+
+         if (!e.IsOverlayVisible)
+         {
+            LoadSettings();
+            UpdateUserInitial();
+            RefreshMessageColors();
+            RefreshVideoHeaderState();
+         }
+      }
+
+      private void SetNavigationOverlayState(bool isOverlayVisible)
+      {
+         SetMainChromeVisible(!isOverlayVisible);
+
+         if (isOverlayVisible)
+         {
+            DetachVideoSurfaceForOverlay();
+         }
+         else
+         {
+            ReattachVideoSurfaceAfterOverlay();
+         }
+      }
+
+      private void SetMainChromeVisible(bool isVisible)
+      {
+         if (mainTopBar != null)
+            mainTopBar.IsVisible = isVisible;
+
+         if (rootLayoutGrid != null && rootLayoutGrid.RowDefinitions.Count > 0)
+            rootLayoutGrid.RowDefinitions[0].Height = isVisible ? new GridLength(64) : new GridLength(0);
+      }
+
+      private void DetachVideoSurfaceForOverlay()
+      {
+         if (mVideoControl == null || !pnlVideo.Children.Contains(mVideoControl))
+            return;
+
+         if (mMediaPlayer != null)
+            mVideoControl.MediaPlayer = null;
+
+         pnlVideo.Children.Remove(mVideoControl);
+         mIsVideoTemporarilyDetached = true;
+      }
+
+      private void ReattachVideoSurfaceAfterOverlay()
+      {
+         if (!mIsVideoTemporarilyDetached || mVideoControl == null)
+            return;
+
+         if (!pnlVideo.Children.Contains(mVideoControl))
+            pnlVideo.Children.Add(mVideoControl);
+
+         if (mMediaPlayer != null)
+            mVideoControl.MediaPlayer = mMediaPlayer;
+
+         mIsVideoTemporarilyDetached = false;
       }
 
       private void MainWindow_KeyDown(object sender, KeyEventArgs e)
@@ -122,6 +204,17 @@ namespace Vao.Sample
             RefreshMessageColors();
             RefreshVideoHeaderState();
             SaveSettings();
+            UpdateThemeMenuLabel();
+            e.Handled = true;
+         }
+         else if (e.Key == Key.F12)
+         {
+            OpenSettingsPage();
+            e.Handled = true;
+         }
+         else if (e.Key == Key.Escape)
+         {
+            HandleEscapeNavigation();
             e.Handled = true;
          }
          
@@ -150,6 +243,7 @@ namespace Vao.Sample
       {
          Opened -= MainWindow_Opened;
 
+         UpdateThemeMenuLabel();
          var s = AppSettings.Default;
          expCameraControl.IsExpanded = s.IsCameraControlExpanded;
          expCameraSelection.IsExpanded = s.IsCameraSelectionExpanded;
@@ -364,19 +458,54 @@ namespace Vao.Sample
          }
       }
 
-      private async void menuItemSettings_Click(object sender, RoutedEventArgs e)
+      private void menuItemToggleTheme_Click(object sender, RoutedEventArgs e)
       {
-         var settingsWindow = new SettingsWindow();
-         await settingsWindow.ShowDialog(this);
+         var app = (App)Avalonia.Application.Current;
+         app.SetTheme(!IsDarkMode);
+         RefreshMessageColors();
+         RefreshVideoHeaderState();
+         SaveSettings();
+         UpdateThemeMenuLabel();
+      }
 
-         if (settingsWindow.WereSettingsSaved())
+      private void UpdateThemeMenuLabel()
+      {
+         if (txtToggleThemeLabel != null)
+            txtToggleThemeLabel.Text = IsDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode";
+         if (txtToggleThemeIcon != null)
+            txtToggleThemeIcon.Text = IsDarkMode ? "\uE51C" : "\uE518";
+      }
+
+      private void menuItemSettings_Click(object sender, RoutedEventArgs e)
+      {
+         OpenSettingsPage();
+      }
+
+      private void OpenSettingsPage()
+      {
+         var currentOverlay = navigationHost?.Content;
+         if (currentOverlay is SettingsPage)
+            return;
+
+         var settingsPage = new SettingsPage
          {
-            // Reload settings into main window
-            LoadSettings();
-            UpdateUserInitial();
-            RefreshMessageColors();
-            RefreshVideoHeaderState();
+            NavigationService = mNavigationService
+         };
+         mNavigationService.NavigateTo(settingsPage);
+      }
+
+      private void HandleEscapeNavigation()
+      {
+         var currentOverlay = navigationHost?.Content;
+
+         if (currentOverlay is SettingsPage settingsPage)
+         {
+            settingsPage.CancelAndGoBack();
+            return;
          }
+
+         if (navigationHost?.IsVisible == true)
+            mNavigationService.GoBack();
       }
 
       private void menuItemLogout_Click(object sender, RoutedEventArgs e)
@@ -676,10 +805,12 @@ namespace Vao.Sample
             if (mVideoControl != null)
             {
                mVideoControl.MediaPlayer = null;
-               pnlVideo.Children.Remove(mVideoControl);
+                  if (pnlVideo.Children.Contains(mVideoControl))
+                     pnlVideo.Children.Remove(mVideoControl);
                mVideoControl = null;
             }
             mIsVideoStarted = false;
+               mIsVideoTemporarilyDetached = false;
             DisposeMediaPlayerAsync(mp);
          }
       }
@@ -1058,8 +1189,14 @@ namespace Vao.Sample
          if (mVideoControl == null)
          {
             mVideoControl = new VideoView();
+         }
+
+         if (!pnlVideo.Children.Contains(mVideoControl))
+         {
             pnlVideo.Children.Add(mVideoControl);
          }
+
+         mIsVideoTemporarilyDetached = false;
       }
 
       private void EnsureVideoContextMenu()
@@ -1109,8 +1246,9 @@ namespace Vao.Sample
          if (sender is Button button && button.Tag is Alarm alarm)
          {
             SelectAlarm(alarm.ComponentNumber);
-            var window = new AlarmActionWindow(FlexRApiClient, CurrentAlarm, mCurrentLoggedInUser);
-            window.ShowDialog(this);
+            var alarmPage = new AlarmActionPage(FlexRApiClient, CurrentAlarm, mCurrentLoggedInUser);
+            alarmPage.NavigationService = mNavigationService;
+            mNavigationService.NavigateTo(alarmPage);
          }
       }
 
@@ -1442,24 +1580,27 @@ namespace Vao.Sample
          }
       }
 
-      private async void btnOpenDownloadWindow_Click(object sender, RoutedEventArgs e)
+      private void btnOpenDownloadWindow_Click(object sender, RoutedEventArgs e)
       {
-         var downloadWindow = new DownloadWindow(FlexRApiClient);
-         await downloadWindow.ShowDialog(this);
+         var downloadPage = new DownloadPage(FlexRApiClient);
+         downloadPage.NavigationService = mNavigationService;
+         mNavigationService.NavigateTo(downloadPage);
       }
 
-      private async void btnOpenAbsolutePositionWindow_Click(object sender, RoutedEventArgs e)
+      private void btnOpenAbsolutePositionWindow_Click(object sender, RoutedEventArgs e)
       {
-         var window = new AbsolutePositionWindow(FlexRApiClient, mCurrentCamera);
-         await window.ShowDialog(this);
+         var positionPage = new AbsolutePositionPage(FlexRApiClient, mCurrentCamera);
+         positionPage.NavigationService = mNavigationService;
+         mNavigationService.NavigateTo(positionPage);
       }
 
-      private async void btnCameraLock_Click(object sender, RoutedEventArgs e)
+      private void btnCameraLock_Click(object sender, RoutedEventArgs e)
       {
          if (!mCurrentCamera.IsLocked)
          {
-            var window = new CameraLockWindow(FlexRApiClient, mCurrentCamera);
-            await window.ShowDialog(this);
+            var lockPage = new CameraLockPage(FlexRApiClient, mCurrentCamera);
+            lockPage.NavigationService = mNavigationService;
+            mNavigationService.NavigateTo(lockPage);
          }
          else
          {

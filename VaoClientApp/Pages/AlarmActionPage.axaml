@@ -1,0 +1,74 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Vao.Sample.Pages.AlarmActionPage"
+             Background="{DynamicResource AppBg}">
+
+    <Grid RowDefinitions="64,*,Auto">
+                <Border Grid.Row="0" Height="64" Background="{DynamicResource Primary}" BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1" Padding="16,0">
+                    <Grid ColumnDefinitions="Auto,*">
+                        <Button Grid.Column="0"
+                                x:Name="btnBack"
+                                Click="btnBack_Click"
+                                Width="40" Height="40"
+                                Padding="0"
+                                Background="Transparent"
+                                BorderThickness="0">
+                            <TextBlock Text="&#xE5C4;" Classes="ms-icon" FontSize="20" Foreground="White"/>
+                        </Button>
+
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="12,0,0,0">
+                            <TextBlock Text="Alarm Action"
+                                       FontSize="20"
+                                       FontWeight="SemiBold"
+                                       Foreground="White"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" Margin="24,24,24,0">
+                
+                <!-- Alarm Information Card -->
+                <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Background="{DynamicResource SectionBg}" BorderBrush="{DynamicResource Divider}" BorderThickness="1" Padding="16">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Alarm Information" FontSize="14" FontWeight="SemiBold"/>
+                        
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Name" FontSize="12" Opacity="0.7"/>
+                            <TextBox x:Name="txtAlarmName" IsReadOnly="True" MinHeight="44" Padding="12,8"/>
+                        </StackPanel>
+                        
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Status" FontSize="12" Opacity="0.7"/>
+                            <TextBox x:Name="txtAlarmStatus" IsReadOnly="True" MinHeight="44" Padding="12,8"/>
+                        </StackPanel>
+                        
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Extended Status" FontSize="12" Opacity="0.7"/>
+                            <TextBox x:Name="txtAlarmExtendedStatus" IsReadOnly="True" MinHeight="44" Padding="12,8"/>
+                        </StackPanel>
+                        
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Priority" FontSize="12" Opacity="0.7"/>
+                            <TextBox x:Name="txtAlarmPriority" IsReadOnly="True" MinHeight="44" Padding="12,8"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Action Buttons - Large touch-friendly buttons -->
+                <Button x:Name="btnAlarmActivate" Content="Activate" Grid.Row="1" Grid.Column="0" Click="btnAlarmActivate_Click" Classes="primary" MinHeight="56" FontSize="14"/>
+                <Button x:Name="btnAlarmAcknowledge" Content="Acknowledge" Grid.Row="1" Grid.Column="1" Click="btnAlarmAcknowledge_Click" Classes="primary" MinHeight="56" FontSize="14"/>
+                
+                <Button x:Name="btnAlarmEnable" Content="Enable" Grid.Row="2" Grid.Column="0" Click="btnAlarmEnable_Click" Classes="outlined" MinHeight="56" FontSize="14"/>
+                <Button x:Name="btnAlarmDisable" Content="Disable" Grid.Row="2" Grid.Column="1" Click="btnAlarmDisable_Click" Classes="outlined" MinHeight="56" FontSize="14"/>
+                    </Grid>
+                </ScrollViewer>
+
+                <Border Grid.Row="2" Background="{DynamicResource Surface1}" BorderBrush="{DynamicResource Divider}" BorderThickness="0,1,0,0" Padding="24,16">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12">
+                        <Button x:Name="btnAlarmExpediate" Content="Expediate" Click="btnAlarmExpediate_Click" Classes="primary" MinWidth="120" MinHeight="48" FontSize="14"/>
+                        <Button Content="Close" Click="btnCancel_Click" Classes="outlined" MinWidth="120" MinHeight="48" FontSize="14"/>
+                    </StackPanel>
+                </Border>
+    </Grid>
+</UserControl>
