@@ -1280,39 +1280,17 @@ namespace Vao.Sample
       {
          var picker = new DatePicker
          {
-            SelectedDate = DateTime.TryParse(txtDatePlayback.Text, out DateTime currentDate) 
-               ? new DateTimeOffset(currentDate) 
-               : new DateTimeOffset(DateTime.Now)
+            SelectedDate = DateTime.TryParse(txtDatePlayback.Text, out DateTime currentDate)
+               ? new DateTimeOffset(currentDate)
+               : new DateTimeOffset(DateTime.Now),
+            HorizontalAlignment = HorizontalAlignment.Stretch
          };
 
-         var okButton = new Button
-         {
-            Content = "OK",
-            HorizontalAlignment = HorizontalAlignment.Right,
-            Margin = new Thickness(0, 10, 0, 0)
-         };
-
-         var dialog = new Window
-         {
-            Title = "Select Date",
-            Width = 320,
-            Height = 380,
-            Content = new StackPanel
-            {
-               Margin = new Thickness(10),
-               Children = { picker, okButton }
-            },
-            WindowStartupLocation = WindowStartupLocation.CenterOwner
-         };
-
-         okButton.Click += (s, args) =>
+         var dialog = CreatePickerDialog("Select Date", "Choose a date for playback", picker, result =>
          {
             if (picker.SelectedDate.HasValue)
-            {
                txtDatePlayback.Text = picker.SelectedDate.Value.ToString("yyyy-MM-dd");
-            }
-            dialog.Close();
-         };
+         });
 
          await dialog.ShowDialog(this);
       }
@@ -1324,39 +1302,116 @@ namespace Vao.Sample
             ClockIdentifier = "24HourClock",
             SelectedTime = TimeSpan.TryParse(txtTimePlayback.Text, out TimeSpan currentTime)
                ? currentTime
-               : DateTime.Now.TimeOfDay
+               : DateTime.Now.TimeOfDay,
+            HorizontalAlignment = HorizontalAlignment.Stretch
+         };
+
+         var dialog = CreatePickerDialog("Select Time", "Choose a time for playback", picker, result =>
+         {
+            if (picker.SelectedTime.HasValue)
+               txtTimePlayback.Text = picker.SelectedTime.Value.ToString(@"hh\:mm\:ss");
+         });
+
+         await dialog.ShowDialog(this);
+      }
+
+      private Window CreatePickerDialog(string title, string subtitle, Control pickerContent, Action<bool> onOk)
+      {
+         Window dialog = null;
+
+         // Header (64px, Primary background)
+         var primaryBrush = this.FindResource("Primary") is IBrush b
+            ? b : new SolidColorBrush(Color.Parse("#007BC1"));
+         var header = new Border
+         {
+            Height = 64,
+            Background = primaryBrush,
+            Child = new StackPanel
+            {
+               VerticalAlignment = VerticalAlignment.Center,
+               Margin = new Thickness(24, 0, 0, 0),
+               Children =
+               {
+                  new TextBlock
+                  {
+                     Text = title,
+                     FontSize = 20,
+                     FontWeight = FontWeight.Medium,
+                     Foreground = Brushes.White
+                  },
+                  new TextBlock
+                  {
+                     Text = subtitle,
+                     FontSize = 12,
+                     Foreground = Brushes.White,
+                     Opacity = 0.7
+                  }
+               }
+            }
+         };
+
+         // Content area
+         var content = new Border
+         {
+            Padding = new Thickness(24),
+            Child = pickerContent
+         };
+
+         // Footer with Cancel + OK buttons
+         var cancelButton = new Button
+         {
+            Content = "Cancel",
+            MinWidth = 100,
+            Classes = { "outlined" }
          };
 
          var okButton = new Button
          {
             Content = "OK",
-            HorizontalAlignment = HorizontalAlignment.Right,
-            Margin = new Thickness(0, 10, 0, 0)
+            MinWidth = 100,
+            Classes = { "primary" }
          };
 
-         var dialog = new Window
+         var footer = new Border
          {
-            Title = "Select Time",
-            Width = 320,
-            Height = 380,
+            Padding = new Thickness(24, 16),
+            Child = new StackPanel
+            {
+               Orientation = Avalonia.Layout.Orientation.Horizontal,
+               HorizontalAlignment = HorizontalAlignment.Right,
+               Spacing = 12,
+               Children = { cancelButton, okButton }
+            }
+         };
+         footer.Bind(Border.BackgroundProperty, footer.GetResourceObservable("Surface1"));
+         footer.Bind(Border.BorderBrushProperty, footer.GetResourceObservable("Divider"));
+         footer.BorderThickness = new Thickness(0, 1, 0, 0);
+
+         dialog = new Window
+         {
+            Title = title,
+            MinWidth = 320,
+            SizeToContent = SizeToContent.WidthAndHeight,
+            CanResize = false,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
             Content = new StackPanel
             {
-               Margin = new Thickness(10),
-               Children = { picker, okButton }
-            },
-            WindowStartupLocation = WindowStartupLocation.CenterOwner
+               Children = { header, content, footer }
+            }
          };
 
          okButton.Click += (s, args) =>
          {
-            if (picker.SelectedTime.HasValue)
-            {
-               txtTimePlayback.Text = picker.SelectedTime.Value.ToString(@"hh\:mm\:ss");
-            }
+            onOk(true);
             dialog.Close();
          };
 
-         await dialog.ShowDialog(this);
+         cancelButton.Click += (s, args) =>
+         {
+            dialog.Close();
+         };
+
+         return dialog;
       }
    }
 
