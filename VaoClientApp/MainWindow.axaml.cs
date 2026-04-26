@@ -956,6 +956,47 @@ namespace Vao.Sample
          btnGotoPreset.IsEnabled = hasPanTiltOrLens;
       }
 
+      private void UpdateVideoHeaderTooltip(Camera camera, string rtspUrl, int streamNo)
+      {
+         if (camera == null)
+         {
+            ToolTip.SetTip(txtVideoHeader, null);
+            return;
+         }
+
+         var capabilities = new List<string>();
+         if (camera.HasPanTiltControl) capabilities.Add("Pan/Tilt");
+         if (camera.HasLensControl) capabilities.Add("Lens (Zoom/Focus/Iris)");
+         if (camera.HasWipeWashControl) capabilities.Add("Wipe/Wash");
+         string capabilitiesText = capabilities.Count > 0 ? string.Join(", ", capabilities) : "None";
+
+         string lockStatus = camera.IsLocked
+            ? $"Locked by {camera.LockOwner ?? "Unknown"}"
+            : "Unlocked";
+
+         string videoHost = "N/A";
+         try
+         {
+            var uri = new Uri(rtspUrl);
+            videoHost = uri.Port > 0 ? $"{uri.Host}:{uri.Port}" : uri.Host;
+         }
+         catch { }
+
+         string resolution = streamNo == 2
+            ? (camera.Stream2Resolution ?? "N/A")
+            : (camera.Stream1Resolution ?? "N/A");
+         string channelName = streamNo == 2 ? "Sub" : "Main";
+
+         string tooltip = $"Camera: {camera.Name} (#{camera.ComponentNumber})\n"
+            + $"Resolution: {resolution} ({channelName})\n"
+            + $"Capabilities: {capabilitiesText}\n"
+            + $"Priority: {camera.Priority}\n"
+            + $"Lock: {lockStatus}\n"
+            + $"Video Server: {videoHost}";
+
+         ToolTip.SetTip(txtVideoHeader, tooltip);
+      }
+
       private void FillSelectPresetList()
       {
          List<Preset> presets = mCurrentCamera?.PresetList;
@@ -1009,9 +1050,10 @@ namespace Vao.Sample
             if (!string.IsNullOrEmpty(url))
             {
                txtCurrentRtspUrl.Text = GetMaskedUrl(url);
-               txtVideoHeader.Text = $"LIVE - Camera {cameraNo}";
-               brdVideoHeader.Background = GetLiveHeaderBrush();
-               StartRtspStream(url);
+                   txtVideoHeader.Text = $"LIVE - Camera {cameraNo}";
+                   brdVideoHeader.Background = GetLiveHeaderBrush();
+                   UpdateVideoHeaderTooltip(camera, url, streamNo);
+                   StartRtspStream(url);
             }
             // Update toggle to reflect actual stream without triggering save
             mIsLoadingSettings = true;
