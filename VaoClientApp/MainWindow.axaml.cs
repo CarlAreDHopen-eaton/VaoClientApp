@@ -1042,11 +1042,12 @@ namespace Vao.Sample
          if (camera != null)
          {
             CurrentCamera = camera;
+            string url = camera.GetCameraLiveStreamUrl(streamNo);
+            // Evaluate sub channel availability after GetCameraLiveStreamUrl which refreshes camera data
             bool hasSubChannel = !string.IsNullOrEmpty(camera.Stream2Resolution);
             // If sub requested but not available, fall back to main
             if (streamNo == 2 && !hasSubChannel)
                streamNo = 1;
-            string url = camera.GetCameraLiveStreamUrl(streamNo);
             if (!string.IsNullOrEmpty(url))
             {
                txtCurrentRtspUrl.Text = GetMaskedUrl(url);
