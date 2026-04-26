@@ -950,6 +950,10 @@ namespace Vao.Sample
          btnZoomOut.IsEnabled = mCurrentCamera?.HasLensControl ?? false;
          btnFocusFar.IsEnabled = mCurrentCamera?.HasLensControl ?? false;
          btnFocusNear.IsEnabled = mCurrentCamera?.HasLensControl ?? false;
+
+         bool hasPanTiltOrLens = (mCurrentCamera?.HasPanTiltControl ?? false) || (mCurrentCamera?.HasLensControl ?? false);
+         btnAbsolutePosition.IsEnabled = hasPanTiltOrLens;
+         btnGotoPreset.IsEnabled = hasPanTiltOrLens;
       }
 
       private void FillSelectPresetList()
