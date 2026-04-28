@@ -210,6 +210,8 @@ namespace Vao.Sample
          resources["AppBarHeight"] = Components.AppBar.Height;
          resources["SidebarWidth"] = Components.Sidebar.Width;
          resources["SidebarSectionHeaderFontSize"] = Components.Sidebar.SectionHeaderFontSize;
+         resources["SidebarSectionHeaderMinHeight"] = Components.Sidebar.SectionHeaderMinHeight;
+         resources["SidebarSectionHeaderPadding"] = new Thickness(16, Components.Sidebar.SectionHeaderPaddingVertical);
 
          resources["ButtonMinHeight"] = Sizing.Button.MinHeight;
          resources["InputMinHeight"] = Sizing.Input.MinHeight;
@@ -408,6 +410,8 @@ namespace Vao.Sample
             {
                Width = isTablet ? 280 : 248,
                SectionHeaderFontSize = isTablet ? 14 : 13,
+               SectionHeaderMinHeight = isTablet ? 52 : 48,
+               SectionHeaderPaddingVertical = isTablet ? 14 : 12,
                Colors = isDark
                   ? new ThemeSidebarColors { Background = "#121212", CardBackground = "#1E1E1E", Border = "#1FFFFFFF", HeaderForeground = "#DEFFFFFF" }
                   : new ThemeSidebarColors { Background = "#F6F6F6", CardBackground = "#F3F3F3", Border = "#D4D4D4", HeaderForeground = "#DE000000" }
@@ -449,6 +453,8 @@ namespace Vao.Sample
    {
       public double Width { get; set; }
       public double SectionHeaderFontSize { get; set; }
+      public double SectionHeaderMinHeight { get; set; }
+      public double SectionHeaderPaddingVertical { get; set; }
       public ThemeSidebarColors Colors { get; set; } = new();
    }
 

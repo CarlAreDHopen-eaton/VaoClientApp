@@ -73,6 +73,8 @@
     "Sidebar": {
       "Width": 280.0,
       "SectionHeaderFontSize": 14.0,
+      "SectionHeaderMinHeight": 52.0,
+      "SectionHeaderPaddingVertical": 14.0,
       "Colors": {
         "Background": "#121212",
         "CardBackground": "#1E1E1E",

@@ -137,7 +137,7 @@
                                 <Expander Classes="sidebar-section" x:Name="expCameraControl" IsExpanded="True" HorizontalAlignment="Stretch">
                                     <Expander.Header>
                                         <StackPanel Orientation="Horizontal" Spacing="8">
-                                            <TextBlock Text="&#xE30F;" Classes="ms-icon" FontSize="20" VerticalAlignment="Center"/>
+                                            <TextBlock Text="&#xE30F;" Classes="ms-icon" FontSize="{DynamicResource IconSize}" VerticalAlignment="Center"/>
                                             <TextBlock Text="Camera Control" VerticalAlignment="Center"/>
                                         </StackPanel>
                                     </Expander.Header>
@@ -187,7 +187,7 @@
                                 <Expander Classes="sidebar-section" x:Name="expCameraSelection" IsExpanded="True" HorizontalAlignment="Stretch">
                                     <Expander.Header>
                                         <StackPanel Orientation="Horizontal" Spacing="8">
-                                            <TextBlock Text="&#xE412;" Classes="ms-icon" FontSize="20" VerticalAlignment="Center"/>
+                                            <TextBlock Text="&#xE412;" Classes="ms-icon" FontSize="{DynamicResource IconSize}" VerticalAlignment="Center"/>
                                             <TextBlock Text="Camera Selection" VerticalAlignment="Center"/>
                                         </StackPanel>
                                     </Expander.Header>
@@ -200,7 +200,7 @@
                                 <Expander Classes="sidebar-section" x:Name="expPresetSelection" IsExpanded="True" HorizontalAlignment="Stretch">
                                     <Expander.Header>
                                         <StackPanel Orientation="Horizontal" Spacing="8">
-                                            <TextBlock Text="&#xE55E;" Classes="ms-icon" FontSize="20" VerticalAlignment="Center"/>
+                                            <TextBlock Text="&#xE55E;" Classes="ms-icon" FontSize="{DynamicResource IconSize}" VerticalAlignment="Center"/>
                                             <TextBlock Text="Preset Selection" VerticalAlignment="Center"/>
                                         </StackPanel>
                                     </Expander.Header>
@@ -218,7 +218,7 @@
                                 <Expander Classes="sidebar-section" x:Name="expAlarms" IsExpanded="True" HorizontalAlignment="Stretch">
                                     <Expander.Header>
                                         <StackPanel Orientation="Horizontal" Spacing="8">
-                                            <TextBlock Text="&#xE7F5;" Classes="ms-icon" FontSize="20" VerticalAlignment="Center"/>
+                                            <TextBlock Text="&#xE7F5;" Classes="ms-icon" FontSize="{DynamicResource IconSize}" VerticalAlignment="Center"/>
                                             <TextBlock Text="Alarms" VerticalAlignment="Center"/>
                                         </StackPanel>
                                     </Expander.Header>
@@ -231,7 +231,7 @@
                                 <Expander Classes="sidebar-section" x:Name="expPlaybackSelection" IsExpanded="True" HorizontalAlignment="Stretch">
                                     <Expander.Header>
                                         <StackPanel Orientation="Horizontal" Spacing="8">
-                                            <TextBlock Text="&#xE037;" Classes="ms-icon" FontSize="20" VerticalAlignment="Center"/>
+                                            <TextBlock Text="&#xE037;" Classes="ms-icon" FontSize="{DynamicResource IconSize}" VerticalAlignment="Center"/>
                                             <TextBlock Text="Playback Selection" VerticalAlignment="Center"/>
                                         </StackPanel>
                                     </Expander.Header>
@@ -270,7 +270,7 @@
                                 <Expander Classes="sidebar-section" x:Name="expDownloadRecording" IsExpanded="True" HorizontalAlignment="Stretch">
                                     <Expander.Header>
                                         <StackPanel Orientation="Horizontal" Spacing="8">
-                                            <TextBlock Text="&#xF090;" Classes="ms-icon" FontSize="20" VerticalAlignment="Center"/>
+                                            <TextBlock Text="&#xF090;" Classes="ms-icon" FontSize="{DynamicResource IconSize}" VerticalAlignment="Center"/>
                                             <TextBlock Text="Download Recording" VerticalAlignment="Center"/>
                                         </StackPanel>
                                     </Expander.Header>

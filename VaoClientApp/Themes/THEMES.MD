@@ -143,6 +143,8 @@ Component-specific overrides. These extend or override the global `Colors` and `
 |-------|-------------|
 | `Width` | Sidebar panel width |
 | `SectionHeaderFontSize` | Font size for sidebar group headers |
+| `SectionHeaderMinHeight` | Minimum height of expandable section headers |
+| `SectionHeaderPaddingVertical` | Vertical padding inside section headers |
 | `Colors.Background` | Sidebar background |
 | `Colors.CardBackground` | Background for cards within the sidebar |
 | `Colors.Border` | Sidebar edge border |

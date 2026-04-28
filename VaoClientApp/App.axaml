@@ -85,27 +85,33 @@
              =========================================== -->
 
         <!-- Base Expander Toggle Button -->
-        <Style Selector="Expander /template/ ToggleButton">
-            <Setter Property="MinHeight" Value="48"/>
-            <Setter Property="Padding" Value="16,12"/>
+        <Style Selector="Expander /template/ ToggleButton#PART_toggle">
+            <Setter Property="MinHeight" Value="{DynamicResource SidebarSectionHeaderMinHeight}"/>
+            <Setter Property="Padding" Value="{DynamicResource SidebarSectionHeaderPadding}"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         </Style>
+        <Style Selector="Expander.sidebar-section">
+            <Setter Property="MinHeight" Value="0"/>
+        </Style>
 
         <!-- Sidebar Section Expander - Collapsed State -->
-        <Style Selector="Expander.sidebar-section /template/ ToggleButton">
+        <Style Selector="Expander.sidebar-section /template/ ToggleButton#PART_toggle">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="{DynamicResource SidebarHeaderFg}"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="FontSize" Value="{DynamicResource SidebarSectionHeaderFontSize}"/>
-            <Setter Property="Padding" Value="16,12"/>
+            <Setter Property="MinHeight" Value="{DynamicResource SidebarSectionHeaderMinHeight}"/>
+            <Setter Property="Padding" Value="{DynamicResource SidebarSectionHeaderPadding}"/>
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         </Style>
 
         <!-- Sidebar Section Expander - Expanded State (Primary Blue) -->
-        <Style Selector="Expander.sidebar-section:expanded /template/ ToggleButton">
+        <Style Selector="Expander.sidebar-section:expanded /template/ ToggleButton#PART_toggle">
             <Setter Property="Background" Value="{DynamicResource Primary}"/>
             <Setter Property="Foreground" Value="White"/>
+            <Setter Property="MinHeight" Value="{DynamicResource SidebarSectionHeaderMinHeight}"/>
+            <Setter Property="Padding" Value="{DynamicResource SidebarSectionHeaderPadding}"/>
         </Style>
 
         <!-- Expander Content Text Colors -->

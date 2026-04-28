@@ -1,0 +1,116 @@
+{
+  "Key": "blue-desktop",
+  "DisplayName": "Blue Desktop",
+  "Variant": "Dark",
+  "FormFactor": "Desktop",
+
+  "Colors": {
+    "Accent": {
+      "Default": "#4A9FD9",
+      "Hover": "#5BB0EA",
+      "Pressed": "#3A8BC2"
+    },
+    "Status": {
+      "Success": "#4CAF50",
+      "Warning": "#FFB74D",
+      "Error": "#EF5350",
+      "Info": "#4A9FD9"
+    },
+    "Background": {
+      "App": "#0B1929",
+      "Raised": "#112240",
+      "Elevated": "#1A3358",
+      "Overlay": "#234470"
+    },
+    "Foreground": {
+      "Primary": "#E3ECF5",
+      "Secondary": "#8EACC4",
+      "Hint": "#5A7A96"
+    },
+    "Border": {
+      "Default": "#1A3D5C",
+      "Secondary": "#142E47"
+    }
+  },
+
+  "Sizing": {
+    "Page": {
+      "MarginHorizontal": 12.0,
+      "MarginVertical": 8.0
+    },
+    "Typography": {
+      "PageTitle": 15.0,
+      "PageSubtitle": 10.0,
+      "SectionHeader": 12.0
+    },
+    "Icon": {
+      "Default": 18.0,
+      "Small": 14.0
+    },
+    "Button": {
+      "MinHeight": 24.0,
+      "PaddingHorizontal": 8.0,
+      "PaddingVertical": 2.0
+    },
+    "Input": {
+      "MinHeight": 24.0,
+      "PaddingHorizontal": 6.0,
+      "PaddingVertical": 2.0
+    },
+    "ListItem": {
+      "MinHeight": 24.0
+    },
+    "Avatar": {
+      "Size": 26.0,
+      "CornerRadius": 13.0
+    }
+  },
+
+  "Components": {
+    "AppBar": {
+      "Height": 42.0
+    },
+    "Sidebar": {
+      "Width": 230.0,
+      "SectionHeaderFontSize": 11.0,
+      "SectionHeaderMinHeight": 28.0,
+      "SectionHeaderPaddingVertical": 4.0,
+      "Colors": {
+        "Background": "#091627",
+        "CardBackground": "#0F1F38",
+        "Border": "#1A3D5C",
+        "HeaderForeground": "#C0D6EA"
+      }
+    },
+    "VideoPanel": {
+      "Colors": {
+        "Background": "#050E1A",
+        "HeaderBackground": "#112240",
+        "HeaderIdle": "#1A3D5C",
+        "HeaderLive": "#2E7D32",
+        "HeaderPlayback": "#C62828"
+      }
+    },
+    "MessageLog": {
+      "Error":   { "Foreground": "#EF5350", "Background": "#1A0A0A" },
+      "Warning": { "Foreground": "#FFB74D", "Background": "#1A1408" },
+      "Debug":   { "Foreground": "#64B5F6", "Background": "#0A1520" },
+      "Default": { "Foreground": "#C0D6EA", "Background": "#00000000" }
+    },
+    "UserProfile": {
+      "ConnectedBackground": "#3A8BC2",
+      "DisconnectedBackground": "#546E7A"
+    },
+    "CameraLock": {
+      "AlarmLockedForeground": "#EF5350",
+      "UserLockedForeground": "#FFB74D"
+    },
+    "AlarmStatus": {
+      "Active": "#EF5350",
+      "Inactive": "#546E7A",
+      "Acknowledged": "#FFB74D",
+      "Tampered": "#FF8A65",
+      "Default": "#455A64"
+    }
+  }
+}
