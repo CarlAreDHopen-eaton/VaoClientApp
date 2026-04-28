@@ -37,6 +37,7 @@ namespace Vao.Sample.Pages
             var chkSecure = this.FindControl<CheckBox>("chkSecure");
             var chkUseTcp = this.FindControl<CheckBox>("chkUseTcp");
             var chkPreferSubChannel = this.FindControl<CheckBox>("chkPreferSubChannel");
+            var chkTabletMode = this.FindControl<CheckBox>("chkTabletMode");
             var chkDarkMode = this.FindControl<CheckBox>("chkDarkMode");
             var chkAutoConnect = this.FindControl<CheckBox>("chkAutoConnect");
             var txtFTPUser = this.FindControl<TextBox>("txtFTPUser");
@@ -50,6 +51,7 @@ namespace Vao.Sample.Pages
             if (chkSecure != null) chkSecure.IsChecked = s.UseHttps;
             if (chkUseTcp != null) chkUseTcp.IsChecked = s.UseTcp;
             if (chkPreferSubChannel != null) chkPreferSubChannel.IsChecked = s.PreferSubChannel;
+            if (chkTabletMode != null) chkTabletMode.IsChecked = s.IsTabletMode;
             if (chkDarkMode != null) chkDarkMode.IsChecked = s.IsDarkMode;
             if (chkAutoConnect != null) chkAutoConnect.IsChecked = s.AutoConnectOnStartup;
             if (txtFTPUser != null) txtFTPUser.Text = s.FTPUser;
@@ -67,6 +69,7 @@ namespace Vao.Sample.Pages
             var chkSecure = this.FindControl<CheckBox>("chkSecure");
             var chkUseTcp = this.FindControl<CheckBox>("chkUseTcp");
             var chkPreferSubChannel = this.FindControl<CheckBox>("chkPreferSubChannel");
+            var chkTabletMode = this.FindControl<CheckBox>("chkTabletMode");
             var chkDarkMode = this.FindControl<CheckBox>("chkDarkMode");
             var chkAutoConnect = this.FindControl<CheckBox>("chkAutoConnect");
             var txtFTPUser = this.FindControl<TextBox>("txtFTPUser");
@@ -80,6 +83,7 @@ namespace Vao.Sample.Pages
             s.UseHttps = chkSecure?.IsChecked == true;
             s.UseTcp = chkUseTcp?.IsChecked == true;
             s.PreferSubChannel = chkPreferSubChannel?.IsChecked == true;
+            s.IsTabletMode = chkTabletMode?.IsChecked == true;
             s.IsDarkMode = chkDarkMode?.IsChecked == true;
             s.AutoConnectOnStartup = chkAutoConnect?.IsChecked == true;
             s.FTPUser = txtFTPUser?.Text ?? "";
@@ -94,6 +98,13 @@ namespace Vao.Sample.Pages
             var chkDarkMode = this.FindControl<CheckBox>("chkDarkMode");
             bool isDark = chkDarkMode?.IsChecked == true;
             ((App)Application.Current).SetTheme(isDark);
+        }
+
+        private void chkTabletMode_Changed(object sender, RoutedEventArgs e)
+        {
+            var chkTabletMode = this.FindControl<CheckBox>("chkTabletMode");
+            bool isTabletMode = chkTabletMode?.IsChecked == true;
+            ((App)Application.Current).SetUiMode(isTabletMode);
         }
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
@@ -130,9 +141,10 @@ namespace Vao.Sample.Pages
 
         public void CancelAndGoBack()
         {
-            // Restore original dark mode setting if changed and go back
+            // Restore original appearance settings if changed and go back.
             var s = AppSettings.Default;
             ((App)Application.Current).SetTheme(s.IsDarkMode);
+            ((App)Application.Current).SetUiMode(s.IsTabletMode);
             GoBack();
         }
 

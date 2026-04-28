@@ -18,11 +18,11 @@
 
                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="12,0,0,0" Spacing="2">
                             <TextBlock Text="Download Recording"
-                                       FontSize="20"
+                                       Classes="page-header-title"
                                        FontWeight="SemiBold"
                                        Foreground="White"/>
                             <TextBlock Text="Export video recordings from recorders"
-                                       FontSize="12"
+                                       Classes="page-header-subtitle"
                                        Foreground="White"
                                        Opacity="0.7"/>
                         </StackPanel>
@@ -35,7 +35,7 @@
                 <!-- Recording Selection Section -->
                 <Border Background="{DynamicResource SectionBg}" BorderBrush="{DynamicResource Divider}" BorderThickness="1" Padding="16" x:Name="grpSelectRecording">
                     <StackPanel Spacing="12">
-                        <TextBlock Text="Available Recordings" FontSize="16" FontWeight="SemiBold"/>
+                        <TextBlock Text="Available Recordings" Classes="section-header" Margin="0"/>
                         
                         <StackPanel Spacing="4">
                             <TextBlock Text="Camera" FontSize="12" Opacity="0.7"/>
@@ -52,7 +52,7 @@
                 <!-- Download Request Section -->
                 <Border Background="{DynamicResource SectionBg}" BorderBrush="{DynamicResource Divider}" BorderThickness="1" Padding="16" x:Name="grpDownload">
                     <StackPanel Spacing="12">
-                        <TextBlock Text="Request Download" FontSize="16" FontWeight="SemiBold"/>
+                        <TextBlock Text="Request Download" Classes="section-header" Margin="0"/>
                         
                         <StackPanel Spacing="4">
                             <TextBlock Text="Recorder Address" FontSize="12" Opacity="0.7"/>
@@ -85,7 +85,7 @@
                 <!-- Pending Downloads Section -->
                 <Border Background="{DynamicResource SectionBg}" BorderBrush="{DynamicResource Divider}" BorderThickness="1" Padding="16">
                     <Grid RowDefinitions="Auto,*,Auto">
-                        <TextBlock Grid.Row="0" Text="Pending Downloads" FontSize="16" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Row="0" Text="Pending Downloads" Classes="section-header" Margin="0"/>
                         <ListBox Grid.Row="1" x:Name="lstPendingDownloads" Background="Transparent" MinHeight="100" Margin="0,8,0,8"/>
                         <Button Grid.Row="2" Content="Clear" Click="btnClearPendingDownloads_Click" Classes="outlined" HorizontalAlignment="Right" MinHeight="44" MinWidth="100"/>
                     </Grid>
@@ -94,7 +94,7 @@
                 <!-- Finished Downloads Section -->
                 <Border Background="{DynamicResource SectionBg}" BorderBrush="{DynamicResource Divider}" BorderThickness="1" Padding="16">
                     <Grid RowDefinitions="Auto,*,Auto">
-                        <TextBlock Grid.Row="0" Text="Finished Downloads" FontSize="16" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Row="0" Text="Finished Downloads" Classes="section-header" Margin="0"/>
                         <ListBox Grid.Row="1" x:Name="lstFinishedDownloads" Background="Transparent" MinHeight="100" Margin="0,8,0,8"/>
                         <Button Grid.Row="2" Content="Clear" Click="btnClearFinishedDownloads_Click" Classes="outlined" HorizontalAlignment="Right" MinHeight="44" MinWidth="100"/>
                     </Grid>
@@ -103,7 +103,7 @@
                 <!-- Messages Section -->
                 <Border Background="{DynamicResource SectionBg}" BorderBrush="{DynamicResource Divider}" BorderThickness="1" Padding="16">
                     <Grid RowDefinitions="Auto,*,Auto">
-                        <TextBlock Grid.Row="0" Text="Messages" FontSize="16" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Row="0" Text="Messages" Classes="section-header" Margin="0"/>
                         <ListBox Grid.Row="1" x:Name="lstDownloadMessages" Background="Transparent" FontSize="12" MinHeight="100" Margin="0,8,0,8"/>
                         <Button Grid.Row="2" Content="Clear" Click="btnClearDownloadMessages_Click" Classes="outlined" HorizontalAlignment="Right" MinHeight="44" MinWidth="100"/>
                     </Grid>

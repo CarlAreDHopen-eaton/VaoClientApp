@@ -21,11 +21,11 @@
                     </Button>
                     <StackPanel VerticalAlignment="Center" Spacing="2">
                         <TextBlock Text="HERNIS FLEX VAO" 
-                                   FontSize="20" 
+                                   Classes="page-header-title"
                                    FontWeight="Medium"
                                    Foreground="White"/>
                         <TextBlock Text="Test application for the HERNIS FLEX API" 
-                                   FontSize="12" 
+                                   Classes="page-header-subtitle"
                                    Foreground="White"
                                    Opacity="0.7"/>
                     </StackPanel>
@@ -34,9 +34,9 @@
                 <!-- Right: User Profile Avatar -->
                 <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center" Margin="0,0,16,0">
                     <Button x:Name="btnUserProfile"
-                            Width="44" Height="44"
+                            Width="{DynamicResource AvatarSize}" Height="{DynamicResource AvatarSize}"
                             Background="{DynamicResource PrimaryDark}"
-                            CornerRadius="22"
+                            CornerRadius="{DynamicResource AvatarCornerRadius}"
                             Padding="0"
                             BorderThickness="0"
                             VerticalAlignment="Center"
@@ -144,36 +144,36 @@
                                     <StackPanel Spacing="8" Margin="16,8,16,16" x:Name="grpCameraControl" IsEnabled="False">
                                         <Grid ColumnDefinitions="48,48,48,*,48,48" RowDefinitions="48,48,48">
                                             <!-- PTZ Controls -->
-                                            <Button Grid.Row="0" Grid.Column="0" x:Name="btnFocusNear" ToolTip.Tip="Focus Near" PointerPressed="OnControlCameraPointerPressed" PointerReleased="OnControlCameraPointerReleased" Width="44" Height="44" Padding="2" Classes="icon">
+                                            <Button Grid.Row="0" Grid.Column="0" x:Name="btnFocusNear" ToolTip.Tip="Focus Near" PointerPressed="OnControlCameraPointerPressed" PointerReleased="OnControlCameraPointerReleased" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}" Padding="2" Classes="icon">
                                                 <TextBlock x:Name="iconFocusNear" Text="&#xE883;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
                                             </Button>
-                                            <Button Grid.Row="0" Grid.Column="1" x:Name="btnTiltUp" ToolTip.Tip="Tilt Up" PointerPressed="OnControlCameraPointerPressed" PointerReleased="OnControlCameraPointerReleased" Width="44" Height="44" Padding="2" Classes="icon">
+                                            <Button Grid.Row="0" Grid.Column="1" x:Name="btnTiltUp" ToolTip.Tip="Tilt Up" PointerPressed="OnControlCameraPointerPressed" PointerReleased="OnControlCameraPointerReleased" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}" Padding="2" Classes="icon">
                                                 <TextBlock x:Name="iconTiltUp" Text="&#xE5D8;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
                                             </Button>
-                                            <Button Grid.Row="0" Grid.Column="2" x:Name="btnZoomIn" ToolTip.Tip="Zoom In" PointerPressed="OnControlCameraPointerPressed" PointerReleased="OnControlCameraPointerReleased" Width="44" Height="44" Padding="2" Classes="icon">
+                                            <Button Grid.Row="0" Grid.Column="2" x:Name="btnZoomIn" ToolTip.Tip="Zoom In" PointerPressed="OnControlCameraPointerPressed" PointerReleased="OnControlCameraPointerReleased" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}" Padding="2" Classes="icon">
                                                 <TextBlock x:Name="iconZoomIn" Text="&#xE8FF;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
                                             </Button>
-                                            <Button Grid.Row="1" Grid.Column="0" x:Name="btnPanLeft" ToolTip.Tip="Pan Left" PointerPressed="OnControlCameraPointerPressed" PointerReleased="OnControlCameraPointerReleased" Width="44" Height="44" Padding="2" Classes="icon">
+                                            <Button Grid.Row="1" Grid.Column="0" x:Name="btnPanLeft" ToolTip.Tip="Pan Left" PointerPressed="OnControlCameraPointerPressed" PointerReleased="OnControlCameraPointerReleased" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}" Padding="2" Classes="icon">
                                                 <TextBlock x:Name="iconPanLeft" Text="&#xE5C4;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
                                             </Button>
                                             <TextBlock Grid.Row="1" Grid.Column="1" x:Name="iconCenterCamera" Text="&#xE074;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                            <Button Grid.Row="1" Grid.Column="2" x:Name="btnPanRight" ToolTip.Tip="Pan Right" PointerPressed="OnControlCameraPointerPressed" PointerReleased="OnControlCameraPointerReleased" Width="44" Height="44" Padding="2" Classes="icon">
+                                            <Button Grid.Row="1" Grid.Column="2" x:Name="btnPanRight" ToolTip.Tip="Pan Right" PointerPressed="OnControlCameraPointerPressed" PointerReleased="OnControlCameraPointerReleased" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}" Padding="2" Classes="icon">
                                                 <TextBlock x:Name="iconPanRight" Text="&#xE5C8;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
                                             </Button>
-                                            <Button Grid.Row="2" Grid.Column="0" x:Name="btnFocusFar" ToolTip.Tip="Focus Far" PointerPressed="OnControlCameraPointerPressed" PointerReleased="OnControlCameraPointerReleased" Width="44" Height="44" Padding="2" Classes="icon">
+                                            <Button Grid.Row="2" Grid.Column="0" x:Name="btnFocusFar" ToolTip.Tip="Focus Far" PointerPressed="OnControlCameraPointerPressed" PointerReleased="OnControlCameraPointerReleased" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}" Padding="2" Classes="icon">
                                                 <TextBlock x:Name="iconFocusFar" Text="&#xE882;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
                                             </Button>
-                                            <Button Grid.Row="2" Grid.Column="1" x:Name="btnTiltDown" ToolTip.Tip="Tilt Down" PointerPressed="OnControlCameraPointerPressed" PointerReleased="OnControlCameraPointerReleased" Width="44" Height="44" Padding="2" Classes="icon">
+                                            <Button Grid.Row="2" Grid.Column="1" x:Name="btnTiltDown" ToolTip.Tip="Tilt Down" PointerPressed="OnControlCameraPointerPressed" PointerReleased="OnControlCameraPointerReleased" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}" Padding="2" Classes="icon">
                                                 <TextBlock x:Name="iconTiltDown" Text="&#xE5DB;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
                                             </Button>
-                                            <Button Grid.Row="2" Grid.Column="2" x:Name="btnZoomOut" ToolTip.Tip="Zoom Out" PointerPressed="OnControlCameraPointerPressed" PointerReleased="OnControlCameraPointerReleased" Width="44" Height="44" Padding="2" Classes="icon">
+                                            <Button Grid.Row="2" Grid.Column="2" x:Name="btnZoomOut" ToolTip.Tip="Zoom Out" PointerPressed="OnControlCameraPointerPressed" PointerReleased="OnControlCameraPointerReleased" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}" Padding="2" Classes="icon">
                                                 <TextBlock x:Name="iconZoomOut" Text="&#xE900;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
                                             </Button>
                                             <!-- Extra controls -->
-                                            <Button Grid.Row="0" Grid.Column="4" x:Name="btnAbsolutePosition" ToolTip.Tip="Absolute Position" Click="btnOpenAbsolutePositionWindow_Click" Width="44" Height="44" Padding="2" Classes="icon">
+                                            <Button Grid.Row="0" Grid.Column="4" x:Name="btnAbsolutePosition" ToolTip.Tip="Absolute Position" Click="btnOpenAbsolutePositionWindow_Click" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}" Padding="2" Classes="icon">
                                                 <TextBlock x:Name="iconAbsolutePosition" Text="&#xE074;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
                                             </Button>
-                                            <Button Grid.Row="1" Grid.Column="4" x:Name="btnCameraLock" ToolTip.Tip="Camera Lock" Click="btnCameraLock_Click" Width="44" Height="44" Padding="2" Classes="icon">
+                                            <Button Grid.Row="1" Grid.Column="4" x:Name="btnCameraLock" ToolTip.Tip="Camera Lock" Click="btnCameraLock_Click" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}" Padding="2" Classes="icon">
                                                 <TextBlock x:Name="iconCameraLock" Text="&#xE898;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
                                             </Button>
                                         </Grid>
@@ -246,7 +246,7 @@
                                             <TextBlock Text="Date (YYYY-MM-DD)" Classes="label"/>
                                             <Grid ColumnDefinitions="*,8,44">
                                                 <TextBox Grid.Column="0" x:Name="txtDatePlayback" Watermark="2024-01-15" HorizontalAlignment="Stretch"/>
-                                                <Button Grid.Column="2" x:Name="btnPickDate" Click="btnPickDate_Click" ToolTip.Tip="Pick date" Classes="icon" Width="44" Height="44">
+                                                <Button Grid.Column="2" x:Name="btnPickDate" Click="btnPickDate_Click" ToolTip.Tip="Pick date" Classes="icon" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}">
                                                                                                     <TextBlock Text="&#xE935;" Classes="ms-icon" FontSize="20"/>
                                                                                                 </Button>
                                             </Grid>
@@ -255,7 +255,7 @@
                                             <TextBlock Text="Time (HH:MM:SS)" Classes="label"/>
                                             <Grid ColumnDefinitions="*,8,44">
                                                 <TextBox Grid.Column="0" x:Name="txtTimePlayback" Watermark="14:30:00" HorizontalAlignment="Stretch"/>
-                                                <Button Grid.Column="2" x:Name="btnPickTime" Click="btnPickTime_Click" ToolTip.Tip="Pick time" Classes="icon" Width="44" Height="44">
+                                                <Button Grid.Column="2" x:Name="btnPickTime" Click="btnPickTime_Click" ToolTip.Tip="Pick time" Classes="icon" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}">
                                                                                                     <TextBlock Text="&#xE8B5;" Classes="ms-icon" FontSize="20"/>
                                                                                                 </Button>
                                             </Grid>
@@ -323,8 +323,8 @@
                                         ToolTip.Tip="Video menu"
                                         Margin="0,0,8,0"
                                         VerticalAlignment="Center"
-                                        Width="44"
-                                        Height="44"
+                                        Width="{DynamicResource ButtonMinHeight}"
+                                        Height="{DynamicResource ButtonMinHeight}"
                                         Padding="0">
                                     <TextBlock Text="&#xE5D4;" Classes="ms-icon" FontSize="18" Foreground="White"/>
                                 </Button>
@@ -428,15 +428,15 @@
 
                             <Border Grid.Row="1" Padding="20">
                                 <Grid>
-                                    <DatePicker x:Name="overlayDatePicker" IsVisible="False" MinHeight="44" HorizontalAlignment="Stretch"/>
-                                    <TimePicker x:Name="overlayTimePicker" IsVisible="False" MinHeight="44" ClockIdentifier="24HourClock" HorizontalAlignment="Stretch"/>
+                                    <DatePicker x:Name="overlayDatePicker" IsVisible="False" MinHeight="{DynamicResource InputMinHeight}" HorizontalAlignment="Stretch"/>
+                                    <TimePicker x:Name="overlayTimePicker" IsVisible="False" MinHeight="{DynamicResource InputMinHeight}" ClockIdentifier="24HourClock" HorizontalAlignment="Stretch"/>
                                 </Grid>
                             </Border>
 
                             <Border Grid.Row="2" Background="{DynamicResource Surface1}" BorderBrush="{DynamicResource Divider}" BorderThickness="0,1,0,0" Padding="16">
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12">
-                                    <Button Content="Cancel" Click="btnPickerOverlayCancel_Click" Classes="outlined" MinWidth="110" MinHeight="44"/>
-                                    <Button Content="Apply" Click="btnPickerOverlayApply_Click" Classes="primary" MinWidth="110" MinHeight="44"/>
+                                    <Button Content="Cancel" Click="btnPickerOverlayCancel_Click" Classes="outlined" MinWidth="110" MinHeight="{DynamicResource ButtonMinHeight}"/>
+                                    <Button Content="Apply" Click="btnPickerOverlayApply_Click" Classes="primary" MinWidth="110" MinHeight="{DynamicResource ButtonMinHeight}"/>
                                 </StackPanel>
                             </Border>
                         </Grid>

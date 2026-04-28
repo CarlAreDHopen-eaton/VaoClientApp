@@ -19,11 +19,11 @@
 
                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="12,0,0,0" Spacing="2">
                             <TextBlock Text="Settings"
-                                       FontSize="20"
+                                       Classes="page-header-title"
                                        FontWeight="SemiBold"
                                        Foreground="White"/>
                             <TextBlock Text="Configure application preferences"
-                                       FontSize="12"
+                                       Classes="page-header-subtitle"
                                        Foreground="White"
                                        Opacity="0.7"/>
                         </StackPanel>
@@ -35,31 +35,31 @@
 
                 <!-- Connection Settings Section -->
                 <StackPanel Spacing="16">
-                    <TextBlock Text="Connection Settings" Classes="section-header" FontSize="16" FontWeight="SemiBold"/>
+                    <TextBlock Text="Connection Settings" Classes="section-header"/>
 
                     <StackPanel Spacing="12">
                         <StackPanel Spacing="4">
                             <TextBlock Text="Host" Classes="label"/>
-                            <TextBox x:Name="txtHost" Watermark="Enter host address" MinHeight="44" Padding="12,8"/>
+                            <TextBox x:Name="txtHost" Watermark="Enter host address" MinHeight="{DynamicResource InputMinHeight}" Padding="{DynamicResource InputPadding}"/>
                         </StackPanel>
                         
                         <StackPanel Spacing="4">
                             <TextBlock Text="Port" Classes="label"/>
-                            <TextBox x:Name="txtPort" Watermark="444" MinHeight="44" Padding="12,8"/>
+                            <TextBox x:Name="txtPort" Watermark="444" MinHeight="{DynamicResource InputMinHeight}" Padding="{DynamicResource InputPadding}"/>
                         </StackPanel>
                         
                         <StackPanel Spacing="4">
                             <TextBlock Text="Username" Classes="label"/>
-                            <TextBox x:Name="txtUser" Watermark="Enter username" MinHeight="44" Padding="12,8"/>
+                            <TextBox x:Name="txtUser" Watermark="Enter username" MinHeight="{DynamicResource InputMinHeight}" Padding="{DynamicResource InputPadding}"/>
                         </StackPanel>
                         
                         <StackPanel Spacing="4">
                             <TextBlock Text="Password" Classes="label"/>
-                            <TextBox x:Name="txtPassword" PasswordChar="*" Watermark="Enter password" MinHeight="44" Padding="12,8"/>
+                            <TextBox x:Name="txtPassword" PasswordChar="*" Watermark="Enter password" MinHeight="{DynamicResource InputMinHeight}" Padding="{DynamicResource InputPadding}"/>
                         </StackPanel>
                         
-                        <CheckBox x:Name="chkSecure" Content="Use HTTPS (Secure)" MinHeight="44" Padding="12" FontSize="14"/>
-                        <CheckBox x:Name="chkAutoConnect" Content="Auto-connect on startup" MinHeight="44" Padding="12" FontSize="14"/>
+                        <CheckBox x:Name="chkSecure" Content="Use HTTPS (Secure)" MinHeight="{DynamicResource ButtonMinHeight}" Padding="12" FontSize="14"/>
+                        <CheckBox x:Name="chkAutoConnect" Content="Auto-connect on startup" MinHeight="{DynamicResource ButtonMinHeight}" Padding="12" FontSize="14"/>
                     </StackPanel>
                 </StackPanel>
 
@@ -68,11 +68,11 @@
 
                 <!-- Stream Settings Section -->
                 <StackPanel Spacing="16">
-                    <TextBlock Text="Stream Settings" Classes="section-header" FontSize="16" FontWeight="SemiBold"/>
+                    <TextBlock Text="Stream Settings" Classes="section-header"/>
 
                     <StackPanel Spacing="12">
-                        <CheckBox x:Name="chkUseTcp" Content="Use TCP protocol (instead of UDP)" MinHeight="44" Padding="12" FontSize="14"/>
-                        <CheckBox x:Name="chkPreferSubChannel" Content="Prefer sub-channel for streaming" MinHeight="44" Padding="12" FontSize="14"/>
+                        <CheckBox x:Name="chkUseTcp" Content="Use TCP protocol (instead of UDP)" MinHeight="{DynamicResource ButtonMinHeight}" Padding="12" FontSize="14"/>
+                        <CheckBox x:Name="chkPreferSubChannel" Content="Prefer sub-channel for streaming" MinHeight="{DynamicResource ButtonMinHeight}" Padding="12" FontSize="14"/>
                     </StackPanel>
                 </StackPanel>
 
@@ -81,24 +81,24 @@
 
                 <!-- Download Settings Section -->
                 <StackPanel Spacing="16">
-                    <TextBlock Text="Download Settings" Classes="section-header" FontSize="16" FontWeight="SemiBold"/>
+                    <TextBlock Text="Download Settings" Classes="section-header"/>
 
                     <StackPanel Spacing="12">
                         <StackPanel Spacing="4">
                             <TextBlock Text="FTP User" Classes="label"/>
-                            <TextBox x:Name="txtFTPUser" Watermark="Enter FTP username" MinHeight="44" Padding="12,8"/>
+                            <TextBox x:Name="txtFTPUser" Watermark="Enter FTP username" MinHeight="{DynamicResource InputMinHeight}" Padding="{DynamicResource InputPadding}"/>
                         </StackPanel>
                         
                         <StackPanel Spacing="4">
                             <TextBlock Text="FTP Password" Classes="label"/>
-                            <TextBox x:Name="txtFTPPassword" PasswordChar="*" Watermark="Enter FTP password" MinHeight="44" Padding="12,8"/>
+                            <TextBox x:Name="txtFTPPassword" PasswordChar="*" Watermark="Enter FTP password" MinHeight="{DynamicResource InputMinHeight}" Padding="{DynamicResource InputPadding}"/>
                         </StackPanel>
                         
                         <StackPanel Spacing="4">
                             <TextBlock Text="Download Path" Classes="label"/>
                             <Grid ColumnDefinitions="*,Auto">
-                                <TextBox Grid.Column="0" x:Name="txtDownloadPath" Watermark="Select download folder" MinHeight="44" Padding="12,8" Margin="0,0,8,0"/>
-                                <Button Grid.Column="1" Content="Browse" Click="btnBrowseDownloadPath_Click" Classes="outlined" Width="90" Height="44" MinWidth="0" VerticalAlignment="Center"/>
+                                <TextBox Grid.Column="0" x:Name="txtDownloadPath" Watermark="Select download folder" MinHeight="{DynamicResource InputMinHeight}" Padding="{DynamicResource InputPadding}" Margin="0,0,8,0"/>
+                                <Button Grid.Column="1" Content="Browse" Click="btnBrowseDownloadPath_Click" Classes="outlined" Width="90" Height="{DynamicResource ButtonMinHeight}" MinWidth="0" VerticalAlignment="Center"/>
                             </Grid>
                         </StackPanel>
                     </StackPanel>
@@ -109,13 +109,19 @@
 
                 <!-- Appearance Section -->
                 <StackPanel Spacing="16">
-                    <TextBlock Text="Appearance" Classes="section-header" FontSize="16" FontWeight="SemiBold"/>
+                    <TextBlock Text="Appearance" Classes="section-header"/>
+
+                    <CheckBox x:Name="chkTabletMode"
+                              Content="Tablet mode (larger controls)"
+                              Checked="chkTabletMode_Changed"
+                              Unchecked="chkTabletMode_Changed"
+                              MinHeight="{DynamicResource ButtonMinHeight}" Padding="12" FontSize="14"/>
 
                     <CheckBox x:Name="chkDarkMode" 
                               Content="Dark Mode" 
                               Checked="chkDarkMode_Changed" 
                               Unchecked="chkDarkMode_Changed"
-                              MinHeight="44" Padding="12" FontSize="14"/>
+                              MinHeight="{DynamicResource ButtonMinHeight}" Padding="12" FontSize="14"/>
                 </StackPanel>
                 
                         <Border Height="20"/>
@@ -124,8 +130,8 @@
 
                 <Border Grid.Row="2" Background="{DynamicResource Surface1}" BorderBrush="{DynamicResource Divider}" BorderThickness="0,1,0,0" Padding="24,16">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12">
-                        <Button Content="Cancel" Click="btnCancel_Click" Classes="outlined" MinWidth="120" MinHeight="48" FontSize="14"/>
-                        <Button Content="Save" Click="btnSave_Click" Classes="primary" MinWidth="120" MinHeight="48" FontSize="14"/>
+                        <Button Content="Cancel" Click="btnCancel_Click" Classes="outlined" MinWidth="120" MinHeight="{DynamicResource ButtonMinHeight}" FontSize="14"/>
+                        <Button Content="Save" Click="btnSave_Click" Classes="primary" MinWidth="120" MinHeight="{DynamicResource ButtonMinHeight}" FontSize="14"/>
                     </StackPanel>
                 </Border>
     </Grid>

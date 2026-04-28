@@ -27,6 +27,7 @@ namespace Vao.Sample
       public bool AutoConnectOnStartup { get; set; } = false;
       public bool PreferSubChannel { get; set; } = true;
       public bool IsDarkMode { get; set; } = true;
+      public bool IsTabletMode { get; set; } = true;
       public bool IsSidebarCollapsed { get; set; } = false;
 
       public bool IsConnectionExpanded { get; set; } = true;
