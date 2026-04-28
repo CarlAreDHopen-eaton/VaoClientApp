@@ -32,8 +32,8 @@ namespace Vao.Sample
          if (persistSelection)
             settings.SelectedTheme = theme.Key;
 
-         ApplyColorResources(theme.Colors);
-         ApplyLayoutResources(theme.Layout);
+         ApplyColorResources(theme);
+         ApplyLayoutResources(theme);
       }
 
       public ThemeDefinition ToggleThemeBrightness()
@@ -53,30 +53,14 @@ namespace Vao.Sample
          return ThemeCatalog.Reload().GetThemeOptions();
       }
 
-      private void ApplyLayoutResources(ThemeLayoutProfile profile)
+      private void ApplyLayoutResources(ThemeDefinition theme)
       {
-         Resources["AppBarHeight"] = profile.AppBarHeight;
-         Resources["SidebarWidth"] = profile.SidebarWidth;
-         Resources["ButtonMinHeight"] = profile.ButtonMinHeight;
-         Resources["InputMinHeight"] = profile.InputMinHeight;
-         Resources["ListItemMinHeight"] = profile.ListItemMinHeight;
-         Resources["AvatarSize"] = profile.AvatarSize;
-         Resources["AvatarCornerRadius"] = new CornerRadius(profile.AvatarCornerRadius);
-         Resources["IconSize"] = profile.IconSize;
-         Resources["IconSizeSmall"] = profile.IconSizeSmall;
-         Resources["SidebarSectionHeaderFontSize"] = profile.SidebarSectionHeaderFontSize;
-         Resources["SectionHeaderFontSize"] = profile.SectionHeaderFontSize;
-         Resources["PageHeaderTitleFontSize"] = profile.PageHeaderTitleFontSize;
-         Resources["PageHeaderSubtitleFontSize"] = profile.PageHeaderSubtitleFontSize;
-         Resources["ButtonPadding"] = profile.GetButtonPadding();
-         Resources["InputPadding"] = profile.GetInputPadding();
-         Resources["PageMargin"] = profile.GetPageMargin();
-         Resources["PageMarginNoBottom"] = profile.GetPageMarginNoBottom();
+         theme.ApplyLayoutResources(Resources);
       }
 
-      private void ApplyColorResources(ThemeColorProfile colors)
+      private void ApplyColorResources(ThemeDefinition theme)
       {
-         foreach (var entry in colors.ToBrushResources())
+         foreach (var entry in theme.ToBrushResources())
             Resources[entry.Key] = entry.Value;
       }
 
