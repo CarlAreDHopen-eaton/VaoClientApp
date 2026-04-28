@@ -499,6 +499,8 @@
             <!-- Component Padding -->
             <Thickness x:Key="ButtonPadding">16,8</Thickness>
             <Thickness x:Key="InputPadding">12,8</Thickness>
+            <Thickness x:Key="PageMargin">24</Thickness>
+            <Thickness x:Key="PageMarginNoBottom">24,24,24,0</Thickness>
             <Thickness x:Key="CardPadding">16</Thickness>
             <Thickness x:Key="SectionPadding">24</Thickness>
             <Thickness x:Key="DialogPadding">24,16</Thickness>

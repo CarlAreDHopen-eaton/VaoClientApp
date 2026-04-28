@@ -6,9 +6,9 @@
         Width="1226" Height="1002" MinWidth="400" MinHeight="200"
         Background="{DynamicResource AppBg}">
 
-    <Grid x:Name="rootLayoutGrid" RowDefinitions="64,*">
+    <Grid x:Name="rootLayoutGrid" RowDefinitions="Auto,*">
         <!-- Top App Bar (64px per Brightlayer UI) -->
-        <Border x:Name="mainTopBar" Grid.Row="0" Background="{DynamicResource Primary}" BoxShadow="0 2 4 0 #40000000">
+        <Border x:Name="mainTopBar" Grid.Row="0" Height="{DynamicResource AppBarHeight}" Background="{DynamicResource Primary}" BoxShadow="0 2 4 0 #40000000">
             <Grid ColumnDefinitions="Auto,*,Auto" Margin="0">
                 <!-- Left: Hamburger + App Title + Subtitle -->
                 <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="16" VerticalAlignment="Center" Margin="8,0,0,0">
@@ -102,7 +102,7 @@
         <!-- Main Content Area -->
         <Grid Grid.Row="1" ColumnDefinitions="Auto,*">
             <!-- Left panel - collapsible sidebar (280px expanded, 56px collapsed) -->
-            <Grid Grid.Column="0" x:Name="sidebarGrid" Width="280">
+            <Grid Grid.Column="0" x:Name="sidebarGrid" Width="{DynamicResource SidebarWidth}">
                 <!-- Narrow icon rail (visible when collapsed) -->
                 <Border x:Name="narrowSidebar" IsVisible="False" Background="{DynamicResource Surface1}">
                     <StackPanel Spacing="4" Margin="0,8" HorizontalAlignment="Center">

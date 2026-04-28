@@ -3,8 +3,8 @@
              x:Class="Vao.Sample.Pages.AbsolutePositionPage"
              Background="{DynamicResource AppBg}">
 
-    <Grid RowDefinitions="64,*,Auto">
-                <Border Grid.Row="0" Height="64" Background="{DynamicResource Primary}" BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1" Padding="16,0">
+    <Grid RowDefinitions="Auto,*,Auto">
+                <Border Grid.Row="0" Height="{DynamicResource AppBarHeight}" Background="{DynamicResource Primary}" BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1" Padding="16,0">
                     <Grid ColumnDefinitions="Auto,*">
                         <Button Grid.Column="0"
                                 x:Name="btnBack"
@@ -25,7 +25,7 @@
                     </Grid>
                 </Border>
 
-                <StackPanel Grid.Row="1" Spacing="16" Margin="24" VerticalAlignment="Top">
+                <StackPanel Grid.Row="1" Spacing="16" Margin="{DynamicResource PageMargin}" VerticalAlignment="Top">
             <StackPanel Spacing="8">
                 <TextBlock Text="Pan (degrees)" FontSize="14" FontWeight="Medium"/>
                 <TextBox x:Name="txtAbsolutePan" Watermark="Enter pan value" MinHeight="44" Padding="12,8" TextChanged="txtAbsoluteValue_TextChanged" FontSize="14"/>

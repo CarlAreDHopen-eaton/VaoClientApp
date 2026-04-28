@@ -26,8 +26,7 @@ namespace Vao.Sample
       public bool UseTcp { get; set; } = false;
       public bool AutoConnectOnStartup { get; set; } = false;
       public bool PreferSubChannel { get; set; } = true;
-      public bool IsDarkMode { get; set; } = true;
-      public bool IsTabletMode { get; set; } = true;
+      public string SelectedTheme { get; set; } = "dark-tablet";
       public bool IsSidebarCollapsed { get; set; } = false;
 
       public bool IsConnectionExpanded { get; set; } = true;
@@ -55,10 +54,20 @@ namespace Vao.Sample
          try
          {
             if (File.Exists(SettingsPath))
-               return JsonConvert.DeserializeObject<AppSettings>(File.ReadAllText(SettingsPath)) ?? new AppSettings();
+            {
+               var settings = JsonConvert.DeserializeObject<AppSettings>(File.ReadAllText(SettingsPath)) ?? new AppSettings();
+               if (string.IsNullOrWhiteSpace(settings.SelectedTheme))
+                  settings.SelectedTheme = "dark-tablet";
+               return settings;
+            }
          }
          catch { }
          return new AppSettings();
+      }
+
+      public string GetPreferredThemeKey()
+      {
+         return string.IsNullOrWhiteSpace(SelectedTheme) ? "dark-tablet" : SelectedTheme;
       }
    }
 }

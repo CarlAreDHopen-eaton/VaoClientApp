@@ -96,10 +96,10 @@
 				<StackPanel Spacing="16">
 					<TextBlock Text="Appearance" Classes="section-header"/>
 
-					<CheckBox x:Name="chkDarkMode" 
-							  Content="Dark Mode" 
-							  Checked="chkDarkMode_Changed" 
-							  Unchecked="chkDarkMode_Changed"/>
+					<StackPanel Spacing="4">
+						<TextBlock Text="Theme" Classes="label"/>
+						<ComboBox x:Name="cmbTheme" SelectionChanged="cmbTheme_SelectionChanged"/>
+					</StackPanel>
 				</StackPanel>
 
 			</StackPanel>

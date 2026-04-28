@@ -4,16 +4,19 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
 using System;
+using System.Linq;
 
 namespace Vao.Sample
 {
     public partial class SettingsWindow : Window
     {
         private bool _settingsSaved = false;
+        private string _originalThemeKey = string.Empty;
 
         public SettingsWindow()
         {
             InitializeComponent();
+            _originalThemeKey = AppSettings.Default.GetPreferredThemeKey();
             LoadSettings();
         }
 
@@ -32,11 +35,12 @@ namespace Vao.Sample
             var chkSecure = this.FindControl<CheckBox>("chkSecure");
             var chkUseTcp = this.FindControl<CheckBox>("chkUseTcp");
             var chkPreferSubChannel = this.FindControl<CheckBox>("chkPreferSubChannel");
-            var chkDarkMode = this.FindControl<CheckBox>("chkDarkMode");
+            var cmbTheme = this.FindControl<ComboBox>("cmbTheme");
             var chkAutoConnect = this.FindControl<CheckBox>("chkAutoConnect");
             var txtFTPUser = this.FindControl<TextBox>("txtFTPUser");
             var txtFTPPassword = this.FindControl<TextBox>("txtFTPPassword");
             var txtDownloadPath = this.FindControl<TextBox>("txtDownloadPath");
+            var themeOptions = ((App)Application.Current).GetThemeOptions();
 
             txtHost.Text = s.Host1;
             txtPort.Text = s.ApiPort;
@@ -45,11 +49,12 @@ namespace Vao.Sample
             chkSecure.IsChecked = s.UseHttps;
             chkUseTcp.IsChecked = s.UseTcp;
             chkPreferSubChannel.IsChecked = s.PreferSubChannel;
-            chkDarkMode.IsChecked = s.IsDarkMode;
             chkAutoConnect.IsChecked = s.AutoConnectOnStartup;
             txtFTPUser.Text = s.FTPUser;
             txtFTPPassword.Text = s.FTPPassword;
             txtDownloadPath.Text = s.DownloadPath;
+            cmbTheme.ItemsSource = themeOptions;
+            cmbTheme.SelectedItem = themeOptions.FirstOrDefault(option => option.Key == s.GetPreferredThemeKey());
         }
 
         private void SaveSettings()
@@ -62,11 +67,12 @@ namespace Vao.Sample
             var chkSecure = this.FindControl<CheckBox>("chkSecure");
             var chkUseTcp = this.FindControl<CheckBox>("chkUseTcp");
             var chkPreferSubChannel = this.FindControl<CheckBox>("chkPreferSubChannel");
-            var chkDarkMode = this.FindControl<CheckBox>("chkDarkMode");
+            var cmbTheme = this.FindControl<ComboBox>("cmbTheme");
             var chkAutoConnect = this.FindControl<CheckBox>("chkAutoConnect");
             var txtFTPUser = this.FindControl<TextBox>("txtFTPUser");
             var txtFTPPassword = this.FindControl<TextBox>("txtFTPPassword");
             var txtDownloadPath = this.FindControl<TextBox>("txtDownloadPath");
+            var selectedTheme = cmbTheme.SelectedItem as ThemeOption;
 
             s.Host1 = txtHost.Text ?? "";
             s.ApiPort = txtPort.Text ?? "";
@@ -75,20 +81,21 @@ namespace Vao.Sample
             s.UseHttps = chkSecure.IsChecked == true;
             s.UseTcp = chkUseTcp.IsChecked == true;
             s.PreferSubChannel = chkPreferSubChannel.IsChecked == true;
-            s.IsDarkMode = chkDarkMode.IsChecked == true;
+            s.SelectedTheme = selectedTheme?.Key ?? s.GetPreferredThemeKey();
             s.AutoConnectOnStartup = chkAutoConnect.IsChecked == true;
             s.FTPUser = txtFTPUser.Text ?? "";
             s.FTPPassword = txtFTPPassword.Text ?? "";
             s.DownloadPath = txtDownloadPath.Text ?? "";
             s.Save();
+            _originalThemeKey = s.SelectedTheme;
             _settingsSaved = true;
         }
 
-        private void chkDarkMode_Changed(object sender, RoutedEventArgs e)
+        private void cmbTheme_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var chkDarkMode = this.FindControl<CheckBox>("chkDarkMode");
-            bool isDark = chkDarkMode.IsChecked == true;
-            ((App)Application.Current).SetTheme(isDark);
+            var selectedTheme = this.FindControl<ComboBox>("cmbTheme")?.SelectedItem as ThemeOption;
+            if (selectedTheme != null)
+                ((App)Application.Current).ApplyTheme(selectedTheme.Key, persistSelection: false);
         }
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
@@ -99,9 +106,7 @@ namespace Vao.Sample
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)
         {
-            // Restore original dark mode setting if changed
-            var s = AppSettings.Default;
-            ((App)Application.Current).SetTheme(s.IsDarkMode);
+            ((App)Application.Current).ApplyTheme(_originalThemeKey, persistSelection: false);
             Close();
         }
 

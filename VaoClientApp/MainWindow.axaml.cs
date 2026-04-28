@@ -253,7 +253,7 @@ namespace Vao.Sample
          else if (e.Key == Key.F10)
          {
             var app = (App)Avalonia.Application.Current;
-            app.SetTheme(!IsDarkMode);
+            app.ToggleThemeBrightness();
             RefreshMessageColors();
             RefreshVideoHeaderState();
             SaveSettings();
@@ -440,7 +440,7 @@ namespace Vao.Sample
          }
       }
 
-      private bool IsDarkMode => AppSettings.Default.IsDarkMode;
+      private bool IsDarkMode => ((App)Avalonia.Application.Current)?.CurrentTheme?.IsDark ?? true;
 
       private void ApplyIcons()
       {
@@ -482,14 +482,11 @@ namespace Vao.Sample
           // Gray circle when disconnected, themed color when connected
           if (IsStarted)
           {
-             if (this.TryFindResource("PrimaryDark", out var res) && res is IBrush brush)
-                btnUserProfile.Background = brush;
-             else
-                btnUserProfile.Background = new SolidColorBrush(Color.FromRgb(0, 90, 143));
+             btnUserProfile.Background = GetBrushResource("UserProfileConnectedBackground", "#006BA1");
           }
           else
           {
-             btnUserProfile.Background = new SolidColorBrush(Color.FromRgb(128, 128, 128));
+             btnUserProfile.Background = GetBrushResource("UserProfileDisconnectedBackground", "#808080");
           }
        }
 
@@ -518,7 +515,7 @@ namespace Vao.Sample
       private void menuItemToggleTheme_Click(object sender, RoutedEventArgs e)
       {
          var app = (App)Avalonia.Application.Current;
-         app.SetTheme(!IsDarkMode);
+         app.ToggleThemeBrightness();
          RefreshMessageColors();
          RefreshVideoHeaderState();
          SaveSettings();
@@ -527,8 +524,10 @@ namespace Vao.Sample
 
       private void UpdateThemeMenuLabel()
       {
+         var app = (App)Avalonia.Application.Current;
+         var targetTheme = app.GetToggleBrightnessTargetTheme();
          if (txtToggleThemeLabel != null)
-            txtToggleThemeLabel.Text = IsDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode";
+            txtToggleThemeLabel.Text = $"Switch to {targetTheme.DisplayName}";
          if (txtToggleThemeIcon != null)
             txtToggleThemeIcon.Text = IsDarkMode ? "\uE51C" : "\uE518";
       }
@@ -796,24 +795,21 @@ namespace Vao.Sample
       {
          return level switch
          {
-            LogLevel.Error => Brushes.Red,
-            LogLevel.Warning => new SolidColorBrush(IsDarkMode ? Colors.Orange : Color.FromRgb(120, 63, 0)),
-            LogLevel.Debug => new SolidColorBrush(IsDarkMode ? Colors.LightBlue : Color.FromRgb(0, 67, 122)),
-            _ => new SolidColorBrush(IsDarkMode ? Colors.White : Colors.Black),
+            LogLevel.Error => GetBrushResource("MessageErrorForeground", "#FF0000"),
+            LogLevel.Warning => GetBrushResource("MessageWarningForeground", "#F0AA1F"),
+            LogLevel.Debug => GetBrushResource("MessageDebugForeground", "#ADD8E6"),
+            _ => GetBrushResource("MessageDefaultForeground", "#FFFFFF"),
          };
       }
 
       private IBrush GetBackgroundForLogLevel(LogLevel level)
       {
-         if (IsDarkMode)
-            return Brushes.Transparent;
-
          return level switch
          {
-            LogLevel.Error => new SolidColorBrush(Color.FromRgb(255, 238, 238)),
-            LogLevel.Warning => new SolidColorBrush(Color.FromRgb(255, 245, 230)),
-            LogLevel.Debug => new SolidColorBrush(Color.FromRgb(236, 245, 252)),
-            _ => Brushes.Transparent,
+            LogLevel.Error => GetBrushResource("MessageErrorBackground", "#00FFFFFF"),
+            LogLevel.Warning => GetBrushResource("MessageWarningBackground", "#00FFFFFF"),
+            LogLevel.Debug => GetBrushResource("MessageDebugBackground", "#00FFFFFF"),
+            _ => GetBrushResource("MessageDefaultBackground", "#00FFFFFF"),
          };
       }
 
@@ -841,27 +837,25 @@ namespace Vao.Sample
 
       private IBrush GetNeutralHeaderBrush()
       {
-         if (this.TryFindResource("VideoHeaderBg", this.ActualThemeVariant, out var brush) && brush is IBrush b)
-            return b;
-         return new SolidColorBrush(Color.FromRgb(29, 58, 74));
+         return GetBrushResource("VideoHeaderNeutral", "#1D3A4A");
       }
 
       private IBrush GetLiveHeaderBrush()
       {
-         if (!IsDarkMode)
-            return new SolidColorBrush(Color.FromRgb(46, 125, 50));
-         if (this.TryFindResource("Success", this.ActualThemeVariant, out var brush) && brush is IBrush b)
-            return b;
-         return new SolidColorBrush(Color.FromRgb(57, 182, 32));
+         return GetBrushResource("VideoHeaderLive", "#39B620");
       }
 
       private IBrush GetPlaybackHeaderBrush()
       {
-         if (!IsDarkMode)
-            return new SolidColorBrush(Color.FromRgb(183, 28, 28));
-         if (this.TryFindResource("Error", this.ActualThemeVariant, out var brush) && brush is IBrush b)
-            return b;
-         return new SolidColorBrush(Color.FromRgb(202, 60, 61));
+         return GetBrushResource("VideoHeaderPlayback", "#CA3C3D");
+      }
+
+      private IBrush GetBrushResource(string resourceKey, string fallbackColor)
+      {
+         if (this.TryFindResource(resourceKey, this.ActualThemeVariant, out var brush) && brush is IBrush typedBrush)
+            return typedBrush;
+
+         return new SolidColorBrush(Color.Parse(fallbackColor));
       }
 
       private void RefreshMessageColors()
@@ -1013,7 +1007,7 @@ namespace Vao.Sample
                 if (iconCameraLock != null)
                 {
                    iconCameraLock.Text = "\uE899"; // lock
-                   iconCameraLock.Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#CA3C3D"));
+                  iconCameraLock.Foreground = GetBrushResource("CameraLockAlarmForeground", "#CA3C3D");
                 }
                 btnCameraLock.IsEnabled = true;
              }
@@ -1022,7 +1016,7 @@ namespace Vao.Sample
                 if (iconCameraLock != null)
                 {
                    iconCameraLock.Text = "\uE899"; // lock
-                   iconCameraLock.Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#F0AA1F"));
+                  iconCameraLock.Foreground = GetBrushResource("CameraLockManualForeground", "#F0AA1F");
                 }
                 btnCameraLock.IsEnabled = true;
              }
@@ -1470,15 +1464,15 @@ namespace Vao.Sample
          }
       }
 
-      private static IBrush GetBrushForStatus(AlarmGeneralStatus status)
+      private IBrush GetBrushForStatus(AlarmGeneralStatus status)
       {
          return status switch
          {
-            AlarmGeneralStatus.Active => Brushes.Red,
-            AlarmGeneralStatus.Inactive => Brushes.Gray,
-            AlarmGeneralStatus.Acknowledged => Brushes.Orange,
-            AlarmGeneralStatus.Tampered => Brushes.DarkOrange,
-            _ => new SolidColorBrush(Color.FromArgb(120, 128, 128, 128)),
+            AlarmGeneralStatus.Active => GetBrushResource("AlarmStatusActive", "#FF0000"),
+            AlarmGeneralStatus.Inactive => GetBrushResource("AlarmStatusInactive", "#808080"),
+            AlarmGeneralStatus.Acknowledged => GetBrushResource("AlarmStatusAcknowledged", "#FFA500"),
+            AlarmGeneralStatus.Tampered => GetBrushResource("AlarmStatusTampered", "#FF8C00"),
+            _ => GetBrushResource("AlarmStatusDefault", "#78808080"),
          };
       }
 

@@ -3,8 +3,8 @@
              x:Class="Vao.Sample.Pages.SettingsPage"
              Background="{DynamicResource AppBg}">
 
-    <Grid RowDefinitions="64,*,Auto">
-                <Border Grid.Row="0" Height="64" Background="{DynamicResource Primary}" BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1" Padding="16,0">
+    <Grid RowDefinitions="Auto,*,Auto">
+                <Border Grid.Row="0" Height="{DynamicResource AppBarHeight}" Background="{DynamicResource Primary}" BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1" Padding="16,0">
                     <Grid ColumnDefinitions="Auto,*">
                         <Button Grid.Column="0"
                                 x:Name="btnBack"
@@ -31,7 +31,7 @@
                 </Border>
 
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                    <StackPanel Margin="24" Spacing="24">
+                    <StackPanel Margin="{DynamicResource PageMargin}" Spacing="24">
 
                 <!-- Connection Settings Section -->
                 <StackPanel Spacing="16">
@@ -111,17 +111,13 @@
                 <StackPanel Spacing="16">
                     <TextBlock Text="Appearance" Classes="section-header"/>
 
-                    <CheckBox x:Name="chkTabletMode"
-                              Content="Tablet mode (larger controls)"
-                              Checked="chkTabletMode_Changed"
-                              Unchecked="chkTabletMode_Changed"
-                              MinHeight="{DynamicResource ButtonMinHeight}" Padding="12" FontSize="14"/>
-
-                    <CheckBox x:Name="chkDarkMode" 
-                              Content="Dark Mode" 
-                              Checked="chkDarkMode_Changed" 
-                              Unchecked="chkDarkMode_Changed"
-                              MinHeight="{DynamicResource ButtonMinHeight}" Padding="12" FontSize="14"/>
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Theme" Classes="label"/>
+                        <ComboBox x:Name="cmbTheme"
+                                  SelectionChanged="cmbTheme_SelectionChanged"
+                                  MinHeight="{DynamicResource InputMinHeight}"
+                                  Padding="{DynamicResource InputPadding}"/>
+                    </StackPanel>
                 </StackPanel>
                 
                         <Border Height="20"/>

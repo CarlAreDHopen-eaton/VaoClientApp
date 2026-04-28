@@ -24,6 +24,12 @@
     <AvaloniaResource Include="Resources\**" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="Themes\*.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
   <!-- Embedded Open Sans Fonts for Brightlayer UI -->
   <ItemGroup>
     <AvaloniaResource Include="Assets\Fonts\*.ttf" />

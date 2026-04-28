@@ -3,8 +3,8 @@
              x:Class="Vao.Sample.Pages.DownloadPage"
              Background="{DynamicResource AppBg}">
 
-    <Grid RowDefinitions="64,*">
-                <Border Grid.Row="0" Height="64" Background="{DynamicResource Primary}" BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1" Padding="16,0">
+    <Grid RowDefinitions="Auto,*">
+                <Border Grid.Row="0" Height="{DynamicResource AppBarHeight}" Background="{DynamicResource Primary}" BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1" Padding="16,0">
                     <Grid ColumnDefinitions="Auto,*">
                         <Button Grid.Column="0"
                                 x:Name="btnBack"
@@ -30,7 +30,7 @@
                 </Border>
 
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                    <StackPanel Spacing="16" Margin="24,24,24,24">
+                    <StackPanel Spacing="16" Margin="{DynamicResource PageMargin}">
 
                 <!-- Recording Selection Section -->
                 <Border Background="{DynamicResource SectionBg}" BorderBrush="{DynamicResource Divider}" BorderThickness="1" Padding="16" x:Name="grpSelectRecording">

@@ -3,8 +3,8 @@
              x:Class="Vao.Sample.Pages.AlarmActionPage"
              Background="{DynamicResource AppBg}">
 
-    <Grid RowDefinitions="64,*,Auto">
-                <Border Grid.Row="0" Height="64" Background="{DynamicResource Primary}" BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1" Padding="16,0">
+    <Grid RowDefinitions="Auto,*,Auto">
+                <Border Grid.Row="0" Height="{DynamicResource AppBarHeight}" Background="{DynamicResource Primary}" BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1" Padding="16,0">
                     <Grid ColumnDefinitions="Auto,*">
                         <Button Grid.Column="0"
                                 x:Name="btnBack"
@@ -26,7 +26,7 @@
                 </Border>
 
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" Margin="24,24,24,0">
+                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" Margin="{DynamicResource PageMarginNoBottom}">
                 
                 <!-- Alarm Information Card -->
                 <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Background="{DynamicResource SectionBg}" BorderBrush="{DynamicResource Divider}" BorderThickness="1" Padding="16">
