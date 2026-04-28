@@ -326,14 +326,9 @@ namespace Vao.Sample
             btnToggleSidebar_Click(null, null);
             e.Handled = true;
          }
-         else if (e.Key == Key.F10)
+         else if ((e.Key == Key.F || e.Key == Key.F10) && !IsTextInputFocused())
          {
-            var app = (App)Avalonia.Application.Current;
-            app.ToggleThemeBrightness();
-            RefreshMessageColors();
-            RefreshVideoHeaderState();
-            SaveSettings();
-            UpdateThemeMenuLabel();
+            CycleThemeAndRefreshUi();
             e.Handled = true;
          }
          else if (e.Key == Key.F12)
@@ -368,11 +363,23 @@ namespace Vao.Sample
          }
       }
 
+      private bool IsTextInputFocused()
+      {
+         var focusedElement = TopLevel.GetTopLevel(this)?.FocusManager?.GetFocusedElement();
+         if (focusedElement is TextBox)
+            return true;
+
+         if (focusedElement is Visual visual && visual.GetVisualAncestors().OfType<TextBox>().Any())
+            return true;
+
+         return false;
+      }
+
       private void MainWindow_Opened(object sender, EventArgs e)
       {
          Opened -= MainWindow_Opened;
 
-         UpdateThemeMenuLabel();
+         UpdateThemeMenus();
          var s = AppSettings.Default;
          expCameraControl.IsExpanded = s.IsCameraControlExpanded;
          expCameraSelection.IsExpanded = s.IsCameraSelectionExpanded;
@@ -568,6 +575,7 @@ namespace Vao.Sample
 
       private void btnUserProfile_Click(object sender, RoutedEventArgs e)
       {
+         PopulateThemeSelectionMenuItems();
          // The flyout opens automatically when the button is clicked
       }
 
@@ -590,22 +598,87 @@ namespace Vao.Sample
 
       private void menuItemToggleTheme_Click(object sender, RoutedEventArgs e)
       {
-         var app = (App)Avalonia.Application.Current;
-         app.ToggleThemeBrightness();
-         RefreshMessageColors();
-         RefreshVideoHeaderState();
-         SaveSettings();
-         UpdateThemeMenuLabel();
+         CycleThemeAndRefreshUi();
       }
 
       private void UpdateThemeMenuLabel()
       {
          var app = (App)Avalonia.Application.Current;
-         var targetTheme = app.GetToggleBrightnessTargetTheme();
+         var targetTheme = app.GetNextThemeInCycle();
          if (txtToggleThemeLabel != null)
-            txtToggleThemeLabel.Text = $"Switch to {targetTheme.DisplayName}";
+            txtToggleThemeLabel.Text = $"Cycle to {targetTheme.DisplayName}";
          if (txtToggleThemeIcon != null)
             txtToggleThemeIcon.Text = IsDarkMode ? "\uE51C" : "\uE518";
+      }
+
+      private void UpdateThemeMenus()
+      {
+         UpdateThemeMenuLabel();
+         PopulateThemeSelectionMenuItems();
+      }
+
+      private void PopulateThemeSelectionMenuItems()
+      {
+         var menuItemThemeSelect = this.FindControl<MenuItem>("menuItemThemeSelect");
+         if (menuItemThemeSelect == null)
+            return;
+
+         menuItemThemeSelect.ItemsSource = BuildThemeSelectionMenuItems();
+      }
+
+      private List<object> BuildThemeSelectionMenuItems()
+      {
+         var app = (App)Avalonia.Application.Current;
+         var selectedThemeKey = AppSettings.Default.GetPreferredThemeKey();
+         var items = new List<object>();
+
+         foreach (var option in app.GetThemeOptions())
+         {
+            var item = new MenuItem
+            {
+               Header = option.DisplayName,
+               Tag = option.Key
+            };
+
+            if (string.Equals(option.Key, selectedThemeKey, StringComparison.OrdinalIgnoreCase))
+               item.Icon = new CheckBox { IsChecked = true, IsHitTestVisible = false };
+
+            item.Click += ThemeSelectionMenuItem_Click;
+            items.Add(item);
+         }
+
+         return items;
+      }
+
+      private void ThemeSelectionMenuItem_Click(object sender, RoutedEventArgs e)
+      {
+         if (sender is not MenuItem menuItem || menuItem.Tag is not string themeKey || string.IsNullOrWhiteSpace(themeKey))
+            return;
+
+         ApplyThemeAndRefreshUi(themeKey);
+      }
+
+      private void CycleThemeAndRefreshUi()
+      {
+         var app = (App)Avalonia.Application.Current;
+         var nextTheme = app.CycleTheme();
+         if (nextTheme != null)
+            ApplySharedThemeRefresh();
+      }
+
+      private void ApplyThemeAndRefreshUi(string themeKey)
+      {
+         var app = (App)Avalonia.Application.Current;
+         app.ApplyTheme(themeKey, persistSelection: true);
+         ApplySharedThemeRefresh();
+      }
+
+      private void ApplySharedThemeRefresh()
+      {
+         RefreshMessageColors();
+         RefreshVideoHeaderState();
+         SaveSettings();
+         UpdateThemeMenus();
       }
 
       private void menuItemSettings_Click(object sender, RoutedEventArgs e)
@@ -1313,6 +1386,14 @@ namespace Vao.Sample
                rootItems.Add(rangeMenu);
             }
          }
+
+         rootItems.Add(new Separator());
+         rootItems.Add(new MenuItem
+         {
+            Header = "Themes",
+            ItemsSource = BuildThemeSelectionMenuItems()
+         });
+
          return rootItems;
       }
 

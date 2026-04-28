@@ -77,9 +77,43 @@ namespace Vao.Sample
          return toggledTheme;
       }
 
+      public ThemeDefinition CycleTheme()
+      {
+         var catalog = ThemeCatalog.Reload();
+         var themes = catalog.Themes;
+
+         if (themes == null || themes.Count == 0)
+         {
+            ApplyTheme("dark-tablet");
+            return CurrentTheme;
+         }
+
+         var currentThemeKey = AppSettings.Default.GetPreferredThemeKey();
+         var currentIndex = themes.FindIndex(theme => string.Equals(theme.Key, currentThemeKey, StringComparison.OrdinalIgnoreCase));
+         var nextIndex = currentIndex < 0 ? 0 : (currentIndex + 1) % themes.Count;
+         var nextTheme = themes[nextIndex];
+
+         ApplyTheme(nextTheme.Key);
+         return nextTheme;
+      }
+
       public ThemeDefinition GetToggleBrightnessTargetTheme()
       {
          return ThemeCatalog.Reload().GetOppositeBrightnessTheme(AppSettings.Default.GetPreferredThemeKey());
+      }
+
+      public ThemeDefinition GetNextThemeInCycle()
+      {
+         var catalog = ThemeCatalog.Reload();
+         var themes = catalog.Themes;
+
+         if (themes == null || themes.Count == 0)
+            return CurrentTheme;
+
+         var currentThemeKey = AppSettings.Default.GetPreferredThemeKey();
+         var currentIndex = themes.FindIndex(theme => string.Equals(theme.Key, currentThemeKey, StringComparison.OrdinalIgnoreCase));
+         var nextIndex = currentIndex < 0 ? 0 : (currentIndex + 1) % themes.Count;
+         return themes[nextIndex];
       }
 
       public IReadOnlyList<ThemeOption> GetThemeOptions()
