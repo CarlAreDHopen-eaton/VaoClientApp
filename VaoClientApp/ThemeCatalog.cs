@@ -177,14 +177,11 @@ namespace Vao.Sample
          yield return Brush("VideoHeaderPlayback", Components.VideoPanel.Colors.HeaderPlayback);
 
          // Messages
-         yield return Brush("MessageErrorForeground", Components.MessageLog.Error.Foreground);
-         yield return Brush("MessageErrorBackground", Components.MessageLog.Error.Background);
-         yield return Brush("MessageWarningForeground", Components.MessageLog.Warning.Foreground);
-         yield return Brush("MessageWarningBackground", Components.MessageLog.Warning.Background);
-         yield return Brush("MessageDebugForeground", Components.MessageLog.Debug.Foreground);
-         yield return Brush("MessageDebugBackground", Components.MessageLog.Debug.Background);
-         yield return Brush("MessageDefaultForeground", Components.MessageLog.Default.Foreground);
-         yield return Brush("MessageDefaultBackground", Components.MessageLog.Default.Background);
+         yield return Brush("MessageLogBackground", Components.MessageLog.Background);
+         yield return Brush("MessageErrorForeground", Components.MessageLog.ErrorForeground);
+         yield return Brush("MessageWarningForeground", Components.MessageLog.WarningForeground);
+         yield return Brush("MessageDebugForeground", Components.MessageLog.DebugForeground);
+         yield return Brush("MessageDefaultForeground", Components.MessageLog.DefaultForeground);
 
          // User profile
          yield return Brush("UserProfileConnectedBackground", Components.UserProfile.ConnectedBackground);
@@ -425,17 +422,19 @@ namespace Vao.Sample
             MessageLog = isDark
                ? new ThemeMessageLogComponent
                {
-                  Error = new ThemeMessageColors { Foreground = "#FFFF0000", Background = "#00FFFFFF" },
-                  Warning = new ThemeMessageColors { Foreground = "#FFFFA500", Background = "#00FFFFFF" },
-                  Debug = new ThemeMessageColors { Foreground = "#FFADD8E6", Background = "#00FFFFFF" },
-                  Default = new ThemeMessageColors { Foreground = "#FFFFFFFF", Background = "#00FFFFFF" }
+                  Background = "#00000000",
+                  ErrorForeground = "#FFFF0000",
+                  WarningForeground = "#FFFFA500",
+                  DebugForeground = "#FFADD8E6",
+                  DefaultForeground = "#FFFFFFFF"
                }
                : new ThemeMessageLogComponent
                {
-                  Error = new ThemeMessageColors { Foreground = "#FFFF0000", Background = "#FFFFEEEE" },
-                  Warning = new ThemeMessageColors { Foreground = "#FF783F00", Background = "#FFFFF5E6" },
-                  Debug = new ThemeMessageColors { Foreground = "#FF00437A", Background = "#FFECF5FC" },
-                  Default = new ThemeMessageColors { Foreground = "#FF000000", Background = "#00FFFFFF" }
+                  Background = "#00000000",
+                  ErrorForeground = "#FFFF0000",
+                  WarningForeground = "#FF783F00",
+                  DebugForeground = "#FF00437A",
+                  DefaultForeground = "#FF000000"
                },
             UserProfile = new ThemeUserProfileComponent { ConnectedBackground = "#FF006BA1", DisconnectedBackground = "#FF808080" },
             CameraLock = new ThemeCameraLockComponent { AlarmLockedForeground = "#FFCA3C3D", UserLockedForeground = "#FFF0AA1F" },
@@ -482,16 +481,11 @@ namespace Vao.Sample
 
    public sealed class ThemeMessageLogComponent
    {
-      public ThemeMessageColors Error { get; set; } = new();
-      public ThemeMessageColors Warning { get; set; } = new();
-      public ThemeMessageColors Debug { get; set; } = new();
-      public ThemeMessageColors Default { get; set; } = new();
-   }
-
-   public sealed class ThemeMessageColors
-   {
-      public string Foreground { get; set; } = string.Empty;
-      public string Background { get; set; } = string.Empty;
+      public string Background { get; set; } = "#00000000";
+      public string ErrorForeground { get; set; } = "#FFFF0000";
+      public string WarningForeground { get; set; } = "#FFFFA500";
+      public string DebugForeground { get; set; } = "#FFADD8E6";
+      public string DefaultForeground { get; set; } = "#FFFFFFFF";
    }
 
    public sealed class ThemeUserProfileComponent

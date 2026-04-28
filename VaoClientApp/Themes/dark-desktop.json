@@ -86,16 +86,17 @@
       "Colors": {
         "Background": "#000000",
         "HeaderBackground": "#1E1E1E",
-        "HeaderNeutral": "#FF1D3A4A",
+        "HeaderIdle": "#FF1D3A4A",
         "HeaderLive": "#FF39B620",
         "HeaderPlayback": "#FFCA3C3D"
       }
     },
     "MessageLog": {
-      "Error":   { "Foreground": "#FFFF0000", "Background": "#00FFFFFF" },
-      "Warning": { "Foreground": "#FFFFA500", "Background": "#00FFFFFF" },
-      "Debug":   { "Foreground": "#FFADD8E6", "Background": "#00FFFFFF" },
-      "Default": { "Foreground": "#FFFFFFFF", "Background": "#00FFFFFF" }
+      "Background": "#00000000",
+      "ErrorForeground": "#FFFF0000",
+      "WarningForeground": "#FFFFA500",
+      "DebugForeground": "#FFADD8E6",
+      "DefaultForeground": "#FFFFFFFF"
     },
     "UserProfile": {
       "ConnectedBackground": "#FF006BA1",

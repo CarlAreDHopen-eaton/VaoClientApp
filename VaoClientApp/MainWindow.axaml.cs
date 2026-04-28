@@ -804,13 +804,7 @@ namespace Vao.Sample
 
       private IBrush GetBackgroundForLogLevel(LogLevel level)
       {
-         return level switch
-         {
-            LogLevel.Error => GetBrushResource("MessageErrorBackground", "#00FFFFFF"),
-            LogLevel.Warning => GetBrushResource("MessageWarningBackground", "#00FFFFFF"),
-            LogLevel.Debug => GetBrushResource("MessageDebugBackground", "#00FFFFFF"),
-            _ => GetBrushResource("MessageDefaultBackground", "#00FFFFFF"),
-         };
+         return GetBrushResource("MessageLogBackground", "#00000000");
       }
 
       private void RefreshVideoHeaderState()

@@ -162,12 +162,13 @@ Component-specific overrides. These extend or override the global `Colors` and `
 
 ### Components.MessageLog
 
-Each severity level (`Error`, `Warning`, `Debug`, `Default`) has:
-
 | Token | Description |
 |-------|-------------|
-| `Foreground` | Text color |
-| `Background` | Row highlight color |
+| `Background` | Shared background for all message rows |
+| `ErrorForeground` | Text color for error messages |
+| `WarningForeground` | Text color for warning messages |
+| `DebugForeground` | Text color for debug/notice messages |
+| `DefaultForeground` | Text color for all other messages |
 
 ### Components.UserProfile
 

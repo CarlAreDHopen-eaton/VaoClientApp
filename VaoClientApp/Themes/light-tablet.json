@@ -92,10 +92,11 @@
       }
     },
     "MessageLog": {
-      "Error":   { "Foreground": "#FFFF0000", "Background": "#FFFFEEEE" },
-      "Warning": { "Foreground": "#FF783F00", "Background": "#FFFFF5E6" },
-      "Debug":   { "Foreground": "#FF00437A", "Background": "#FFECF5FC" },
-      "Default": { "Foreground": "#FF000000", "Background": "#00FFFFFF" }
+      "Background": "#00000000",
+      "ErrorForeground": "#FFFF0000",
+      "WarningForeground": "#FF783F00",
+      "DebugForeground": "#FF00437A",
+      "DefaultForeground": "#FF000000"
     },
     "UserProfile": {
       "ConnectedBackground": "#FF006BA1",
