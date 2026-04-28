@@ -165,7 +165,7 @@
 
         <!-- Base Button Style -->
         <Style Selector="Button">
-            <Setter Property="MinHeight" Value="36"/>
+            <Setter Property="MinHeight" Value="44"/>
             <Setter Property="Padding" Value="16,8"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="FontSize" Value="14"/>
@@ -251,8 +251,8 @@
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Padding" Value="8"/>
-            <Setter Property="MinHeight" Value="40"/>
-            <Setter Property="MinWidth" Value="40"/>
+            <Setter Property="MinHeight" Value="44"/>
+            <Setter Property="MinWidth" Value="44"/>
             <Setter Property="CornerRadius" Value="20"/>
         </Style>
         <Style Selector="Button.icon:pointerover /template/ ContentPresenter">
@@ -268,8 +268,8 @@
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Padding" Value="8"/>
-            <Setter Property="MinHeight" Value="40"/>
-            <Setter Property="MinWidth" Value="40"/>
+            <Setter Property="MinHeight" Value="44"/>
+            <Setter Property="MinWidth" Value="44"/>
             <Setter Property="CornerRadius" Value="20"/>
         </Style>
         <Style Selector="Button.appbar-icon:pointerover /template/ ContentPresenter">
@@ -329,14 +329,14 @@
 
         <!-- TextBox -->
         <Style Selector="TextBox">
-            <Setter Property="MinHeight" Value="36"/>
+            <Setter Property="MinHeight" Value="44"/>
             <Setter Property="Padding" Value="12,8"/>
             <Setter Property="CornerRadius" Value="4"/>
         </Style>
 
         <!-- ComboBox -->
         <Style Selector="ComboBox">
-            <Setter Property="MinHeight" Value="36"/>
+            <Setter Property="MinHeight" Value="44"/>
             <Setter Property="Padding" Value="12,8"/>
             <Setter Property="CornerRadius" Value="4"/>
         </Style>
@@ -370,8 +370,8 @@
              =========================================== -->
 
         <Style Selector="DatePicker /template/ Button">
-            <Setter Property="MinHeight" Value="36"/>
-            <Setter Property="Height" Value="36"/>
+            <Setter Property="MinHeight" Value="44"/>
+            <Setter Property="Height" Value="44"/>
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         </Style>
         <Style Selector="DatePicker /template/ Button Grid">
@@ -384,8 +384,8 @@
         </Style>
 
         <Style Selector="TimePicker /template/ Button">
-            <Setter Property="MinHeight" Value="36"/>
-            <Setter Property="Height" Value="36"/>
+            <Setter Property="MinHeight" Value="44"/>
+            <Setter Property="Height" Value="44"/>
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         </Style>
         <Style Selector="TimePicker /template/ Button Grid">
@@ -475,10 +475,10 @@
             <x:Double x:Key="AppBarHeight">64</x:Double>
             <x:Double x:Key="SidebarWidth">280</x:Double>
             <x:Double x:Key="SidebarCollapsedWidth">56</x:Double>
-            <x:Double x:Key="ButtonMinHeight">36</x:Double>
-            <x:Double x:Key="InputMinHeight">36</x:Double>
+            <x:Double x:Key="ButtonMinHeight">44</x:Double>
+            <x:Double x:Key="InputMinHeight">44</x:Double>
             <x:Double x:Key="ListItemMinHeight">48</x:Double>
-            <x:Double x:Key="AvatarSize">40</x:Double>
+            <x:Double x:Key="AvatarSize">44</x:Double>
             <x:Double x:Key="IconSize">24</x:Double>
             <x:Double x:Key="IconSizeSmall">20</x:Double>
 

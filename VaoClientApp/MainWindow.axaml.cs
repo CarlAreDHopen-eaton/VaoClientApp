@@ -39,11 +39,27 @@ namespace Vao.Sample
       private ContextMenu mVideoContextMenu;
       private LibVLC mLibVlc;
       private MediaPlayer mMediaPlayer;
+      private string mActiveRtspUrl;
       private bool mIsVideoStarted = false;
       private bool mIsLoadingSettings;
       private bool mIsMessagesCollapsed = false;
       private GridLength mMessagesExpandedRowHeight = new GridLength(1, GridUnitType.Star);
       private bool mIsVideoTemporarilyDetached = false;
+      private bool mPendingConnectAfterSettings = false;
+      private bool mIsNavigationOverlayVisible = false;
+      private bool mIsPickerOverlayVisible = false;
+      private bool mIsConnecting = false;
+
+      private const double SidebarAutoCollapseBreakpoint = 1100;
+
+      private enum PickerOverlayMode
+      {
+         None,
+         Date,
+         Time
+      }
+
+      private PickerOverlayMode mPickerOverlayMode = PickerOverlayMode.None;
 
       // Navigation service for tablet/mobile compatibility
       private NavigationService mNavigationService;
@@ -114,7 +130,8 @@ namespace Vao.Sample
          UpdateUserInitial();
 
          Opened += MainWindow_Opened;
-         AddHandler(KeyDownEvent, MainWindow_KeyDown, handledEventsToo: true);
+            AddHandler(KeyDownEvent, MainWindow_KeyDown, handledEventsToo: true);
+            SizeChanged += MainWindow_SizeChanged;
       }
 
       private void InitializeNavigationService()
@@ -138,14 +155,29 @@ namespace Vao.Sample
             UpdateUserInitial();
             RefreshMessageColors();
             RefreshVideoHeaderState();
+
+            if (mPendingConnectAfterSettings)
+            {
+               mPendingConnectAfterSettings = false;
+               var s = AppSettings.Default;
+               if (!IsStarted && !string.IsNullOrWhiteSpace(s.Host1) && !string.IsNullOrWhiteSpace(s.User) && !string.IsNullOrWhiteSpace(s.Password))
+               {
+                  btnConnect_Click(null, null);
+               }
+            }
          }
       }
 
       private void SetNavigationOverlayState(bool isOverlayVisible)
       {
+         mIsNavigationOverlayVisible = isOverlayVisible;
          SetMainChromeVisible(!isOverlayVisible);
+         UpdateVideoSurfaceForOverlayState();
+      }
 
-         if (isOverlayVisible)
+      private void UpdateVideoSurfaceForOverlayState()
+      {
+         if (mIsNavigationOverlayVisible || mIsPickerOverlayVisible)
          {
             DetachVideoSurfaceForOverlay();
          }
@@ -178,14 +210,35 @@ namespace Vao.Sample
 
       private void ReattachVideoSurfaceAfterOverlay()
       {
-         if (!mIsVideoTemporarilyDetached || mVideoControl == null)
+         bool shouldAttach = mIsVideoTemporarilyDetached ||
+                             (mIsVideoStarted && mMediaPlayer != null && (mVideoControl == null || !pnlVideo.Children.Contains(mVideoControl)));
+         if (!shouldAttach)
             return;
 
-         if (!pnlVideo.Children.Contains(mVideoControl))
-            pnlVideo.Children.Add(mVideoControl);
+         if (mVideoControl != null && pnlVideo.Children.Contains(mVideoControl))
+            pnlVideo.Children.Remove(mVideoControl);
+
+         // Recreate the native video surface to avoid stale handles after overlay detach.
+         mVideoControl = new VideoView();
+         pnlVideo.Children.Add(mVideoControl);
 
          if (mMediaPlayer != null)
+         {
+            mVideoControl.MediaPlayer = null;
             mVideoControl.MediaPlayer = mMediaPlayer;
+
+            // Emulate manual camera-switch recovery when native surface fails to redraw.
+            if (mIsVideoStarted && !string.IsNullOrWhiteSpace(mActiveRtspUrl))
+            {
+               Dispatcher.UIThread.Post(() =>
+               {
+                  if (!mIsNavigationOverlayVisible && !mIsPickerOverlayVisible && mIsVideoStarted)
+                  {
+                     StartRtspStream(mActiveRtspUrl);
+                  }
+               }, DispatcherPriority.Background);
+            }
+         }
 
          mIsVideoTemporarilyDetached = false;
       }
@@ -253,7 +306,8 @@ namespace Vao.Sample
          expDownloadRecording.IsExpanded = s.IsDownloadRecordingExpanded;
 
          // Apply saved sidebar state
-         SetSidebarCollapsed(s.IsSidebarCollapsed);
+             SetSidebarCollapsed(s.IsSidebarCollapsed, persistSetting: false);
+             ApplyResponsiveSidebarLayout(Bounds.Width);
 
          // Restore messages split ratio and collapsed state
          if (brdMessages.Parent is Grid mg && mg.RowDefinitions.Count > 2)
@@ -275,13 +329,14 @@ namespace Vao.Sample
       private void btnToggleSidebar_Click(object sender, RoutedEventArgs e)
       {
          var isCurrentlyCollapsed = sidebarGrid.Width == 56;
-         SetSidebarCollapsed(!isCurrentlyCollapsed);
-         AppSettings.Default.IsSidebarCollapsed = !isCurrentlyCollapsed;
-         SaveSettings();
+         SetSidebarCollapsed(!isCurrentlyCollapsed, persistSetting: true);
       }
 
-      private void SetSidebarCollapsed(bool collapsed)
+      private void SetSidebarCollapsed(bool collapsed, bool persistSetting = false)
       {
+         // Keep navigation controls anchored to the left rail; no floating overlay trigger.
+         btnOpenSidebar.IsVisible = false;
+
          if (collapsed)
          {
             sidebarGrid.Width = 56;
@@ -294,6 +349,28 @@ namespace Vao.Sample
             narrowSidebar.IsVisible = false;
             fullSidebar.IsVisible = true;
          }
+
+         if (persistSetting)
+         {
+            AppSettings.Default.IsSidebarCollapsed = collapsed;
+            SaveSettings();
+         }
+      }
+
+      private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
+      {
+         ApplyResponsiveSidebarLayout(e.NewSize.Width);
+      }
+
+      private void ApplyResponsiveSidebarLayout(double width)
+      {
+         if (width < SidebarAutoCollapseBreakpoint)
+         {
+            SetSidebarCollapsed(true, persistSetting: false);
+            return;
+         }
+
+         SetSidebarCollapsed(AppSettings.Default.IsSidebarCollapsed, persistSetting: false);
       }
 
       private void CollapseAllExpandersExcept(Expander target)
@@ -310,50 +387,38 @@ namespace Vao.Sample
       // Icon button handlers for narrow sidebar
       private void btnExpandCameraControl_Click(object sender, RoutedEventArgs e)
       {
-         SetSidebarCollapsed(false);
+         SetSidebarCollapsed(false, persistSetting: true);
          CollapseAllExpandersExcept(expCameraControl);
-         AppSettings.Default.IsSidebarCollapsed = false;
-         SaveSettings();
       }
 
       private void btnExpandCameraSelection_Click(object sender, RoutedEventArgs e)
       {
-         SetSidebarCollapsed(false);
+         SetSidebarCollapsed(false, persistSetting: true);
          CollapseAllExpandersExcept(expCameraSelection);
-         AppSettings.Default.IsSidebarCollapsed = false;
-         SaveSettings();
       }
 
       private void btnExpandPresetSelection_Click(object sender, RoutedEventArgs e)
       {
-         SetSidebarCollapsed(false);
+         SetSidebarCollapsed(false, persistSetting: true);
          CollapseAllExpandersExcept(expPresetSelection);
-         AppSettings.Default.IsSidebarCollapsed = false;
-         SaveSettings();
       }
 
       private void btnExpandAlarms_Click(object sender, RoutedEventArgs e)
       {
-         SetSidebarCollapsed(false);
+         SetSidebarCollapsed(false, persistSetting: true);
          CollapseAllExpandersExcept(expAlarms);
-         AppSettings.Default.IsSidebarCollapsed = false;
-         SaveSettings();
       }
 
       private void btnExpandPlayback_Click(object sender, RoutedEventArgs e)
       {
-         SetSidebarCollapsed(false);
+         SetSidebarCollapsed(false, persistSetting: true);
          CollapseAllExpandersExcept(expPlaybackSelection);
-         AppSettings.Default.IsSidebarCollapsed = false;
-         SaveSettings();
       }
 
       private void btnExpandDownload_Click(object sender, RoutedEventArgs e)
       {
-         SetSidebarCollapsed(false);
+         SetSidebarCollapsed(false, persistSetting: true);
          CollapseAllExpandersExcept(expDownloadRecording);
-         AppSettings.Default.IsSidebarCollapsed = false;
-         SaveSettings();
       }
 
       private void narrowSidebar_PointerEntered(object sender, Avalonia.Input.PointerEventArgs e)
@@ -361,7 +426,7 @@ namespace Vao.Sample
          // Auto-expand on hover
          if (sidebarGrid.Width == 56)
          {
-            SetSidebarCollapsed(false);
+            SetSidebarCollapsed(false, persistSetting: false);
             // Don't save the state - this is just a temporary hover expand
          }
       }
@@ -371,7 +436,7 @@ namespace Vao.Sample
          // Auto-collapse on mouse leave if the sidebar was opened via hover (not manually toggled)
          if (AppSettings.Default.IsSidebarCollapsed && sidebarGrid.Width == 280)
          {
-            SetSidebarCollapsed(true);
+            SetSidebarCollapsed(true, persistSetting: false);
          }
       }
 
@@ -402,11 +467,11 @@ namespace Vao.Sample
          }
 
          // Update Login/Logout enabled state based on connection
-         if (menuItemLogin != null) menuItemLogin.IsEnabled = !IsStarted;
-         if (menuItemLogout != null) menuItemLogout.IsEnabled = IsStarted;
+         if (menuItemLogin != null) menuItemLogin.IsEnabled = !IsStarted && !mIsConnecting;
+         if (menuItemLogout != null) menuItemLogout.IsEnabled = IsStarted && !mIsConnecting;
 
          // Update tooltip with user, connection status, and server
-          var status = IsStarted ? "Connected" : "Disconnected";
+          var status = mIsConnecting ? "Connecting" : (IsStarted ? "Connected" : "Disconnected");
           var host = AppSettings.Default.Host1?.Trim() ?? "";
           var tip = string.IsNullOrEmpty(username) ? "Not logged in" : username;
           tip += $"\n{status}";
@@ -433,23 +498,15 @@ namespace Vao.Sample
          // The flyout opens automatically when the button is clicked
       }
 
-      private async void menuItemLogin_Click(object sender, RoutedEventArgs e)
+      private void menuItemLogin_Click(object sender, RoutedEventArgs e)
       {
          var s = AppSettings.Default;
          // Check if credentials are configured
          if (string.IsNullOrWhiteSpace(s.Host1) || string.IsNullOrWhiteSpace(s.User) || string.IsNullOrWhiteSpace(s.Password))
          {
-            // Open settings first if not configured
-            var settingsWindow = new SettingsWindow();
-            await settingsWindow.ShowDialog(this);
-
-            if (settingsWindow.WereSettingsSaved())
-            {
-               LoadSettings();
-               UpdateUserInitial();
-               // After settings saved, attempt to connect
-               btnConnect_Click(sender, e);
-            }
+            // Open settings page first if not configured and connect after save.
+            mPendingConnectAfterSettings = true;
+            OpenSettingsPage();
          }
          else
          {
@@ -567,63 +624,106 @@ namespace Vao.Sample
       {
          var menuItemLogin = this.FindControl<MenuItem>("menuItemLogin");
          var menuItemLogout = this.FindControl<MenuItem>("menuItemLogout");
-         if (menuItemLogin != null) menuItemLogin.IsEnabled = !IsStarted;
-         if (menuItemLogout != null) menuItemLogout.IsEnabled = IsStarted;
-         pnlCameraSelectFlowPanel.IsEnabled = IsStarted;
-         tglSubChannel.IsEnabled = IsStarted && !IsPlayback && mCurrentCamera != null && !string.IsNullOrEmpty(mCurrentCamera?.Stream2Resolution);
-         grpSelectPreset.IsEnabled = IsStarted;
-         grpSelectPlayback.IsEnabled = IsStarted && ApiSupportsPlayback;
-         grpCameraControl.IsEnabled = IsStarted && mCurrentCamera != null;
+         if (menuItemLogin != null) menuItemLogin.IsEnabled = !IsStarted && !mIsConnecting;
+         if (menuItemLogout != null) menuItemLogout.IsEnabled = IsStarted && !mIsConnecting;
 
-         btnStopPlayback.IsEnabled = IsStarted && IsPlayback && ApiSupportsPlayback;
-         btnPlayPlayback.IsEnabled = IsStarted && IsCameraSelected && !IsPlaybackStarted && ApiSupportsPlayback;
-         btnGotoTime.IsEnabled = IsStarted && IsCameraSelected && ApiSupportsPlayback;
-         btnDownload.IsEnabled = IsStarted && ApiSupportsPlayback;
+         bool canUseConnectedFeatures = IsStarted && !mIsConnecting;
+         pnlCameraSelectFlowPanel.IsEnabled = canUseConnectedFeatures;
+         tglSubChannel.IsEnabled = canUseConnectedFeatures && !IsPlayback && mCurrentCamera != null && !string.IsNullOrEmpty(mCurrentCamera?.Stream2Resolution);
+         grpSelectPreset.IsEnabled = canUseConnectedFeatures;
+         grpSelectPlayback.IsEnabled = canUseConnectedFeatures && ApiSupportsPlayback;
+         grpCameraControl.IsEnabled = canUseConnectedFeatures && mCurrentCamera != null;
+
+         btnStopPlayback.IsEnabled = canUseConnectedFeatures && IsPlayback && ApiSupportsPlayback;
+         btnPlayPlayback.IsEnabled = canUseConnectedFeatures && IsCameraSelected && !IsPlaybackStarted && ApiSupportsPlayback;
+         btnGotoTime.IsEnabled = canUseConnectedFeatures && IsCameraSelected && ApiSupportsPlayback;
+         btnDownload.IsEnabled = canUseConnectedFeatures && ApiSupportsPlayback;
 
          UpdateCameraControl();
       }
 
-      private void btnConnect_Click(object sender, RoutedEventArgs e)
+      private async void btnConnect_Click(object sender, RoutedEventArgs e)
       {
+         if (mIsConnecting || IsStarted)
+            return;
+
          SaveSettings();
-          if (!ValidateCanConnect()) return;
+         if (!ValidateCanConnect()) return;
 
          var s = AppSettings.Default;
-         IsStarted = true;
-         moFlexRApiClient = new FlexRApiClient
+         var connectClient = new FlexRApiClient
          {
             Host = s.Host1,
             Port = s.ApiPort,
             Password = s.Password,
             User = s.User,
             UseHttps = s.UseHttps,
-            IgnoreCertificateErrors = true
+            IgnoreCertificateErrors = true,
+            ConnectionTimeoutMs = 8000
          };
-         moFlexRApiClient.OnMessage += OnFlexRApiClientMessage;
+         connectClient.OnMessage += OnFlexRApiClientMessage;
          txtVideoHeader.Text = "No Camera Selected";
          brdVideoHeader.Background = GetNeutralHeaderBrush();
+         mIsConnecting = true;
+         UpdateEnabled();
+         UpdateUserInitial();
+         WriteMessageLog(MessageSource.FlexApi, "Connecting to FLEX API...", LogLevel.Notice);
 
-         if (moFlexRApiClient.StartClient())
+         bool started = false;
+         User loggedInUser = null;
+         List<Camera> cameraList = null;
+         List<Alarm> alarmList = null;
+         ApiVersion apiVersion = null;
+
+         try
          {
-            WriteMessageLog(MessageSource.FlexApi, "Client started.", LogLevel.Notice);
-            SetCurrentLoggedInUser();
-            FillSelectCameraButtonList();
-            FillSelectAlarmButtonList();
-            CheckApiVersion();
-            ClearRecordingDropdown();
-            ClearPresetDropdown();
-            UpdateEnabled();
-             UpdateUserInitial();
+            await Task.Run(() =>
+            {
+               started = connectClient.StartClient();
+               if (!started)
+                  return;
 
-             if (AppSettings.Default.CurrentCamera != 0)
-                SelectCamera(AppSettings.Default.CurrentCamera, AppSettings.Default.PreferSubChannel ? 2 : 1);
-          }
-          else
-          {
-             WriteMessageLog(MessageSource.FlexApi, "Unable to start, no response.", LogLevel.Error);
-             btnDisconnect_Click(sender, e);
-             ClearPresetDropdown();
-             UpdateEnabled();
+               loggedInUser = connectClient.GetLoggedInUserInfo();
+               cameraList = connectClient.GetCameraList();
+               alarmList = connectClient.GetAlarmList();
+               apiVersion = connectClient.GetApiVersion();
+            });
+
+            if (started)
+            {
+               moFlexRApiClient = connectClient;
+               IsStarted = true;
+               WriteMessageLog(MessageSource.FlexApi, "Client started.", LogLevel.Notice);
+               CurrentLoggedInUser = loggedInUser;
+               FillSelectCameraButtonList(cameraList);
+               FillSelectAlarmButtonList(alarmList);
+               CheckApiVersion(apiVersion);
+               ClearRecordingDropdown();
+               ClearPresetDropdown();
+
+               if (AppSettings.Default.CurrentCamera != 0)
+                  SelectCamera(AppSettings.Default.CurrentCamera, AppSettings.Default.PreferSubChannel ? 2 : 1);
+            }
+            else
+            {
+               WriteMessageLog(MessageSource.FlexApi, "Unable to start, no response.", LogLevel.Error);
+               connectClient.OnMessage -= OnFlexRApiClientMessage;
+               connectClient.StopClient();
+               ClearPresetDropdown();
+            }
+         }
+         catch (Exception ex)
+         {
+            WriteMessageLog(MessageSource.FlexApi, $"Connection failed: {ex.Message}", LogLevel.Error);
+            connectClient.OnMessage -= OnFlexRApiClientMessage;
+            connectClient.StopClient();
+            ClearPresetDropdown();
+         }
+         finally
+         {
+            mIsConnecting = false;
+            UpdateEnabled();
+            UpdateUserInitial();
           }
       }
 
@@ -775,6 +875,9 @@ namespace Vao.Sample
 
       private void btnDisconnect_Click(object sender, RoutedEventArgs e)
       {
+         if (mIsConnecting)
+            return;
+
          IsStarted = false;
          if (moFlexRApiClient != null)
          {
@@ -783,6 +886,7 @@ namespace Vao.Sample
             moFlexRApiClient = null;
          }
          StopRtspStream();
+         mActiveRtspUrl = null;
          CurrentCamera = null;
          CurrentAlarm = null;
          txtCurrentRtspUrl.Text = string.Empty;
@@ -1186,9 +1290,9 @@ namespace Vao.Sample
          return item;
       }
 
-      private void CheckApiVersion()
+      private void CheckApiVersion(ApiVersion apiversion = null)
       {
-         ApiVersion apiversion = moFlexRApiClient.GetApiVersion();
+         apiversion ??= moFlexRApiClient.GetApiVersion();
          if (apiversion != null)
          {
             Version version = new Version(apiversion.MajorVersion, apiversion.MinorVersion);
@@ -1206,6 +1310,8 @@ namespace Vao.Sample
 
       private void StartRtspStream(string rtspUrl)
       {
+         mActiveRtspUrl = rtspUrl;
+
          if (mIsVideoStarted) StopRtspStream();
 
          InitVideoControl();
@@ -1299,10 +1405,10 @@ namespace Vao.Sample
          }
       }
 
-       private void FillSelectCameraButtonList()
+          private void FillSelectCameraButtonList(List<Camera> cameraList = null)
       {
          ClearCameraSelection();
-         List<Camera> cameraList = moFlexRApiClient.GetCameraList();
+             cameraList ??= moFlexRApiClient.GetCameraList();
          if (cameraList != null)
          {
             foreach (var camera in cameraList)
@@ -1325,10 +1431,10 @@ namespace Vao.Sample
          }
       }
 
-      private void FillSelectAlarmButtonList()
+      private void FillSelectAlarmButtonList(List<Alarm> alarmList = null)
       {
          ClearAlarmSelection();
-         List<Alarm> alarmList = moFlexRApiClient.GetAlarmList();
+         alarmList ??= moFlexRApiClient.GetAlarmList();
          if (alarmList == null) return;
 
          foreach (Alarm alarm in alarmList)
@@ -1655,142 +1761,84 @@ namespace Vao.Sample
          }
       }
 
-      private async void btnPickDate_Click(object sender, RoutedEventArgs e)
+      private void btnPickDate_Click(object sender, RoutedEventArgs e)
       {
-         var picker = new DatePicker
-         {
-            SelectedDate = DateTime.TryParse(txtDatePlayback.Text, out DateTime currentDate)
-               ? new DateTimeOffset(currentDate)
-               : new DateTimeOffset(DateTime.Now),
-            HorizontalAlignment = HorizontalAlignment.Stretch
-         };
+         mPickerOverlayMode = PickerOverlayMode.Date;
+         txtPickerOverlayTitle.Text = "Select Date";
+         txtPickerOverlaySubtitle.Text = "Choose a date for playback";
 
-         var dialog = CreatePickerDialog("Select Date", "Choose a date for playback", picker, result =>
-         {
-            if (picker.SelectedDate.HasValue)
-               txtDatePlayback.Text = picker.SelectedDate.Value.ToString("yyyy-MM-dd");
-         });
+         overlayDatePicker.IsVisible = true;
+         overlayTimePicker.IsVisible = false;
+         overlayDatePicker.SelectedDate = DateTime.TryParse(txtDatePlayback.Text, out DateTime currentDate)
+            ? new DateTimeOffset(currentDate)
+            : new DateTimeOffset(DateTime.Now);
 
-         await dialog.ShowDialog(this);
+         ShowPickerOverlay();
       }
 
-      private async void btnPickTime_Click(object sender, RoutedEventArgs e)
+      private void btnPickTime_Click(object sender, RoutedEventArgs e)
       {
-         var picker = new TimePicker
-         {
-            ClockIdentifier = "24HourClock",
-            SelectedTime = TimeSpan.TryParse(txtTimePlayback.Text, out TimeSpan currentTime)
-               ? currentTime
-               : DateTime.Now.TimeOfDay,
-            HorizontalAlignment = HorizontalAlignment.Stretch
-         };
+         mPickerOverlayMode = PickerOverlayMode.Time;
+         txtPickerOverlayTitle.Text = "Select Time";
+         txtPickerOverlaySubtitle.Text = "Choose a time for playback";
 
-         var dialog = CreatePickerDialog("Select Time", "Choose a time for playback", picker, result =>
-         {
-            if (picker.SelectedTime.HasValue)
-               txtTimePlayback.Text = picker.SelectedTime.Value.ToString(@"hh\:mm\:ss");
-         });
+         overlayDatePicker.IsVisible = false;
+         overlayTimePicker.IsVisible = true;
+         overlayTimePicker.SelectedTime = TimeSpan.TryParse(txtTimePlayback.Text, out TimeSpan currentTime)
+            ? currentTime
+            : DateTime.Now.TimeOfDay;
 
-         await dialog.ShowDialog(this);
+         ShowPickerOverlay();
       }
 
-      private Window CreatePickerDialog(string title, string subtitle, Control pickerContent, Action<bool> onOk)
+      private void btnPickerOverlayCancel_Click(object sender, RoutedEventArgs e)
       {
-         Window dialog = null;
+         mPickerOverlayMode = PickerOverlayMode.None;
+         HidePickerOverlay();
+      }
 
-         // Header (64px, Primary background)
-         var primaryBrush = this.FindResource("Primary") is IBrush b
-            ? b : new SolidColorBrush(Color.Parse("#007BC1"));
-         var header = new Border
+      private void btnPickerOverlayApply_Click(object sender, RoutedEventArgs e)
+      {
+         if (mPickerOverlayMode == PickerOverlayMode.Date && overlayDatePicker.SelectedDate.HasValue)
          {
-            Height = 64,
-            Background = primaryBrush,
-            Child = new StackPanel
+            txtDatePlayback.Text = overlayDatePicker.SelectedDate.Value.ToString("yyyy-MM-dd");
+         }
+         else if (mPickerOverlayMode == PickerOverlayMode.Time && overlayTimePicker.SelectedTime.HasValue)
+         {
+            txtTimePlayback.Text = overlayTimePicker.SelectedTime.Value.ToString(@"hh\:mm\:ss");
+         }
+
+         mPickerOverlayMode = PickerOverlayMode.None;
+         HidePickerOverlay();
+      }
+
+      private void ShowPickerOverlay()
+      {
+         mIsPickerOverlayVisible = true;
+         pickerOverlay.IsVisible = true;
+         UpdateVideoSurfaceForOverlayState();
+      }
+
+      private void HidePickerOverlay()
+      {
+         mIsPickerOverlayVisible = false;
+         pickerOverlay.IsVisible = false;
+         overlayDatePicker.IsVisible = false;
+         overlayTimePicker.IsVisible = false;
+         UpdateVideoSurfaceForOverlayState();
+
+         // Native video surfaces can require one extra layout tick to reliably
+         // reattach after overlay close on some platforms.
+         if (!mIsNavigationOverlayVisible)
+         {
+            Dispatcher.UIThread.Post(() =>
             {
-               VerticalAlignment = VerticalAlignment.Center,
-               Margin = new Thickness(24, 0, 0, 0),
-               Children =
+               if (!mIsNavigationOverlayVisible && !mIsPickerOverlayVisible)
                {
-                  new TextBlock
-                  {
-                     Text = title,
-                     FontSize = 20,
-                     FontWeight = FontWeight.Medium,
-                     Foreground = Brushes.White
-                  },
-                  new TextBlock
-                  {
-                     Text = subtitle,
-                     FontSize = 12,
-                     Foreground = Brushes.White,
-                     Opacity = 0.7
-                  }
+                  ReattachVideoSurfaceAfterOverlay();
                }
-            }
-         };
-
-         // Content area
-         var content = new Border
-         {
-            Padding = new Thickness(24),
-            Child = pickerContent
-         };
-
-         // Footer with Cancel + OK buttons
-         var cancelButton = new Button
-         {
-            Content = "Cancel",
-            MinWidth = 100,
-            Classes = { "outlined" }
-         };
-
-         var okButton = new Button
-         {
-            Content = "OK",
-            MinWidth = 100,
-            Classes = { "primary" }
-         };
-
-         var footer = new Border
-         {
-            Padding = new Thickness(24, 16),
-            Child = new StackPanel
-            {
-               Orientation = Avalonia.Layout.Orientation.Horizontal,
-               HorizontalAlignment = HorizontalAlignment.Right,
-               Spacing = 12,
-               Children = { cancelButton, okButton }
-            }
-         };
-         footer.Bind(Border.BackgroundProperty, footer.GetResourceObservable("Surface1"));
-         footer.Bind(Border.BorderBrushProperty, footer.GetResourceObservable("Divider"));
-         footer.BorderThickness = new Thickness(0, 1, 0, 0);
-
-         dialog = new Window
-         {
-            Title = title,
-            MinWidth = 320,
-            SizeToContent = SizeToContent.WidthAndHeight,
-            CanResize = false,
-            WindowStartupLocation = WindowStartupLocation.CenterOwner,
-            Content = new StackPanel
-            {
-               Children = { header, content, footer }
-            }
-         };
-
-         okButton.Click += (s, args) =>
-         {
-            onOk(true);
-            dialog.Close();
-         };
-
-         cancelButton.Click += (s, args) =>
-         {
-            dialog.Close();
-         };
-
-         return dialog;
+            }, DispatcherPriority.Background);
+         }
       }
    }
 

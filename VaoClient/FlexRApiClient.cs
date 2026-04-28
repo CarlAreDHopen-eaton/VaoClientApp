@@ -240,6 +240,7 @@ namespace Vao.Client
             return mRestClient;
 
          string addressLine = $"{(UseHttps ? "https" : "http")}://{Host}:{Port}";
+         var requestTimeout = TimeSpan.FromMilliseconds(ConnectionTimeoutMs <= 0 ? 8000 : ConnectionTimeoutMs);
 
          RestClientOptions options;
          if (UseHttps && IgnoreCertificateErrors)
@@ -248,7 +249,8 @@ namespace Vao.Client
             options = new RestClientOptions(addressLine)
             {
                Authenticator = new HttpBasicAuthenticator(User, Password),
-               RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true
+               RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true,
+               Timeout = requestTimeout
             };            
          }
          else
@@ -257,6 +259,7 @@ namespace Vao.Client
             options = new RestClientOptions(addressLine)
             {
                Authenticator = new HttpBasicAuthenticator(User, Password),
+               Timeout = requestTimeout
             };
          }
          mRestClient = new RestClient(options);
@@ -402,6 +405,8 @@ namespace Vao.Client
       public string Port { get; set; }
 
       public bool UseHttps { get; set; }
+
+      public int ConnectionTimeoutMs { get; set; } = 8000;
 
       #endregion
    }

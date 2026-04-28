@@ -87,7 +87,7 @@
                     <Grid RowDefinitions="Auto,*,Auto">
                         <TextBlock Grid.Row="0" Text="Pending Downloads" FontSize="16" FontWeight="SemiBold"/>
                         <ListBox Grid.Row="1" x:Name="lstPendingDownloads" Background="Transparent" MinHeight="100" Margin="0,8,0,8"/>
-                        <Button Grid.Row="2" Content="Clear" Click="btnClearPendingDownloads_Click" Classes="outlined" HorizontalAlignment="Right" MinHeight="40" MinWidth="100"/>
+                        <Button Grid.Row="2" Content="Clear" Click="btnClearPendingDownloads_Click" Classes="outlined" HorizontalAlignment="Right" MinHeight="44" MinWidth="100"/>
                     </Grid>
                 </Border>
 
@@ -96,7 +96,7 @@
                     <Grid RowDefinitions="Auto,*,Auto">
                         <TextBlock Grid.Row="0" Text="Finished Downloads" FontSize="16" FontWeight="SemiBold"/>
                         <ListBox Grid.Row="1" x:Name="lstFinishedDownloads" Background="Transparent" MinHeight="100" Margin="0,8,0,8"/>
-                        <Button Grid.Row="2" Content="Clear" Click="btnClearFinishedDownloads_Click" Classes="outlined" HorizontalAlignment="Right" MinHeight="40" MinWidth="100"/>
+                        <Button Grid.Row="2" Content="Clear" Click="btnClearFinishedDownloads_Click" Classes="outlined" HorizontalAlignment="Right" MinHeight="44" MinWidth="100"/>
                     </Grid>
                 </Border>
 
@@ -105,7 +105,7 @@
                     <Grid RowDefinitions="Auto,*,Auto">
                         <TextBlock Grid.Row="0" Text="Messages" FontSize="16" FontWeight="SemiBold"/>
                         <ListBox Grid.Row="1" x:Name="lstDownloadMessages" Background="Transparent" FontSize="12" MinHeight="100" Margin="0,8,0,8"/>
-                        <Button Grid.Row="2" Content="Clear" Click="btnClearDownloadMessages_Click" Classes="outlined" HorizontalAlignment="Right" MinHeight="40" MinWidth="100"/>
+                        <Button Grid.Row="2" Content="Clear" Click="btnClearDownloadMessages_Click" Classes="outlined" HorizontalAlignment="Right" MinHeight="44" MinWidth="100"/>
                     </Grid>
                 </Border>
 
