@@ -142,6 +142,7 @@ namespace Vao.Sample
          yield return Brush("Primary", Colors.Accent.Default);
          yield return Brush("PrimaryLight", Colors.Accent.Hover);
          yield return Brush("PrimaryDark", Colors.Accent.Pressed);
+         yield return Brush("PrimaryHeaderFg", Colors.Foreground.Primary); // Header text on primary background
 
          // Background
          yield return Brush("AppBg", Colors.Background.App);

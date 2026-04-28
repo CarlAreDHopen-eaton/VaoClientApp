@@ -8,7 +8,7 @@
 
     <Grid x:Name="rootLayoutGrid" RowDefinitions="Auto,*">
         <!-- Top App Bar (64px per Brightlayer UI) -->
-        <Border x:Name="mainTopBar" Grid.Row="0" Height="{DynamicResource AppBarHeight}" Background="{DynamicResource Primary}" BoxShadow="0 2 4 0 #40000000">
+        <Border x:Name="mainTopBar" Grid.Row="0" Height="{DynamicResource AppBarHeight}" Background="{DynamicResource Primary}" BoxShadow="0 2 4 0 #40000000" ClipToBounds="True">
             <Grid ColumnDefinitions="Auto,*,Auto" Margin="0">
                 <!-- Left: Hamburger + App Title + Subtitle -->
                 <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="16" VerticalAlignment="Center" Margin="8,0,0,0">
@@ -17,16 +17,16 @@
                             Classes="appbar-icon"
                             ToolTip.Tip="Toggle sidebar (F9)"
                             VerticalAlignment="Center">
-                        <TextBlock Text="&#xE5D2;" Classes="ms-icon" FontSize="24" Foreground="White"/>
+                        <TextBlock Text="&#xE5D2;" Classes="ms-icon" FontSize="24" Foreground="{DynamicResource PrimaryHeaderFg}"/>
                     </Button>
                     <StackPanel VerticalAlignment="Center" Spacing="2">
-                        <TextBlock Text="HERNIS FLEX VAO" 
+                        <TextBlock x:Name="txtAppTitle" Text="HERNIS FLEX VAO" 
                                    Classes="page-header-title"
                                    FontWeight="Medium"
-                                   Foreground="White"/>
-                        <TextBlock Text="Test application for the HERNIS FLEX API" 
+                                   Foreground="{DynamicResource PrimaryHeaderFg}"/>
+                        <TextBlock x:Name="txtAppSubtitle" Text="Test application for the HERNIS FLEX API" 
                                    Classes="page-header-subtitle"
-                                   Foreground="White"
+                                   Foreground="{DynamicResource PrimaryHeaderFg}"
                                    Opacity="0.7"/>
                     </StackPanel>
                 </StackPanel>
@@ -46,7 +46,7 @@
                                    Text="U" 
                                    FontSize="18" 
                                    FontWeight="SemiBold"
-                                   Foreground="White"
+                                   Foreground="{DynamicResource PrimaryHeaderFg}"
                                    HorizontalAlignment="Center" 
                                    VerticalAlignment="Center"/>
                         <Button.Flyout>

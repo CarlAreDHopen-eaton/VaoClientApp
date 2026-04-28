@@ -14,10 +14,10 @@
 				<TextBlock Text="Settings" 
 						   FontSize="20" 
 						   FontWeight="Medium"
-						   Foreground="White"/>
+						   Foreground="{DynamicResource PrimaryHeaderFg}"/>
 				<TextBlock Text="Configure application preferences" 
 						   FontSize="12" 
-						   Foreground="White"
+						   Foreground="{DynamicResource PrimaryHeaderFg}"
 						   Opacity="0.7"/>
 			</StackPanel>
 		</Border>

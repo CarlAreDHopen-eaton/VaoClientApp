@@ -13,10 +13,10 @@
                 <TextBlock Text="Download Recording"
                            FontSize="20"
                            FontWeight="Medium"
-                           Foreground="White"/>
+                           Foreground="{DynamicResource PrimaryHeaderFg}"/>
                 <TextBlock Text="Export video recordings from recorders"
                            FontSize="12"
-                           Foreground="White"
+                           Foreground="{DynamicResource PrimaryHeaderFg}"
                            Opacity="0.7"/>
             </StackPanel>
         </Border>

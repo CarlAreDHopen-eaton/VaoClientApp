@@ -7,7 +7,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
+using Avalonia.VisualTree;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
@@ -49,6 +51,7 @@ namespace Vao.Sample
       private bool mIsNavigationOverlayVisible = false;
       private bool mIsPickerOverlayVisible = false;
       private bool mIsConnecting = false;
+      private App mApp;
 
       private const double SidebarAutoCollapseBreakpoint = 1100;
 
@@ -132,6 +135,76 @@ namespace Vao.Sample
          Opened += MainWindow_Opened;
             AddHandler(KeyDownEvent, MainWindow_KeyDown, handledEventsToo: true);
             SizeChanged += MainWindow_SizeChanged;
+
+         mApp = (App)Application.Current;
+         mApp.ThemeApplied += OnThemeApplied;
+         Closed += MainWindow_Closed;
+         if (mApp.CurrentTheme != null)
+            OnThemeApplied(mApp.CurrentTheme);
+      }
+
+      private void OnThemeApplied(ThemeDefinition theme)
+      {
+         var topBar = this.FindControl<Border>("mainTopBar");
+         if (topBar != null)
+         {
+            topBar.Height = theme.Components.AppBar.Height;
+            topBar.MinHeight = theme.Components.AppBar.Height;
+            topBar.MaxHeight = theme.Components.AppBar.Height;
+         }
+
+         var appBarToggleButton = this.FindControl<Button>("btnToggleSidebarAppBar");
+         if (appBarToggleButton != null)
+         {
+            appBarToggleButton.MinHeight = theme.Sizing.Button.MinHeight;
+            appBarToggleButton.MinWidth = theme.Sizing.Button.MinHeight;
+         }
+
+         var appTitle = this.FindControl<TextBlock>("txtAppTitle");
+         if (appTitle != null)
+            appTitle.FontSize = theme.Sizing.Typography.PageTitle;
+
+         var appSubtitle = this.FindControl<TextBlock>("txtAppSubtitle");
+         if (appSubtitle != null)
+            appSubtitle.FontSize = theme.Sizing.Typography.PageSubtitle;
+
+         var sidebar = this.FindControl<Grid>("sidebarGrid");
+         if (sidebar != null)
+            sidebar.Width = theme.Components.Sidebar.Width;
+
+         var avatarBtn = this.FindControl<Button>("btnUserProfile");
+         if (avatarBtn != null)
+         {
+            avatarBtn.Width = theme.Sizing.Avatar.Size;
+            avatarBtn.Height = theme.Sizing.Avatar.Size;
+            avatarBtn.CornerRadius = new CornerRadius(theme.Sizing.Avatar.CornerRadius);
+         }
+
+         // Update MinHeight on all buttons (base Button style MinHeight via DynamicResource
+         // in style setters does NOT update reactively in Avalonia 11).
+         foreach (var btn in this.GetVisualDescendants().OfType<Button>())
+            btn.MinHeight = theme.Sizing.Button.MinHeight;
+
+         // Same for Expander section toggle buttons.
+         var sectionPadding = new Thickness(16, theme.Components.Sidebar.SectionHeaderPaddingVertical);
+         foreach (var expander in this.GetVisualDescendants().OfType<Expander>())
+         {
+            var toggle = expander.GetVisualDescendants()
+                                 .OfType<ToggleButton>()
+                                 .FirstOrDefault(t => t.Name == "PART_toggle");
+            if (toggle == null) continue;
+            toggle.MinHeight = theme.Components.Sidebar.SectionHeaderMinHeight;
+            toggle.Padding = sectionPadding;
+            toggle.FontSize = theme.Components.Sidebar.SectionHeaderFontSize;
+         }
+
+      }
+
+      private void MainWindow_Closed(object sender, EventArgs e)
+      {
+         if (mApp != null)
+            mApp.ThemeApplied -= OnThemeApplied;
+         Closed -= MainWindow_Closed;
       }
 
       private void InitializeNavigationService()
@@ -193,7 +266,10 @@ namespace Vao.Sample
             mainTopBar.IsVisible = isVisible;
 
          if (rootLayoutGrid != null && rootLayoutGrid.RowDefinitions.Count > 0)
-            rootLayoutGrid.RowDefinitions[0].Height = isVisible ? new GridLength(64) : new GridLength(0);
+         {
+            var appBarHeight = ((App)Application.Current)?.CurrentTheme?.Components?.AppBar?.Height ?? 64d;
+            rootLayoutGrid.RowDefinitions[0].Height = isVisible ? new GridLength(appBarHeight) : new GridLength(0);
+         }
       }
 
       private void DetachVideoSurfaceForOverlay()

@@ -1,8 +1,11 @@
+using System;
 using System.Collections.Generic;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
+using Avalonia.Threading;
 
 namespace Vao.Sample
 {
@@ -11,6 +14,8 @@ namespace Vao.Sample
       private ThemeDefinition _currentTheme;
 
       public ThemeDefinition CurrentTheme => _currentTheme;
+
+      public event Action<ThemeDefinition> ThemeApplied;
 
       public override void Initialize()
       {
@@ -34,6 +39,35 @@ namespace Vao.Sample
 
          ApplyColorResources(theme);
          ApplyLayoutResources(theme);
+         RefreshAllStyles();
+         if (Dispatcher.UIThread.CheckAccess())
+            ThemeApplied?.Invoke(theme);
+         else
+            Dispatcher.UIThread.Post(() => ThemeApplied?.Invoke(theme), DispatcherPriority.Send);
+      }
+
+      private static readonly System.Reflection.MethodInfo _invalidateStylesMethod =
+         typeof(StyledElement).GetMethod("InvalidateStyles",
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+
+      private void RefreshAllStyles()
+      {
+         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+         {
+            foreach (var window in desktop.Windows)
+               _invalidateStylesMethod?.Invoke(window, [true]);
+         }
+      }
+
+      private void ApplyLayoutResources(ThemeDefinition theme)
+      {
+         theme.ApplyLayoutResources(Resources);
+      }
+
+      private void ApplyColorResources(ThemeDefinition theme)
+      {
+         foreach (var entry in theme.ToBrushResources())
+            Resources[entry.Key] = entry.Value;
       }
 
       public ThemeDefinition ToggleThemeBrightness()
@@ -51,17 +85,6 @@ namespace Vao.Sample
       public IReadOnlyList<ThemeOption> GetThemeOptions()
       {
          return ThemeCatalog.Reload().GetThemeOptions();
-      }
-
-      private void ApplyLayoutResources(ThemeDefinition theme)
-      {
-         theme.ApplyLayoutResources(Resources);
-      }
-
-      private void ApplyColorResources(ThemeDefinition theme)
-      {
-         foreach (var entry in theme.ToBrushResources())
-            Resources[entry.Key] = entry.Value;
       }
 
       public override void OnFrameworkInitializationCompleted()

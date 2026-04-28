@@ -109,7 +109,7 @@
         <!-- Sidebar Section Expander - Expanded State (Primary Blue) -->
         <Style Selector="Expander.sidebar-section:expanded /template/ ToggleButton#PART_toggle">
             <Setter Property="Background" Value="{DynamicResource Primary}"/>
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryHeaderFg}"/>
             <Setter Property="MinHeight" Value="{DynamicResource SidebarSectionHeaderMinHeight}"/>
             <Setter Property="Padding" Value="{DynamicResource SidebarSectionHeaderPadding}"/>
         </Style>
@@ -217,7 +217,7 @@
         </Style>
         <Style Selector="Button.outlined:pointerover">
             <Setter Property="Background" Value="{DynamicResource Primary}"/>
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryHeaderFg}"/>
         </Style>
         <Style Selector="Button.outlined:pointerover /template/ ContentPresenter">
             <Setter Property="Background" Value="{DynamicResource Primary}"/>
@@ -271,7 +271,7 @@
         <!-- APP BAR ICON BUTTON - tuned for top blue app bar -->
         <Style Selector="Button.appbar-icon">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryHeaderFg}"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Padding" Value="8"/>
             <Setter Property="MinHeight" Value="{DynamicResource ButtonMinHeight}"/>
@@ -288,7 +288,7 @@
         <!-- FAB (Floating Action Button) -->
         <Style Selector="Button.fab">
             <Setter Property="Background" Value="{DynamicResource Primary}"/>
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryHeaderFg}"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Width" Value="56"/>
             <Setter Property="Height" Value="56"/>
@@ -305,7 +305,7 @@
         <!-- Camera selection button (selected state) -->
         <Style Selector="Button.camera-selected">
             <Setter Property="Background" Value="Goldenrod"/>
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryHeaderFg}"/>
         </Style>
         <Style Selector="Button.camera-selected:pointerover /template/ ContentPresenter">
             <Setter Property="Background" Value="DarkGoldenrod"/>

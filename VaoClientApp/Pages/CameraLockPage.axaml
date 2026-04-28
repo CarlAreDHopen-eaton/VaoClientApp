@@ -4,7 +4,7 @@
              Background="{DynamicResource AppBg}">
 
     <Grid RowDefinitions="Auto,*,Auto">
-                <Border Grid.Row="0" Height="{DynamicResource AppBarHeight}" Background="{DynamicResource Primary}" BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1" Padding="16,0">
+                <Border Grid.Row="0" Height="{DynamicResource AppBarHeight}" Background="{DynamicResource Primary}" BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1" Padding="16,0" ClipToBounds="True">
                     <Grid ColumnDefinitions="Auto,*">
                         <Button Grid.Column="0"
                                 x:Name="btnBack"
@@ -13,14 +13,14 @@
                                 Padding="0"
                                 Background="Transparent"
                                 BorderThickness="0">
-                            <TextBlock Text="&#xE5C4;" Classes="ms-icon" FontSize="20" Foreground="White"/>
+                            <TextBlock Text="&#xE5C4;" Classes="ms-icon" FontSize="20" Foreground="{DynamicResource PrimaryHeaderFg}"/>
                         </Button>
 
                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="12,0,0,0">
                             <TextBlock Text="Camera Lock"
                                        Classes="page-header-title"
                                        FontWeight="SemiBold"
-                                       Foreground="White"/>
+                                       Foreground="{DynamicResource PrimaryHeaderFg}"/>
                         </StackPanel>
                     </Grid>
                 </Border>

@@ -98,6 +98,9 @@ namespace Vao.Sample.Pages
             s.DownloadPath = txtDownloadPath?.Text ?? "";
             s.Save();
             _originalThemeKey = s.SelectedTheme;
+            
+            // Apply the theme to ensure it's fully applied with persistence
+            ((App)Application.Current).ApplyTheme(s.SelectedTheme, persistSelection: true);
             _settingsSaved = true;
         }
 

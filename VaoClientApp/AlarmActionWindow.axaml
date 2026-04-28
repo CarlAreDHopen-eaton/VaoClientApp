@@ -3,13 +3,13 @@
         x:Class="Vao.Sample.AlarmActionWindow"
         Title="Alarm Action"
         Width="430" Height="250" MinWidth="100" MinHeight="100"
-        Background="{StaticResource DarkBg}"
+        Background="{DynamicResource AppBg}"
         WindowStartupLocation="CenterOwner"
         CanResize="False">
     <Grid ColumnDefinitions="200,*">
         <!-- Alarm actions -->
         <StackPanel Grid.Column="0" Margin="12" Spacing="6">
-            <TextBlock Text="Alarm action" FontWeight="Bold" Foreground="White"/>
+            <TextBlock Text="Alarm action" FontWeight="Bold" Foreground="{DynamicResource PrimaryHeaderFg}"/>
             <Button x:Name="btnAlarmActivate" Content="Activate" HorizontalAlignment="Stretch" Click="btnAlarmActivate_Click"/>
             <Button x:Name="btnAlarmAcknowledge" Content="Acknowledge" HorizontalAlignment="Stretch" Click="btnAlarmAcknowledge_Click"/>
             <Button x:Name="btnAlarmEnable" Content="Enable" HorizontalAlignment="Stretch" Click="btnAlarmEnable_Click"/>
@@ -20,8 +20,8 @@
 
         <!-- Alarm info -->
         <StackPanel Grid.Column="1" Margin="12" Spacing="4">
-            <TextBlock Text="Alarm information" FontWeight="Bold" Foreground="White"/>
-            <TextBlock Text="Name" Foreground="Silver"/>
+            <TextBlock Text="Alarm information" FontWeight="Bold" Foreground="{DynamicResource PrimaryHeaderFg}"/>
+            <TextBlock Text="Name" Foreground="{DynamicResource TextSecondary}"/>
             <TextBox x:Name="txtAlarmName" IsReadOnly="True"/>
             <TextBlock Text="Status" Foreground="Silver"/>
             <TextBox x:Name="txtAlarmStatus" IsReadOnly="True"/>
