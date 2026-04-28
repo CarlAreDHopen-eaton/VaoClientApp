@@ -54,6 +54,7 @@ namespace Vao.Sample
       private App mApp;
 
       private const double SidebarAutoCollapseBreakpoint = 1100;
+      private const double CollapsedSidebarWidth = 56;
 
       private enum PickerOverlayMode
       {
@@ -145,6 +146,8 @@ namespace Vao.Sample
 
       private void OnThemeApplied(ThemeDefinition theme)
       {
+         var sidebarWasCollapsed = IsSidebarCurrentlyCollapsed();
+
          var topBar = this.FindControl<Border>("mainTopBar");
          if (topBar != null)
          {
@@ -168,9 +171,9 @@ namespace Vao.Sample
          if (appSubtitle != null)
             appSubtitle.FontSize = theme.Sizing.Typography.PageSubtitle;
 
-         var sidebar = this.FindControl<Grid>("sidebarGrid");
-         if (sidebar != null)
-            sidebar.Width = theme.Components.Sidebar.Width;
+         SetSidebarCollapsed(sidebarWasCollapsed, persistSetting: false);
+         ApplyResponsiveSidebarLayout(Bounds.Width);
+         SetMainChromeVisible(!mIsNavigationOverlayVisible);
 
          var avatarBtn = this.FindControl<Button>("btnUserProfile");
          if (avatarBtn != null)
@@ -411,7 +414,7 @@ namespace Vao.Sample
 
       private void btnToggleSidebar_Click(object sender, RoutedEventArgs e)
       {
-         var isCurrentlyCollapsed = sidebarGrid.Width == 56;
+         var isCurrentlyCollapsed = IsSidebarCurrentlyCollapsed();
          SetSidebarCollapsed(!isCurrentlyCollapsed, persistSetting: true);
       }
 
@@ -422,13 +425,13 @@ namespace Vao.Sample
 
          if (collapsed)
          {
-            sidebarGrid.Width = 56;
+            sidebarGrid.Width = CollapsedSidebarWidth;
             narrowSidebar.IsVisible = true;
             fullSidebar.IsVisible = false;
          }
          else
          {
-            sidebarGrid.Width = 280;
+            sidebarGrid.Width = GetExpandedSidebarWidth();
             narrowSidebar.IsVisible = false;
             fullSidebar.IsVisible = true;
          }
@@ -443,6 +446,19 @@ namespace Vao.Sample
       private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
       {
          ApplyResponsiveSidebarLayout(e.NewSize.Width);
+      }
+
+      private double GetExpandedSidebarWidth()
+      {
+         return ((App)Application.Current)?.CurrentTheme?.Components?.Sidebar?.Width ?? 280d;
+      }
+
+      private bool IsSidebarCurrentlyCollapsed()
+      {
+         if (narrowSidebar?.IsVisible == true)
+            return true;
+
+         return Math.Abs(sidebarGrid.Width - CollapsedSidebarWidth) < 0.5;
       }
 
       private void ApplyResponsiveSidebarLayout(double width)
