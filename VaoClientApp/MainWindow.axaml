@@ -308,27 +308,38 @@
                 <Border Grid.Row="0" x:Name="grpVideoControl" Background="{DynamicResource SectionBg}" CornerRadius="4">
                     <Grid RowDefinitions="Auto,*,Auto">
                         <Border Grid.Row="0" x:Name="brdVideoHeader" Background="{DynamicResource VideoHeaderBg}" CornerRadius="4,4,0,0">
-                            <Grid ColumnDefinitions="*,Auto,Auto">
+                            <Grid ColumnDefinitions="*,Auto">
                                 <TextBlock x:Name="txtVideoHeader" Text="No Camera Selected" FontWeight="SemiBold" FontSize="14" Foreground="White" Margin="16,6" Opacity="0.87" VerticalAlignment="Center"/>
-                                <ToggleSwitch x:Name="tglSubChannel" Grid.Column="1" 
-                                              OnContent="Sub" OffContent="Main"
-                                              IsChecked="True" 
-                                              Checked="tglSubChannel_CheckedChanged" 
-                                              Unchecked="tglSubChannel_CheckedChanged"
-                                              Margin="0,0,8,0" VerticalAlignment="Center" MinHeight="0"
-                                              Foreground="White"/>
-                                <Button x:Name="btnVideoMenuHeader"
-                                        Grid.Column="2"
-                                        Classes="appbar-icon"
-                                        Click="VideoMenuButton_Click"
-                                        ToolTip.Tip="Video menu"
-                                        Margin="0,0,8,0"
-                                        VerticalAlignment="Center"
-                                        Width="{DynamicResource ButtonMinHeight}"
-                                        Height="{DynamicResource ButtonMinHeight}"
-                                        Padding="0">
-                                    <TextBlock Text="&#xE5D4;" Classes="ms-icon" FontSize="18" Foreground="White"/>
-                                </Button>
+                                <Grid Grid.Column="1"
+                                      ColumnDefinitions="Auto,Auto"
+                                      HorizontalAlignment="Right"
+                                      VerticalAlignment="Center"
+                                      Margin="0,0,8,0">
+                                    <ToggleSwitch x:Name="tglSubChannel"
+                                                  Grid.Column="0"
+                                                  OnContent="Sub" OffContent="Main"
+                                                  IsChecked="True"
+                                                  Checked="tglSubChannel_CheckedChanged"
+                                                  Unchecked="tglSubChannel_CheckedChanged"
+                                                  VerticalAlignment="Center"
+                                                  VerticalContentAlignment="Center"
+                                                  HorizontalContentAlignment="Center"
+                                                  Padding="0"
+                                                  Margin="0,0,8,0"
+                                                  MinHeight="0"
+                                                  Foreground="White"/>
+                                    <Button x:Name="btnVideoMenuHeader"
+                                            Grid.Column="1"
+                                            Classes="appbar-icon"
+                                            Click="VideoMenuButton_Click"
+                                            ToolTip.Tip="Video menu"
+                                            VerticalAlignment="Center"
+                                            Width="{DynamicResource ButtonMinHeight}"
+                                            Height="{DynamicResource ButtonMinHeight}"
+                                            Padding="0">
+                                        <TextBlock Text="&#xE5D4;" Classes="ms-icon" FontSize="18" Foreground="White"/>
+                                    </Button>
+                                </Grid>
                             </Grid>
                         </Border>
                         <Panel Grid.Row="1" x:Name="pnlVideo" Background="{DynamicResource VideoBg}"/>

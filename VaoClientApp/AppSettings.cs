@@ -1,9 +1,20 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Newtonsoft.Json;
 
 namespace Vao.Sample
 {
+   public class ConnectionAlternative
+   {
+      public string Host { get; set; } = "";
+      public string Port { get; set; } = "444";
+
+      [JsonIgnore]
+      public string DisplayName => string.IsNullOrWhiteSpace(Host) ? "(empty host)" : $"{Host}:{Port}";
+   }
+
    public class AppSettings
    {
       private static readonly string SettingsPath = Path.Combine(
@@ -16,9 +27,12 @@ namespace Vao.Sample
       public string Host1 { get; set; } = "";
       public string Host2 { get; set; } = "";
       public string ApiPort { get; set; } = "444";
+      public string SystemName { get; set; } = "";
       public bool UseHttps { get; set; } = true;
       public string User { get; set; } = "";
       public string Password { get; set; } = "";
+      public List<ConnectionAlternative> ConnectionAlternatives { get; set; } = new List<ConnectionAlternative>();
+      public int SelectedConnectionIndex { get; set; } = 0;
       public string DownloadPath { get; set; } = "";
       public string FTPUser { get; set; } = "";
       public string FTPPassword { get; set; } = "";
@@ -43,6 +57,7 @@ namespace Vao.Sample
 
       public void Save()
       {
+         NormalizeConnections();
          var dir = Path.GetDirectoryName(SettingsPath);
          if (!Directory.Exists(dir))
             Directory.CreateDirectory(dir!);
@@ -58,16 +73,147 @@ namespace Vao.Sample
                var settings = JsonConvert.DeserializeObject<AppSettings>(File.ReadAllText(SettingsPath)) ?? new AppSettings();
                if (string.IsNullOrWhiteSpace(settings.SelectedTheme))
                   settings.SelectedTheme = "dark-tablet";
+               settings.NormalizeConnections();
                return settings;
             }
          }
          catch { }
-         return new AppSettings();
+         var defaults = new AppSettings();
+         defaults.NormalizeConnections();
+         return defaults;
       }
 
       public string GetPreferredThemeKey()
       {
          return string.IsNullOrWhiteSpace(SelectedTheme) ? "dark-tablet" : SelectedTheme;
+      }
+
+      public IReadOnlyList<ConnectionAlternative> GetConnectionAlternatives()
+      {
+         NormalizeConnections();
+         return ConnectionAlternatives;
+      }
+
+      public bool HasAnyConnectionAlternative()
+      {
+         NormalizeConnections();
+         return ConnectionAlternatives.Any(c => !string.IsNullOrWhiteSpace(c.Host) && !string.IsNullOrWhiteSpace(c.Port));
+      }
+
+      public ConnectionAlternative GetSelectedConnectionAlternative()
+      {
+         NormalizeConnections();
+         if (ConnectionAlternatives.Count == 0)
+            return new ConnectionAlternative();
+
+         var selectedIndex = Math.Clamp(SelectedConnectionIndex, 0, ConnectionAlternatives.Count - 1);
+         return ConnectionAlternatives[selectedIndex];
+      }
+
+      public void SetConnectionAlternatives(IEnumerable<ConnectionAlternative> alternatives, int selectedIndex = 0)
+      {
+         ConnectionAlternatives = (alternatives ?? Enumerable.Empty<ConnectionAlternative>())
+            .Where(c => c != null)
+            .Select(c => new ConnectionAlternative
+            {
+               Host = c.Host?.Trim() ?? "",
+               Port = string.IsNullOrWhiteSpace(c.Port) ? "444" : c.Port.Trim()
+            })
+            .Where(c => !string.IsNullOrWhiteSpace(c.Host))
+            .ToList();
+
+         if (ConnectionAlternatives.Count == 0)
+         {
+            Host1 = "";
+            ApiPort = "444";
+            SelectedConnectionIndex = 0;
+            return;
+         }
+
+         SelectedConnectionIndex = Math.Clamp(selectedIndex, 0, ConnectionAlternatives.Count - 1);
+         var primary = ConnectionAlternatives[SelectedConnectionIndex];
+         Host1 = primary.Host;
+         ApiPort = primary.Port;
+      }
+
+      public bool PromoteConnectionAlternativeToTop(string host, string port)
+      {
+         NormalizeConnections();
+
+         var normalizedHost = host?.Trim() ?? "";
+         var normalizedPort = string.IsNullOrWhiteSpace(port) ? "444" : port.Trim();
+         if (string.IsNullOrWhiteSpace(normalizedHost))
+            return false;
+
+         var matchIndex = ConnectionAlternatives.FindIndex(c =>
+            string.Equals(c.Host, normalizedHost, StringComparison.OrdinalIgnoreCase) &&
+            string.Equals(c.Port, normalizedPort, StringComparison.Ordinal));
+
+         if (matchIndex <= 0)
+         {
+            if (matchIndex == 0)
+            {
+               SelectedConnectionIndex = 0;
+               Host1 = ConnectionAlternatives[0].Host;
+               ApiPort = ConnectionAlternatives[0].Port;
+            }
+            return false;
+         }
+
+         var matched = ConnectionAlternatives[matchIndex];
+         ConnectionAlternatives.RemoveAt(matchIndex);
+         ConnectionAlternatives.Insert(0, matched);
+         SelectedConnectionIndex = 0;
+         Host1 = matched.Host;
+         ApiPort = matched.Port;
+         return true;
+      }
+
+      private void NormalizeConnections()
+      {
+         if (ConnectionAlternatives == null)
+            ConnectionAlternatives = new List<ConnectionAlternative>();
+
+         ConnectionAlternatives = ConnectionAlternatives
+            .Where(c => c != null)
+            .Select(c => new ConnectionAlternative
+            {
+               Host = c.Host?.Trim() ?? "",
+               Port = string.IsNullOrWhiteSpace(c.Port) ? "444" : c.Port.Trim()
+            })
+            .Where(c => !string.IsNullOrWhiteSpace(c.Host))
+            .ToList();
+
+         if (ConnectionAlternatives.Count == 0 && !string.IsNullOrWhiteSpace(Host1))
+         {
+            ConnectionAlternatives.Add(new ConnectionAlternative
+            {
+               Host = Host1.Trim(),
+               Port = string.IsNullOrWhiteSpace(ApiPort) ? "444" : ApiPort.Trim()
+            });
+         }
+
+         if (ConnectionAlternatives.Count <= 1 && !string.IsNullOrWhiteSpace(Host2))
+         {
+            ConnectionAlternatives.Add(new ConnectionAlternative
+            {
+               Host = Host2.Trim(),
+               Port = string.IsNullOrWhiteSpace(ApiPort) ? "444" : ApiPort.Trim()
+            });
+         }
+
+         if (ConnectionAlternatives.Count == 0)
+         {
+            Host1 = "";
+            ApiPort = "444";
+            SelectedConnectionIndex = 0;
+            return;
+         }
+
+         SelectedConnectionIndex = Math.Clamp(SelectedConnectionIndex, 0, ConnectionAlternatives.Count - 1);
+         var selected = ConnectionAlternatives[SelectedConnectionIndex];
+         Host1 = selected.Host;
+         ApiPort = selected.Port;
       }
    }
 }

@@ -51,6 +51,7 @@ namespace Vao.Sample
       private bool mIsNavigationOverlayVisible = false;
       private bool mIsPickerOverlayVisible = false;
       private bool mIsConnecting = false;
+      private string mConnectedEndpointDisplay = string.Empty;
       private App mApp;
 
       private const double SidebarAutoCollapseBreakpoint = 1100;
@@ -236,7 +237,7 @@ namespace Vao.Sample
             {
                mPendingConnectAfterSettings = false;
                var s = AppSettings.Default;
-               if (!IsStarted && !string.IsNullOrWhiteSpace(s.Host1) && !string.IsNullOrWhiteSpace(s.User) && !string.IsNullOrWhiteSpace(s.Password))
+               if (!IsStarted && s.HasAnyConnectionAlternative() && !string.IsNullOrWhiteSpace(s.User) && !string.IsNullOrWhiteSpace(s.Password))
                {
                   btnConnect_Click(null, null);
                }
@@ -571,7 +572,9 @@ namespace Vao.Sample
 
          // Update tooltip with user, connection status, and server
           var status = mIsConnecting ? "Connecting" : (IsStarted ? "Connected" : "Disconnected");
-          var host = AppSettings.Default.Host1?.Trim() ?? "";
+          var host = IsStarted
+             ? mConnectedEndpointDisplay
+             : (AppSettings.Default.GetSelectedConnectionAlternative().Host?.Trim() ?? "");
           var tip = string.IsNullOrEmpty(username) ? "Not logged in" : username;
           tip += $"\n{status}";
           if (IsStarted && !string.IsNullOrEmpty(host))
@@ -599,7 +602,7 @@ namespace Vao.Sample
       {
          var s = AppSettings.Default;
          // Check if credentials are configured
-         if (string.IsNullOrWhiteSpace(s.Host1) || string.IsNullOrWhiteSpace(s.User) || string.IsNullOrWhiteSpace(s.Password))
+         if (!s.HasAnyConnectionAlternative() || string.IsNullOrWhiteSpace(s.User) || string.IsNullOrWhiteSpace(s.Password))
          {
             // Open settings page first if not configured and connect after save.
             mPendingConnectAfterSettings = true;
@@ -815,17 +818,16 @@ namespace Vao.Sample
          if (!ValidateCanConnect()) return;
 
          var s = AppSettings.Default;
-         var connectClient = new FlexRApiClient
+         var endpoints = s.GetConnectionAlternatives()
+            .Where(c => !string.IsNullOrWhiteSpace(c.Host) && !string.IsNullOrWhiteSpace(c.Port))
+            .ToList();
+
+         if (endpoints.Count == 0)
          {
-            Host = s.Host1,
-            Port = s.ApiPort,
-            Password = s.Password,
-            User = s.User,
-            UseHttps = s.UseHttps,
-            IgnoreCertificateErrors = true,
-            ConnectionTimeoutMs = 8000
-         };
-         connectClient.OnMessage += OnFlexRApiClientMessage;
+            WriteMessageLog(MessageSource.Config, "No valid host/port alternatives configured", LogLevel.Error);
+            return;
+         }
+
          txtVideoHeader.Text = "No Camera Selected";
          brdVideoHeader.Background = GetNeutralHeaderBrush();
          mIsConnecting = true;
@@ -838,26 +840,65 @@ namespace Vao.Sample
          List<Camera> cameraList = null;
          List<Alarm> alarmList = null;
          ApiVersion apiVersion = null;
+         FlexRApiClient connectClient = null;
+         ConnectionAlternative connectedEndpoint = null;
 
          try
          {
-            await Task.Run(() =>
+            foreach (var endpoint in endpoints)
             {
-               started = connectClient.StartClient();
-               if (!started)
-                  return;
+               var candidateClient = new FlexRApiClient
+               {
+                  Host = endpoint.Host,
+                  Port = endpoint.Port,
+                  Password = s.Password,
+                  User = s.User,
+                  UseHttps = s.UseHttps,
+                  IgnoreCertificateErrors = true,
+                  ConnectionTimeoutMs = 8000
+               };
+               candidateClient.OnMessage += OnFlexRApiClientMessage;
 
-               loggedInUser = connectClient.GetLoggedInUserInfo();
-               cameraList = connectClient.GetCameraList();
-               alarmList = connectClient.GetAlarmList();
-               apiVersion = connectClient.GetApiVersion();
-            });
+               WriteMessageLog(MessageSource.FlexApi, $"Trying {endpoint.Host}:{endpoint.Port}...", LogLevel.Notice);
+
+               try
+               {
+                  await Task.Run(() =>
+                  {
+                     started = candidateClient.StartClient();
+                     if (!started)
+                        return;
+
+                     loggedInUser = candidateClient.GetLoggedInUserInfo();
+                     cameraList = candidateClient.GetCameraList();
+                     alarmList = candidateClient.GetAlarmList();
+                     apiVersion = candidateClient.GetApiVersion();
+                  });
+
+                  if (started)
+                  {
+                     connectClient = candidateClient;
+                     connectedEndpoint = endpoint;
+                     break;
+                  }
+               }
+               catch (Exception ex)
+               {
+                  WriteMessageLog(MessageSource.FlexApi, $"Connection attempt failed for {endpoint.Host}:{endpoint.Port}: {ex.Message}", LogLevel.Warning);
+               }
+
+               candidateClient.OnMessage -= OnFlexRApiClientMessage;
+               candidateClient.StopClient();
+            }
 
             if (started)
             {
                moFlexRApiClient = connectClient;
+               mConnectedEndpointDisplay = $"{connectedEndpoint?.Host}:{connectedEndpoint?.Port}";
+               if (connectedEndpoint != null && s.PromoteConnectionAlternativeToTop(connectedEndpoint.Host, connectedEndpoint.Port))
+                  s.Save();
                IsStarted = true;
-               WriteMessageLog(MessageSource.FlexApi, "Client started.", LogLevel.Notice);
+               WriteMessageLog(MessageSource.FlexApi, $"Client started on {mConnectedEndpointDisplay}.", LogLevel.Notice);
                CurrentLoggedInUser = loggedInUser;
                FillSelectCameraButtonList(cameraList);
                FillSelectAlarmButtonList(alarmList);
@@ -870,17 +911,18 @@ namespace Vao.Sample
             }
             else
             {
-               WriteMessageLog(MessageSource.FlexApi, "Unable to start, no response.", LogLevel.Error);
-               connectClient.OnMessage -= OnFlexRApiClientMessage;
-               connectClient.StopClient();
+               WriteMessageLog(MessageSource.FlexApi, "Unable to start, no response from any configured host.", LogLevel.Error);
                ClearPresetDropdown();
             }
          }
          catch (Exception ex)
          {
             WriteMessageLog(MessageSource.FlexApi, $"Connection failed: {ex.Message}", LogLevel.Error);
-            connectClient.OnMessage -= OnFlexRApiClientMessage;
-            connectClient.StopClient();
+            if (connectClient != null)
+            {
+               connectClient.OnMessage -= OnFlexRApiClientMessage;
+               connectClient.StopClient();
+            }
             ClearPresetDropdown();
          }
          finally
@@ -894,14 +936,12 @@ namespace Vao.Sample
       private bool ValidateCanConnect()
       {
          var s = AppSettings.Default;
-         if (string.IsNullOrWhiteSpace(s.Host1))
+         if (!s.HasAnyConnectionAlternative())
          { WriteMessageLog(MessageSource.Config, "Missing host name", LogLevel.Error); return false; }
          if (string.IsNullOrWhiteSpace(s.Password))
          { WriteMessageLog(MessageSource.Config, "Missing host password", LogLevel.Error); return false; }
          if (string.IsNullOrWhiteSpace(s.User))
          { WriteMessageLog(MessageSource.Config, "Missing user name", LogLevel.Error); return false; }
-         if (string.IsNullOrWhiteSpace(s.ApiPort))
-         { WriteMessageLog(MessageSource.Config, "Missing port", LogLevel.Error); return false; }
          return true;
       }
 
@@ -1038,6 +1078,7 @@ namespace Vao.Sample
             moFlexRApiClient.StopClient();
             moFlexRApiClient = null;
          }
+         mConnectedEndpointDisplay = string.Empty;
          StopRtspStream();
          mActiveRtspUrl = null;
          CurrentCamera = null;

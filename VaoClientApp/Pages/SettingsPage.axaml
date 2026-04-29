@@ -39,13 +39,8 @@
 
                     <StackPanel Spacing="12">
                         <StackPanel Spacing="4">
-                            <TextBlock Text="Host" Classes="label"/>
-                            <TextBox x:Name="txtHost" Watermark="Enter host address" MinHeight="{DynamicResource InputMinHeight}" Padding="{DynamicResource InputPadding}"/>
-                        </StackPanel>
-                        
-                        <StackPanel Spacing="4">
-                            <TextBlock Text="Port" Classes="label"/>
-                            <TextBox x:Name="txtPort" Watermark="444" MinHeight="{DynamicResource InputMinHeight}" Padding="{DynamicResource InputPadding}"/>
+                            <TextBlock Text="System Name" Classes="label"/>
+                            <TextBox x:Name="txtSystemName" Watermark="Enter system name" MinHeight="{DynamicResource InputMinHeight}" Padding="{DynamicResource InputPadding}"/>
                         </StackPanel>
                         
                         <StackPanel Spacing="4">
@@ -60,6 +55,25 @@
                         
                         <CheckBox x:Name="chkSecure" Content="Use HTTPS (Secure)" MinHeight="{DynamicResource ButtonMinHeight}" Padding="12" FontSize="14"/>
                         <CheckBox x:Name="chkAutoConnect" Content="Auto-connect on startup" MinHeight="{DynamicResource ButtonMinHeight}" Padding="12" FontSize="14"/>
+
+                                                <Border Height="1" Background="{DynamicResource Divider}" Margin="0,8,0,8"/>
+
+                                                <TextBlock Text="Connection Alternatives (host + port)" Classes="label"/>
+                                                <ListBox x:Name="lstConnections"
+                                                         SelectionChanged="lstConnections_SelectionChanged"
+                                                         MinHeight="120"
+                                                         MaxHeight="180"/>
+
+                                                <Grid ColumnDefinitions="2*,*">
+                                                    <TextBox Grid.Column="0" x:Name="txtConnectionHost" Watermark="Host" MinHeight="{DynamicResource InputMinHeight}" Padding="{DynamicResource InputPadding}" Margin="0,0,8,0"/>
+                                                    <TextBox Grid.Column="1" x:Name="txtConnectionPort" Watermark="Port (444)" MinHeight="{DynamicResource InputMinHeight}" Padding="{DynamicResource InputPadding}"/>
+                                                </Grid>
+
+                                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                                    <Button Content="Add" Click="btnAddConnection_Click" Classes="outlined" MinWidth="100" MinHeight="{DynamicResource ButtonMinHeight}"/>
+                                                    <Button Content="Update" Click="btnUpdateConnection_Click" Classes="outlined" MinWidth="100" MinHeight="{DynamicResource ButtonMinHeight}"/>
+                                                    <Button Content="Remove" Click="btnRemoveConnection_Click" Classes="outlined" MinWidth="100" MinHeight="{DynamicResource ButtonMinHeight}"/>
+                                                </StackPanel>
                     </StackPanel>
                 </StackPanel>
 

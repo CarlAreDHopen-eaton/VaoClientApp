@@ -5,6 +5,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
 using Vao.Sample.Navigation;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Vao.Sample.Pages
@@ -13,6 +14,7 @@ namespace Vao.Sample.Pages
     {
         private bool _settingsSaved = false;
         private string _originalThemeKey = string.Empty;
+        private List<ConnectionAlternative> _connectionAlternatives = new List<ConnectionAlternative>();
 
         public SettingsPage()
         {
@@ -33,8 +35,7 @@ namespace Vao.Sample.Pages
         private void LoadSettings()
         {
             var s = AppSettings.Default;
-            var txtHost = this.FindControl<TextBox>("txtHost");
-            var txtPort = this.FindControl<TextBox>("txtPort");
+            var txtSystemName = this.FindControl<TextBox>("txtSystemName");
             var txtUser = this.FindControl<TextBox>("txtUser");
             var txtPassword = this.FindControl<TextBox>("txtPassword");
             var chkSecure = this.FindControl<CheckBox>("chkSecure");
@@ -49,8 +50,15 @@ namespace Vao.Sample.Pages
             var themeOptions = app.GetThemeOptions();
             var selectedThemeKey = s.GetPreferredThemeKey();
 
-            if (txtHost != null) txtHost.Text = s.Host1;
-            if (txtPort != null) txtPort.Text = s.ApiPort;
+            _connectionAlternatives = s.GetConnectionAlternatives()
+                .Select(c => new ConnectionAlternative
+                {
+                    Host = c.Host,
+                    Port = c.Port
+                })
+                .ToList();
+
+            if (txtSystemName != null) txtSystemName.Text = s.SystemName;
             if (txtUser != null) txtUser.Text = s.User;
             if (txtPassword != null) txtPassword.Text = s.Password;
             if (chkSecure != null) chkSecure.IsChecked = s.UseHttps;
@@ -65,27 +73,29 @@ namespace Vao.Sample.Pages
                 cmbTheme.ItemsSource = themeOptions;
                 cmbTheme.SelectedItem = themeOptions.FirstOrDefault(option => option.Key == selectedThemeKey);
             }
+
+            RefreshConnectionList(s.SelectedConnectionIndex);
         }
 
         private void SaveSettings()
         {
             var s = AppSettings.Default;
-            var txtHost = this.FindControl<TextBox>("txtHost");
-            var txtPort = this.FindControl<TextBox>("txtPort");
+            var txtSystemName = this.FindControl<TextBox>("txtSystemName");
             var txtUser = this.FindControl<TextBox>("txtUser");
             var txtPassword = this.FindControl<TextBox>("txtPassword");
             var chkSecure = this.FindControl<CheckBox>("chkSecure");
             var chkUseTcp = this.FindControl<CheckBox>("chkUseTcp");
             var chkPreferSubChannel = this.FindControl<CheckBox>("chkPreferSubChannel");
             var cmbTheme = this.FindControl<ComboBox>("cmbTheme");
+            var lstConnections = this.FindControl<ListBox>("lstConnections");
             var chkAutoConnect = this.FindControl<CheckBox>("chkAutoConnect");
             var txtFTPUser = this.FindControl<TextBox>("txtFTPUser");
             var txtFTPPassword = this.FindControl<TextBox>("txtFTPPassword");
             var txtDownloadPath = this.FindControl<TextBox>("txtDownloadPath");
             var selectedTheme = cmbTheme?.SelectedItem as ThemeOption;
+            var selectedConnectionIndex = lstConnections?.SelectedIndex ?? 0;
 
-            s.Host1 = txtHost?.Text ?? "";
-            s.ApiPort = txtPort?.Text ?? "";
+            s.SystemName = txtSystemName?.Text?.Trim() ?? "";
             s.User = txtUser?.Text ?? "";
             s.Password = txtPassword?.Text ?? "";
             s.UseHttps = chkSecure?.IsChecked == true;
@@ -96,6 +106,7 @@ namespace Vao.Sample.Pages
             s.FTPUser = txtFTPUser?.Text ?? "";
             s.FTPPassword = txtFTPPassword?.Text ?? "";
             s.DownloadPath = txtDownloadPath?.Text ?? "";
+            s.SetConnectionAlternatives(_connectionAlternatives, selectedConnectionIndex);
             s.Save();
             _originalThemeKey = s.SelectedTheme;
             
@@ -141,6 +152,107 @@ namespace Vao.Sample.Pages
         private void btnBack_Click(object sender, RoutedEventArgs e)
         {
             CancelAndGoBack();
+        }
+
+        private void btnAddConnection_Click(object sender, RoutedEventArgs e)
+        {
+            var txtConnectionHost = this.FindControl<TextBox>("txtConnectionHost");
+            var txtConnectionPort = this.FindControl<TextBox>("txtConnectionPort");
+            var host = txtConnectionHost?.Text?.Trim() ?? string.Empty;
+            var port = txtConnectionPort?.Text?.Trim() ?? "444";
+
+            if (string.IsNullOrWhiteSpace(host))
+                return;
+
+            _connectionAlternatives.Add(new ConnectionAlternative { Host = host, Port = string.IsNullOrWhiteSpace(port) ? "444" : port });
+            RefreshConnectionList(_connectionAlternatives.Count - 1);
+            ClearConnectionEntryFields();
+        }
+
+        private void btnUpdateConnection_Click(object sender, RoutedEventArgs e)
+        {
+            var txtConnectionHost = this.FindControl<TextBox>("txtConnectionHost");
+            var txtConnectionPort = this.FindControl<TextBox>("txtConnectionPort");
+            var lstConnections = this.FindControl<ListBox>("lstConnections");
+
+            if (lstConnections == null || lstConnections.SelectedIndex < 0 || lstConnections.SelectedIndex >= _connectionAlternatives.Count)
+                return;
+
+            var host = txtConnectionHost?.Text?.Trim() ?? string.Empty;
+            var port = txtConnectionPort?.Text?.Trim() ?? "444";
+            if (string.IsNullOrWhiteSpace(host))
+                return;
+
+            _connectionAlternatives[lstConnections.SelectedIndex] = new ConnectionAlternative
+            {
+                Host = host,
+                Port = string.IsNullOrWhiteSpace(port) ? "444" : port
+            };
+
+            RefreshConnectionList(lstConnections.SelectedIndex);
+        }
+
+        private void btnRemoveConnection_Click(object sender, RoutedEventArgs e)
+        {
+            var lstConnections = this.FindControl<ListBox>("lstConnections");
+            if (lstConnections == null || lstConnections.SelectedIndex < 0 || lstConnections.SelectedIndex >= _connectionAlternatives.Count)
+                return;
+
+            var removedIndex = lstConnections.SelectedIndex;
+            _connectionAlternatives.RemoveAt(removedIndex);
+
+            var nextIndex = Math.Min(removedIndex, _connectionAlternatives.Count - 1);
+            RefreshConnectionList(nextIndex);
+            ClearConnectionEntryFields();
+        }
+
+        private void lstConnections_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var lstConnections = this.FindControl<ListBox>("lstConnections");
+            var txtConnectionHost = this.FindControl<TextBox>("txtConnectionHost");
+            var txtConnectionPort = this.FindControl<TextBox>("txtConnectionPort");
+
+            if (lstConnections == null || txtConnectionHost == null || txtConnectionPort == null)
+                return;
+
+            if (lstConnections.SelectedIndex < 0 || lstConnections.SelectedIndex >= _connectionAlternatives.Count)
+            {
+                ClearConnectionEntryFields();
+                return;
+            }
+
+            var selected = _connectionAlternatives[lstConnections.SelectedIndex];
+            txtConnectionHost.Text = selected.Host;
+            txtConnectionPort.Text = selected.Port;
+        }
+
+        private void RefreshConnectionList(int selectedIndex)
+        {
+            var lstConnections = this.FindControl<ListBox>("lstConnections");
+            if (lstConnections == null)
+                return;
+
+            lstConnections.ItemsSource = _connectionAlternatives
+                .Select((entry, index) => $"{index + 1}. {entry.DisplayName}")
+                .ToList();
+
+            if (_connectionAlternatives.Count == 0)
+            {
+                lstConnections.SelectedIndex = -1;
+                return;
+            }
+
+            lstConnections.SelectedIndex = Math.Clamp(selectedIndex, 0, _connectionAlternatives.Count - 1);
+        }
+
+        private void ClearConnectionEntryFields()
+        {
+            var txtConnectionHost = this.FindControl<TextBox>("txtConnectionHost");
+            var txtConnectionPort = this.FindControl<TextBox>("txtConnectionPort");
+            if (txtConnectionHost != null)
+                txtConnectionHost.Text = string.Empty;
+            if (txtConnectionPort != null)
+                txtConnectionPort.Text = "444";
         }
 
         public void CancelAndGoBack()
