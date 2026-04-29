@@ -54,6 +54,8 @@ namespace Vao.Sample
       public bool IsMessagesCollapsed { get; set; } = false;
       public double MessagesSplitVideoStars { get; set; } = 3.0;
       public double MessagesSplitMessagesStars { get; set; } = 1.0;
+      public double CameraSelectorListHeight { get; set; } = 240.0;
+      public double AlarmSelectorListHeight { get; set; } = 240.0;
 
       public void Save()
       {

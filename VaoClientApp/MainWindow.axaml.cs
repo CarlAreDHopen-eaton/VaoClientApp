@@ -37,7 +37,8 @@ namespace Vao.Sample
       private Camera mCurrentCamera;
       private Alarm mCurrentAlarm;
       private User mCurrentLoggedInUser;
-      private Button mCurrentCameraButton;
+      private bool mIsUpdatingCameraSelection;
+      private bool mIsResizingSelectorList;
       private ContextMenu mVideoContextMenu;
       private LibVLC mLibVlc;
       private MediaPlayer mMediaPlayer;
@@ -47,6 +48,10 @@ namespace Vao.Sample
       private bool mIsMessagesCollapsed = false;
       private GridLength mMessagesExpandedRowHeight = new GridLength(1, GridUnitType.Star);
       private bool mIsVideoTemporarilyDetached = false;
+      private bool mIsUpdatingAlarmSelection;
+      private ListBox mActiveResizableList;
+      private double mResizeStartHeight;
+      private Point mResizeStartPoint;
       private bool mPendingConnectAfterSettings = false;
       private bool mIsNavigationOverlayVisible = false;
       private bool mIsPickerOverlayVisible = false;
@@ -71,6 +76,10 @@ namespace Vao.Sample
 
       private ObservableCollection<MessageItem> mMessages = new();
       private ObservableCollection<MessageItem> mFilteredMessages = new();
+      private readonly ObservableCollection<CameraSelectionItem> mCameraSelectionItems = new();
+      private readonly ObservableCollection<CameraSelectionItem> mFilteredCameraSelectionItems = new();
+      private readonly ObservableCollection<AlarmSelectionItem> mAlarmSelectionItems = new();
+      private readonly ObservableCollection<AlarmSelectionItem> mFilteredAlarmSelectionItems = new();
       private Dictionary<MessageSource, bool> mSourceFilters = new()
       {
          { MessageSource.FlexApi, true },
@@ -118,6 +127,9 @@ namespace Vao.Sample
          EnsureVideoContextMenu();
 
          lstMessages.ItemsSource = mFilteredMessages;
+         lstCameraSelection.ItemsSource = mFilteredCameraSelectionItems;
+         lstAlarmSelection.ItemsSource = mFilteredAlarmSelectionItems;
+         InitializeSelectorListHeights(useSavedHeights: true);
 
          StartInitializeVlc();
          ClearPresetDropdown();
@@ -202,6 +214,121 @@ namespace Vao.Sample
             toggle.FontSize = theme.Components.Sidebar.SectionHeaderFontSize;
          }
 
+         InitializeSelectorListHeights(useSavedHeights: true);
+
+      }
+
+      private void InitializeSelectorListHeights(bool useSavedHeights)
+      {
+         var defaultHeight = GetThemeResourceDouble("SidebarSelectorListDefaultHeight", 240);
+         var minHeight = GetThemeResourceDouble("SidebarSelectorListMinHeight", 140);
+         var maxHeight = GetThemeResourceDouble("SidebarSelectorListMaxHeight", 340);
+         var settings = AppSettings.Default;
+
+         double ResolveTargetHeight(double savedHeight, double currentHeight)
+         {
+            var preferred = useSavedHeights ? savedHeight : currentHeight;
+            if (preferred <= 0)
+               preferred = defaultHeight;
+            return Math.Clamp(preferred, minHeight, maxHeight);
+         }
+
+         var cameraTarget = ResolveTargetHeight(settings.CameraSelectorListHeight, lstCameraSelection?.Height ?? 0);
+         var alarmTarget = ResolveTargetHeight(settings.AlarmSelectorListHeight, lstAlarmSelection?.Height ?? 0);
+
+         if (lstCameraSelection != null)
+         {
+            lstCameraSelection.MinHeight = minHeight;
+            lstCameraSelection.MaxHeight = maxHeight;
+            lstCameraSelection.Height = cameraTarget;
+         }
+
+         if (lstAlarmSelection != null)
+         {
+            lstAlarmSelection.MinHeight = minHeight;
+            lstAlarmSelection.MaxHeight = maxHeight;
+            lstAlarmSelection.Height = alarmTarget;
+         }
+      }
+
+      private double GetThemeResourceDouble(string key, double fallback)
+      {
+         if (this.TryFindResource(key, this.ActualThemeVariant, out var resource))
+         {
+            if (resource is double d)
+               return d;
+            if (resource is float f)
+               return f;
+            if (resource is int i)
+               return i;
+            if (double.TryParse(resource?.ToString(), NumberStyles.Float, CultureInfo.InvariantCulture, out var parsed))
+               return parsed;
+         }
+
+         return fallback;
+      }
+
+      private ListBox ResolveResizableList(object sender)
+      {
+         if (sender is not Control control)
+            return null;
+
+         return control.Tag?.ToString() switch
+         {
+            "camera" => lstCameraSelection,
+            "alarm" => lstAlarmSelection,
+            _ => null
+         };
+      }
+
+      private void SelectorResizeHandle_PointerPressed(object sender, PointerPressedEventArgs e)
+      {
+         var list = ResolveResizableList(sender);
+         if (list == null)
+            return;
+
+         mActiveResizableList = list;
+         mIsResizingSelectorList = true;
+         mResizeStartPoint = e.GetPosition(this);
+         mResizeStartHeight = list.Height > 0 ? list.Height : list.Bounds.Height;
+
+         if (sender is InputElement inputElement)
+            e.Pointer.Capture(inputElement);
+      }
+
+      private void SelectorResizeHandle_PointerMoved(object sender, PointerEventArgs e)
+      {
+         if (!mIsResizingSelectorList || mActiveResizableList == null)
+            return;
+
+         var minHeight = GetThemeResourceDouble("SidebarSelectorListMinHeight", 140);
+         var maxHeight = GetThemeResourceDouble("SidebarSelectorListMaxHeight", 340);
+
+         var currentPoint = e.GetPosition(this);
+         var deltaY = currentPoint.Y - mResizeStartPoint.Y;
+         var newHeight = Math.Clamp(mResizeStartHeight + deltaY, minHeight, maxHeight);
+         mActiveResizableList.Height = newHeight;
+      }
+
+      private void SelectorResizeHandle_PointerReleased(object sender, PointerReleasedEventArgs e)
+      {
+         EndSelectorResize(e.Pointer);
+      }
+
+      private void SelectorResizeHandle_PointerCaptureLost(object sender, PointerCaptureLostEventArgs e)
+      {
+         EndSelectorResize(null);
+      }
+
+      private void EndSelectorResize(IPointer pointer)
+      {
+         if (!mIsResizingSelectorList)
+            return;
+
+         mIsResizingSelectorList = false;
+         mActiveResizableList = null;
+         pointer?.Capture(null);
+         SaveSettings();
       }
 
       private void MainWindow_Closed(object sender, EventArgs e)
@@ -814,6 +941,10 @@ namespace Vao.Sample
             s.MessagesSplitVideoStars = mg.RowDefinitions[0].Height.Value;
             s.MessagesSplitMessagesStars = mg.RowDefinitions[2].Height.Value;
          }
+         if (lstCameraSelection?.Height > 0)
+            s.CameraSelectorListHeight = lstCameraSelection.Height;
+         if (lstAlarmSelection?.Height > 0)
+            s.AlarmSelectorListHeight = lstAlarmSelection.Height;
          s.Save();
       }
 
@@ -831,7 +962,8 @@ namespace Vao.Sample
          if (menuItemLogout != null) menuItemLogout.IsEnabled = IsStarted && !mIsConnecting;
 
          bool canUseConnectedFeatures = IsStarted && !mIsConnecting;
-         pnlCameraSelectFlowPanel.IsEnabled = canUseConnectedFeatures;
+         pnlCameraSelection.IsEnabled = canUseConnectedFeatures;
+         pnlAlarmsSelection.IsEnabled = canUseConnectedFeatures;
          tglSubChannel.IsEnabled = canUseConnectedFeatures && !IsPlayback && mCurrentCamera != null && !string.IsNullOrEmpty(mCurrentCamera?.Stream2Resolution);
          grpSelectPreset.IsEnabled = canUseConnectedFeatures;
          grpSelectPlayback.IsEnabled = canUseConnectedFeatures && ApiSupportsPlayback;
@@ -1164,9 +1296,6 @@ namespace Vao.Sample
          get => mCurrentCamera;
          set
          {
-            if (mCurrentCameraButton != null)
-               mCurrentCameraButton.Classes.Remove("camera-selected");
-
             if (mCurrentCamera != null)
             {
                mCurrentCamera.PropertyChanged -= Camera_PropertyChanged;
@@ -1181,9 +1310,7 @@ namespace Vao.Sample
                mCurrentCamera.LockStatusChanged += Camera_LockStatusChanged;
             }
 
-            mCurrentCameraButton = GetCameraButton(mCurrentCamera);
-            if (mCurrentCameraButton != null)
-               mCurrentCameraButton.Classes.Add("camera-selected");
+            SyncCameraSelectionWithCurrent();
 
             if (mCurrentCamera != null)
             {
@@ -1223,8 +1350,24 @@ namespace Vao.Sample
          selPreset.SelectedIndex = 0;
       }
 
-      private void ClearCameraSelection() { pnlCameraSelectFlowPanel.Children.Clear(); }
-      private void ClearAlarmSelection() { pnlAlarms.Children.Clear(); }
+      private void ClearCameraSelection()
+      {
+         mCameraSelectionItems.Clear();
+         mFilteredCameraSelectionItems.Clear();
+         mIsUpdatingCameraSelection = true;
+         lstCameraSelection.SelectedItem = null;
+         mIsUpdatingCameraSelection = false;
+         txtCameraSearch.Text = string.Empty;
+      }
+      private void ClearAlarmSelection()
+      {
+         mAlarmSelectionItems.Clear();
+         mFilteredAlarmSelectionItems.Clear();
+         mIsUpdatingAlarmSelection = true;
+         lstAlarmSelection.SelectedItem = null;
+         mIsUpdatingAlarmSelection = false;
+         txtAlarmSearch.Text = string.Empty;
+      }
 
       private void Camera_PropertyChanged(object sender, PropertyChangedEventArgs e)
       {
@@ -1360,16 +1503,6 @@ namespace Vao.Sample
          }
       }
 
-      private Button GetCameraButton(Camera camera)
-      {
-         foreach (var child in pnlCameraSelectFlowPanel.Children)
-         {
-            if (child is Button button && button.Tag == camera)
-               return button;
-         }
-         return null;
-      }
-
       private void SelectCamera(int cameraNo, int streamNo)
       {
          Camera camera = mFlexRApiClient.GetCamera(cameraNo);
@@ -1489,10 +1622,9 @@ namespace Vao.Sample
          if (cameraList != null && cameraList.Count > 0)
             return cameraList;
 
-         // Fallback: use cameras already loaded in the sidebar selection panel.
-         var fallback = pnlCameraSelectFlowPanel.Children
-            .OfType<Button>()
-            .Select(b => b.Tag as Camera)
+         // Fallback: use cameras loaded in the searchable selection list.
+         var fallback = mCameraSelectionItems
+            .Select(i => i.Camera)
             .Where(c => c != null)
             .GroupBy(c => c.ComponentNumber)
             .Select(g => g.First())
@@ -1619,47 +1751,60 @@ namespace Vao.Sample
          WriteMessageLog(MessageSource.LibVlc, $"LibVLC opening {GetMaskedUrl(mrl)}", LogLevel.Notice);
       }
 
-      private void OnSelectCameraClicked(object sender, RoutedEventArgs e)
-      {
-         if (sender is Button button && button.Tag is Camera camera)
-            SelectCamera(camera.ComponentNumber, AppSettings.Default.PreferSubChannel ? 2 : 1);
-      }
-
-      private void OnSelectAlarmClicked(object sender, RoutedEventArgs e)
-      {
-         if (sender is Button button && button.Tag is Alarm alarm)
-         {
-            SelectAlarm(alarm.ComponentNumber);
-            var alarmPage = new AlarmActionPage(FlexRApiClient, CurrentAlarm, mCurrentLoggedInUser);
-            alarmPage.NavigationService = mNavigationService;
-            mNavigationService.NavigateTo(alarmPage);
-         }
-      }
-
-          private void FillSelectCameraButtonList(List<Camera> cameraList = null)
+      private void FillSelectCameraButtonList(List<Camera> cameraList = null)
       {
          ClearCameraSelection();
-             cameraList ??= mFlexRApiClient.GetCameraList();
-         if (cameraList != null)
-         {
-            foreach (var camera in cameraList)
-            {
-               var button = new Button
-               {
-                  Content = camera.Name,
-                  Height = 28,
-                  Tag = camera,
-                  Margin = new Thickness(2),
-                  Padding = new Thickness(4, 2),
-                  FontSize = 11,
-                  HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch,
-                  HorizontalContentAlignment = Avalonia.Layout.HorizontalAlignment.Center
-               };
-               ToolTip.SetTip(button, camera.Name);
-               button.Click += OnSelectCameraClicked;
-               pnlCameraSelectFlowPanel.Children.Add(button);
-            }
-         }
+         cameraList ??= mFlexRApiClient.GetCameraList();
+         if (cameraList == null)
+            return;
+
+         foreach (var camera in cameraList.OrderBy(c => c.ComponentNumber))
+            mCameraSelectionItems.Add(new CameraSelectionItem(camera));
+
+         ApplyCameraSearchFilter();
+      }
+
+      private void txtCameraSearch_TextChanged(object sender, TextChangedEventArgs e)
+      {
+         ApplyCameraSearchFilter();
+      }
+
+      private void lstCameraSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
+      {
+         if (mIsUpdatingCameraSelection)
+            return;
+
+         if (lstCameraSelection.SelectedItem is not CameraSelectionItem selected || selected.Camera == null)
+            return;
+
+         int streamNo = tglSubChannel.IsChecked == true ? 2 : 1;
+         SelectCamera(selected.Camera.ComponentNumber, streamNo);
+      }
+
+      private void ApplyCameraSearchFilter()
+      {
+         string query = txtCameraSearch.Text?.Trim() ?? string.Empty;
+         var filtered = string.IsNullOrWhiteSpace(query)
+            ? mCameraSelectionItems
+            : mCameraSelectionItems.Where(item => item.Matches(query));
+
+         mFilteredCameraSelectionItems.Clear();
+         foreach (var item in filtered)
+            mFilteredCameraSelectionItems.Add(item);
+
+         SyncCameraSelectionWithCurrent();
+      }
+
+      private void SyncCameraSelectionWithCurrent()
+      {
+         mIsUpdatingCameraSelection = true;
+         lstCameraSelection.SelectedItem = mCurrentCamera == null
+            ? null
+            : mFilteredCameraSelectionItems.FirstOrDefault(item => item.Camera?.ComponentNumber == mCurrentCamera.ComponentNumber);
+
+         if (lstCameraSelection.SelectedItem != null)
+            lstCameraSelection.ScrollIntoView(lstCameraSelection.SelectedItem);
+         mIsUpdatingCameraSelection = false;
       }
 
       private void FillSelectAlarmButtonList(List<Alarm> alarmList = null)
@@ -1668,37 +1813,57 @@ namespace Vao.Sample
          alarmList ??= mFlexRApiClient.GetAlarmList();
          if (alarmList == null) return;
 
-         foreach (Alarm alarm in alarmList)
+         foreach (var alarm in alarmList.OrderBy(a => a.ComponentNumber))
          {
-            var border = new Border
-            {
-               Width = 64, Height = 24,
-               BorderThickness = new Thickness(2),
-               BorderBrush = GetBrushForStatus(alarm.Status),
-               Margin = new Thickness(2)
-            };
-
-            var button = new Button
-            {
-               Content = "Alarm " + alarm.ComponentNumber,
-               FontSize = 10,
-               Tag = alarm,
-               HorizontalAlignment = HorizontalAlignment.Center,
-               VerticalAlignment = VerticalAlignment.Center,
-            };
-            ToolTip.SetTip(button, alarm.Name);
-            button.Click += OnSelectAlarmClicked;
-            border.Child = button;
-            border.Tag = alarm;
-
-            pnlAlarms.Children.Add(border);
-
+            var item = new AlarmSelectionItem(alarm, GetBrushForStatus(alarm.Status));
+            mAlarmSelectionItems.Add(item);
             alarm.PropertyChanged += (s, ev) =>
             {
-               if (ev.PropertyName == "Status")
-                  Dispatcher.UIThread.Post(() => border.BorderBrush = GetBrushForStatus(alarm.Status));
+               if (ev.PropertyName == nameof(Alarm.Status))
+                  Dispatcher.UIThread.Post(() => item.StatusBrush = GetBrushForStatus(alarm.Status));
             };
          }
+
+         ApplyAlarmSearchFilter();
+      }
+
+      private void txtAlarmSearch_TextChanged(object sender, TextChangedEventArgs e)
+      {
+         ApplyAlarmSearchFilter();
+      }
+
+      private void lstAlarmSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
+      {
+         if (mIsUpdatingAlarmSelection)
+            return;
+
+         if (lstAlarmSelection.SelectedItem is not AlarmSelectionItem selected || selected.Alarm == null)
+            return;
+
+         SelectAlarm(selected.Alarm.ComponentNumber);
+         var alarmPage = new AlarmActionPage(FlexRApiClient, CurrentAlarm, mCurrentLoggedInUser)
+         {
+            NavigationService = mNavigationService
+         };
+         mNavigationService.NavigateTo(alarmPage);
+      }
+
+      private void ApplyAlarmSearchFilter()
+      {
+         string query = txtAlarmSearch.Text?.Trim() ?? string.Empty;
+         var filtered = string.IsNullOrWhiteSpace(query)
+            ? mAlarmSelectionItems
+            : mAlarmSelectionItems.Where(item => item.Matches(query));
+
+         mFilteredAlarmSelectionItems.Clear();
+         foreach (var item in filtered)
+            mFilteredAlarmSelectionItems.Add(item);
+
+         mIsUpdatingAlarmSelection = true;
+         lstAlarmSelection.SelectedItem = mCurrentAlarm == null
+            ? null
+            : mFilteredAlarmSelectionItems.FirstOrDefault(item => item.Alarm?.ComponentNumber == mCurrentAlarm.ComponentNumber);
+         mIsUpdatingAlarmSelection = false;
       }
 
       private IBrush GetBrushForStatus(AlarmGeneralStatus status)
@@ -2071,6 +2236,77 @@ namespace Vao.Sample
             }, DispatcherPriority.Background);
          }
       }
+   }
+
+   public class CameraSelectionItem
+   {
+      public CameraSelectionItem(Camera camera)
+      {
+         Camera = camera;
+      }
+
+      public Camera Camera { get; }
+
+      public string CameraName => Camera?.Name ?? string.Empty;
+
+      public string CameraNumberText => Camera == null ? string.Empty : $"#{Camera.ComponentNumber:D4}";
+
+      public string CameraTypeIcon => Camera?.HasPanTiltControl == true ? "\uE30F" : "\uE412";
+
+      public bool Matches(string query)
+      {
+         if (Camera == null)
+            return false;
+
+         if (string.IsNullOrWhiteSpace(query))
+            return true;
+
+         return Camera.Name?.Contains(query, StringComparison.OrdinalIgnoreCase) == true
+            || Camera.ComponentNumber.ToString(CultureInfo.InvariantCulture).Contains(query, StringComparison.OrdinalIgnoreCase);
+      }
+   }
+
+   public class AlarmSelectionItem : INotifyPropertyChanged
+   {
+      private IBrush mStatusBrush;
+
+      public AlarmSelectionItem(Alarm alarm, IBrush statusBrush)
+      {
+         Alarm = alarm;
+         mStatusBrush = statusBrush;
+      }
+
+      public Alarm Alarm { get; }
+
+      public string AlarmName => Alarm?.Name ?? string.Empty;
+
+      public string AlarmNumberText => Alarm == null ? string.Empty : $"#{Alarm.ComponentNumber:D4}";
+
+      public IBrush StatusBrush
+      {
+         get => mStatusBrush;
+         set
+         {
+            if (ReferenceEquals(mStatusBrush, value))
+               return;
+            mStatusBrush = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StatusBrush)));
+         }
+      }
+
+      public bool Matches(string query)
+      {
+         if (Alarm == null)
+            return false;
+
+         if (string.IsNullOrWhiteSpace(query))
+            return true;
+
+         return Alarm.Name?.Contains(query, StringComparison.OrdinalIgnoreCase) == true
+            || Alarm.ComponentNumber.ToString(CultureInfo.InvariantCulture).Contains(query, StringComparison.OrdinalIgnoreCase);
+      }
+
+      public event PropertyChangedEventHandler PropertyChanged;
    }
 
    public enum MessageSource { FlexApi, LibVlc, Config }

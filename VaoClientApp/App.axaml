@@ -147,6 +147,32 @@
             <Setter Property="IsVisible" Value="False"/>
         </Style>
 
+        <!-- Camera selection section should be edge-to-edge with no extra template spacing -->
+        <Style Selector="Expander.camera-selection-section /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+        <Style Selector="Expander.camera-selection-section /template/ ContentPresenter">
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+        <Style Selector="Expander.camera-selection-section /template/ Border">
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="0"/>
+        </Style>
+        <Style Selector="Expander.alarm-selection-section /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+        <Style Selector="Expander.alarm-selection-section /template/ ContentPresenter">
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+        <Style Selector="Expander.alarm-selection-section /template/ Border">
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="0"/>
+        </Style>
+
         <!-- Expander Template Border Overrides -->
         <Style Selector="Expander /template/ ToggleButton /template/ Border">
             <Setter Property="MinHeight" Value="0"/>
@@ -339,6 +365,46 @@
         </Style>
         <Style Selector="Button.camera-selected /template/ ContentPresenter">
             <Setter Property="Background" Value="Goldenrod"/>
+        </Style>
+
+        <!-- Camera selection list (supports long names and touch-friendly rows) -->
+        <Style Selector="ListBox#lstCameraSelection ListBoxItem">
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="MinHeight" Value="{DynamicResource SidebarSelectorItemMinHeight}"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="CornerRadius" Value="4"/>
+        </Style>
+        <Style Selector="ListBox#lstCameraSelection ListBoxItem:selected">
+            <Setter Property="Background" Value="{DynamicResource Primary}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryHeaderFg}"/>
+        </Style>
+        <Style Selector="ListBox#lstCameraSelection ListBoxItem:pointerover">
+            <Setter Property="Background" Value="{DynamicResource Surface3}"/>
+        </Style>
+
+        <Style Selector="ListBox#lstAlarmSelection ListBoxItem">
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="MinHeight" Value="{DynamicResource SidebarSelectorItemMinHeight}"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="CornerRadius" Value="4"/>
+        </Style>
+        <Style Selector="ListBox#lstAlarmSelection ListBoxItem:selected">
+            <Setter Property="Background" Value="{DynamicResource Primary}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryHeaderFg}"/>
+        </Style>
+        <Style Selector="ListBox#lstAlarmSelection ListBoxItem:pointerover">
+            <Setter Property="Background" Value="{DynamicResource Surface3}"/>
+        </Style>
+
+        <Style Selector="Border.selector-resize-handle">
+            <Setter Property="Height" Value="8"/>
+            <Setter Property="Background" Value="{DynamicResource Divider}"/>
+            <Setter Property="Opacity" Value="0.55"/>
+            <Setter Property="Margin" Value="0,2,0,0"/>
+            <Setter Property="Cursor" Value="SizeNorthSouth"/>
+        </Style>
+        <Style Selector="Border.selector-resize-handle:pointerover">
+            <Setter Property="Opacity" Value="0.9"/>
         </Style>
 
         <!-- ===========================================

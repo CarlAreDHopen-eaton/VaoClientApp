@@ -176,14 +176,64 @@
 
                             <!-- Camera Selection -->
                             <Border Classes="sidebar-card">
-                                <Expander Classes="sidebar-section" x:Name="expCameraSelection" IsExpanded="True" HorizontalAlignment="Stretch">
+                                <Expander Classes="sidebar-section camera-selection-section" x:Name="expCameraSelection" IsExpanded="True" HorizontalAlignment="Stretch">
                                     <Expander.Header>
                                         <StackPanel Orientation="Horizontal" Spacing="8">
                                             <TextBlock Text="&#xE412;" Classes="ms-icon" FontSize="{DynamicResource IconSize}" VerticalAlignment="Center"/>
                                             <TextBlock Text="Camera Selection" VerticalAlignment="Center"/>
                                         </StackPanel>
                                     </Expander.Header>
-                                    <UniformGrid x:Name="pnlCameraSelectFlowPanel" Columns="3" Margin="8,8,8,16" IsEnabled="False"/>
+                                    <Grid x:Name="pnlCameraSelection" Margin="0" IsEnabled="False" RowDefinitions="Auto,Auto,Auto">
+                                        <TextBox Grid.Row="0"
+                                                 x:Name="txtCameraSearch"
+                                                 Watermark="Search by number or name"
+                                                 TextChanged="txtCameraSearch_TextChanged"/>
+                                        <ListBox Grid.Row="1"
+                                                 x:Name="lstCameraSelection"
+                                                 SelectionChanged="lstCameraSelection_SelectionChanged"
+                                                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                                 MinHeight="{DynamicResource SidebarSelectorListMinHeight}"
+                                                 Height="{DynamicResource SidebarSelectorListDefaultHeight}"
+                                                 MaxHeight="{DynamicResource SidebarSelectorListMaxHeight}"
+                                                 Background="Transparent"
+                                                 BorderBrush="{DynamicResource Divider}"
+                                                 BorderThickness="1"
+                                                 CornerRadius="4"
+                                                 Padding="0"
+                                                 Margin="0">
+                                            <ListBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid ColumnDefinitions="Auto,Auto,*" Margin="0" MinHeight="{DynamicResource SidebarSelectorItemMinHeight}">
+                                                        <TextBlock Grid.Column="0"
+                                                                   Text="{Binding CameraTypeIcon}"
+                                                                   Classes="ms-icon"
+                                                                   FontSize="18"
+                                                                   Foreground="{DynamicResource LabelFg}"
+                                                                   VerticalAlignment="Center"/>
+                                                        <TextBlock Grid.Column="1"
+                                                                   Text="{Binding CameraNumberText}"
+                                                                   Margin="6,0,6,0"
+                                                                   FontWeight="SemiBold"
+                                                                   Foreground="{DynamicResource LabelFg}"
+                                                                   VerticalAlignment="Center"/>
+                                                        <TextBlock Grid.Column="2"
+                                                                   Text="{Binding CameraName}"
+                                                                   TextTrimming="CharacterEllipsis"
+                                                                   ToolTip.Tip="{Binding CameraName}"
+                                                                   VerticalAlignment="Center"/>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ListBox.ItemTemplate>
+                                        </ListBox>
+                                        <Border Grid.Row="2"
+                                                Classes="selector-resize-handle"
+                                                Tag="camera"
+                                                PointerPressed="SelectorResizeHandle_PointerPressed"
+                                                PointerMoved="SelectorResizeHandle_PointerMoved"
+                                                PointerReleased="SelectorResizeHandle_PointerReleased"
+                                                PointerCaptureLost="SelectorResizeHandle_PointerCaptureLost"/>
+                                    </Grid>
                                 </Expander>
                             </Border>
 
@@ -207,14 +257,64 @@
 
                             <!-- Alarms -->
                             <Border Classes="sidebar-card">
-                                <Expander Classes="sidebar-section" x:Name="expAlarms" IsExpanded="True" HorizontalAlignment="Stretch">
+                                <Expander Classes="sidebar-section alarm-selection-section" x:Name="expAlarms" IsExpanded="True" HorizontalAlignment="Stretch">
                                     <Expander.Header>
                                         <StackPanel Orientation="Horizontal" Spacing="8">
                                             <TextBlock Text="&#xE7F5;" Classes="ms-icon" FontSize="{DynamicResource IconSize}" VerticalAlignment="Center"/>
                                             <TextBlock Text="Alarms" VerticalAlignment="Center"/>
                                         </StackPanel>
                                     </Expander.Header>
-                                    <WrapPanel x:Name="pnlAlarms" Margin="16,8,16,16"/>
+                                    <Grid x:Name="pnlAlarmsSelection" Margin="0" IsEnabled="False" RowDefinitions="Auto,Auto,Auto">
+                                        <TextBox Grid.Row="0"
+                                                 x:Name="txtAlarmSearch"
+                                                 Watermark="Search alarm by number or name"
+                                                 TextChanged="txtAlarmSearch_TextChanged"/>
+                                        <ListBox Grid.Row="1"
+                                                 x:Name="lstAlarmSelection"
+                                                 SelectionChanged="lstAlarmSelection_SelectionChanged"
+                                                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                                 MinHeight="{DynamicResource SidebarSelectorListMinHeight}"
+                                                 Height="{DynamicResource SidebarSelectorListDefaultHeight}"
+                                                 MaxHeight="{DynamicResource SidebarSelectorListMaxHeight}"
+                                                 Background="Transparent"
+                                                 BorderBrush="{DynamicResource Divider}"
+                                                 BorderThickness="1"
+                                                 CornerRadius="4"
+                                                 Padding="0"
+                                                 Margin="0">
+                                            <ListBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid ColumnDefinitions="Auto,Auto,*" Margin="0" MinHeight="{DynamicResource SidebarSelectorItemMinHeight}">
+                                                        <TextBlock Grid.Column="0"
+                                                                   Text="&#xE7F5;"
+                                                                   Classes="ms-icon"
+                                                                   FontSize="16"
+                                                                   Foreground="{Binding StatusBrush}"
+                                                                   VerticalAlignment="Center"/>
+                                                        <TextBlock Grid.Column="1"
+                                                                   Text="{Binding AlarmNumberText}"
+                                                                   Margin="6,0,6,0"
+                                                                   FontWeight="SemiBold"
+                                                                   Foreground="{DynamicResource LabelFg}"
+                                                                   VerticalAlignment="Center"/>
+                                                        <TextBlock Grid.Column="2"
+                                                                   Text="{Binding AlarmName}"
+                                                                   TextTrimming="CharacterEllipsis"
+                                                                   ToolTip.Tip="{Binding AlarmName}"
+                                                                   VerticalAlignment="Center"/>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ListBox.ItemTemplate>
+                                        </ListBox>
+                                        <Border Grid.Row="2"
+                                                Classes="selector-resize-handle"
+                                                Tag="alarm"
+                                                PointerPressed="SelectorResizeHandle_PointerPressed"
+                                                PointerMoved="SelectorResizeHandle_PointerMoved"
+                                                PointerReleased="SelectorResizeHandle_PointerReleased"
+                                                PointerCaptureLost="SelectorResizeHandle_PointerCaptureLost"/>
+                                    </Grid>
                                 </Expander>
                             </Border>
 

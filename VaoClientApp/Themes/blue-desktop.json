@@ -75,6 +75,10 @@
       "SectionHeaderFontSize": 11.0,
       "SectionHeaderMinHeight": 28.0,
       "SectionHeaderPaddingVertical": 4.0,
+      "SelectorItemMinHeight": 30.0,
+      "SelectorListMinHeight": 120.0,
+      "SelectorListDefaultHeight": 220.0,
+      "SelectorListMaxHeight": 320.0,
       "Colors": {
         "Background": "#091627",
         "CardBackground": "#0F1F38",
