@@ -20,14 +20,14 @@ namespace Vao.Sample.Pages
 {
     public partial class DownloadPage : NavigableViewBase
     {
-        private bool _isFtpConnected = false;
-        private readonly FlexRApiClient _flexRApiClient;
-        private FtpClient _ftpClient;
-        private Camera _currentCamera;
+        private bool mIsFtpConnected = false;
+        private readonly FlexRApiClient mFlexRApiClient;
+        private FtpClient mFtpClient;
+        private Camera mCurrentCamera;
 
-        private ObservableCollection<DownloadItem> _pendingDownloads = new();
-        private ObservableCollection<string> _finishedDownloads = new();
-        private ObservableCollection<string> _downloadMessages = new();
+        private ObservableCollection<DownloadItem> mPendingDownloads = new();
+        private ObservableCollection<string> mFinishedDownloads = new();
+        private ObservableCollection<string> mDownloadMessages = new();
 
         public DownloadPage()
         {
@@ -36,16 +36,16 @@ namespace Vao.Sample.Pages
 
         public DownloadPage(FlexRApiClient client) : this()
         {
-            _flexRApiClient = client;
-            _flexRApiClient.OnMessage += FlexRApiClientOnMessage;
+            mFlexRApiClient = client;
+            mFlexRApiClient.OnMessage += FlexRApiClientOnMessage;
 
             var lstPending = this.FindControl<ListBox>("lstPendingDownloads");
             var lstFinished = this.FindControl<ListBox>("lstFinishedDownloads");
             var lstMessages = this.FindControl<ListBox>("lstDownloadMessages");
 
-            if (lstPending != null) lstPending.ItemsSource = _pendingDownloads;
-            if (lstFinished != null) lstFinished.ItemsSource = _finishedDownloads;
-            if (lstMessages != null) lstMessages.ItemsSource = _downloadMessages;
+            if (lstPending != null) lstPending.ItemsSource = mPendingDownloads;
+            if (lstFinished != null) lstFinished.ItemsSource = mFinishedDownloads;
+            if (lstMessages != null) lstMessages.ItemsSource = mDownloadMessages;
 
             FillStreamSelectionList();
             FillDurationSelectionList();
@@ -67,8 +67,8 @@ namespace Vao.Sample.Pages
 
         private bool IsFtpConnected
         {
-            get => _isFtpConnected;
-            set { _isFtpConnected = value; UpdateEnabled(); }
+            get => mIsFtpConnected;
+            set { mIsFtpConnected = value; UpdateEnabled(); }
         }
 
         private void UpdateEnabled()
@@ -99,7 +99,7 @@ namespace Vao.Sample.Pages
                 return;
             }
             var strTime = DateTime.Now.ToString(CultureInfo.InvariantCulture);
-            _downloadMessages.Add($"{strTime} [{level}] - {source} - {message}");
+            mDownloadMessages.Add($"{strTime} [{level}] - {source} - {message}");
         }
 
         private void FlexRApiClientOnMessage(object sender, MessageEventArgs e)
@@ -114,7 +114,7 @@ namespace Vao.Sample.Pages
             {
                 if (e.StatusMessage.DownloadId != Guid.Empty)
                 {
-                    var downloadItem = _pendingDownloads.FirstOrDefault(x => x.DownloadId == e.StatusMessage.DownloadId);
+                    var downloadItem = mPendingDownloads.FirstOrDefault(x => x.DownloadId == e.StatusMessage.DownloadId);
                     if (downloadItem != null)
                     {
                         switch (e.StatusMessage.Type)
@@ -147,7 +147,7 @@ namespace Vao.Sample.Pages
             string fileType = downloadUrl.GetFileType();
             if (!IsFtpConnected)
                 ConnectToFtpServer(recorderAddress);
-            else if (IsFtpConnected && recorderAddress != _ftpClient.Host)
+            else if (IsFtpConnected && recorderAddress != mFtpClient.Host)
             {
                 DisconnectFromFtpServer();
                 ConnectToFtpServer(recorderAddress);
@@ -169,11 +169,11 @@ namespace Vao.Sample.Pages
             try
             {
                 WriteMessageLog("FTP", $"Downloading {fileId} from FTP server {recorderAddress}", LogLevel.Notice);
-                var ftpStatus = _ftpClient.DownloadFile($@"{downloadPath}\{downloadName}.{fileType}", $"{fileId}");
+                var ftpStatus = mFtpClient.DownloadFile($@"{downloadPath}\{downloadName}.{fileType}", $"{fileId}");
                 if (ftpStatus.IsSuccess())
                 {
-                    _finishedDownloads.Add($"{downloadName}.{fileType}");
-                    _pendingDownloads.Remove(downloadItem);
+                    mFinishedDownloads.Add($"{downloadName}.{fileType}");
+                    mPendingDownloads.Remove(downloadItem);
                 }
                 if (ftpStatus.IsFailure())
                     downloadItem.Text = $"{e.StatusMessage.DownloadId} - Download failed - {DateTime.Now:HH:mm:ss}";
@@ -239,7 +239,7 @@ namespace Vao.Sample.Pages
             var selCamera = this.FindControl<ComboBox>("selCamera");
             if (selCamera == null) return;
 
-            List<Camera> cameraList = _flexRApiClient.GetCameraList();
+            List<Camera> cameraList = mFlexRApiClient.GetCameraList();
             if (cameraList?.Count > 0)
             {
                 selCamera.ItemsSource = cameraList;
@@ -256,11 +256,11 @@ namespace Vao.Sample.Pages
         {
             var s = AppSettings.Default;
             var ftpConfig = new FtpConfig { EncryptionMode = FtpEncryptionMode.Explicit, ValidateAnyCertificate = true };
-            _ftpClient = new FtpClient(recorderAddress, s.FTPUser ?? "", s.FTPPassword ?? "", 0, ftpConfig);
+            mFtpClient = new FtpClient(recorderAddress, s.FTPUser ?? "", s.FTPPassword ?? "", 0, ftpConfig);
             try
             {
                 WriteMessageLog("FTP", $"Connecting to FTP server {recorderAddress}", LogLevel.Notice);
-                _ftpClient.Connect();
+                mFtpClient.Connect();
                 IsFtpConnected = true;
                 return true;
             }
@@ -273,7 +273,7 @@ namespace Vao.Sample.Pages
 
         private void DisconnectFromFtpServer()
         {
-            try { _ftpClient?.Disconnect(); IsFtpConnected = false; }
+            try { mFtpClient?.Disconnect(); IsFtpConnected = false; }
             catch (FluentFTP.Exceptions.FtpException ex)
             {
                 WriteMessageLog("FTP", ex.InnerException?.Message ?? ex.Message, LogLevel.Error);
@@ -285,7 +285,7 @@ namespace Vao.Sample.Pages
             if (sender is ComboBox cmb && cmb.SelectedItem is Camera camera)
             {
                 FillRecordingSelectionList(camera);
-                _currentCamera = camera;
+                mCurrentCamera = camera;
                 UpdateEnabled();
                 UpdateEnabledDownloadButton();
             }
@@ -314,7 +314,7 @@ namespace Vao.Sample.Pages
 
         private void btnDownloadRequest_Click(object sender, RoutedEventArgs e)
         {
-            if (_currentCamera == null) return;
+            if (mCurrentCamera == null) return;
 
             var selStream = this.FindControl<ComboBox>("selStreamNumber");
             var selDuration = this.FindControl<ComboBox>("selDuration");
@@ -335,10 +335,10 @@ namespace Vao.Sample.Pages
             var time = timeStart?.SelectedTime ?? TimeSpan.Zero;
             var startTimeStr = (date.Date + time).ToString("yyyy-MM-dd HH:mm:ss");
 
-            DownloadInfo downloadInfo = _flexRApiClient.GetDownloadInfo(_currentCamera, txtRecorder?.Text ?? "", streamNumber, startTimeStr, durationIsoString);
+            DownloadInfo downloadInfo = mFlexRApiClient.GetDownloadInfo(mCurrentCamera, txtRecorder?.Text ?? "", streamNumber, startTimeStr, durationIsoString);
             if (downloadInfo != null)
             {
-                _pendingDownloads.Add(new DownloadItem
+                mPendingDownloads.Add(new DownloadItem
                 {
                     DownloadId = downloadInfo.DownloadId,
                     Text = $"{downloadInfo.DownloadId} - Extracting videofile - {DateTime.Now:HH:mm:ss}"
@@ -346,9 +346,9 @@ namespace Vao.Sample.Pages
             }
         }
 
-        private void btnClearPendingDownloads_Click(object sender, RoutedEventArgs e) => _pendingDownloads.Clear();
-        private void btnClearFinishedDownloads_Click(object sender, RoutedEventArgs e) => _finishedDownloads.Clear();
-        private void btnClearDownloadMessages_Click(object sender, RoutedEventArgs e) => _downloadMessages.Clear();
+        private void btnClearPendingDownloads_Click(object sender, RoutedEventArgs e) => mPendingDownloads.Clear();
+        private void btnClearFinishedDownloads_Click(object sender, RoutedEventArgs e) => mFinishedDownloads.Clear();
+        private void btnClearDownloadMessages_Click(object sender, RoutedEventArgs e) => mDownloadMessages.Clear();
 
         private void UpdateEnabledDownloadButton()
         {
@@ -365,7 +365,7 @@ namespace Vao.Sample.Pages
         public override void OnNavigatingFrom()
         {
             DisconnectFromFtpServer();
-            _flexRApiClient.OnMessage -= FlexRApiClientOnMessage;
+            mFlexRApiClient.OnMessage -= FlexRApiClientOnMessage;
         }
     }
 

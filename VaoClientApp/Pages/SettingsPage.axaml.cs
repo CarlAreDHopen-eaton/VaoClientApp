@@ -12,9 +12,9 @@ namespace Vao.Sample.Pages
 {
     public partial class SettingsPage : NavigableViewBase
     {
-        private bool _settingsSaved = false;
-        private string _originalThemeKey = string.Empty;
-        private List<ConnectionAlternative> _connectionAlternatives = new List<ConnectionAlternative>();
+        private bool mSettingsSaved = false;
+        private string mOriginalThemeKey = string.Empty;
+        private List<ConnectionAlternative> mConnectionAlternatives = new List<ConnectionAlternative>();
 
         public SettingsPage()
         {
@@ -28,7 +28,7 @@ namespace Vao.Sample.Pages
 
         public override void OnNavigatedTo()
         {
-            _originalThemeKey = AppSettings.Default.GetPreferredThemeKey();
+            mOriginalThemeKey = AppSettings.Default.GetPreferredThemeKey();
             LoadSettings();
         }
 
@@ -50,7 +50,7 @@ namespace Vao.Sample.Pages
             var themeOptions = app.GetThemeOptions();
             var selectedThemeKey = s.GetPreferredThemeKey();
 
-            _connectionAlternatives = s.GetConnectionAlternatives()
+            mConnectionAlternatives = s.GetConnectionAlternatives()
                 .Select(c => new ConnectionAlternative
                 {
                     Host = c.Host,
@@ -106,13 +106,13 @@ namespace Vao.Sample.Pages
             s.FTPUser = txtFTPUser?.Text ?? "";
             s.FTPPassword = txtFTPPassword?.Text ?? "";
             s.DownloadPath = txtDownloadPath?.Text ?? "";
-            s.SetConnectionAlternatives(_connectionAlternatives, selectedConnectionIndex);
+            s.SetConnectionAlternatives(mConnectionAlternatives, selectedConnectionIndex);
             s.Save();
-            _originalThemeKey = s.SelectedTheme;
+            mOriginalThemeKey = s.SelectedTheme;
             
             // Apply the theme to ensure it's fully applied with persistence
             ((App)Application.Current).ApplyTheme(s.SelectedTheme, persistSelection: true);
-            _settingsSaved = true;
+            mSettingsSaved = true;
         }
 
         private void cmbTheme_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -164,8 +164,8 @@ namespace Vao.Sample.Pages
             if (string.IsNullOrWhiteSpace(host))
                 return;
 
-            _connectionAlternatives.Add(new ConnectionAlternative { Host = host, Port = string.IsNullOrWhiteSpace(port) ? "444" : port });
-            RefreshConnectionList(_connectionAlternatives.Count - 1);
+            mConnectionAlternatives.Add(new ConnectionAlternative { Host = host, Port = string.IsNullOrWhiteSpace(port) ? "444" : port });
+            RefreshConnectionList(mConnectionAlternatives.Count - 1);
             ClearConnectionEntryFields();
         }
 
@@ -175,7 +175,7 @@ namespace Vao.Sample.Pages
             var txtConnectionPort = this.FindControl<TextBox>("txtConnectionPort");
             var lstConnections = this.FindControl<ListBox>("lstConnections");
 
-            if (lstConnections == null || lstConnections.SelectedIndex < 0 || lstConnections.SelectedIndex >= _connectionAlternatives.Count)
+            if (lstConnections == null || lstConnections.SelectedIndex < 0 || lstConnections.SelectedIndex >= mConnectionAlternatives.Count)
                 return;
 
             var host = txtConnectionHost?.Text?.Trim() ?? string.Empty;
@@ -183,7 +183,7 @@ namespace Vao.Sample.Pages
             if (string.IsNullOrWhiteSpace(host))
                 return;
 
-            _connectionAlternatives[lstConnections.SelectedIndex] = new ConnectionAlternative
+            mConnectionAlternatives[lstConnections.SelectedIndex] = new ConnectionAlternative
             {
                 Host = host,
                 Port = string.IsNullOrWhiteSpace(port) ? "444" : port
@@ -195,13 +195,13 @@ namespace Vao.Sample.Pages
         private void btnRemoveConnection_Click(object sender, RoutedEventArgs e)
         {
             var lstConnections = this.FindControl<ListBox>("lstConnections");
-            if (lstConnections == null || lstConnections.SelectedIndex < 0 || lstConnections.SelectedIndex >= _connectionAlternatives.Count)
+            if (lstConnections == null || lstConnections.SelectedIndex < 0 || lstConnections.SelectedIndex >= mConnectionAlternatives.Count)
                 return;
 
             var removedIndex = lstConnections.SelectedIndex;
-            _connectionAlternatives.RemoveAt(removedIndex);
+            mConnectionAlternatives.RemoveAt(removedIndex);
 
-            var nextIndex = Math.Min(removedIndex, _connectionAlternatives.Count - 1);
+            var nextIndex = Math.Min(removedIndex, mConnectionAlternatives.Count - 1);
             RefreshConnectionList(nextIndex);
             ClearConnectionEntryFields();
         }
@@ -215,13 +215,13 @@ namespace Vao.Sample.Pages
             if (lstConnections == null || txtConnectionHost == null || txtConnectionPort == null)
                 return;
 
-            if (lstConnections.SelectedIndex < 0 || lstConnections.SelectedIndex >= _connectionAlternatives.Count)
+            if (lstConnections.SelectedIndex < 0 || lstConnections.SelectedIndex >= mConnectionAlternatives.Count)
             {
                 ClearConnectionEntryFields();
                 return;
             }
 
-            var selected = _connectionAlternatives[lstConnections.SelectedIndex];
+            var selected = mConnectionAlternatives[lstConnections.SelectedIndex];
             txtConnectionHost.Text = selected.Host;
             txtConnectionPort.Text = selected.Port;
         }
@@ -232,17 +232,17 @@ namespace Vao.Sample.Pages
             if (lstConnections == null)
                 return;
 
-            lstConnections.ItemsSource = _connectionAlternatives
+            lstConnections.ItemsSource = mConnectionAlternatives
                 .Select((entry, index) => $"{index + 1}. {entry.DisplayName}")
                 .ToList();
 
-            if (_connectionAlternatives.Count == 0)
+            if (mConnectionAlternatives.Count == 0)
             {
                 lstConnections.SelectedIndex = -1;
                 return;
             }
 
-            lstConnections.SelectedIndex = Math.Clamp(selectedIndex, 0, _connectionAlternatives.Count - 1);
+            lstConnections.SelectedIndex = Math.Clamp(selectedIndex, 0, mConnectionAlternatives.Count - 1);
         }
 
         private void ClearConnectionEntryFields()
@@ -258,12 +258,12 @@ namespace Vao.Sample.Pages
         public void CancelAndGoBack()
         {
             // Restore original appearance settings if changed and go back.
-            ((App)Application.Current).ApplyTheme(_originalThemeKey, persistSelection: false);
+            ((App)Application.Current).ApplyTheme(mOriginalThemeKey, persistSelection: false);
             GoBack();
         }
 
         public override string GetPageTitle() => "Settings";
 
-        public bool WereSettingsSaved() => _settingsSaved;
+        public bool WereSettingsSaved() => mSettingsSaved;
     }
 }

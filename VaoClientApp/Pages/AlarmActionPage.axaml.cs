@@ -9,9 +9,9 @@ namespace Vao.Sample.Pages
 {
     public partial class AlarmActionPage : NavigableViewBase
     {
-        private readonly FlexRApiClient _flexRApiClient;
-        private readonly Alarm _currentAlarm;
-        private readonly User _currentLoggedInUser;
+        private readonly FlexRApiClient mFlexRApiClient;
+        private readonly Alarm mCurrentAlarm;
+        private readonly User mCurrentLoggedInUser;
 
         public AlarmActionPage()
         {
@@ -20,9 +20,9 @@ namespace Vao.Sample.Pages
 
         public AlarmActionPage(FlexRApiClient client, Alarm alarm, User user) : this()
         {
-            _flexRApiClient = client;
-            _currentAlarm = alarm;
-            _currentLoggedInUser = user;
+            mFlexRApiClient = client;
+            mCurrentAlarm = alarm;
+            mCurrentLoggedInUser = user;
             UpdateEnabled();
             FillAlarmInfo();
         }
@@ -35,17 +35,17 @@ namespace Vao.Sample.Pages
             var btnDisable = this.FindControl<Button>("btnAlarmDisable");
             var btnExpediate = this.FindControl<Button>("btnAlarmExpediate");
 
-            bool hasAccess = _currentLoggedInUser != null && 
-                           _currentLoggedInUser.HasAccessLevel(UserPrivilege.Supervisor) && 
-                           _currentAlarm?.Priority <= _currentLoggedInUser.Priority;
+            bool hasAccess = mCurrentLoggedInUser != null && 
+                           mCurrentLoggedInUser.HasAccessLevel(UserPrivilege.Supervisor) && 
+                           mCurrentAlarm?.Priority <= mCurrentLoggedInUser.Priority;
 
             if (hasAccess)
             {
-                if (btnActivate != null) btnActivate.IsEnabled = _currentAlarm.Status == AlarmGeneralStatus.Inactive || _currentAlarm.Status == AlarmGeneralStatus.Acknowledged;
-                if (btnAcknowledge != null) btnAcknowledge.IsEnabled = _currentAlarm.Status == AlarmGeneralStatus.Active;
-                if (btnEnable != null) btnEnable.IsEnabled = _currentAlarm.Status == AlarmGeneralStatus.Disabled;
-                if (btnDisable != null) btnDisable.IsEnabled = _currentAlarm.Status != AlarmGeneralStatus.Disabled;
-                if (btnExpediate != null) btnExpediate.IsEnabled = _currentAlarm.Status == AlarmGeneralStatus.Active;
+                if (btnActivate != null) btnActivate.IsEnabled = mCurrentAlarm.Status == AlarmGeneralStatus.Inactive || mCurrentAlarm.Status == AlarmGeneralStatus.Acknowledged;
+                if (btnAcknowledge != null) btnAcknowledge.IsEnabled = mCurrentAlarm.Status == AlarmGeneralStatus.Active;
+                if (btnEnable != null) btnEnable.IsEnabled = mCurrentAlarm.Status == AlarmGeneralStatus.Disabled;
+                if (btnDisable != null) btnDisable.IsEnabled = mCurrentAlarm.Status != AlarmGeneralStatus.Disabled;
+                if (btnExpediate != null) btnExpediate.IsEnabled = mCurrentAlarm.Status == AlarmGeneralStatus.Active;
             }
             else
             {
@@ -64,12 +64,12 @@ namespace Vao.Sample.Pages
             var txtExtended = this.FindControl<TextBox>("txtAlarmExtendedStatus");
             var txtPriority = this.FindControl<TextBox>("txtAlarmPriority");
 
-            if (_currentAlarm != null)
+            if (mCurrentAlarm != null)
             {
-                if (txtName != null) txtName.Text = _currentAlarm.Name;
-                if (txtStatus != null) txtStatus.Text = _currentAlarm.Status.ToString();
-                if (txtExtended != null) txtExtended.Text = _currentAlarm.ExtendedStatus;
-                if (txtPriority != null) txtPriority.Text = _currentAlarm.Priority.ToString();
+                if (txtName != null) txtName.Text = mCurrentAlarm.Name;
+                if (txtStatus != null) txtStatus.Text = mCurrentAlarm.Status.ToString();
+                if (txtExtended != null) txtExtended.Text = mCurrentAlarm.ExtendedStatus;
+                if (txtPriority != null) txtPriority.Text = mCurrentAlarm.Priority.ToString();
             }
         }
 
@@ -78,31 +78,31 @@ namespace Vao.Sample.Pages
         
         private void btnAlarmActivate_Click(object sender, RoutedEventArgs e) 
         {
-            _flexRApiClient?.SendAlarmCommand(_currentAlarm.ComponentNumber, nameof(AlarmCommands.Activate));
+            mFlexRApiClient?.SendAlarmCommand(mCurrentAlarm.ComponentNumber, nameof(AlarmCommands.Activate));
             GoBack();
         }
 
         private void btnAlarmAcknowledge_Click(object sender, RoutedEventArgs e) 
         {
-            _flexRApiClient?.SendAlarmCommand(_currentAlarm.ComponentNumber, nameof(AlarmCommands.Acknowledge));
+            mFlexRApiClient?.SendAlarmCommand(mCurrentAlarm.ComponentNumber, nameof(AlarmCommands.Acknowledge));
             GoBack();
         }
 
         private void btnAlarmEnable_Click(object sender, RoutedEventArgs e) 
         {
-            _flexRApiClient?.SendAlarmCommand(_currentAlarm.ComponentNumber, nameof(AlarmCommands.Enable));
+            mFlexRApiClient?.SendAlarmCommand(mCurrentAlarm.ComponentNumber, nameof(AlarmCommands.Enable));
             GoBack();
         }
 
         private void btnAlarmDisable_Click(object sender, RoutedEventArgs e) 
         {
-            _flexRApiClient?.SendAlarmCommand(_currentAlarm.ComponentNumber, nameof(AlarmCommands.Disable));
+            mFlexRApiClient?.SendAlarmCommand(mCurrentAlarm.ComponentNumber, nameof(AlarmCommands.Disable));
             GoBack();
         }
 
         private void btnAlarmExpediate_Click(object sender, RoutedEventArgs e) 
         {
-            _flexRApiClient?.SendAlarmCommand(_currentAlarm.ComponentNumber, nameof(AlarmCommands.Expediate));
+            mFlexRApiClient?.SendAlarmCommand(mCurrentAlarm.ComponentNumber, nameof(AlarmCommands.Expediate));
             GoBack();
         }
 

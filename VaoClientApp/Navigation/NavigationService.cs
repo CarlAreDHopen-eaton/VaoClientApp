@@ -10,8 +10,8 @@ namespace Vao.Sample.Navigation
     /// </summary>
     public class NavigationService
     {
-        private readonly Stack<INavigableView> _navigationStack = new();
-        private ContentControl _contentHost;
+        private readonly Stack<INavigableView> mNavigationStack = new();
+        private ContentControl mContentHost;
 
         /// <summary>
         /// Event fired when navigation occurs
@@ -23,7 +23,7 @@ namespace Vao.Sample.Navigation
         /// </summary>
         public void Initialize(ContentControl contentHost)
         {
-            _contentHost = contentHost ?? throw new ArgumentNullException(nameof(contentHost));
+            mContentHost = contentHost ?? throw new ArgumentNullException(nameof(contentHost));
         }
 
         /// <summary>
@@ -31,23 +31,23 @@ namespace Vao.Sample.Navigation
         /// </summary>
         public void NavigateTo(INavigableView page)
         {
-            if (_contentHost == null)
+            if (mContentHost == null)
                 throw new InvalidOperationException("NavigationService not initialized");
 
             // Save current page to stack if it exists and is not null
-            if (_contentHost.Content is INavigableView currentPage && currentPage != null)
+            if (mContentHost.Content is INavigableView currentPage && currentPage != null)
             {
-                _navigationStack.Push(currentPage);
+                mNavigationStack.Push(currentPage);
             }
 
-            _contentHost.Content = page;
-            _contentHost.IsVisible = true;  // Show the overlay
+            mContentHost.Content = page;
+            mContentHost.IsVisible = true;  // Show the overlay
             page.OnNavigatedTo();
 
             NavigationChanged?.Invoke(this, new NavigationChangedEventArgs 
             { 
                 NewPage = page, 
-                CanGoBack = _navigationStack.Count > 0,
+                CanGoBack = mNavigationStack.Count > 0,
                 IsOverlayVisible = true
             });
         }
@@ -57,18 +57,18 @@ namespace Vao.Sample.Navigation
         /// </summary>
         public bool GoBack()
         {
-            if (_contentHost?.Content is INavigableView currentPage && currentPage != null)
+            if (mContentHost?.Content is INavigableView currentPage && currentPage != null)
             {
                 currentPage.OnNavigatingFrom();
             }
 
-            if (_navigationStack.Count == 0)
+            if (mNavigationStack.Count == 0)
             {
                 // No more pages - hide the navigation host
-                if (_contentHost != null)
+                if (mContentHost != null)
                 {
-                    _contentHost.Content = null;
-                    _contentHost.IsVisible = false;
+                    mContentHost.Content = null;
+                    mContentHost.IsVisible = false;
                 }
 
                 NavigationChanged?.Invoke(this, new NavigationChangedEventArgs
@@ -81,15 +81,15 @@ namespace Vao.Sample.Navigation
                 return false;
             }
 
-            var previousPage = _navigationStack.Pop();
+            var previousPage = mNavigationStack.Pop();
 
-            _contentHost.Content = previousPage;
+            mContentHost.Content = previousPage;
             previousPage.OnNavigatedTo();
 
             NavigationChanged?.Invoke(this, new NavigationChangedEventArgs 
             { 
                 NewPage = previousPage, 
-                CanGoBack = _navigationStack.Count > 0,
+                CanGoBack = mNavigationStack.Count > 0,
                 IsOverlayVisible = true
             });
 
@@ -101,18 +101,18 @@ namespace Vao.Sample.Navigation
         /// </summary>
         public void ClearNavigationStack()
         {
-            _navigationStack.Clear();
+            mNavigationStack.Clear();
         }
 
         /// <summary>
         /// Check if navigation back is possible
         /// </summary>
-        public bool CanGoBack => _navigationStack.Count > 0;
+        public bool CanGoBack => mNavigationStack.Count > 0;
 
         /// <summary>
         /// Get the current number of pages in the back stack
         /// </summary>
-        public int NavigationStackDepth => _navigationStack.Count;
+        public int NavigationStackDepth => mNavigationStack.Count;
     }
 
     public class NavigationChangedEventArgs : EventArgs

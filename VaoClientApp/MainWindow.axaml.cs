@@ -31,7 +31,7 @@ namespace Vao.Sample
       private bool mIsPlaybackStarted = false;
       private bool mApiSupportsPlayback = false;
 
-      private FlexRApiClient moFlexRApiClient;
+      private FlexRApiClient mFlexRApiClient;
       private VideoView mVideoControl;
       private Guid mViewerID = Guid.NewGuid();
       private Camera mCurrentCamera;
@@ -54,8 +54,8 @@ namespace Vao.Sample
       private string mConnectedEndpointDisplay = string.Empty;
       private App mApp;
 
-      private const double SidebarAutoCollapseBreakpoint = 1100;
-      private const double CollapsedSidebarWidth = 56;
+      private const double C_SIDEBAR_AUTO_COLLAPSE_BREAKPOINT = 1100;
+      private const double C_COLLAPSED_SIDEBAR_WIDTH = 56;
 
       private enum PickerOverlayMode
       {
@@ -78,7 +78,7 @@ namespace Vao.Sample
          { MessageSource.Config, true }
       };
 
-      public FlexRApiClient FlexRApiClient => moFlexRApiClient;
+      public FlexRApiClient FlexRApiClient => mFlexRApiClient;
 
       public bool IsStarted
       {
@@ -426,7 +426,7 @@ namespace Vao.Sample
 
          if (collapsed)
          {
-            sidebarGrid.Width = CollapsedSidebarWidth;
+            sidebarGrid.Width = C_COLLAPSED_SIDEBAR_WIDTH;
             narrowSidebar.IsVisible = true;
             fullSidebar.IsVisible = false;
          }
@@ -459,12 +459,12 @@ namespace Vao.Sample
          if (narrowSidebar?.IsVisible == true)
             return true;
 
-         return Math.Abs(sidebarGrid.Width - CollapsedSidebarWidth) < 0.5;
+         return Math.Abs(sidebarGrid.Width - C_COLLAPSED_SIDEBAR_WIDTH) < 0.5;
       }
 
       private void ApplyResponsiveSidebarLayout(double width)
       {
-         if (width < SidebarAutoCollapseBreakpoint)
+         if (width < C_SIDEBAR_AUTO_COLLAPSE_BREAKPOINT)
          {
             SetSidebarCollapsed(true, persistSetting: false);
             return;
@@ -929,7 +929,7 @@ namespace Vao.Sample
 
             if (started)
             {
-               moFlexRApiClient = connectClient;
+               mFlexRApiClient = connectClient;
                mConnectedEndpointDisplay = $"{connectedEndpoint?.Host}:{connectedEndpoint?.Port}";
                if (connectedEndpoint != null && s.PromoteConnectionAlternativeToTop(connectedEndpoint.Host, connectedEndpoint.Port))
                   s.Save();
@@ -1108,11 +1108,11 @@ namespace Vao.Sample
             return;
 
          IsStarted = false;
-         if (moFlexRApiClient != null)
+         if (mFlexRApiClient != null)
          {
-            moFlexRApiClient.OnMessage -= OnFlexRApiClientMessage;
-            moFlexRApiClient.StopClient();
-            moFlexRApiClient = null;
+            mFlexRApiClient.OnMessage -= OnFlexRApiClientMessage;
+            mFlexRApiClient.StopClient();
+            mFlexRApiClient = null;
          }
          mConnectedEndpointDisplay = string.Empty;
          StopRtspStream();
@@ -1372,7 +1372,7 @@ namespace Vao.Sample
 
       private void SelectCamera(int cameraNo, int streamNo)
       {
-         Camera camera = moFlexRApiClient.GetCamera(cameraNo);
+         Camera camera = mFlexRApiClient.GetCamera(cameraNo);
          if (camera != null)
          {
             CurrentCamera = camera;
@@ -1402,7 +1402,7 @@ namespace Vao.Sample
       {
          if (!IsStarted || mCurrentCamera == null) return;
 
-         List<Camera> cameraList = moFlexRApiClient.GetCameraList();
+         List<Camera> cameraList = mFlexRApiClient.GetCameraList();
          if (cameraList == null || cameraList.Count == 0) return;
 
          int currentIndex = cameraList.FindIndex(c => c.ComponentNumber == mCurrentCamera.ComponentNumber);
@@ -1417,7 +1417,7 @@ namespace Vao.Sample
       {
          if (!IsStarted || mCurrentCamera == null) return;
 
-         List<Camera> cameraList = moFlexRApiClient.GetCameraList();
+         List<Camera> cameraList = mFlexRApiClient.GetCameraList();
          if (cameraList == null || cameraList.Count == 0) return;
 
          int currentIndex = cameraList.FindIndex(c => c.ComponentNumber == mCurrentCamera.ComponentNumber);
@@ -1430,17 +1430,17 @@ namespace Vao.Sample
 
       private void SelectAlarm(int alarmNo)
       {
-         Alarm alarm = moFlexRApiClient.GetSingleAlarm(alarmNo);
+         Alarm alarm = mFlexRApiClient.GetSingleAlarm(alarmNo);
          if (alarm != null) CurrentAlarm = alarm;
       }
 
-      private const int MaxCamerasPerSubmenu = 25;
+      private const int C_MAX_CAMERAS_PER_SUBMENU = 25;
 
       private List<object> BuildVideoContextMenuItems()
       {
          var rootItems = new List<object>();
 
-         if (moFlexRApiClient == null)
+         if (mFlexRApiClient == null)
          {
             rootItems.Add(new MenuItem { Header = "Not connected", IsEnabled = false });
             return rootItems;
@@ -1453,7 +1453,7 @@ namespace Vao.Sample
             return rootItems;
          }
 
-         if (cameraList.Count <= MaxCamerasPerSubmenu)
+         if (cameraList.Count <= C_MAX_CAMERAS_PER_SUBMENU)
          {
             foreach (var camera in cameraList)
             {
@@ -1462,9 +1462,9 @@ namespace Vao.Sample
          }
          else
          {
-            for (int i = 0; i < cameraList.Count; i += MaxCamerasPerSubmenu)
+            for (int i = 0; i < cameraList.Count; i += C_MAX_CAMERAS_PER_SUBMENU)
             {
-               int end = Math.Min(i + MaxCamerasPerSubmenu, cameraList.Count);
+               int end = Math.Min(i + C_MAX_CAMERAS_PER_SUBMENU, cameraList.Count);
                var batch = cameraList.GetRange(i, end - i);
                var first = batch.First();
                var last = batch.Last();
@@ -1485,7 +1485,7 @@ namespace Vao.Sample
 
       private List<Camera> GetAvailableCamerasForMenu()
       {
-         var cameraList = moFlexRApiClient?.GetCameraList();
+         var cameraList = mFlexRApiClient?.GetCameraList();
          if (cameraList != null && cameraList.Count > 0)
             return cameraList;
 
@@ -1523,7 +1523,7 @@ namespace Vao.Sample
 
       private void CheckApiVersion(ApiVersion apiversion = null)
       {
-         apiversion ??= moFlexRApiClient.GetApiVersion();
+         apiversion ??= mFlexRApiClient.GetApiVersion();
          if (apiversion != null)
          {
             Version version = new Version(apiversion.MajorVersion, apiversion.MinorVersion);
@@ -1639,7 +1639,7 @@ namespace Vao.Sample
           private void FillSelectCameraButtonList(List<Camera> cameraList = null)
       {
          ClearCameraSelection();
-             cameraList ??= moFlexRApiClient.GetCameraList();
+             cameraList ??= mFlexRApiClient.GetCameraList();
          if (cameraList != null)
          {
             foreach (var camera in cameraList)
@@ -1665,7 +1665,7 @@ namespace Vao.Sample
       private void FillSelectAlarmButtonList(List<Alarm> alarmList = null)
       {
          ClearAlarmSelection();
-         alarmList ??= moFlexRApiClient.GetAlarmList();
+         alarmList ??= mFlexRApiClient.GetAlarmList();
          if (alarmList == null) return;
 
          foreach (Alarm alarm in alarmList)

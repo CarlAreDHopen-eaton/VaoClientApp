@@ -21,8 +21,8 @@ namespace Vao.Sample
          Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
          "VaoClientApp", "settings.json");
 
-      private static AppSettings _default;
-      public static AppSettings Default => _default ??= Load();
+      private static AppSettings mDefault;
+      public static AppSettings Default => mDefault ??= Load();
 
       public string Host1 { get; set; } = "";
       public string Host2 { get; set; } = "";

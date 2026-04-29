@@ -13,15 +13,15 @@ namespace Vao.Sample
    {
       private static readonly string ThemesDirectoryPath = Path.Combine(AppContext.BaseDirectory, "Themes");
 
-      private static ThemeCatalog _default;
-      public static ThemeCatalog Default => _default ??= Load();
+      private static ThemeCatalog mDefault;
+      public static ThemeCatalog Default => mDefault ??= Load();
 
       public List<ThemeDefinition> Themes { get; set; } = new();
 
       public static ThemeCatalog Reload()
       {
-         _default = Load();
-         return _default;
+         mDefault = Load();
+         return mDefault;
       }
 
       public ThemeDefinition GetTheme(string themeKey)

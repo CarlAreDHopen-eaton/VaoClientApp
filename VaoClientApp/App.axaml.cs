@@ -11,9 +11,9 @@ namespace Vao.Sample
 {
    public class App : Application
    {
-      private ThemeDefinition _currentTheme;
+      private ThemeDefinition mCurrentTheme;
 
-      public ThemeDefinition CurrentTheme => _currentTheme;
+      public ThemeDefinition CurrentTheme => mCurrentTheme;
 
       public event Action<ThemeDefinition> ThemeApplied;
 
@@ -31,7 +31,7 @@ namespace Vao.Sample
          var settings = AppSettings.Default;
          var theme = ThemeCatalog.Reload().GetThemeOrDefault(themeKey, false, true);
 
-         _currentTheme = theme;
+         mCurrentTheme = theme;
          RequestedThemeVariant = theme.IsDark ? ThemeVariant.Dark : ThemeVariant.Light;
 
          if (persistSelection)
@@ -46,7 +46,7 @@ namespace Vao.Sample
             Dispatcher.UIThread.Post(() => ThemeApplied?.Invoke(theme), DispatcherPriority.Send);
       }
 
-      private static readonly System.Reflection.MethodInfo _invalidateStylesMethod =
+      private static readonly System.Reflection.MethodInfo mInvalidateStylesMethod =
          typeof(StyledElement).GetMethod("InvalidateStyles",
             System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
 
@@ -55,7 +55,7 @@ namespace Vao.Sample
          if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
          {
             foreach (var window in desktop.Windows)
-               _invalidateStylesMethod?.Invoke(window, [true]);
+               mInvalidateStylesMethod?.Invoke(window, [true]);
          }
       }
 

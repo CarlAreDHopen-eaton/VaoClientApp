@@ -9,12 +9,12 @@ namespace Vao.Sample
 {
    public static class IconHelper
    {
-      private static readonly Dictionary<string, Bitmap> _cache = new();
+      private static readonly Dictionary<string, Bitmap> mCache = new();
 
       public static Bitmap Load(string avaresPath, bool invert = false)
       {
          string key = avaresPath + (invert ? "_inv" : "");
-         if (_cache.TryGetValue(key, out var cached))
+         if (mCache.TryGetValue(key, out var cached))
             return cached;
 
          var uri = new Uri(avaresPath);
@@ -23,12 +23,12 @@ namespace Vao.Sample
 
          if (!invert)
          {
-            _cache[key] = original;
+            mCache[key] = original;
             return original;
          }
 
          var inverted = InvertBitmap(original);
-         _cache[key] = inverted;
+         mCache[key] = inverted;
          return inverted;
       }
 

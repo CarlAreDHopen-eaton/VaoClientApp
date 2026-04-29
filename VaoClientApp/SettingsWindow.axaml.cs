@@ -10,13 +10,13 @@ namespace Vao.Sample
 {
     public partial class SettingsWindow : Window
     {
-        private bool _settingsSaved = false;
-        private string _originalThemeKey = string.Empty;
+        private bool mSettingsSaved = false;
+        private string mOriginalThemeKey = string.Empty;
 
         public SettingsWindow()
         {
             InitializeComponent();
-            _originalThemeKey = AppSettings.Default.GetPreferredThemeKey();
+            mOriginalThemeKey = AppSettings.Default.GetPreferredThemeKey();
             LoadSettings();
         }
 
@@ -87,8 +87,8 @@ namespace Vao.Sample
             s.FTPPassword = txtFTPPassword.Text ?? "";
             s.DownloadPath = txtDownloadPath.Text ?? "";
             s.Save();
-            _originalThemeKey = s.SelectedTheme;
-            _settingsSaved = true;
+            mOriginalThemeKey = s.SelectedTheme;
+            mSettingsSaved = true;
         }
 
         private void cmbTheme_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -106,7 +106,7 @@ namespace Vao.Sample
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)
         {
-            ((App)Application.Current).ApplyTheme(_originalThemeKey, persistSelection: false);
+            ((App)Application.Current).ApplyTheme(mOriginalThemeKey, persistSelection: false);
             Close();
         }
 
@@ -132,7 +132,7 @@ namespace Vao.Sample
 
         public bool WereSettingsSaved()
         {
-            return _settingsSaved;
+            return mSettingsSaved;
         }
     }
 }
