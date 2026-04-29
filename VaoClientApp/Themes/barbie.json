@@ -1,0 +1,117 @@
+{
+  "Key": "barbie",
+  "DisplayName": "Barbie",
+  "Variant": "Light",
+  "FormFactor": "Desktop",
+
+  "Colors": {
+    "Accent": {
+      "Default": "#E754A6",
+      "Hover": "#F06AB4",
+      "Pressed": "#C93C8F"
+    },
+    "Status": {
+      "Success": "#5DBB63",
+      "Warning": "#FFB347",
+      "Error": "#E64980",
+      "Info": "#E754A6"
+    },
+    "Background": {
+      "App": "#FFF0F7",
+      "Raised": "#FFF8FC",
+      "Elevated": "#FFE7F2",
+      "Overlay": "#FFD6EA"
+    },
+    "Foreground": {
+      "Primary": "#5C2146",
+      "Secondary": "#8C4D71",
+      "Hint": "#B07A97"
+    },
+    "Border": {
+      "Default": "#F2B7D3",
+      "Secondary": "#F7CFE1"
+    }
+  },
+
+  "Sizing": {
+    "Page": {
+      "MarginHorizontal": 20.0,
+      "MarginVertical": 20.0
+    },
+    "Typography": {
+      "PageTitle": 17.0,
+      "PageSubtitle": 11.0,
+      "SectionHeader": 14.0
+    },
+    "Icon": {
+      "Default": 20.0,
+      "Small": 16.0
+    },
+    "Button": {
+      "MinHeight": 34.0,
+      "PaddingHorizontal": 12.0,
+      "PaddingVertical": 6.0
+    },
+    "Input": {
+      "MinHeight": 34.0,
+      "PaddingHorizontal": 10.0,
+      "PaddingVertical": 6.0
+    },
+    "ListItem": {
+      "MinHeight": 38.0
+    },
+    "Avatar": {
+      "Size": 36.0,
+      "CornerRadius": 18.0
+    }
+  },
+
+  "Components": {
+    "AppBar": {
+      "Height": 56.0
+    },
+    "Sidebar": {
+      "Width": 248.0,
+      "SectionHeaderFontSize": 13.0,
+      "SectionHeaderMinHeight": 48.0,
+      "SectionHeaderPaddingVertical": 12.0,
+      "Colors": {
+        "Background": "#FFF7FB",
+        "CardBackground": "#FFF1F8",
+        "Border": "#F2B7D3",
+        "HeaderForeground": "#8A2358"
+      }
+    },
+    "VideoPanel": {
+      "Colors": {
+        "Background": "#F7DCEB",
+        "HeaderBackground": "#E754A6",
+        "HeaderIdle": "#FFE754A6",
+        "HeaderLive": "#FF5DBB63",
+        "HeaderPlayback": "#FFD9487D"
+      }
+    },
+    "MessageLog": {
+      "Background": "#00000000",
+      "ErrorForeground": "#FFD43F6A",
+      "WarningForeground": "#FF9A5C00",
+      "DebugForeground": "#FF9C2F72",
+      "DefaultForeground": "#FF5C2146"
+    },
+    "UserProfile": {
+      "ConnectedBackground": "#FFC93C8F",
+      "DisconnectedBackground": "#FFC2A0B4"
+    },
+    "CameraLock": {
+      "AlarmLockedForeground": "#FFE64980",
+      "UserLockedForeground": "#FFFFB347"
+    },
+    "AlarmStatus": {
+      "Active": "#FFE64980",
+      "Inactive": "#FFB9A0AE",
+      "Acknowledged": "#FFFFB347",
+      "Tampered": "#FFFF8A65",
+      "Default": "#CCB07A97"
+    }
+  }
+}

@@ -4,6 +4,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using Avalonia.Styling;
 using Avalonia.Threading;
 
@@ -68,6 +69,53 @@ namespace Vao.Sample
       {
          foreach (var entry in theme.ToBrushResources())
             Resources[entry.Key] = entry.Value;
+
+         ApplyFluentAccentResources(theme);
+      }
+
+      private void ApplyFluentAccentResources(ThemeDefinition theme)
+      {
+         // Fluent controls (including CheckBox) consume these accent resource keys.
+         // Keeping them in sync with theme accent ensures consistent control coloring.
+         var accentDefault = ParseColor(theme.Colors.Accent.Default, Colors.DeepSkyBlue);
+         var accentHover = ParseColor(theme.Colors.Accent.Hover, Lighten(accentDefault, 0.12));
+         var accentPressed = ParseColor(theme.Colors.Accent.Pressed, Darken(accentDefault, 0.12));
+
+         var light2 = Lighten(accentDefault, 0.25);
+         var light3 = Lighten(accentDefault, 0.38);
+         var dark2 = Darken(accentDefault, 0.22);
+         var dark3 = Darken(accentDefault, 0.34);
+
+         SetAccentResource("SystemAccentColor", accentDefault);
+         SetAccentResource("SystemAccentColorLight1", accentHover);
+         SetAccentResource("SystemAccentColorLight2", light2);
+         SetAccentResource("SystemAccentColorLight3", light3);
+         SetAccentResource("SystemAccentColorDark1", accentPressed);
+         SetAccentResource("SystemAccentColorDark2", dark2);
+         SetAccentResource("SystemAccentColorDark3", dark3);
+      }
+
+      private void SetAccentResource(string baseKey, Color color)
+      {
+         Resources[baseKey] = color;
+         Resources[$"{baseKey}Brush"] = new SolidColorBrush(color);
+      }
+
+      private static Color ParseColor(string value, Color fallback)
+      {
+         return Color.TryParse(value, out var parsed) ? parsed : fallback;
+      }
+
+      private static Color Lighten(Color color, double amount)
+      {
+         byte mix(byte channel) => (byte)(channel + ((255 - channel) * amount));
+         return Color.FromArgb(color.A, mix(color.R), mix(color.G), mix(color.B));
+      }
+
+      private static Color Darken(Color color, double amount)
+      {
+         byte mix(byte channel) => (byte)(channel * (1.0 - amount));
+         return Color.FromArgb(color.A, mix(color.R), mix(color.G), mix(color.B));
       }
 
       public ThemeDefinition ToggleThemeBrightness()
