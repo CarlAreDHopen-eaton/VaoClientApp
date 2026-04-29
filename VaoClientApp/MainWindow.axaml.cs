@@ -330,7 +330,7 @@ namespace Vao.Sample
             btnToggleSidebar_Click(null, null);
             e.Handled = true;
          }
-         else if ((e.Key == Key.F || e.Key == Key.F10) && !IsTextInputFocused())
+         else if (e.Key == Key.F10 && !IsTextInputFocused())
          {
             CycleThemeAndRefreshUi();
             e.Handled = true;
@@ -618,16 +618,12 @@ namespace Vao.Sample
       private void menuItemToggleTheme_Click(object sender, RoutedEventArgs e)
       {
          CycleThemeAndRefreshUi();
+         CloseProfileMenuFlyout();
       }
 
       private void UpdateThemeMenuLabel()
       {
-         var app = (App)Avalonia.Application.Current;
-         var targetTheme = app.GetNextThemeInCycle();
-         if (txtToggleThemeLabel != null)
-            txtToggleThemeLabel.Text = $"Cycle to {targetTheme.DisplayName}";
-         if (txtToggleThemeIcon != null)
-            txtToggleThemeIcon.Text = IsDarkMode ? "\uE51C" : "\uE518";
+         // Labels/icons for Theme submenu are generated dynamically in PopulateThemeSelectionMenuItems.
       }
 
       private void UpdateThemeMenus()
@@ -642,7 +638,37 @@ namespace Vao.Sample
          if (menuItemThemeSelect == null)
             return;
 
-         menuItemThemeSelect.ItemsSource = BuildThemeSelectionMenuItems();
+         var items = new List<object>();
+
+         var app = (App)Avalonia.Application.Current;
+         var targetTheme = app.GetNextThemeInCycle();
+         var toggleItem = new MenuItem();
+         toggleItem.Icon = new TextBlock
+         {
+            Text = IsDarkMode ? "\uE51C" : "\uE518",
+            Classes = { "ms-icon" },
+            FontSize = 18
+         };
+         toggleItem.Header = new StackPanel
+         {
+            Orientation = Orientation.Horizontal,
+            Spacing = 8,
+            Children =
+            {
+               new TextBlock { Text = $"Cycle to {targetTheme.DisplayName}" },
+               new TextBlock { Text = "F10", Opacity = 0.5, FontSize = 11, VerticalAlignment = VerticalAlignment.Center }
+            }
+         };
+         toggleItem.Click += menuItemToggleTheme_Click;
+
+         items.Add(toggleItem);
+         items.Add(new Separator());
+
+         // Add all theme selection items
+         var themeItems = BuildThemeSelectionMenuItems();
+         items.AddRange(themeItems);
+
+         menuItemThemeSelect.ItemsSource = items;
       }
 
       private List<object> BuildThemeSelectionMenuItems()
@@ -675,6 +701,16 @@ namespace Vao.Sample
             return;
 
          ApplyThemeAndRefreshUi(themeKey);
+         Dispatcher.UIThread.Post(CloseProfileMenuFlyout, DispatcherPriority.Background);
+      }
+
+      private void CloseProfileMenuFlyout()
+      {
+         var btn = this.FindControl<Button>("btnUserProfile");
+         if (btn?.Flyout is MenuFlyout flyout)
+         {
+            flyout.Hide();
+         }
       }
 
       private void CycleThemeAndRefreshUi()
@@ -1443,13 +1479,6 @@ namespace Vao.Sample
                rootItems.Add(rangeMenu);
             }
          }
-
-         rootItems.Add(new Separator());
-         rootItems.Add(new MenuItem
-         {
-            Header = "Themes",
-            ItemsSource = BuildThemeSelectionMenuItems()
-         });
 
          return rootItems;
       }
