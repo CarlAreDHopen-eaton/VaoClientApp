@@ -17,7 +17,7 @@
                         </Button>
 
                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="12,0,0,0">
-                            <TextBlock Text="Alarm Action"
+                            <TextBlock x:Name="txtPageHeader" Text="Alarm Details"
                                        Classes="page-header-title"
                                        FontWeight="SemiBold"
                                        Foreground="{DynamicResource PrimaryHeaderFg}"/>
@@ -26,7 +26,7 @@
                 </Border>
 
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" Margin="{DynamicResource PageMarginNoBottom}">
+                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" Margin="{DynamicResource PageMarginNoBottom}">
                 
                 <!-- Alarm Information Card -->
                 <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Background="{DynamicResource Surface1}" BorderBrush="{DynamicResource Divider}" BorderThickness="1" Padding="16">
@@ -55,12 +55,13 @@
                     </StackPanel>
                 </Border>
 
-                <!-- Action Buttons - Large touch-friendly buttons -->
-                <Button x:Name="btnAlarmActivate" Content="Activate" Grid.Row="1" Grid.Column="0" Click="btnAlarmActivate_Click" Classes="primary" MinHeight="56" FontSize="14"/>
-                <Button x:Name="btnAlarmAcknowledge" Content="Acknowledge" Grid.Row="1" Grid.Column="1" Click="btnAlarmAcknowledge_Click" Classes="primary" MinHeight="56" FontSize="14"/>
-                
-                <Button x:Name="btnAlarmEnable" Content="Enable" Grid.Row="2" Grid.Column="0" Click="btnAlarmEnable_Click" Classes="outlined" MinHeight="56" FontSize="14"/>
-                <Button x:Name="btnAlarmDisable" Content="Disable" Grid.Row="2" Grid.Column="1" Click="btnAlarmDisable_Click" Classes="outlined" MinHeight="56" FontSize="14"/>
+                <!-- Action Buttons -->
+                <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8" Margin="0,16,0,0">
+                    <Button x:Name="btnAlarmActivate" Content="Activate" Click="btnAlarmActivate_Click" Classes="primary" MinHeight="40" MinWidth="100" FontSize="14"/>
+                    <Button x:Name="btnAlarmAcknowledge" Content="Acknowledge" Click="btnAlarmAcknowledge_Click" Classes="primary" MinHeight="40" MinWidth="100" FontSize="14"/>
+                    <Button x:Name="btnAlarmEnable" Content="Enable" Click="btnAlarmEnable_Click" Classes="outlined" MinHeight="40" MinWidth="100" FontSize="14"/>
+                    <Button x:Name="btnAlarmDisable" Content="Disable" Click="btnAlarmDisable_Click" Classes="outlined" MinHeight="40" MinWidth="100" FontSize="14"/>
+                </StackPanel>
                     </Grid>
                 </ScrollViewer>
 

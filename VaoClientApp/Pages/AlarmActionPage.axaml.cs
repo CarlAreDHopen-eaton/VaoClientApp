@@ -70,6 +70,7 @@ namespace Vao.Sample.Pages
                 if (txtStatus != null) txtStatus.Text = mCurrentAlarm.Status.ToString();
                 if (txtExtended != null) txtExtended.Text = mCurrentAlarm.ExtendedStatus;
                 if (txtPriority != null) txtPriority.Text = mCurrentAlarm.Priority.ToString();
+                if (txtPageHeader != null) txtPageHeader.Text = $"Alarm Details - {mCurrentAlarm.Name}";
             }
         }
 
