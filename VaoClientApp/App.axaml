@@ -460,6 +460,7 @@
         <Style Selector="TextBlock.ms-icon">
             <Setter Property="FontFamily" Value="{DynamicResource MaterialSymbolsFont}"/>
             <Setter Property="FontSize" Value="{DynamicResource IconSize}"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
         </Style>
@@ -468,6 +469,7 @@
         <Style Selector="TextBlock.blui-icon">
             <Setter Property="FontFamily" Value="{DynamicResource BrightlayerIconFont}"/>
             <Setter Property="FontSize" Value="{DynamicResource IconSize}"/>
+            <Setter Property="FontWeight" Value="Normal"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
         </Style>
@@ -588,7 +590,7 @@
             <FontFamily x:Key="BrightlayerFont">avares://VaoClientApp/Assets/Fonts#Open Sans, Segoe UI, San Francisco, Roboto, Helvetica Neue, Arial, sans-serif</FontFamily>
             <FontFamily x:Key="MonospaceFont">Consolas, Monaco, Courier New, monospace</FontFamily>
             <FontFamily x:Key="MaterialSymbolsFont">avares://VaoClientApp/Assets/Fonts#Material Symbols Outlined</FontFamily>
-            <FontFamily x:Key="BrightlayerIconFont">avares://VaoClientApp/Assets/Fonts#Brightlayer UI Icons</FontFamily>
+            <FontFamily x:Key="BrightlayerIconFont">avares://VaoClientApp/Assets/Fonts#BrightlayerUIIcons</FontFamily>
 
             <!-- ===========================================
                  BRIGHTLAYER UI SPACING SYSTEM (8px Grid)

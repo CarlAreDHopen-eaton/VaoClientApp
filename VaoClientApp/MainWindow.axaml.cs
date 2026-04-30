@@ -1907,6 +1907,7 @@ namespace Vao.Sample
          foreach (var alarm in alarmList.OrderBy(a => a.ComponentNumber))
          {
             var item = new AlarmSelectionItem(alarm, GetBrushForStatus(alarm.Status), GetTextForStatus(alarm.Status));
+            item.AlarmIcon = GetIconForAlarmStatus(alarm.Status);
              mAlarmSelectionItems.Add(item);
              alarm.PropertyChanged += (s, ev) =>
              {
@@ -1916,6 +1917,7 @@ namespace Vao.Sample
                    {
                       item.StatusBrush = GetBrushForStatus(alarm.Status);
                       item.StatusText = GetTextForStatus(alarm.Status);
+                      item.AlarmIcon = GetIconForAlarmStatus(alarm.Status);
                       UpdateAlarmSidebarIcon();
                    });
                 }
@@ -1999,6 +2001,18 @@ namespace Vao.Sample
             AlarmGeneralStatus.Tampered => "(Tampered)",
             AlarmGeneralStatus.Disabled => "(Disabled)",
             _ => "(Unknown)",
+         };
+      }
+
+      private static string GetIconForAlarmStatus(AlarmGeneralStatus status)
+      {
+         return status switch
+         {
+            AlarmGeneralStatus.Active => "\uE7F7",
+            AlarmGeneralStatus.Tampered => "\uE004",
+            AlarmGeneralStatus.Inactive => "\uE7F4",
+            AlarmGeneralStatus.Disabled => "\uE7F6",
+            _ => "\uE7F4",
          };
       }
 
@@ -2398,7 +2412,7 @@ namespace Vao.Sample
 
       public string CameraNumberText => Camera == null ? string.Empty : $"#{Camera.ComponentNumber:D4}";
 
-      public string CameraTypeIcon => Camera?.HasPanTiltControl == true ? "\uE30F" : "\uE412";
+      public string CameraTypeIcon => Camera?.HasPanTiltControl == true ? "\uF113" : "\uF299";
 
       public bool Matches(string query)
       {
@@ -2457,6 +2471,20 @@ namespace Vao.Sample
       }
 
       public string TooltipText => $"{AlarmNumberText} {AlarmName} {StatusText}".Trim();
+
+      private string mAlarmIcon = "\uE7F4";
+
+      public string AlarmIcon
+      {
+         get => mAlarmIcon;
+         set
+         {
+            if (mAlarmIcon == value)
+               return;
+            mAlarmIcon = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AlarmIcon)));
+         }
+      }
 
       public bool Matches(string query)
       {

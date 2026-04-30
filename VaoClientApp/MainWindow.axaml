@@ -97,16 +97,16 @@
                 <Border x:Name="narrowSidebar" IsVisible="False" Background="{DynamicResource Surface1}">
                     <StackPanel Spacing="4" Margin="0,8" HorizontalAlignment="Center">
                         <Button Classes="icon" Click="btnExpandCameraControl_Click" ToolTip.Tip="Camera Control">
-                            <TextBlock Text="&#xE30F;" Classes="ms-icon" FontSize="20" Foreground="{DynamicResource SidebarHeaderFg}"/>
+                            <TextBlock Text="&#xF113;" Classes="blui-icon" FontSize="20" Foreground="{DynamicResource SidebarHeaderFg}"/>
                         </Button>
                         <Button Classes="icon" Click="btnExpandCameraSelection_Click" ToolTip.Tip="Camera Selection">
-                            <TextBlock Text="&#xE412;" Classes="ms-icon" FontSize="20" Foreground="{DynamicResource SidebarHeaderFg}"/>
+                            <TextBlock Text="&#xF113;" Classes="blui-icon" FontSize="20" Foreground="{DynamicResource SidebarHeaderFg}"/>
                         </Button>
                         <Button Classes="icon" Click="btnExpandPresetSelection_Click" ToolTip.Tip="Preset Selection">
                             <TextBlock Text="&#xE55E;" Classes="ms-icon" FontSize="20" Foreground="{DynamicResource SidebarHeaderFg}"/>
                         </Button>
                         <Button Classes="icon" Click="btnExpandAlarms_Click" ToolTip.Tip="Alarms">
-                            <TextBlock x:Name="iconSidebarAlarm" Text="&#xE7F5;" Classes="ms-icon" FontSize="20" Foreground="{DynamicResource SidebarHeaderFg}"/>
+                            <TextBlock x:Name="iconSidebarAlarm" Text="&#xF1DB;" Classes="blui-icon" FontSize="20" Foreground="{DynamicResource SidebarHeaderFg}"/>
                         </Button>
                         <Button Classes="icon" Click="btnExpandPlayback_Click" ToolTip.Tip="Playback Selection">
                             <TextBlock Text="&#xE037;" Classes="ms-icon" FontSize="20" Foreground="{DynamicResource SidebarHeaderFg}"/>
@@ -127,7 +127,7 @@
                                 <Expander Classes="sidebar-menu" x:Name="expCameraControl" IsExpanded="True" HorizontalAlignment="Stretch">
                                     <Expander.Header>
                                         <StackPanel Orientation="Horizontal" Spacing="8">
-                                            <TextBlock Text="&#xE30F;" Classes="ms-icon" FontSize="{DynamicResource IconSize}" VerticalAlignment="Center"/>
+                                            <TextBlock Text="&#xF113;" Classes="blui-icon" FontSize="{DynamicResource IconSize}" VerticalAlignment="Center"/>
                                             <TextBlock Text="Camera Control" VerticalAlignment="Center"/>
                                         </StackPanel>
                                     </Expander.Header>
@@ -179,7 +179,7 @@
                                 <Expander Classes="sidebar-menu camera-selection-menu" x:Name="expCameraSelection" IsExpanded="True" HorizontalAlignment="Stretch">
                                     <Expander.Header>
                                         <StackPanel Orientation="Horizontal" Spacing="8">
-                                            <TextBlock Text="&#xE412;" Classes="ms-icon" FontSize="{DynamicResource IconSize}" VerticalAlignment="Center"/>
+                                            <TextBlock Text="&#xF113;" Classes="blui-icon" FontSize="{DynamicResource IconSize}" VerticalAlignment="Center"/>
                                             <TextBlock Text="Camera Selection" VerticalAlignment="Center"/>
                                         </StackPanel>
                                     </Expander.Header>
@@ -206,7 +206,7 @@
                                                     <Grid ColumnDefinitions="Auto,Auto,*" Margin="0">
                                                         <TextBlock Grid.Column="0"
                                                                    Text="{Binding CameraTypeIcon}"
-                                                                   Classes="ms-icon"
+                                                                   Classes="blui-icon"
                                                                    FontSize="18"
                                                                    Foreground="{DynamicResource LabelFg}"
                                                                    VerticalAlignment="Center"/>
@@ -268,7 +268,7 @@
                                 <Expander Classes="sidebar-menu alarm-selection-menu" x:Name="expAlarms" IsExpanded="True" HorizontalAlignment="Stretch">
                                     <Expander.Header>
                                         <StackPanel Orientation="Horizontal" Spacing="8">
-                                            <TextBlock x:Name="iconAlarmHeader" Text="&#xE7F5;" Classes="ms-icon" FontSize="{DynamicResource IconSize}" VerticalAlignment="Center"/>
+                                            <TextBlock x:Name="iconAlarmHeader" Text="&#xF1DB;" Classes="blui-icon" FontSize="{DynamicResource IconSize}" VerticalAlignment="Center"/>
                                             <TextBlock Text="Alarms" VerticalAlignment="Center"/>
                                         </StackPanel>
                                     </Expander.Header>
@@ -294,7 +294,7 @@
                                                 <DataTemplate>
                                                     <Grid ColumnDefinitions="Auto,Auto,*,Auto" Margin="0" ToolTip.Tip="{Binding TooltipText}">
                                                         <TextBlock Grid.Column="0"
-                                                                   Text="&#xE7F5;"
+                                                                   Text="{Binding AlarmIcon}"
                                                                    Classes="ms-icon"
                                                                    FontSize="16"
                                                                    Foreground="{Binding StatusBrush}"
