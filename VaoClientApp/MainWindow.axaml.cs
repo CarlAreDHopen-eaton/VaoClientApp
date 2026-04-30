@@ -38,7 +38,7 @@ namespace Vao.Sample
       private Alarm mCurrentAlarm;
       private User mCurrentLoggedInUser;
       private bool mIsUpdatingCameraSelection;
-      private bool mIsResizingSelectorList;
+      private bool mIsResizingSidebarMenu;
       private ContextMenu mVideoContextMenu;
       private LibVLC mLibVlc;
       private MediaPlayer mMediaPlayer;
@@ -129,7 +129,7 @@ namespace Vao.Sample
          lstMessages.ItemsSource = mFilteredMessages;
          lstCameraSelection.ItemsSource = mFilteredCameraSelectionItems;
          lstAlarmSelection.ItemsSource = mFilteredAlarmSelectionItems;
-         InitializeSelectorListHeights(useSavedHeights: true);
+          InitializeSidebarMenuHeights(useSavedHeights: true);
 
          StartInitializeVlc();
          ClearPresetDropdown();
@@ -214,11 +214,11 @@ namespace Vao.Sample
             toggle.FontSize = theme.Components.Sidebar.SectionHeaderFontSize;
          }
 
-         InitializeSelectorListHeights(useSavedHeights: true);
+         InitializeSidebarMenuHeights(useSavedHeights: true);
 
-      }
+       }
 
-      private void InitializeSelectorListHeights(bool useSavedHeights)
+      private void InitializeSidebarMenuHeights(bool useSavedHeights)
       {
          var defaultHeight = AppConstants.Default.ResizableSidebarMenuDefaultHeight;
          var minHeight = AppConstants.Default.ResizableSidebarMenuMinHeight;
@@ -233,8 +233,8 @@ namespace Vao.Sample
             return Math.Clamp(preferred, minHeight, maxHeight);
          }
 
-         var cameraTarget = ResolveTargetHeight(settings.CameraSelectorListHeight, lstCameraSelection?.Height ?? 0);
-         var alarmTarget = ResolveTargetHeight(settings.AlarmSelectorListHeight, lstAlarmSelection?.Height ?? 0);
+         var cameraTarget = ResolveTargetHeight(settings.CameraSidebarMenuHeight, lstCameraSelection?.Height ?? 0);
+         var alarmTarget = ResolveTargetHeight(settings.AlarmSidebarMenuHeight, lstAlarmSelection?.Height ?? 0);
 
          if (lstCameraSelection != null)
          {
@@ -281,14 +281,14 @@ namespace Vao.Sample
          };
       }
 
-      private void SelectorResizeHandle_PointerPressed(object sender, PointerPressedEventArgs e)
+      private void SidebarMenuResizeHandle_PointerPressed(object sender, PointerPressedEventArgs e)
       {
          var list = ResolveResizableList(sender);
          if (list == null)
             return;
 
          mActiveResizableList = list;
-         mIsResizingSelectorList = true;
+         mIsResizingSidebarMenu = true;
          mResizeStartPoint = e.GetPosition(this);
          mResizeStartHeight = list.Height > 0 ? list.Height : list.Bounds.Height;
 
@@ -296,9 +296,9 @@ namespace Vao.Sample
             e.Pointer.Capture(inputElement);
       }
 
-      private void SelectorResizeHandle_PointerMoved(object sender, PointerEventArgs e)
+      private void SidebarMenuResizeHandle_PointerMoved(object sender, PointerEventArgs e)
       {
-         if (!mIsResizingSelectorList || mActiveResizableList == null)
+         if (!mIsResizingSidebarMenu || mActiveResizableList == null)
             return;
 
          var minHeight = AppConstants.Default.ResizableSidebarMenuMinHeight;
@@ -310,22 +310,22 @@ namespace Vao.Sample
          mActiveResizableList.Height = newHeight;
       }
 
-      private void SelectorResizeHandle_PointerReleased(object sender, PointerReleasedEventArgs e)
+      private void SidebarMenuResizeHandle_PointerReleased(object sender, PointerReleasedEventArgs e)
       {
-         EndSelectorResize(e.Pointer);
+         EndSidebarMenuResize(e.Pointer);
       }
 
-      private void SelectorResizeHandle_PointerCaptureLost(object sender, PointerCaptureLostEventArgs e)
+      private void SidebarMenuResizeHandle_PointerCaptureLost(object sender, PointerCaptureLostEventArgs e)
       {
-         EndSelectorResize(null);
+         EndSidebarMenuResize(null);
       }
 
-      private void EndSelectorResize(IPointer pointer)
+      private void EndSidebarMenuResize(IPointer pointer)
       {
-         if (!mIsResizingSelectorList)
+         if (!mIsResizingSidebarMenu)
             return;
 
-         mIsResizingSelectorList = false;
+         mIsResizingSidebarMenu = false;
          mActiveResizableList = null;
          pointer?.Capture(null);
          SaveSettings();
@@ -942,9 +942,9 @@ namespace Vao.Sample
             s.MessagesSplitMessagesStars = mg.RowDefinitions[2].Height.Value;
          }
          if (lstCameraSelection?.Height > 0)
-            s.CameraSelectorListHeight = lstCameraSelection.Height;
+            s.CameraSidebarMenuHeight = lstCameraSelection.Height;
          if (lstAlarmSelection?.Height > 0)
-            s.AlarmSelectorListHeight = lstAlarmSelection.Height;
+            s.AlarmSidebarMenuHeight = lstAlarmSelection.Height;
          s.Save();
       }
 

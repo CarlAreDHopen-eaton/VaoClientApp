@@ -370,8 +370,8 @@
         <!-- Camera selection list (supports long names and touch-friendly rows) -->
         <Style Selector="ListBox#lstCameraSelection ListBoxItem">
             <Setter Property="Padding" Value="0"/>
-            <Setter Property="MinHeight" Value="{DynamicResource SidebarSelectorItemMinHeight}"/>
-            <Setter Property="Height" Value="{DynamicResource SidebarSelectorItemMinHeight}"/>
+            <Setter Property="MinHeight" Value="{DynamicResource SidebarMenuItemHeight}"/>
+            <Setter Property="Height" Value="{DynamicResource SidebarMenuItemHeight}"/>
             <Setter Property="Margin" Value="0"/>
             <Setter Property="CornerRadius" Value="4"/>
         </Style>
@@ -388,8 +388,8 @@
 
         <Style Selector="ListBox#lstAlarmSelection ListBoxItem">
             <Setter Property="Padding" Value="0"/>
-            <Setter Property="MinHeight" Value="{DynamicResource SidebarSelectorItemMinHeight}"/>
-            <Setter Property="Height" Value="{DynamicResource SidebarSelectorItemMinHeight}"/>
+            <Setter Property="MinHeight" Value="{DynamicResource SidebarMenuItemHeight}"/>
+            <Setter Property="Height" Value="{DynamicResource SidebarMenuItemHeight}"/>
             <Setter Property="Margin" Value="0"/>
             <Setter Property="CornerRadius" Value="4"/>
         </Style>
@@ -404,14 +404,14 @@
             <Setter Property="Background" Value="{DynamicResource Surface3}"/>
         </Style>
 
-        <Style Selector="Border.selector-resize-handle">
+        <Style Selector="Border.sidebar-menu-resize-handle">
             <Setter Property="Height" Value="8"/>
             <Setter Property="Background" Value="{DynamicResource Divider}"/>
             <Setter Property="Opacity" Value="0.55"/>
             <Setter Property="Margin" Value="0,2,0,0"/>
             <Setter Property="Cursor" Value="SizeNorthSouth"/>
         </Style>
-        <Style Selector="Border.selector-resize-handle:pointerover">
+        <Style Selector="Border.sidebar-menu-resize-handle:pointerover">
             <Setter Property="Opacity" Value="0.9"/>
         </Style>
 

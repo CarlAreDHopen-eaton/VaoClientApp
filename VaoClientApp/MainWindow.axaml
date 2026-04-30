@@ -188,7 +188,7 @@
                                                  x:Name="txtCameraSearch"
                                                  Watermark="Search by number or name"
                                                  Classes="borderless"
-                                                 MinHeight="{DynamicResource SidebarSelectorSearchMinHeight}"
+                                                 MinHeight="{DynamicResource SidebarMenuSearchHeight}"
                                                  TextChanged="txtCameraSearch_TextChanged"/>
                                         <ListBox Grid.Row="1"
                                                  x:Name="lstCameraSelection"
@@ -226,12 +226,12 @@
                                             </ListBox.ItemTemplate>
                                         </ListBox>
                                         <Border Grid.Row="2"
-                                                Classes="selector-resize-handle"
+                                                Classes="sidebar-menu-resize-handle"
                                                 Tag="camera"
-                                                PointerPressed="SelectorResizeHandle_PointerPressed"
-                                                PointerMoved="SelectorResizeHandle_PointerMoved"
-                                                PointerReleased="SelectorResizeHandle_PointerReleased"
-                                                PointerCaptureLost="SelectorResizeHandle_PointerCaptureLost"/>
+                                                PointerPressed="SidebarMenuResizeHandle_PointerPressed"
+                                                PointerMoved="SidebarMenuResizeHandle_PointerMoved"
+                                                PointerReleased="SidebarMenuResizeHandle_PointerReleased"
+                                                PointerCaptureLost="SidebarMenuResizeHandle_PointerCaptureLost"/>
                                     </Grid>
                                 </Expander>
                             </Border>
@@ -268,7 +268,7 @@
                                                  x:Name="txtAlarmSearch"
                                                  Watermark="Search by number or name"
                                                  Classes="borderless"
-                                                 MinHeight="{DynamicResource SidebarSelectorSearchMinHeight}"
+                                                 MinHeight="{DynamicResource SidebarMenuSearchHeight}"
                                                  TextChanged="txtAlarmSearch_TextChanged"/>
                                         <ListBox Grid.Row="1"
                                                  x:Name="lstAlarmSelection"
@@ -306,12 +306,12 @@
                                             </ListBox.ItemTemplate>
                                         </ListBox>
                                         <Border Grid.Row="2"
-                                                Classes="selector-resize-handle"
+                                                Classes="sidebar-menu-resize-handle"
                                                 Tag="alarm"
-                                                PointerPressed="SelectorResizeHandle_PointerPressed"
-                                                PointerMoved="SelectorResizeHandle_PointerMoved"
-                                                PointerReleased="SelectorResizeHandle_PointerReleased"
-                                                PointerCaptureLost="SelectorResizeHandle_PointerCaptureLost"/>
+                                                PointerPressed="SidebarMenuResizeHandle_PointerPressed"
+                                                PointerMoved="SidebarMenuResizeHandle_PointerMoved"
+                                                PointerReleased="SidebarMenuResizeHandle_PointerReleased"
+                                                PointerCaptureLost="SidebarMenuResizeHandle_PointerCaptureLost"/>
                                     </Grid>
                                 </Expander>
                             </Border>

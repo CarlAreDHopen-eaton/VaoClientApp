@@ -75,8 +75,8 @@
       "SectionHeaderFontSize": 13.0,
       "SectionHeaderMinHeight": 48.0,
       "SectionHeaderPaddingVertical": 12.0,
-      "SelectorItemMinHeight": 30.0,
-      "SelectorSearchMinHeight": 30.0,
+      "SidebarMenuItemHeight": 30.0,
+      "SidebarMenuSearchHeight": 30.0,
       "Colors": {
         "Background": "#121212",
         "CardBackground": "#1E1E1E",
