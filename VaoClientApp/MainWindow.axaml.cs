@@ -220,9 +220,9 @@ namespace Vao.Sample
 
       private void InitializeSelectorListHeights(bool useSavedHeights)
       {
-         var defaultHeight = GetThemeResourceDouble("SidebarSelectorListDefaultHeight", 240);
-         var minHeight = GetThemeResourceDouble("SidebarSelectorListMinHeight", 140);
-         var maxHeight = GetThemeResourceDouble("SidebarSelectorListMaxHeight", 340);
+         var defaultHeight = AppConstants.Default.ResizableSidebarMenuDefaultHeight;
+         var minHeight = AppConstants.Default.ResizableSidebarMenuMinHeight;
+         var maxHeight = AppConstants.Default.ResizableSidebarMenuMaxHeight;
          var settings = AppSettings.Default;
 
          double ResolveTargetHeight(double savedHeight, double currentHeight)
@@ -301,8 +301,8 @@ namespace Vao.Sample
          if (!mIsResizingSelectorList || mActiveResizableList == null)
             return;
 
-         var minHeight = GetThemeResourceDouble("SidebarSelectorListMinHeight", 140);
-         var maxHeight = GetThemeResourceDouble("SidebarSelectorListMaxHeight", 340);
+         var minHeight = AppConstants.Default.ResizableSidebarMenuMinHeight;
+         var maxHeight = AppConstants.Default.ResizableSidebarMenuMaxHeight;
 
          var currentPoint = e.GetPosition(this);
          var deltaY = currentPoint.Y - mResizeStartPoint.Y;

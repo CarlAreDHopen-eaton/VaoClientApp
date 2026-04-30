@@ -28,6 +28,9 @@
     <None Include="Themes\*.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="AppConstants.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <!-- Embedded Open Sans Fonts for Brightlayer UI -->

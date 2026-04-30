@@ -219,9 +219,6 @@ namespace Vao.Sample
          resources["AvatarCornerRadius"] = new CornerRadius(Sizing.Avatar.CornerRadius);
          resources["SidebarSelectorItemMinHeight"] = Components.Sidebar.SelectorItemMinHeight;
          resources["SidebarSelectorSearchMinHeight"] = Components.Sidebar.SelectorSearchMinHeight;
-         resources["SidebarSelectorListMinHeight"] = Components.Sidebar.SelectorListMinHeight;
-         resources["SidebarSelectorListDefaultHeight"] = Components.Sidebar.SelectorListDefaultHeight;
-         resources["SidebarSelectorListMaxHeight"] = Components.Sidebar.SelectorListMaxHeight;
 
          resources["IconSize"] = Sizing.Icon.Default;
          resources["IconSizeSmall"] = Sizing.Icon.Small;
@@ -417,9 +414,6 @@ namespace Vao.Sample
                SectionHeaderPaddingVertical = isTablet ? 14 : 12,
                SelectorItemMinHeight = isTablet ? 44 : 28,
                   SelectorSearchMinHeight = isTablet ? 44 : 28,
-                  SelectorListMinHeight = isTablet ? 180 : 140,
-                  SelectorListDefaultHeight = isTablet ? 300 : 240,
-                  SelectorListMaxHeight = isTablet ? 420 : 340,
                Colors = isDark
                   ? new ThemeSidebarColors { Background = "#121212", CardBackground = "#1E1E1E", Border = "#1FFFFFFF", HeaderForeground = "#DEFFFFFF" }
                   : new ThemeSidebarColors { Background = "#F6F6F6", CardBackground = "#F3F3F3", Border = "#D4D4D4", HeaderForeground = "#DE000000" }
@@ -467,9 +461,6 @@ namespace Vao.Sample
       public double SectionHeaderPaddingVertical { get; set; }
       public double SelectorItemMinHeight { get; set; } = 34;
       public double SelectorSearchMinHeight { get; set; } = 30;
-      public double SelectorListMinHeight { get; set; } = 140;
-      public double SelectorListDefaultHeight { get; set; } = 240;
-      public double SelectorListMaxHeight { get; set; } = 340;
       public ThemeSidebarColors Colors { get; set; } = new();
    }
 

@@ -77,9 +77,6 @@
       "SectionHeaderPaddingVertical": 12.0,
       "SelectorItemMinHeight": 30.0,
       "SelectorSearchMinHeight": 30.0,
-      "SelectorListMinHeight": 120.0,
-      "SelectorListDefaultHeight": 220.0,
-      "SelectorListMaxHeight": 320.0,
       "Colors": {
         "Background": "#FFF7FB",
         "CardBackground": "#FFF1F8",
