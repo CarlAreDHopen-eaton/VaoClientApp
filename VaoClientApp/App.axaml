@@ -371,8 +371,12 @@
         <Style Selector="ListBox#lstCameraSelection ListBoxItem">
             <Setter Property="Padding" Value="0"/>
             <Setter Property="MinHeight" Value="{DynamicResource SidebarSelectorItemMinHeight}"/>
+            <Setter Property="Height" Value="{DynamicResource SidebarSelectorItemMinHeight}"/>
             <Setter Property="Margin" Value="0"/>
             <Setter Property="CornerRadius" Value="4"/>
+        </Style>
+        <Style Selector="ListBox#lstCameraSelection ListBoxItem /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Padding" Value="0"/>
         </Style>
         <Style Selector="ListBox#lstCameraSelection ListBoxItem:selected">
             <Setter Property="Background" Value="{DynamicResource Primary}"/>
@@ -385,8 +389,12 @@
         <Style Selector="ListBox#lstAlarmSelection ListBoxItem">
             <Setter Property="Padding" Value="0"/>
             <Setter Property="MinHeight" Value="{DynamicResource SidebarSelectorItemMinHeight}"/>
+            <Setter Property="Height" Value="{DynamicResource SidebarSelectorItemMinHeight}"/>
             <Setter Property="Margin" Value="0"/>
             <Setter Property="CornerRadius" Value="4"/>
+        </Style>
+        <Style Selector="ListBox#lstAlarmSelection ListBoxItem /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Padding" Value="0"/>
         </Style>
         <Style Selector="ListBox#lstAlarmSelection ListBoxItem:selected">
             <Setter Property="Background" Value="{DynamicResource Primary}"/>
@@ -556,6 +564,7 @@
 
         <Style Selector="TextBox.borderless">
             <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="8,4"/>
         </Style>
         <Style Selector="TextBox.borderless:focus">
             <Setter Property="BorderThickness" Value="0"/>

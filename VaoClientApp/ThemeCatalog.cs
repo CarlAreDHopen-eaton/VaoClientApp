@@ -218,6 +218,7 @@ namespace Vao.Sample
          resources["AvatarSize"] = Sizing.Avatar.Size;
          resources["AvatarCornerRadius"] = new CornerRadius(Sizing.Avatar.CornerRadius);
          resources["SidebarSelectorItemMinHeight"] = Components.Sidebar.SelectorItemMinHeight;
+         resources["SidebarSelectorSearchMinHeight"] = Components.Sidebar.SelectorSearchMinHeight;
          resources["SidebarSelectorListMinHeight"] = Components.Sidebar.SelectorListMinHeight;
          resources["SidebarSelectorListDefaultHeight"] = Components.Sidebar.SelectorListDefaultHeight;
          resources["SidebarSelectorListMaxHeight"] = Components.Sidebar.SelectorListMaxHeight;
@@ -414,7 +415,8 @@ namespace Vao.Sample
                SectionHeaderFontSize = isTablet ? 14 : 13,
                SectionHeaderMinHeight = isTablet ? 52 : 48,
                SectionHeaderPaddingVertical = isTablet ? 14 : 12,
-               SelectorItemMinHeight = isTablet ? 44 : 34,
+               SelectorItemMinHeight = isTablet ? 44 : 28,
+                  SelectorSearchMinHeight = isTablet ? 44 : 28,
                   SelectorListMinHeight = isTablet ? 180 : 140,
                   SelectorListDefaultHeight = isTablet ? 300 : 240,
                   SelectorListMaxHeight = isTablet ? 420 : 340,
@@ -464,6 +466,7 @@ namespace Vao.Sample
       public double SectionHeaderMinHeight { get; set; }
       public double SectionHeaderPaddingVertical { get; set; }
       public double SelectorItemMinHeight { get; set; } = 34;
+      public double SelectorSearchMinHeight { get; set; } = 30;
       public double SelectorListMinHeight { get; set; } = 140;
       public double SelectorListDefaultHeight { get; set; } = 240;
       public double SelectorListMaxHeight { get; set; } = 340;
