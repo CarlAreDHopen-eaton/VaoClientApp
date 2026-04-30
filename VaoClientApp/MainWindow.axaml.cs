@@ -87,6 +87,16 @@ namespace Vao.Sample
          { MessageSource.Config, true }
       };
 
+      private Dictionary<AlarmGeneralStatus, bool> mAlarmStatusFilters = new()
+      {
+         { AlarmGeneralStatus.Active, true },
+         { AlarmGeneralStatus.Inactive, true },
+         { AlarmGeneralStatus.Acknowledged, true },
+         { AlarmGeneralStatus.Tampered, true },
+         { AlarmGeneralStatus.Disabled, true },
+         { AlarmGeneralStatus.Unknown, true }
+      };
+
       public FlexRApiClient FlexRApiClient => mFlexRApiClient;
 
       public bool IsStarted
@@ -129,6 +139,7 @@ namespace Vao.Sample
          lstMessages.ItemsSource = mFilteredMessages;
          lstCameraSelection.ItemsSource = mFilteredCameraSelectionItems;
          lstAlarmSelection.ItemsSource = mFilteredAlarmSelectionItems;
+         InitializeAlarmStatusFilterMenu();
           InitializeSidebarMenuHeights(useSavedHeights: true);
 
          StartInitializeVlc();
@@ -1014,6 +1025,13 @@ namespace Vao.Sample
          var s = AppSettings.Default;
          tglSubChannel.IsChecked = s.PreferSubChannel;
          UpdateUserInitial();
+
+         mAlarmStatusFilters[AlarmGeneralStatus.Active] = s.ShowActiveAlarms;
+         mAlarmStatusFilters[AlarmGeneralStatus.Tampered] = s.ShowTamperedAlarms;
+         mAlarmStatusFilters[AlarmGeneralStatus.Acknowledged] = s.ShowAcknowledgedAlarms;
+         mAlarmStatusFilters[AlarmGeneralStatus.Inactive] = s.ShowPassiveAlarms;
+         mAlarmStatusFilters[AlarmGeneralStatus.Disabled] = s.ShowDisabledAlarms;
+         InitializeAlarmStatusFilterMenu();
       }
 
       private void SaveSettings()
@@ -1036,6 +1054,11 @@ namespace Vao.Sample
             s.CameraSidebarMenuHeight = lstCameraSelection.Height;
          if (lstAlarmSelection?.Height > 0)
             s.AlarmSidebarMenuHeight = lstAlarmSelection.Height;
+         s.ShowActiveAlarms = mAlarmStatusFilters.GetValueOrDefault(AlarmGeneralStatus.Active, true);
+         s.ShowTamperedAlarms = mAlarmStatusFilters.GetValueOrDefault(AlarmGeneralStatus.Tampered, true);
+         s.ShowAcknowledgedAlarms = mAlarmStatusFilters.GetValueOrDefault(AlarmGeneralStatus.Acknowledged, true);
+         s.ShowPassiveAlarms = mAlarmStatusFilters.GetValueOrDefault(AlarmGeneralStatus.Inactive, true);
+         s.ShowDisabledAlarms = mAlarmStatusFilters.GetValueOrDefault(AlarmGeneralStatus.Disabled, true);
          s.Save();
       }
 
@@ -1965,8 +1988,10 @@ namespace Vao.Sample
       {
          string query = txtAlarmSearch.Text?.Trim() ?? string.Empty;
          var filtered = string.IsNullOrWhiteSpace(query)
-            ? mAlarmSelectionItems
+            ? mAlarmSelectionItems.AsEnumerable()
             : mAlarmSelectionItems.Where(item => item.Matches(query));
+
+         filtered = filtered.Where(item => item.Alarm != null && mAlarmStatusFilters.GetValueOrDefault(item.Alarm.Status, true));
 
          mFilteredAlarmSelectionItems.Clear();
          foreach (var item in filtered)
@@ -1976,10 +2001,41 @@ namespace Vao.Sample
          lstAlarmSelection.SelectedItem = mCurrentAlarm == null
             ? null
             : mFilteredAlarmSelectionItems.FirstOrDefault(item => item.Alarm?.ComponentNumber == mCurrentAlarm.ComponentNumber);
-         mIsUpdatingAlarmSelection = false;
-      }
+             mIsUpdatingAlarmSelection = false;
+         }
 
-      private IBrush GetBrushForStatus(AlarmGeneralStatus status)
+         private void AlarmStatusFilter_Click(object sender, RoutedEventArgs e)
+         {
+            if (sender is not MenuItem menuItem || menuItem.Tag is not string tagValue)
+               return;
+
+            if (!System.Enum.TryParse<AlarmGeneralStatus>(tagValue, ignoreCase: true, out var status))
+               return;
+
+            mAlarmStatusFilters[status] = !mAlarmStatusFilters[status];
+
+            // Update the menu item icon to indicate checked state
+            menuItem.Icon = mAlarmStatusFilters[status] ? new TextBlock { Text = "\u2713" } : null;
+
+            ApplyAlarmSearchFilter();
+            SaveSettings();
+         }
+
+         private void InitializeAlarmStatusFilterMenu()
+         {
+            if (ctxAlarmStatusFilter?.Items == null)
+               return;
+
+            foreach (var item in ctxAlarmStatusFilter.Items.OfType<MenuItem>())
+            {
+               if (item.Tag is string tagValue && System.Enum.TryParse<AlarmGeneralStatus>(tagValue, ignoreCase: true, out var status))
+               {
+                  item.Icon = mAlarmStatusFilters.GetValueOrDefault(status, true) ? new TextBlock { Text = "\u2713" } : null;
+               }
+            }
+         }
+
+         private IBrush GetBrushForStatus(AlarmGeneralStatus status)
       {
          return status switch
          {

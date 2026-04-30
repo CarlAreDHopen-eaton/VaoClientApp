@@ -133,6 +133,19 @@
                                   Padding="{DynamicResource InputPadding}"/>
                     </StackPanel>
                 </StackPanel>
+
+                <!-- Alarm Filter Section -->
+                <StackPanel Spacing="16">
+                    <TextBlock Text="Alarm Filters" Classes="section-header"/>
+
+                    <StackPanel Spacing="12">
+                        <CheckBox x:Name="chkShowActiveAlarms" Content="Show Active Alarms"/>
+                        <CheckBox x:Name="chkShowTamperedAlarms" Content="Show Tampered Alarms"/>
+                        <CheckBox x:Name="chkShowAcknowledgedAlarms" Content="Show Acknowledged Alarms"/>
+                        <CheckBox x:Name="chkShowPassiveAlarms" Content="Show Passive Alarms"/>
+                        <CheckBox x:Name="chkShowDisabledAlarms" Content="Show Disabled Alarms"/>
+                    </StackPanel>
+                </StackPanel>
                 
                         <Border Height="20"/>
                     </StackPanel>

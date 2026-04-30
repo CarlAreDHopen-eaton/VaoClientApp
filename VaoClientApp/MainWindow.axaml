@@ -278,7 +278,17 @@
                                                  Watermark="Search by number or name"
                                                  Classes="borderless"
                                                  MinHeight="{DynamicResource SidebarMenuSearchHeight}"
-                                                 TextChanged="txtAlarmSearch_TextChanged"/>
+                                                 TextChanged="txtAlarmSearch_TextChanged">
+                                            <TextBox.ContextMenu>
+                                                <ContextMenu x:Name="ctxAlarmStatusFilter">
+                                                    <MenuItem x:Name="mnuAlarmFilterActive" Header="Active" Click="AlarmStatusFilter_Click" Tag="Active"/>
+                                                    <MenuItem x:Name="mnuAlarmFilterTampered" Header="Tampered" Click="AlarmStatusFilter_Click" Tag="Tampered"/>
+                                                    <MenuItem x:Name="mnuAlarmFilterAcknowledged" Header="Acknowledged" Click="AlarmStatusFilter_Click" Tag="Acknowledged"/>
+                                                    <MenuItem x:Name="mnuAlarmFilterInactive" Header="Passive" Click="AlarmStatusFilter_Click" Tag="Inactive"/>
+                                                    <MenuItem x:Name="mnuAlarmFilterDisabled" Header="Disabled" Click="AlarmStatusFilter_Click" Tag="Disabled"/>
+                                                </ContextMenu>
+                                            </TextBox.ContextMenu>
+                                        </TextBox>
                                         <ListBox Grid.Row="1"
                                                  x:Name="lstAlarmSelection"
                                                  SelectionChanged="lstAlarmSelection_SelectionChanged"

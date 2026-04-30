@@ -57,6 +57,12 @@ namespace Vao.Sample
       public double CameraSidebarMenuHeight { get; set; } = 240.0;
       public double AlarmSidebarMenuHeight { get; set; } = 240.0;
 
+      public bool ShowActiveAlarms { get; set; } = true;
+      public bool ShowTamperedAlarms { get; set; } = true;
+      public bool ShowAcknowledgedAlarms { get; set; } = true;
+      public bool ShowPassiveAlarms { get; set; } = true;
+      public bool ShowDisabledAlarms { get; set; } = true;
+
       public void Save()
       {
          NormalizeConnections();

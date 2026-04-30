@@ -75,6 +75,17 @@ namespace Vao.Sample.Pages
             }
 
             RefreshConnectionList(s.SelectedConnectionIndex);
+
+            var chkShowActiveAlarms = this.FindControl<CheckBox>("chkShowActiveAlarms");
+            var chkShowTamperedAlarms = this.FindControl<CheckBox>("chkShowTamperedAlarms");
+            var chkShowAcknowledgedAlarms = this.FindControl<CheckBox>("chkShowAcknowledgedAlarms");
+            var chkShowPassiveAlarms = this.FindControl<CheckBox>("chkShowPassiveAlarms");
+            var chkShowDisabledAlarms = this.FindControl<CheckBox>("chkShowDisabledAlarms");
+            if (chkShowActiveAlarms != null) chkShowActiveAlarms.IsChecked = s.ShowActiveAlarms;
+            if (chkShowTamperedAlarms != null) chkShowTamperedAlarms.IsChecked = s.ShowTamperedAlarms;
+            if (chkShowAcknowledgedAlarms != null) chkShowAcknowledgedAlarms.IsChecked = s.ShowAcknowledgedAlarms;
+            if (chkShowPassiveAlarms != null) chkShowPassiveAlarms.IsChecked = s.ShowPassiveAlarms;
+            if (chkShowDisabledAlarms != null) chkShowDisabledAlarms.IsChecked = s.ShowDisabledAlarms;
         }
 
         private void SaveSettings()
@@ -107,6 +118,18 @@ namespace Vao.Sample.Pages
             s.FTPPassword = txtFTPPassword?.Text ?? "";
             s.DownloadPath = txtDownloadPath?.Text ?? "";
             s.SetConnectionAlternatives(mConnectionAlternatives, selectedConnectionIndex);
+
+            var chkShowActiveAlarms = this.FindControl<CheckBox>("chkShowActiveAlarms");
+            var chkShowTamperedAlarms = this.FindControl<CheckBox>("chkShowTamperedAlarms");
+            var chkShowAcknowledgedAlarms = this.FindControl<CheckBox>("chkShowAcknowledgedAlarms");
+            var chkShowPassiveAlarms = this.FindControl<CheckBox>("chkShowPassiveAlarms");
+            var chkShowDisabledAlarms = this.FindControl<CheckBox>("chkShowDisabledAlarms");
+            s.ShowActiveAlarms = chkShowActiveAlarms?.IsChecked == true;
+            s.ShowTamperedAlarms = chkShowTamperedAlarms?.IsChecked == true;
+            s.ShowAcknowledgedAlarms = chkShowAcknowledgedAlarms?.IsChecked == true;
+            s.ShowPassiveAlarms = chkShowPassiveAlarms?.IsChecked == true;
+            s.ShowDisabledAlarms = chkShowDisabledAlarms?.IsChecked == true;
+
             s.Save();
             mOriginalThemeKey = s.SelectedTheme;
             
