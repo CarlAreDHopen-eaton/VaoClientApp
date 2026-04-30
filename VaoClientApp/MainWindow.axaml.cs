@@ -452,7 +452,12 @@ namespace Vao.Sample
 
       private void MainWindow_KeyDown(object sender, KeyEventArgs e)
       {
-         if (e.Key == Key.F9)
+         if (e.Key == Key.F2)
+         {
+            HandleRenameCameraAsync();
+            e.Handled = true;
+         }
+         else if (e.Key == Key.F9)
          {
             btnToggleSidebar_Click(null, null);
             e.Handled = true;
@@ -490,6 +495,84 @@ namespace Vao.Sample
             {
                NavigateToNextCamera();
                e.Handled = true;
+            }
+         }
+      }
+
+      private async void HandleRenameCameraAsync()
+      {
+         if (mCurrentLoggedInUser == null || mCurrentLoggedInUser.Privilege < UserPrivilege.Supervisor)
+            return;
+
+         var selectedItem = lstCameraSelection.SelectedItem as CameraSelectionItem;
+         if (selectedItem?.Camera == null)
+            return;
+
+         var camera = selectedItem.Camera;
+
+         var dialog = new Window
+         {
+            Title = "Rename Camera",
+            Width = 350,
+            Height = 150,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            CanResize = false
+         };
+
+         var textBox = new TextBox
+         {
+            Text = camera.Name,
+            Margin = new Thickness(16),
+            VerticalAlignment = VerticalAlignment.Center
+         };
+
+         var okButton = new Button
+         {
+            Content = "OK",
+            HorizontalAlignment = HorizontalAlignment.Right,
+            Margin = new Thickness(0, 0, 16, 16),
+            VerticalAlignment = VerticalAlignment.Bottom
+         };
+
+         var grid = new Grid
+         {
+            RowDefinitions = RowDefinitions.Parse("*,Auto")
+         };
+         Grid.SetRow(textBox, 0);
+         Grid.SetRow(okButton, 1);
+         grid.Children.Add(textBox);
+         grid.Children.Add(okButton);
+         dialog.Content = grid;
+
+         string newName = null;
+         okButton.Click += (s, args) =>
+         {
+            newName = textBox.Text?.Trim();
+            dialog.Close();
+         };
+
+         textBox.KeyDown += (s, args) =>
+         {
+            if (args.Key == Key.Enter)
+            {
+               newName = textBox.Text?.Trim();
+               dialog.Close();
+            }
+            else if (args.Key == Key.Escape)
+            {
+               dialog.Close();
+            }
+         };
+
+         await dialog.ShowDialog(this);
+
+         if (!string.IsNullOrEmpty(newName) && newName != camera.Name)
+         {
+            bool success = camera.SetName(newName);
+            if (success)
+            {
+               camera.UpdateCameraData();
+               ApplyCameraSearchFilter();
             }
          }
       }
