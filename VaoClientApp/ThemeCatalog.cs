@@ -146,7 +146,6 @@ namespace Vao.Sample
 
          // Background
          yield return Brush("AppBg", Colors.Background.App);
-         yield return Brush("SectionBg", Colors.Background.Raised);
          yield return Brush("Surface1", Colors.Background.Raised);
          yield return Brush("Surface2", Colors.Background.Elevated);
          yield return Brush("Surface3", Colors.Background.Overlay);

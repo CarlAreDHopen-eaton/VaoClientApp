@@ -394,7 +394,7 @@
                 </Button>
 
                 <!-- Video area -->
-                <Border Grid.Row="0" x:Name="grpVideoControl" Background="{DynamicResource SectionBg}" CornerRadius="4">
+                <Border Grid.Row="0" x:Name="grpVideoControl" Background="{DynamicResource Surface1}" CornerRadius="4">
                     <Grid RowDefinitions="Auto,*,Auto">
                         <Border Grid.Row="0" x:Name="brdVideoHeader" Background="{DynamicResource VideoHeaderBg}" CornerRadius="4,4,0,0">
                             <Grid ColumnDefinitions="*,Auto">
@@ -443,7 +443,7 @@
                               DragCompleted="MessagesSplitter_DragCompleted"/>
 
                 <!-- Messages -->
-                <Border Grid.Row="2" x:Name="brdMessages" Background="{DynamicResource SectionBg}" BorderBrush="{DynamicResource Divider}" BorderThickness="1" CornerRadius="4" MinHeight="36">
+                <Border Grid.Row="2" x:Name="brdMessages" Background="{DynamicResource Surface1}" BorderBrush="{DynamicResource Divider}" BorderThickness="1" CornerRadius="4" MinHeight="36">
                     <Grid RowDefinitions="Auto,*">
                     <Border Grid.Row="0" Background="{DynamicResource Surface3}" CornerRadius="4,4,0,0" 
                                 Cursor="Hand" PointerPressed="MessagesHeader_PointerPressed">
@@ -506,7 +506,7 @@
                     IsVisible="False"
                     ZIndex="900">
                 <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Margin="16" MaxWidth="520">
-                    <Border Background="{DynamicResource SectionBg}"
+                    <Border Background="{DynamicResource Surface1}"
                             BorderBrush="{DynamicResource Divider}"
                             BorderThickness="1"
                             CornerRadius="8"

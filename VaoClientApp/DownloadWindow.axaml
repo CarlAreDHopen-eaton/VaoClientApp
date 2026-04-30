@@ -28,7 +28,7 @@
                 <StackPanel Spacing="0" Margin="0">
 
                     <!-- Available Recordings -->
-                    <Border Background="{DynamicResource SectionBg}" BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1" Padding="16" x:Name="grpSelectRecording">
+                    <Border Background="{DynamicResource Surface1}" BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1" Padding="16" x:Name="grpSelectRecording">
                         <StackPanel Spacing="8">
                             <TextBlock Text="Available Recordings" Classes="section-header"/>
                             <Grid ColumnDefinitions="80,*" RowDefinitions="Auto,Auto">
@@ -41,7 +41,7 @@
                     </Border>
 
                     <!-- Request Download -->
-                    <Border Background="{DynamicResource SectionBg}" BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1" Padding="16" x:Name="grpDownload">
+                    <Border Background="{DynamicResource Surface1}" BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1" Padding="16" x:Name="grpDownload">
                         <StackPanel Spacing="8">
                             <TextBlock Text="Request Download" Classes="section-header"/>
                             <Grid ColumnDefinitions="80,*" RowDefinitions="Auto,Auto">
@@ -69,7 +69,7 @@
             <!-- Right panel -->
             <Grid Grid.Column="1" RowDefinitions="*,*,*" Margin="0">
                 <!-- Pending Downloads -->
-                <Border Grid.Row="0" Background="{DynamicResource SectionBg}" BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1" Padding="16">
+                <Border Grid.Row="0" Background="{DynamicResource Surface1}" BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1" Padding="16">
                     <Grid RowDefinitions="Auto,*,Auto">
                         <TextBlock Grid.Row="0" Text="Pending Downloads" Classes="section-header"/>
                         <ListBox Grid.Row="1" x:Name="lstPendingDownloads" Background="Transparent" Margin="0,8"/>
@@ -78,7 +78,7 @@
                 </Border>
 
                 <!-- Finished Downloads -->
-                <Border Grid.Row="1" Background="{DynamicResource SectionBg}" BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1" Padding="16">
+                <Border Grid.Row="1" Background="{DynamicResource Surface1}" BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1" Padding="16">
                     <Grid RowDefinitions="Auto,*,Auto">
                         <TextBlock Grid.Row="0" Text="Finished Downloads" Classes="section-header"/>
                         <ListBox Grid.Row="1" x:Name="lstFinishedDownloads" Background="Transparent" Margin="0,8"/>
@@ -87,7 +87,7 @@
                 </Border>
 
                 <!-- Messages -->
-                <Border Grid.Row="2" Background="{DynamicResource SectionBg}" Padding="16">
+                <Border Grid.Row="2" Background="{DynamicResource Surface1}" Padding="16">
                     <Grid RowDefinitions="Auto,*,Auto">
                         <TextBlock Grid.Row="0" Text="Messages" Classes="section-header"/>
                         <ListBox Grid.Row="1" x:Name="lstDownloadMessages" Background="Transparent" FontFamily="{StaticResource MonospaceFont}" FontSize="11" Margin="0,8"/>

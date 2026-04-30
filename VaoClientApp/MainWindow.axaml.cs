@@ -201,8 +201,8 @@ namespace Vao.Sample
          foreach (var btn in this.GetVisualDescendants().OfType<Button>())
             btn.MinHeight = theme.Sizing.Button.MinHeight;
 
-         // Same for Expander section toggle buttons.
-         var sectionPadding = new Thickness(16, theme.Components.Sidebar.SidebarMenuHeaderPaddingVertical);
+         // Same for Expander sidebar menu toggle buttons.
+         var menuHeaderPadding = new Thickness(16, theme.Components.Sidebar.SidebarMenuHeaderPaddingVertical);
          foreach (var expander in this.GetVisualDescendants().OfType<Expander>())
          {
             var toggle = expander.GetVisualDescendants()
@@ -210,7 +210,7 @@ namespace Vao.Sample
                                  .FirstOrDefault(t => t.Name == "PART_toggle");
             if (toggle == null) continue;
             toggle.MinHeight = theme.Components.Sidebar.SidebarMenuHeaderMinHeight;
-            toggle.Padding = sectionPadding;
+            toggle.Padding = menuHeaderPadding;
             toggle.FontSize = theme.Components.Sidebar.SidebarMenuHeaderFontSize;
          }
 

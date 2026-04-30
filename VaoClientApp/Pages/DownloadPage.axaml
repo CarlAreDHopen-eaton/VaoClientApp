@@ -33,7 +33,7 @@
                     <StackPanel Spacing="16" Margin="{DynamicResource PageMargin}">
 
                 <!-- Recording Selection Section -->
-                <Border Background="{DynamicResource SectionBg}" BorderBrush="{DynamicResource Divider}" BorderThickness="1" Padding="16" x:Name="grpSelectRecording">
+                <Border Background="{DynamicResource Surface1}" BorderBrush="{DynamicResource Divider}" BorderThickness="1" Padding="16" x:Name="grpSelectRecording">
                     <StackPanel Spacing="12">
                         <TextBlock Text="Available Recordings" Classes="section-header" Margin="0"/>
                         
@@ -50,7 +50,7 @@
                 </Border>
 
                 <!-- Download Request Section -->
-                <Border Background="{DynamicResource SectionBg}" BorderBrush="{DynamicResource Divider}" BorderThickness="1" Padding="16" x:Name="grpDownload">
+                <Border Background="{DynamicResource Surface1}" BorderBrush="{DynamicResource Divider}" BorderThickness="1" Padding="16" x:Name="grpDownload">
                     <StackPanel Spacing="12">
                         <TextBlock Text="Request Download" Classes="section-header" Margin="0"/>
                         
@@ -83,7 +83,7 @@
                 </Border>
 
                 <!-- Pending Downloads Section -->
-                <Border Background="{DynamicResource SectionBg}" BorderBrush="{DynamicResource Divider}" BorderThickness="1" Padding="16">
+                <Border Background="{DynamicResource Surface1}" BorderBrush="{DynamicResource Divider}" BorderThickness="1" Padding="16">
                     <Grid RowDefinitions="Auto,*,Auto">
                         <TextBlock Grid.Row="0" Text="Pending Downloads" Classes="section-header" Margin="0"/>
                         <ListBox Grid.Row="1" x:Name="lstPendingDownloads" Background="Transparent" MinHeight="100" Margin="0,8,0,8"/>
@@ -92,7 +92,7 @@
                 </Border>
 
                 <!-- Finished Downloads Section -->
-                <Border Background="{DynamicResource SectionBg}" BorderBrush="{DynamicResource Divider}" BorderThickness="1" Padding="16">
+                <Border Background="{DynamicResource Surface1}" BorderBrush="{DynamicResource Divider}" BorderThickness="1" Padding="16">
                     <Grid RowDefinitions="Auto,*,Auto">
                         <TextBlock Grid.Row="0" Text="Finished Downloads" Classes="section-header" Margin="0"/>
                         <ListBox Grid.Row="1" x:Name="lstFinishedDownloads" Background="Transparent" MinHeight="100" Margin="0,8,0,8"/>
@@ -101,7 +101,7 @@
                 </Border>
 
                 <!-- Messages Section -->
-                <Border Background="{DynamicResource SectionBg}" BorderBrush="{DynamicResource Divider}" BorderThickness="1" Padding="16">
+                <Border Background="{DynamicResource Surface1}" BorderBrush="{DynamicResource Divider}" BorderThickness="1" Padding="16">
                     <Grid RowDefinitions="Auto,*,Auto">
                         <TextBlock Grid.Row="0" Text="Messages" Classes="section-header" Margin="0"/>
                         <ListBox Grid.Row="1" x:Name="lstDownloadMessages" Background="Transparent" FontSize="12" MinHeight="100" Margin="0,8,0,8"/>

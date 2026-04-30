@@ -29,7 +29,7 @@
                     <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" Margin="{DynamicResource PageMarginNoBottom}">
                 
                 <!-- Alarm Information Card -->
-                <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Background="{DynamicResource SectionBg}" BorderBrush="{DynamicResource Divider}" BorderThickness="1" Padding="16">
+                <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Background="{DynamicResource Surface1}" BorderBrush="{DynamicResource Divider}" BorderThickness="1" Padding="16">
                     <StackPanel Spacing="8">
                         <TextBlock Text="Alarm Information" FontSize="14" FontWeight="SemiBold"/>
                         

@@ -633,7 +633,6 @@
                 <ResourceDictionary x:Key="Dark">
                     <!-- Background Colors - Layered depth system -->
                     <SolidColorBrush x:Key="AppBg" Color="#121212" />
-                    <SolidColorBrush x:Key="SectionBg" Color="#1E1E1E" />
                     <SolidColorBrush x:Key="SidebarBg" Color="#121212" />
                     <SolidColorBrush x:Key="SidebarCardBg" Color="#1E1E1E" />
                     <SolidColorBrush x:Key="VideoBg" Color="#000000" />
@@ -671,7 +670,6 @@
                 <ResourceDictionary x:Key="Light">
                     <!-- Background Colors -->
                     <SolidColorBrush x:Key="AppBg" Color="#EEEEEE" />
-                    <SolidColorBrush x:Key="SectionBg" Color="#FAFAFA" />
                     <SolidColorBrush x:Key="SidebarBg" Color="#F6F6F6" />
                     <SolidColorBrush x:Key="SidebarCardBg" Color="#F3F3F3" />
                     <SolidColorBrush x:Key="VideoBg" Color="#E0E0E0" />
