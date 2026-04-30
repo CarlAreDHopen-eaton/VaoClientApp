@@ -124,7 +124,7 @@
 
                             <!-- Camera Control -->
                             <Border Classes="sidebar-card">
-                                <Expander Classes="sidebar-section" x:Name="expCameraControl" IsExpanded="True" HorizontalAlignment="Stretch">
+                                <Expander Classes="sidebar-menu" x:Name="expCameraControl" IsExpanded="True" HorizontalAlignment="Stretch">
                                     <Expander.Header>
                                         <StackPanel Orientation="Horizontal" Spacing="8">
                                             <TextBlock Text="&#xE30F;" Classes="ms-icon" FontSize="{DynamicResource IconSize}" VerticalAlignment="Center"/>
@@ -176,7 +176,7 @@
 
                             <!-- Camera Selection -->
                             <Border Classes="sidebar-card">
-                                <Expander Classes="sidebar-section camera-selection-section" x:Name="expCameraSelection" IsExpanded="True" HorizontalAlignment="Stretch">
+                                <Expander Classes="sidebar-menu camera-selection-section" x:Name="expCameraSelection" IsExpanded="True" HorizontalAlignment="Stretch">
                                     <Expander.Header>
                                         <StackPanel Orientation="Horizontal" Spacing="8">
                                             <TextBlock Text="&#xE412;" Classes="ms-icon" FontSize="{DynamicResource IconSize}" VerticalAlignment="Center"/>
@@ -238,7 +238,7 @@
 
                             <!-- Preset Selection -->
                             <Border Classes="sidebar-card">
-                                <Expander Classes="sidebar-section" x:Name="expPresetSelection" IsExpanded="True" HorizontalAlignment="Stretch">
+                                <Expander Classes="sidebar-menu" x:Name="expPresetSelection" IsExpanded="True" HorizontalAlignment="Stretch">
                                     <Expander.Header>
                                         <StackPanel Orientation="Horizontal" Spacing="8">
                                             <TextBlock Text="&#xE55E;" Classes="ms-icon" FontSize="{DynamicResource IconSize}" VerticalAlignment="Center"/>
@@ -256,7 +256,7 @@
 
                             <!-- Alarms -->
                             <Border Classes="sidebar-card">
-                                <Expander Classes="sidebar-section alarm-selection-section" x:Name="expAlarms" IsExpanded="True" HorizontalAlignment="Stretch">
+                                <Expander Classes="sidebar-menu alarm-selection-section" x:Name="expAlarms" IsExpanded="True" HorizontalAlignment="Stretch">
                                     <Expander.Header>
                                         <StackPanel Orientation="Horizontal" Spacing="8">
                                             <TextBlock Text="&#xE7F5;" Classes="ms-icon" FontSize="{DynamicResource IconSize}" VerticalAlignment="Center"/>
@@ -318,7 +318,7 @@
 
                             <!-- Playback Selection -->
                             <Border Classes="sidebar-card">
-                                <Expander Classes="sidebar-section" x:Name="expPlaybackSelection" IsExpanded="True" HorizontalAlignment="Stretch">
+                                <Expander Classes="sidebar-menu" x:Name="expPlaybackSelection" IsExpanded="True" HorizontalAlignment="Stretch">
                                     <Expander.Header>
                                         <StackPanel Orientation="Horizontal" Spacing="8">
                                             <TextBlock Text="&#xE037;" Classes="ms-icon" FontSize="{DynamicResource IconSize}" VerticalAlignment="Center"/>
@@ -357,7 +357,7 @@
 
                             <!-- Download Recording -->
                             <Border Classes="sidebar-card">
-                                <Expander Classes="sidebar-section" x:Name="expDownloadRecording" IsExpanded="True" HorizontalAlignment="Stretch">
+                                <Expander Classes="sidebar-menu" x:Name="expDownloadRecording" IsExpanded="True" HorizontalAlignment="Stretch">
                                     <Expander.Header>
                                         <StackPanel Orientation="Horizontal" Spacing="8">
                                             <TextBlock Text="&#xF090;" Classes="ms-icon" FontSize="{DynamicResource IconSize}" VerticalAlignment="Center"/>

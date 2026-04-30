@@ -86,59 +86,59 @@
 
         <!-- Base Expander Toggle Button -->
         <Style Selector="Expander /template/ ToggleButton#PART_toggle">
-            <Setter Property="MinHeight" Value="{DynamicResource SidebarSectionHeaderMinHeight}"/>
-            <Setter Property="Padding" Value="{DynamicResource SidebarSectionHeaderPadding}"/>
+            <Setter Property="MinHeight" Value="{DynamicResource SidebarMenuHeaderMinHeight}"/>
+            <Setter Property="Padding" Value="{DynamicResource SidebarMenuHeaderPadding}"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         </Style>
-        <Style Selector="Expander.sidebar-section">
+        <Style Selector="Expander.sidebar-menu">
             <Setter Property="MinHeight" Value="0"/>
         </Style>
 
-        <!-- Sidebar Section Expander - Collapsed State -->
-        <Style Selector="Expander.sidebar-section /template/ ToggleButton#PART_toggle">
+        <!-- Sidebar Menu Expander - Collapsed State -->
+        <Style Selector="Expander.sidebar-menu /template/ ToggleButton#PART_toggle">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="{DynamicResource SidebarHeaderFg}"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="FontSize" Value="{DynamicResource SidebarSectionHeaderFontSize}"/>
-            <Setter Property="MinHeight" Value="{DynamicResource SidebarSectionHeaderMinHeight}"/>
-            <Setter Property="Padding" Value="{DynamicResource SidebarSectionHeaderPadding}"/>
+            <Setter Property="FontSize" Value="{DynamicResource SidebarMenuHeaderFontSize}"/>
+            <Setter Property="MinHeight" Value="{DynamicResource SidebarMenuHeaderMinHeight}"/>
+            <Setter Property="Padding" Value="{DynamicResource SidebarMenuHeaderPadding}"/>
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         </Style>
 
-        <!-- Sidebar Section Expander - Expanded State (Primary Blue) -->
-        <Style Selector="Expander.sidebar-section:expanded /template/ ToggleButton#PART_toggle">
+        <!-- Sidebar Menu Expander - Expanded State (Primary Blue) -->
+        <Style Selector="Expander.sidebar-menu:expanded /template/ ToggleButton#PART_toggle">
             <Setter Property="Background" Value="{DynamicResource Primary}"/>
             <Setter Property="Foreground" Value="{DynamicResource PrimaryHeaderFg}"/>
-            <Setter Property="MinHeight" Value="{DynamicResource SidebarSectionHeaderMinHeight}"/>
-            <Setter Property="Padding" Value="{DynamicResource SidebarSectionHeaderPadding}"/>
+            <Setter Property="MinHeight" Value="{DynamicResource SidebarMenuHeaderMinHeight}"/>
+            <Setter Property="Padding" Value="{DynamicResource SidebarMenuHeaderPadding}"/>
         </Style>
 
         <!-- Expander Content Text Colors -->
-        <Style Selector="Expander.sidebar-section > StackPanel">
+        <Style Selector="Expander.sidebar-menu > StackPanel">
             <Setter Property="TextElement.Foreground" Value="{DynamicResource SidebarHeaderFg}"/>
         </Style>
-        <Style Selector="Expander.sidebar-section > StackPanel TextBlock">
+        <Style Selector="Expander.sidebar-menu > StackPanel TextBlock">
             <Setter Property="Foreground" Value="{DynamicResource SidebarHeaderFg}"/>
         </Style>
-        <Style Selector="Expander.sidebar-section > WrapPanel">
+        <Style Selector="Expander.sidebar-menu > WrapPanel">
             <Setter Property="TextElement.Foreground" Value="{DynamicResource SidebarHeaderFg}"/>
         </Style>
-        <Style Selector="Expander.sidebar-section > WrapPanel TextBlock">
+        <Style Selector="Expander.sidebar-menu > WrapPanel TextBlock">
             <Setter Property="Foreground" Value="{DynamicResource SidebarHeaderFg}"/>
         </Style>
-        <Style Selector="Expander.sidebar-section > Grid">
+        <Style Selector="Expander.sidebar-menu > Grid">
             <Setter Property="TextElement.Foreground" Value="{DynamicResource SidebarHeaderFg}"/>
         </Style>
-        <Style Selector="Expander.sidebar-section > Grid TextBlock">
+        <Style Selector="Expander.sidebar-menu > Grid TextBlock">
             <Setter Property="Foreground" Value="{DynamicResource SidebarHeaderFg}"/>
         </Style>
 
         <!-- Form Controls in Expander Content -->
-        <Style Selector="Expander.sidebar-section ComboBox">
+        <Style Selector="Expander.sidebar-menu ComboBox">
             <Setter Property="Foreground" Value="{DynamicResource SidebarHeaderFg}"/>
         </Style>
-        <Style Selector="Expander.sidebar-section TextBox">
+        <Style Selector="Expander.sidebar-menu TextBox">
             <Setter Property="Foreground" Value="{DynamicResource SidebarHeaderFg}"/>
         </Style>
 
@@ -179,7 +179,7 @@
             <Setter Property="Background" Value="Transparent"/>
         </Style>
 
-        <Style Selector="Expander.sidebar-section /template/ ToggleButton /template/ Border">
+        <Style Selector="Expander.sidebar-menu /template/ ToggleButton /template/ Border">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
             <Setter Property="CornerRadius" Value="0"/>
@@ -612,7 +612,7 @@
             <CornerRadius x:Key="AvatarCornerRadius">22</CornerRadius>
             <x:Double x:Key="IconSize">24</x:Double>
             <x:Double x:Key="IconSizeSmall">20</x:Double>
-            <x:Double x:Key="SidebarSectionHeaderFontSize">14</x:Double>
+            <x:Double x:Key="SidebarMenuHeaderFontSize">14</x:Double>
             <x:Double x:Key="SectionHeaderFontSize">16</x:Double>
             <x:Double x:Key="PageHeaderTitleFontSize">20</x:Double>
             <x:Double x:Key="PageHeaderSubtitleFontSize">12</x:Double>

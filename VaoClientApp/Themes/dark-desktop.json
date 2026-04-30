@@ -72,9 +72,9 @@
     },
     "Sidebar": {
       "Width": 248.0,
-      "SectionHeaderFontSize": 13.0,
-      "SectionHeaderMinHeight": 48.0,
-      "SectionHeaderPaddingVertical": 12.0,
+      "SidebarMenuHeaderFontSize": 13.0,
+      "SidebarMenuHeaderMinHeight": 48.0,
+      "SidebarMenuHeaderPaddingVertical": 12.0,
       "SidebarMenuItemHeight": 30.0,
       "SidebarMenuSearchHeight": 30.0,
       "Colors": {

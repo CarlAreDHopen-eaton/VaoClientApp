@@ -207,9 +207,9 @@ namespace Vao.Sample
       {
          resources["AppBarHeight"] = Components.AppBar.Height;
          resources["SidebarWidth"] = Components.Sidebar.Width;
-         resources["SidebarSectionHeaderFontSize"] = Components.Sidebar.SectionHeaderFontSize;
-         resources["SidebarSectionHeaderMinHeight"] = Components.Sidebar.SectionHeaderMinHeight;
-         resources["SidebarSectionHeaderPadding"] = new Thickness(16, Components.Sidebar.SectionHeaderPaddingVertical);
+         resources["SidebarMenuHeaderFontSize"] = Components.Sidebar.SidebarMenuHeaderFontSize;
+         resources["SidebarMenuHeaderMinHeight"] = Components.Sidebar.SidebarMenuHeaderMinHeight;
+         resources["SidebarMenuHeaderPadding"] = new Thickness(16, Components.Sidebar.SidebarMenuHeaderPaddingVertical);
 
          resources["ButtonMinHeight"] = Sizing.Button.MinHeight;
          resources["InputMinHeight"] = Sizing.Input.MinHeight;
@@ -409,9 +409,9 @@ namespace Vao.Sample
             Sidebar = new ThemeSidebarComponent
             {
                Width = isTablet ? 280 : 248,
-               SectionHeaderFontSize = isTablet ? 14 : 13,
-               SectionHeaderMinHeight = isTablet ? 52 : 48,
-               SectionHeaderPaddingVertical = isTablet ? 14 : 12,
+               SidebarMenuHeaderFontSize = isTablet ? 14 : 13,
+               SidebarMenuHeaderMinHeight = isTablet ? 52 : 48,
+               SidebarMenuHeaderPaddingVertical = isTablet ? 14 : 12,
                SidebarMenuItemHeight = isTablet ? 44 : 28,
                   SidebarMenuSearchHeight = isTablet ? 44 : 28,
                Colors = isDark
@@ -456,9 +456,9 @@ namespace Vao.Sample
    public sealed class ThemeSidebarComponent
    {
       public double Width { get; set; }
-      public double SectionHeaderFontSize { get; set; }
-      public double SectionHeaderMinHeight { get; set; }
-      public double SectionHeaderPaddingVertical { get; set; }
+      public double SidebarMenuHeaderFontSize { get; set; }
+      public double SidebarMenuHeaderMinHeight { get; set; }
+      public double SidebarMenuHeaderPaddingVertical { get; set; }
       public double SidebarMenuItemHeight { get; set; } = 34;
       public double SidebarMenuSearchHeight { get; set; } = 30;
       public ThemeSidebarColors Colors { get; set; } = new();
