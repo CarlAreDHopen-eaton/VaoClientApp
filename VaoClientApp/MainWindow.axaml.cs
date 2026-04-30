@@ -142,6 +142,7 @@ namespace Vao.Sample
          InitializeAlarmStatusFilterMenu();
           InitializeSidebarMenuHeights(useSavedHeights: true);
 
+         RegisterPtzButtonHandlers();
          StartInitializeVlc();
          ClearPresetDropdown();
          ClearRecordingDropdown();
@@ -2096,6 +2097,16 @@ namespace Vao.Sample
       }
 
       private void SetCurrentLoggedInUser() { CurrentLoggedInUser = FlexRApiClient.GetLoggedInUserInfo(); }
+
+      private void RegisterPtzButtonHandlers()
+      {
+         var ptzButtons = new[] { btnPanLeft, btnPanRight, btnTiltUp, btnTiltDown, btnZoomIn, btnZoomOut, btnFocusFar, btnFocusNear };
+         foreach (var btn in ptzButtons)
+         {
+            btn.AddHandler(PointerPressedEvent, OnControlCameraPointerPressed, RoutingStrategies.Bubble, handledEventsToo: true);
+            btn.AddHandler(PointerReleasedEvent, OnControlCameraPointerReleased, RoutingStrategies.Bubble, handledEventsToo: true);
+         }
+      }
 
       private void OnControlCameraPointerPressed(object sender, PointerPressedEventArgs e)
       {
