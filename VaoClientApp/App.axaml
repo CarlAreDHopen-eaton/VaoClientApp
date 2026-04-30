@@ -554,6 +554,19 @@
             <Setter Property="FontWeight" Value="SemiBold"/>
         </Style>
 
+        <Style Selector="TextBox.borderless">
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        <Style Selector="TextBox.borderless:focus">
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        <Style Selector="TextBox.borderless:pointerover">
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        <Style Selector="TextBox.borderless /template/ Border#PART_BorderElement">
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+
     </Application.Styles>
 
     <Application.Resources>

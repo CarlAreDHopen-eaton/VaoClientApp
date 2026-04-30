@@ -187,6 +187,7 @@
                                         <TextBox Grid.Row="0"
                                                  x:Name="txtCameraSearch"
                                                  Watermark="Search by number or name"
+                                                 Classes="borderless"
                                                  TextChanged="txtCameraSearch_TextChanged"/>
                                         <ListBox Grid.Row="1"
                                                  x:Name="lstCameraSelection"
@@ -267,7 +268,8 @@
                                     <Grid x:Name="pnlAlarmsSelection" Margin="0" IsEnabled="False" RowDefinitions="Auto,Auto,Auto">
                                         <TextBox Grid.Row="0"
                                                  x:Name="txtAlarmSearch"
-                                                 Watermark="Search alarm by number or name"
+                                                 Watermark="Search by number or name"
+                                                 Classes="borderless"
                                                  TextChanged="txtAlarmSearch_TextChanged"/>
                                         <ListBox Grid.Row="1"
                                                  x:Name="lstAlarmSelection"
