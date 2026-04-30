@@ -176,7 +176,7 @@
 
                             <!-- Camera Selection -->
                             <Border Classes="sidebar-card">
-                                <Expander Classes="sidebar-menu camera-selection-section" x:Name="expCameraSelection" IsExpanded="True" HorizontalAlignment="Stretch">
+                                <Expander Classes="sidebar-menu camera-selection-menu" x:Name="expCameraSelection" IsExpanded="True" HorizontalAlignment="Stretch">
                                     <Expander.Header>
                                         <StackPanel Orientation="Horizontal" Spacing="8">
                                             <TextBlock Text="&#xE412;" Classes="ms-icon" FontSize="{DynamicResource IconSize}" VerticalAlignment="Center"/>
@@ -256,7 +256,7 @@
 
                             <!-- Alarms -->
                             <Border Classes="sidebar-card">
-                                <Expander Classes="sidebar-menu alarm-selection-section" x:Name="expAlarms" IsExpanded="True" HorizontalAlignment="Stretch">
+                                <Expander Classes="sidebar-menu alarm-selection-menu" x:Name="expAlarms" IsExpanded="True" HorizontalAlignment="Stretch">
                                     <Expander.Header>
                                         <StackPanel Orientation="Horizontal" Spacing="8">
                                             <TextBlock Text="&#xE7F5;" Classes="ms-icon" FontSize="{DynamicResource IconSize}" VerticalAlignment="Center"/>

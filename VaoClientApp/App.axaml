@@ -148,27 +148,27 @@
         </Style>
 
         <!-- Camera selection section should be edge-to-edge with no extra template spacing -->
-        <Style Selector="Expander.camera-selection-section /template/ ContentPresenter#PART_ContentPresenter">
+        <Style Selector="Expander.camera-selection-menu /template/ ContentPresenter#PART_ContentPresenter">
             <Setter Property="Margin" Value="0"/>
             <Setter Property="Padding" Value="0"/>
         </Style>
-        <Style Selector="Expander.camera-selection-section /template/ ContentPresenter">
+        <Style Selector="Expander.camera-selection-menu /template/ ContentPresenter">
             <Setter Property="Margin" Value="0"/>
             <Setter Property="Padding" Value="0"/>
         </Style>
-        <Style Selector="Expander.camera-selection-section /template/ Border">
+        <Style Selector="Expander.camera-selection-menu /template/ Border">
             <Setter Property="Padding" Value="0"/>
             <Setter Property="Margin" Value="0"/>
         </Style>
-        <Style Selector="Expander.alarm-selection-section /template/ ContentPresenter#PART_ContentPresenter">
+        <Style Selector="Expander.alarm-selection-menu /template/ ContentPresenter#PART_ContentPresenter">
             <Setter Property="Margin" Value="0"/>
             <Setter Property="Padding" Value="0"/>
         </Style>
-        <Style Selector="Expander.alarm-selection-section /template/ ContentPresenter">
+        <Style Selector="Expander.alarm-selection-menu /template/ ContentPresenter">
             <Setter Property="Margin" Value="0"/>
             <Setter Property="Padding" Value="0"/>
         </Style>
-        <Style Selector="Expander.alarm-selection-section /template/ Border">
+        <Style Selector="Expander.alarm-selection-menu /template/ Border">
             <Setter Property="Padding" Value="0"/>
             <Setter Property="Margin" Value="0"/>
         </Style>
