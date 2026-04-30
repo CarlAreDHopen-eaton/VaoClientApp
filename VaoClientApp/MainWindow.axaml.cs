@@ -499,7 +499,7 @@ namespace Vao.Sample
          }
       }
 
-      private async void HandleRenameCameraAsync()
+      private void HandleRenameCameraAsync()
       {
          if (mCurrentLoggedInUser == null || mCurrentLoggedInUser.Privilege < UserPrivilege.Supervisor)
             return;
@@ -508,73 +508,81 @@ namespace Vao.Sample
          if (selectedItem?.Camera == null)
             return;
 
+         var container = lstCameraSelection.ContainerFromItem(selectedItem) as Control;
+         if (container == null)
+            return;
+
+         var textBlock = container.GetVisualDescendants().OfType<TextBlock>()
+            .FirstOrDefault(tb => tb.Name == "txtCameraItemName");
+         var textBox = container.GetVisualDescendants().OfType<TextBox>()
+            .FirstOrDefault(tb => tb.Name == "txtCameraItemEdit");
+
+         if (textBlock == null || textBox == null)
+            return;
+
          var camera = selectedItem.Camera;
+         textBox.Text = camera.Name;
+         textBlock.IsVisible = false;
+         textBox.IsVisible = true;
+         textBox.Focus();
+         textBox.SelectAll();
 
-         var dialog = new Window
+         const string C_ALLOWED_CHARS = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm1234567890,.()?!-/_ ";
+
+         void CommitEdit()
          {
-            Title = "Rename Camera",
-            Width = 350,
-            Height = 150,
-            WindowStartupLocation = WindowStartupLocation.CenterOwner,
-            CanResize = false
-         };
+            string newName = textBox.Text?.Trim();
+            textBlock.IsVisible = true;
+            textBox.IsVisible = false;
 
-         var textBox = new TextBox
+            if (!string.IsNullOrEmpty(newName) && newName != camera.Name)
+            {
+               bool success = camera.SetName(newName);
+               if (success)
+               {
+                  camera.UpdateCameraData();
+                  ApplyCameraSearchFilter();
+               }
+            }
+         }
+
+         void CancelEdit()
          {
-            Text = camera.Name,
-            Margin = new Thickness(16),
-            VerticalAlignment = VerticalAlignment.Center
-         };
+            textBlock.IsVisible = true;
+            textBox.IsVisible = false;
+         }
 
-         var okButton = new Button
+         void OnTextInput(object s, TextInputEventArgs args)
          {
-            Content = "OK",
-            HorizontalAlignment = HorizontalAlignment.Right,
-            Margin = new Thickness(0, 0, 16, 16),
-            VerticalAlignment = VerticalAlignment.Bottom
-         };
+            if (args.Text != null && args.Text.Any(c => !C_ALLOWED_CHARS.Contains(c)))
+               args.Handled = true;
+         }
 
-         var grid = new Grid
-         {
-            RowDefinitions = RowDefinitions.Parse("*,Auto")
-         };
-         Grid.SetRow(textBox, 0);
-         Grid.SetRow(okButton, 1);
-         grid.Children.Add(textBox);
-         grid.Children.Add(okButton);
-         dialog.Content = grid;
-
-         string newName = null;
-         okButton.Click += (s, args) =>
-         {
-            newName = textBox.Text?.Trim();
-            dialog.Close();
-         };
-
-         textBox.KeyDown += (s, args) =>
+         void OnKeyDown(object s, KeyEventArgs args)
          {
             if (args.Key == Key.Enter)
             {
-               newName = textBox.Text?.Trim();
-               dialog.Close();
+               CommitEdit();
+               args.Handled = true;
             }
             else if (args.Key == Key.Escape)
             {
-               dialog.Close();
-            }
-         };
-
-         await dialog.ShowDialog(this);
-
-         if (!string.IsNullOrEmpty(newName) && newName != camera.Name)
-         {
-            bool success = camera.SetName(newName);
-            if (success)
-            {
-               camera.UpdateCameraData();
-               ApplyCameraSearchFilter();
+               CancelEdit();
+               args.Handled = true;
             }
          }
+
+         void OnLostFocus(object s, RoutedEventArgs args)
+         {
+            CommitEdit();
+            textBox.RemoveHandler(InputElement.TextInputEvent, OnTextInput);
+            textBox.KeyDown -= OnKeyDown;
+            textBox.LostFocus -= OnLostFocus;
+         }
+
+         textBox.AddHandler(InputElement.TextInputEvent, OnTextInput, RoutingStrategies.Tunnel);
+         textBox.KeyDown += OnKeyDown;
+         textBox.LostFocus += OnLostFocus;
       }
 
       private bool IsTextInputFocused()
