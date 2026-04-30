@@ -106,7 +106,7 @@
                             <TextBlock Text="&#xE55E;" Classes="ms-icon" FontSize="20" Foreground="{DynamicResource SidebarHeaderFg}"/>
                         </Button>
                         <Button Classes="icon" Click="btnExpandAlarms_Click" ToolTip.Tip="Alarms">
-                            <TextBlock Text="&#xE7F5;" Classes="ms-icon" FontSize="20" Foreground="{DynamicResource SidebarHeaderFg}"/>
+                            <TextBlock x:Name="iconSidebarAlarm" Text="&#xE7F5;" Classes="ms-icon" FontSize="20" Foreground="{DynamicResource SidebarHeaderFg}"/>
                         </Button>
                         <Button Classes="icon" Click="btnExpandPlayback_Click" ToolTip.Tip="Playback Selection">
                             <TextBlock Text="&#xE037;" Classes="ms-icon" FontSize="20" Foreground="{DynamicResource SidebarHeaderFg}"/>
@@ -268,7 +268,7 @@
                                 <Expander Classes="sidebar-menu alarm-selection-menu" x:Name="expAlarms" IsExpanded="True" HorizontalAlignment="Stretch">
                                     <Expander.Header>
                                         <StackPanel Orientation="Horizontal" Spacing="8">
-                                            <TextBlock Text="&#xE7F5;" Classes="ms-icon" FontSize="{DynamicResource IconSize}" VerticalAlignment="Center"/>
+                                            <TextBlock x:Name="iconAlarmHeader" Text="&#xE7F5;" Classes="ms-icon" FontSize="{DynamicResource IconSize}" VerticalAlignment="Center"/>
                                             <TextBlock Text="Alarms" VerticalAlignment="Center"/>
                                         </StackPanel>
                                     </Expander.Header>
@@ -292,7 +292,7 @@
                                                  Margin="0">
                                             <ListBox.ItemTemplate>
                                                 <DataTemplate>
-                                                    <Grid ColumnDefinitions="Auto,Auto,*" Margin="0">
+                                                    <Grid ColumnDefinitions="Auto,Auto,*,Auto" Margin="0" ToolTip.Tip="{Binding TooltipText}">
                                                         <TextBlock Grid.Column="0"
                                                                    Text="&#xE7F5;"
                                                                    Classes="ms-icon"
@@ -308,8 +308,20 @@
                                                         <TextBlock Grid.Column="2"
                                                                    Text="{Binding AlarmName}"
                                                                    TextTrimming="CharacterEllipsis"
-                                                                   ToolTip.Tip="{Binding AlarmName}"
                                                                    VerticalAlignment="Center"/>
+                                                        <Button Grid.Column="3"
+                                                                Classes="icon"
+                                                                ToolTip.Tip="Open Alarm Details"
+                                                                Click="btnAlarmEdit_Click"
+                                                                Padding="2"
+                                                                Margin="2,0,0,0"
+                                                                MinWidth="0"
+                                                                MinHeight="0"
+                                                                Width="24"
+                                                                Height="24"
+                                                                VerticalAlignment="Center">
+                                                            <TextBlock Text="&#xE3C9;" Classes="ms-icon" FontSize="14" Foreground="{DynamicResource LabelFg}"/>
+                                                        </Button>
                                                     </Grid>
                                                 </DataTemplate>
                                             </ListBox.ItemTemplate>

@@ -1906,24 +1906,32 @@ namespace Vao.Sample
 
          foreach (var alarm in alarmList.OrderBy(a => a.ComponentNumber))
          {
-            var item = new AlarmSelectionItem(alarm, GetBrushForStatus(alarm.Status));
-            mAlarmSelectionItems.Add(item);
-            alarm.PropertyChanged += (s, ev) =>
-            {
-               if (ev.PropertyName == nameof(Alarm.Status))
-                  Dispatcher.UIThread.Post(() => item.StatusBrush = GetBrushForStatus(alarm.Status));
-            };
-         }
+            var item = new AlarmSelectionItem(alarm, GetBrushForStatus(alarm.Status), GetTextForStatus(alarm.Status));
+             mAlarmSelectionItems.Add(item);
+             alarm.PropertyChanged += (s, ev) =>
+             {
+                if (ev.PropertyName == nameof(Alarm.Status))
+                {
+                   Dispatcher.UIThread.Post(() =>
+                   {
+                      item.StatusBrush = GetBrushForStatus(alarm.Status);
+                      item.StatusText = GetTextForStatus(alarm.Status);
+                      UpdateAlarmSidebarIcon();
+                   });
+                }
+                    };
+                }
 
-         ApplyAlarmSearchFilter();
-      }
+                ApplyAlarmSearchFilter();
+                UpdateAlarmSidebarIcon();
+             }
 
-      private void txtAlarmSearch_TextChanged(object sender, TextChangedEventArgs e)
-      {
-         ApplyAlarmSearchFilter();
-      }
+             private void txtAlarmSearch_TextChanged(object sender, TextChangedEventArgs e)
+             {
+                ApplyAlarmSearchFilter();
+             }
 
-      private void lstAlarmSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
+             private void lstAlarmSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
       {
          if (mIsUpdatingAlarmSelection)
             return;
@@ -1932,6 +1940,18 @@ namespace Vao.Sample
             return;
 
          SelectAlarm(selected.Alarm.ComponentNumber);
+      }
+
+      private void btnAlarmEdit_Click(object sender, RoutedEventArgs e)
+      {
+         if (sender is not Button btn)
+            return;
+
+         var item = btn.DataContext as AlarmSelectionItem;
+         if (item?.Alarm == null)
+            return;
+
+         SelectAlarm(item.Alarm.ComponentNumber);
          var alarmPage = new AlarmActionPage(FlexRApiClient, CurrentAlarm, mCurrentLoggedInUser)
          {
             NavigationService = mNavigationService
@@ -1967,6 +1987,42 @@ namespace Vao.Sample
             AlarmGeneralStatus.Tampered => GetBrushResource("AlarmStatusTampered", "#FF8C00"),
             _ => GetBrushResource("AlarmStatusDefault", "#78808080"),
          };
+      }
+
+      private string GetTextForStatus(AlarmGeneralStatus status)
+      {
+         return status switch
+         {
+            AlarmGeneralStatus.Active => "(Active)",
+            AlarmGeneralStatus.Inactive => "(Inactive)",
+            AlarmGeneralStatus.Acknowledged => "(Acknowledged)",
+            AlarmGeneralStatus.Tampered => "(Tampered)",
+            AlarmGeneralStatus.Disabled => "(Disabled)",
+            _ => "(Unknown)",
+         };
+      }
+
+      private void UpdateAlarmSidebarIcon()
+      {
+         bool hasActiveAlarm = mAlarmSelectionItems.Any(item =>
+            item.Alarm?.Status == AlarmGeneralStatus.Active);
+
+         if (iconSidebarAlarm != null)
+         {
+            if (hasActiveAlarm)
+               iconSidebarAlarm.Foreground = GetBrushForStatus(AlarmGeneralStatus.Active);
+            else
+               iconSidebarAlarm.ClearValue(TextBlock.ForegroundProperty);
+         }
+
+         var alarmHeader = this.FindControl<TextBlock>("iconAlarmHeader");
+         if (alarmHeader != null)
+         {
+            if (hasActiveAlarm)
+               alarmHeader.Foreground = GetBrushForStatus(AlarmGeneralStatus.Active);
+            else
+               alarmHeader.ClearValue(TextBlock.ForegroundProperty);
+         }
       }
 
       private void SetCurrentLoggedInUser() { CurrentLoggedInUser = FlexRApiClient.GetLoggedInUserInfo(); }
@@ -2360,11 +2416,13 @@ namespace Vao.Sample
    public class AlarmSelectionItem : INotifyPropertyChanged
    {
       private IBrush mStatusBrush;
+      private string mStatusText;
 
-      public AlarmSelectionItem(Alarm alarm, IBrush statusBrush)
+      public AlarmSelectionItem(Alarm alarm, IBrush statusBrush, string statusText)
       {
          Alarm = alarm;
          mStatusBrush = statusBrush;
+         mStatusText = statusText;
       }
 
       public Alarm Alarm { get; }
@@ -2384,6 +2442,21 @@ namespace Vao.Sample
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StatusBrush)));
          }
       }
+
+      public string StatusText
+      {
+         get => mStatusText;
+         set
+         {
+            if (mStatusText == value)
+               return;
+            mStatusText = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StatusText)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TooltipText)));
+         }
+      }
+
+      public string TooltipText => $"{AlarmNumberText} {AlarmName} {StatusText}".Trim();
 
       public bool Matches(string query)
       {
