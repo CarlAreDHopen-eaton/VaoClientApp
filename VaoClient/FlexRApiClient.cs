@@ -162,6 +162,15 @@ namespace Vao.Client
       }
 
       /// <summary>
+      /// Gets the system implementation version (name and version string).
+      /// </summary>
+      /// <returns></returns>
+      public ImplementationVersion GetImplementationVersion()
+      {
+         return this.ExecuteGetImplementationVersion();
+      }
+
+      /// <summary>
       /// Stops  the client.
       /// </summary>
       public void StopClient()

@@ -162,6 +162,17 @@ namespace Vao.Client.Utility
          return null;
       }
 
+      internal static ImplementationVersion ParseImplementationVersion(string strJson, FlexRApiClient flexRApiClient)
+      {
+         if (!string.IsNullOrEmpty(strJson))
+         {
+            JsonImplementationVersion implVersion = JsonConvert.DeserializeObject<JsonImplementationVersion>(strJson);
+            return new ImplementationVersion(implVersion, flexRApiClient);
+         }
+
+         return null;
+      }
+
       /// <summary>
       /// Parses the JSON message text to a list of Alarm objects.
       /// </summary>

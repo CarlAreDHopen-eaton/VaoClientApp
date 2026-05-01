@@ -30,6 +30,8 @@ namespace Vao.Sample
       private bool mIsCameraSelected = false;
       private bool mIsPlaybackStarted = false;
       private bool mApiSupportsPlayback = false;
+      private ApiVersion mApiVersion;
+      private ImplementationVersion mImplementationVersion;
 
       private FlexRApiClient mFlexRApiClient;
       private VideoView mVideoControl;
@@ -850,6 +852,10 @@ namespace Vao.Sample
           tip += $"\n{status}";
           if (IsStarted && !string.IsNullOrEmpty(host))
              tip += $"\nServer: {host}";
+          if (IsStarted && mApiVersion != null)
+             tip += $"\nAPI: v{mApiVersion.MajorVersion}.{mApiVersion.MinorVersion}";
+          if (IsStarted && mImplementationVersion != null)
+             tip += $"\n{mImplementationVersion.Name}: {mImplementationVersion.Version}";
           ToolTip.SetTip(btnUserProfile, tip);
 
           // Gray circle when disconnected, themed color when connected
@@ -1403,6 +1409,9 @@ namespace Vao.Sample
             mFlexRApiClient = null;
          }
          mConnectedEndpointDisplay = string.Empty;
+         mApiVersion = null;
+         mImplementationVersion = null;
+         UpdateWindowTitle();
          StopRtspStream();
          mActiveRtspUrl = null;
          CurrentCamera = null;
@@ -1850,13 +1859,36 @@ namespace Vao.Sample
       private void CheckApiVersion(ApiVersion apiversion = null)
       {
          apiversion ??= mFlexRApiClient.GetApiVersion();
+         mApiVersion = apiversion;
          if (apiversion != null)
          {
             Version version = new Version(apiversion.MajorVersion, apiversion.MinorVersion);
             if (version >= new Version(1, 1))
                ApiSupportsPlayback = true;
          }
+
+         try
+         {
+            mImplementationVersion = mFlexRApiClient.GetImplementationVersion();
+         }
+         catch
+         {
+            mImplementationVersion = null;
+         }
+
+         UpdateWindowTitle();
          UpdateEnabled();
+      }
+
+      private void UpdateWindowTitle()
+      {
+         const string C_BASE_TITLE = "HERNIS FLEX VAO API Demo";
+         if (IsStarted && mImplementationVersion != null)
+            Title = $"{C_BASE_TITLE} (HERNIS FLEX version {mImplementationVersion.Version})";
+         else if (!IsStarted)
+            Title = $"{C_BASE_TITLE} (Not connected)";
+         else
+            Title = C_BASE_TITLE;
       }
 
       private static string GetMaskedUrl(string url)

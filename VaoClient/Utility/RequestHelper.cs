@@ -172,7 +172,7 @@ namespace Vao.Client.Utility
       {
          RestClient client = flexRApiClient.GetRestClient();
          RestRequest request = new RestRequest("version/api", Method.Options);
-         
+
          mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
          string strResponse = flexRApiClient.ValidateResponseContent(response);
@@ -184,6 +184,23 @@ namespace Vao.Client.Utility
 
          ApiVersion apiVersion = JsonParser.ParseApiVersion(strResponse, flexRApiClient);
          return apiVersion;
+      }
+
+      internal static ImplementationVersion ExecuteGetImplementationVersion(this FlexRApiClient flexRApiClient)
+      {
+         RestClient client = flexRApiClient.GetRestClient();
+         RestRequest request = new RestRequest("version/implementation", Method.Options);
+
+         mRateLimiter.WaitForSlot();
+         RestResponse response = client.Execute(request);
+         string strResponse = flexRApiClient.ValidateResponseContent(response);
+         if (strResponse == null)
+         {
+            return null;
+         }
+
+         ImplementationVersion implVersion = JsonParser.ParseImplementationVersion(strResponse, flexRApiClient);
+         return implVersion;
       }
 
       internal static string ExecuteGetStatusMessages(this FlexRApiClient flexRApiClient, DateTime dateTime)
