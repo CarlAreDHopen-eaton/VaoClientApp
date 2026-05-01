@@ -509,8 +509,48 @@ namespace Vao.Sample
                NavigateToNextCamera();
                e.Handled = true;
             }
+            else
+            {
+               var slot = HotkeySlotFromPhysicalKey(e.PhysicalKey);
+               if (slot >= 0 && mCurrentCamera != null)
+               {
+                  AppSettings.Default.CameraHotkeys[slot] = mCurrentCamera.ComponentNumber;
+                  SaveSettings();
+                  WriteMessageLog(MessageSource.Config, $"Camera {mCurrentCamera.ComponentNumber} assigned to slot {slot} (Ctrl+{slot})", LogLevel.Notice);
+                  e.Handled = true;
+               }
+            }
+         }
+         else if ((e.KeyModifiers & KeyModifiers.Control) != 0 && (e.KeyModifiers & KeyModifiers.Shift) == 0)
+         {
+            var slot = HotkeySlotFromPhysicalKey(e.PhysicalKey);
+            if (slot >= 0 && IsStarted)
+            {
+               var hotkeys = AppSettings.Default.CameraHotkeys;
+               if (hotkeys.TryGetValue(slot, out int cameraNo) && cameraNo != 0)
+               {
+                  int streamNo = tglSubChannel.IsChecked == true ? 2 : 1;
+                  SelectCamera(cameraNo, streamNo);
+                  e.Handled = true;
+               }
+            }
          }
       }
+
+      private static int HotkeySlotFromPhysicalKey(PhysicalKey key) => key switch
+      {
+         PhysicalKey.Digit0 => 0,
+         PhysicalKey.Digit1 => 1,
+         PhysicalKey.Digit2 => 2,
+         PhysicalKey.Digit3 => 3,
+         PhysicalKey.Digit4 => 4,
+         PhysicalKey.Digit5 => 5,
+         PhysicalKey.Digit6 => 6,
+         PhysicalKey.Digit7 => 7,
+         PhysicalKey.Digit8 => 8,
+         PhysicalKey.Digit9 => 9,
+         _ => -1
+      };
 
       private void HandleRenameCameraAsync()
       {

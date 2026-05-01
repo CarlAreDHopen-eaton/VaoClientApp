@@ -57,6 +57,9 @@ namespace Vao.Sample
       public double CameraSidebarMenuHeight { get; set; } = 240.0;
       public double AlarmSidebarMenuHeight { get; set; } = 240.0;
 
+      /// <summary>Camera hotkey slots 0-9, value is camera component number (0 = unassigned).</summary>
+      public Dictionary<int, int> CameraHotkeys { get; set; } = new Dictionary<int, int>();
+
       public bool ShowActiveAlarms { get; set; } = true;
       public bool ShowTamperedAlarms { get; set; } = true;
       public bool ShowAcknowledgedAlarms { get; set; } = true;
