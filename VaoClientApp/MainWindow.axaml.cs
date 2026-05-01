@@ -439,6 +439,7 @@ namespace Vao.Sample
 
          // Recreate the native video surface to avoid stale handles after overlay detach.
          mVideoControl = new VideoView();
+         mVideoControl.Focusable = false;
          pnlVideo.Children.Add(mVideoControl);
 
          if (mMediaPlayer != null)
@@ -1798,6 +1799,8 @@ namespace Vao.Sample
          {
             var media = new Media(mLibVlc, uri);
              mMediaPlayer = new MediaPlayer(media);
+             mMediaPlayer.EnableKeyInput = false;
+             mMediaPlayer.EnableMouseInput = false;
              mMediaPlayer.EncounteredError += MediaPlayer_EncounteredError;
              mMediaPlayer.Opening += MediaPlayer_Opening;
              if (AppSettings.Default.UseTcp) media.AddOption(":rtsp-tcp");
@@ -1820,6 +1823,7 @@ namespace Vao.Sample
          if (mVideoControl == null)
          {
             mVideoControl = new VideoView();
+            mVideoControl.Focusable = false;
          }
 
          if (!pnlVideo.Children.Contains(mVideoControl))
