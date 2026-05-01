@@ -1792,9 +1792,32 @@ namespace Vao.Sample
 
       private MenuItem CreateCameraMenuItem(Camera camera)
       {
+         string iconIndicator = camera.HasPanTiltControl ? "PTZ" : "Fixed";
+         string labelText = $"#{camera.ComponentNumber:D4} [{iconIndicator}] {camera.Name}";
+
+         int hotkeySlot = GetCameraHotkeySlot(camera.ComponentNumber);
+         object header;
+         if (hotkeySlot >= 0)
+         {
+            var panel = new StackPanel { Orientation = Avalonia.Layout.Orientation.Horizontal, Spacing = 8 };
+            panel.Children.Add(new TextBlock { Text = labelText });
+            panel.Children.Add(new TextBlock
+            {
+               Text = $"Ctrl+{hotkeySlot}",
+               Opacity = 0.5,
+               FontSize = 11,
+               VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center
+            });
+            header = panel;
+         }
+         else
+         {
+            header = labelText;
+         }
+
          var item = new MenuItem
          {
-            Header = camera.Name,
+            Header = header,
             Tag = camera
          };
          if (mCurrentCamera == camera)
@@ -1807,6 +1830,21 @@ namespace Vao.Sample
             SelectCamera(camera.ComponentNumber, streamNo);
          };
          return item;
+      }
+
+      private static int GetCameraHotkeySlot(int cameraNumber)
+      {
+         var hotkeys = AppSettings.Default.CameraHotkeys;
+         if (hotkeys == null)
+            return -1;
+
+         foreach (var kvp in hotkeys)
+         {
+            if (kvp.Value == cameraNumber)
+               return kvp.Key;
+         }
+
+         return -1;
       }
 
       private void CheckApiVersion(ApiVersion apiversion = null)
