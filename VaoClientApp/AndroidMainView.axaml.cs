@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Controls.Shapes;
@@ -98,16 +99,24 @@ public partial class AndroidMainView : UserControl
             IgnoreCertificateErrors = true,
             ConnectionTimeoutMs = 10000
          };
+         candidate.OnMessage += (_, args) =>
+            Trace.WriteLine($"[VaoConnect] OnMessage [{args.Level}]: {args.Message}");
 
          await Task.Run(() =>
          {
+            Trace.WriteLine($"[VaoConnect] Attempting StartClient host={host} port={port} https={useHttps}");
             started = candidate.StartClient();
+            Trace.WriteLine($"[VaoConnect] StartClient returned: {started}");
             if (started)
+            {
                cameraList = candidate.GetCameraList();
+               Trace.WriteLine($"[VaoConnect] GetCameraList returned {cameraList?.Count ?? -1} cameras");
+            }
          });
       }
       catch (Exception ex)
       {
+         Trace.WriteLine($"[VaoConnect] Exception: {ex}");
          SetStatus(txtConnectStatus, $"Connection failed: {ex.Message}", isError: true);
          candidate?.StopClient();
          mIsConnecting = false;

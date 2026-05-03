@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.vao.clientapp">
   <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="35" />
+  <uses-permission android:name="android.permission.INTERNET" />
   <application android:label="VaoClientApp" android:allowBackup="true" android:theme="@style/Theme.AppCompat.NoActionBar">
     <activity android:name="com.vao.clientapp.MainActivity"
               android:label="VaoClientApp"

@@ -282,7 +282,9 @@ namespace Vao.Client
             string strMessage;
             if (response.ErrorException != null)
             {
-               strMessage = $"{response.ErrorException.Message} {response.StatusDescription}";
+               var inner = response.ErrorException.InnerException;
+               var detail = inner != null ? $" [{inner.GetType().Name}: {inner.Message}]" : string.Empty;
+               strMessage = $"{response.ErrorException.Message}{detail} {response.StatusDescription}";
             }
             else
             {
