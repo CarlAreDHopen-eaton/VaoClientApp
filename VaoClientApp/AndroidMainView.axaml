@@ -4,6 +4,7 @@
              Background="{DynamicResource AppBg}">
   <Grid RowDefinitions="Auto,*">
 
+
     <!-- ===== App Bar ===== -->
     <Border Grid.Row="0"
             Height="{DynamicResource AppBarHeight}"
@@ -109,59 +110,289 @@
       <!-- Connected View (visible after successful connect) -->
       <Grid x:Name="pnlConnected"
             IsVisible="False"
-            ColumnDefinitions="280,*">
+            ColumnDefinitions="300,*">
 
-        <!-- Camera Sidebar -->
+        <!-- ===== Left Sidebar ===== -->
         <Border Grid.Column="0"
                 Background="{DynamicResource SidebarBg}"
                 BorderBrush="{DynamicResource SidebarBorder}"
                 BorderThickness="0,0,1,0">
-          <Grid RowDefinitions="Auto,*">
-            <!-- Sidebar header -->
-            <Border Grid.Row="0"
-                    BorderBrush="{DynamicResource Divider}"
-                    BorderThickness="0,0,0,1"
-                    Padding="16,14">
-              <TextBlock Text="Cameras"
-                         FontSize="14"
-                         FontWeight="SemiBold"
-                         Foreground="{DynamicResource SidebarHeaderFg}"/>
-            </Border>
+          <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Spacing="0">
 
-            <!-- Camera list -->
-            <ListBox x:Name="lstCameras"
-                     Grid.Row="1"
-                     Background="Transparent"
-                     SelectionChanged="lstCameras_SelectionChanged">
-              <ListBox.ItemTemplate>
-                <DataTemplate>
-                  <StackPanel Margin="4,6" Spacing="2">
-                    <TextBlock Text="{Binding Name}"
-                               FontSize="14"
-                               TextTrimming="CharacterEllipsis"/>
-                    <TextBlock Text="{Binding ComponentNumber, StringFormat='Camera \{0\}'}"
-                               FontSize="11"
-                               Foreground="{DynamicResource LabelFg}"/>
+              <!-- Camera Control -->
+              <Border BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1">
+                <Expander x:Name="expCameraControl" IsExpanded="True" HorizontalAlignment="Stretch">
+                  <Expander.Header>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                      <TextBlock Text="&#xF113;" Classes="blui-icon" FontSize="18" VerticalAlignment="Center"/>
+                      <TextBlock Text="Camera Control" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                    </StackPanel>
+                  </Expander.Header>
+                  <StackPanel Spacing="8" Margin="16,8,16,16" x:Name="grpCameraControl" IsEnabled="False">
+                    <Grid ColumnDefinitions="48,48,48,*,48,48" RowDefinitions="48,48,48">
+                      <Button Grid.Row="0" Grid.Column="0" x:Name="btnFocusNear" ToolTip.Tip="Focus Near" Width="48" Height="48" Padding="2" Classes="ptz-icon">
+                        <TextBlock Text="&#xE883;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
+                      </Button>
+                      <Button Grid.Row="0" Grid.Column="1" x:Name="btnTiltUp" ToolTip.Tip="Tilt Up" Width="48" Height="48" Padding="2" Classes="ptz-icon">
+                        <TextBlock Text="&#xE5D8;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
+                      </Button>
+                      <Button Grid.Row="0" Grid.Column="2" x:Name="btnZoomIn" ToolTip.Tip="Zoom In" Width="48" Height="48" Padding="2" Classes="ptz-icon">
+                        <TextBlock Text="&#xE8FF;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
+                      </Button>
+                      <Button Grid.Row="1" Grid.Column="0" x:Name="btnPanLeft" ToolTip.Tip="Pan Left" Width="48" Height="48" Padding="2" Classes="ptz-icon">
+                        <TextBlock Text="&#xE5C4;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
+                      </Button>
+                      <Button Grid.Row="1" Grid.Column="1" IsHitTestVisible="False" Width="48" Height="48" Padding="2" Classes="ptz-icon ptz-icon-transparent">
+                        <TextBlock Text="&#xE074;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
+                      </Button>
+                      <Button Grid.Row="1" Grid.Column="2" x:Name="btnPanRight" ToolTip.Tip="Pan Right" Width="48" Height="48" Padding="2" Classes="ptz-icon">
+                        <TextBlock Text="&#xE5C8;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
+                      </Button>
+                      <Button Grid.Row="2" Grid.Column="0" x:Name="btnFocusFar" ToolTip.Tip="Focus Far" Width="48" Height="48" Padding="2" Classes="ptz-icon">
+                        <TextBlock Text="&#xE882;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
+                      </Button>
+                      <Button Grid.Row="2" Grid.Column="1" x:Name="btnTiltDown" ToolTip.Tip="Tilt Down" Width="48" Height="48" Padding="2" Classes="ptz-icon">
+                        <TextBlock Text="&#xE5DB;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
+                      </Button>
+                      <Button Grid.Row="2" Grid.Column="2" x:Name="btnZoomOut" ToolTip.Tip="Zoom Out" Width="48" Height="48" Padding="2" Classes="ptz-icon">
+                        <TextBlock Text="&#xE900;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
+                      </Button>
+                      <Button Grid.Row="0" Grid.Column="4" x:Name="btnAbsolutePosition" ToolTip.Tip="Absolute Position" Click="btnAbsolutePosition_Click" Width="48" Height="48" Padding="2" Classes="ptz-icon">
+                        <TextBlock Text="&#xE074;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
+                      </Button>
+                      <Button Grid.Row="1" Grid.Column="4" x:Name="btnCameraLock" ToolTip.Tip="Camera Lock" Click="btnCameraLock_Click" Width="48" Height="48" Padding="2" Classes="ptz-icon">
+                        <TextBlock x:Name="iconCameraLock" Text="&#xE898;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
+                      </Button>
+                    </Grid>
+                    <TextBlock x:Name="lblCurrentCamera"
+                               Text="Camera: (No camera selected)"
+                               Foreground="{DynamicResource LabelFg}"
+                               FontSize="12"
+                               TextWrapping="Wrap"/>
                   </StackPanel>
-                </DataTemplate>
-              </ListBox.ItemTemplate>
-            </ListBox>
-          </Grid>
+                </Expander>
+              </Border>
+
+              <!-- Camera Selection -->
+              <Border BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1">
+                <Expander x:Name="expCameraSelection" IsExpanded="True" HorizontalAlignment="Stretch">
+                  <Expander.Header>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                      <TextBlock Text="&#xF113;" Classes="blui-icon" FontSize="18" VerticalAlignment="Center"/>
+                      <TextBlock Text="Camera Selection" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                    </StackPanel>
+                  </Expander.Header>
+                  <Grid x:Name="pnlCameraSelection" IsEnabled="False" RowDefinitions="Auto,Auto">
+                    <TextBox Grid.Row="0"
+                             x:Name="txtCameraSearch"
+                             Watermark="Search by number or name"
+                             Classes="borderless"
+                             MinHeight="{DynamicResource SidebarMenuSearchHeight}"
+                             TextChanged="txtCameraSearch_TextChanged"/>
+                    <ListBox Grid.Row="1"
+                             x:Name="lstCameraSelection"
+                             Height="200"
+                             SelectionChanged="lstCameraSelection_SelectionChanged"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto"
+                             Background="Transparent"
+                             BorderBrush="{DynamicResource Divider}"
+                             BorderThickness="1"
+                             CornerRadius="4"
+                             Padding="0"
+                             Margin="8,0,8,8">
+                      <ListBox.ItemTemplate>
+                        <DataTemplate>
+                          <Grid ColumnDefinitions="Auto,Auto,*" Margin="0">
+                            <TextBlock Grid.Column="0"
+                                       Text="{Binding CameraTypeIcon}"
+                                       Classes="blui-icon"
+                                       FontSize="18"
+                                       Foreground="{DynamicResource LabelFg}"
+                                       VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1"
+                                       Text="{Binding CameraNumberText}"
+                                       Margin="6,0,6,0"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource LabelFg}"
+                                       VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="2"
+                                       Text="{Binding CameraName}"
+                                       TextTrimming="CharacterEllipsis"
+                                       VerticalAlignment="Center"/>
+                          </Grid>
+                        </DataTemplate>
+                      </ListBox.ItemTemplate>
+                    </ListBox>
+                  </Grid>
+                </Expander>
+              </Border>
+
+              <!-- Preset Selection -->
+              <Border BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1">
+                <Expander x:Name="expPresetSelection" IsExpanded="True" HorizontalAlignment="Stretch">
+                  <Expander.Header>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                      <TextBlock Text="&#xE55E;" Classes="ms-icon" FontSize="18" VerticalAlignment="Center"/>
+                      <TextBlock Text="Preset Selection" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                    </StackPanel>
+                  </Expander.Header>
+                  <StackPanel x:Name="grpSelectPreset" Spacing="8" Margin="16,8,16,16" IsEnabled="False">
+                    <Grid ColumnDefinitions="*,Auto">
+                      <ComboBox Grid.Column="0" x:Name="selPreset" MinWidth="0" HorizontalAlignment="Stretch"/>
+                      <Button Grid.Column="1" x:Name="btnGotoPreset" Content="Go" Click="btnGotoPreset_Click"
+                              MinWidth="64" Margin="8,0,0,0" Classes="primary"/>
+                    </Grid>
+                  </StackPanel>
+                </Expander>
+              </Border>
+
+              <!-- Alarms -->
+              <Border BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1">
+                <Expander x:Name="expAlarms" IsExpanded="True" HorizontalAlignment="Stretch">
+                  <Expander.Header>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                      <TextBlock x:Name="iconAlarmHeader" Text="&#xF1DB;" Classes="blui-icon" FontSize="18" VerticalAlignment="Center"/>
+                      <TextBlock Text="Alarms" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                    </StackPanel>
+                  </Expander.Header>
+                  <Grid x:Name="pnlAlarmsSelection" IsEnabled="False" RowDefinitions="Auto,Auto">
+                    <TextBox Grid.Row="0"
+                             x:Name="txtAlarmSearch"
+                             Watermark="Search by number or name"
+                             Classes="borderless"
+                             MinHeight="{DynamicResource SidebarMenuSearchHeight}"
+                             TextChanged="txtAlarmSearch_TextChanged"/>
+                    <ListBox Grid.Row="1"
+                             x:Name="lstAlarmSelection"
+                             Height="200"
+                             SelectionChanged="lstAlarmSelection_SelectionChanged"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto"
+                             Background="Transparent"
+                             BorderBrush="{DynamicResource Divider}"
+                             BorderThickness="1"
+                             CornerRadius="4"
+                             Padding="0"
+                             Margin="8,0,8,8">
+                      <ListBox.ItemTemplate>
+                        <DataTemplate>
+                          <Grid ColumnDefinitions="Auto,Auto,*,Auto" Margin="0">
+                            <TextBlock Grid.Column="0"
+                                       Text="{Binding AlarmIcon}"
+                                       Classes="ms-icon"
+                                       FontSize="16"
+                                       Foreground="{Binding StatusBrush}"
+                                       VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1"
+                                       Text="{Binding AlarmNumberText}"
+                                       Margin="6,0,6,0"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource LabelFg}"
+                                       VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="2"
+                                       Text="{Binding AlarmName}"
+                                       TextTrimming="CharacterEllipsis"
+                                       VerticalAlignment="Center"/>
+                            <Button Grid.Column="3"
+                                    Classes="icon"
+                                    ToolTip.Tip="Open Alarm Details"
+                                    Click="btnAlarmEdit_Click"
+                                    Padding="2"
+                                    Margin="2,0,0,0"
+                                    MinWidth="0"
+                                    MinHeight="0"
+                                    Width="32"
+                                    Height="32"
+                                    VerticalAlignment="Center">
+                              <TextBlock Text="&#xE3C9;" Classes="ms-icon" FontSize="14" Foreground="{DynamicResource LabelFg}"/>
+                            </Button>
+                          </Grid>
+                        </DataTemplate>
+                      </ListBox.ItemTemplate>
+                    </ListBox>
+                  </Grid>
+                </Expander>
+              </Border>
+
+              <!-- Playback Selection -->
+              <Border BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1">
+                <Expander x:Name="expPlaybackSelection" IsExpanded="False" HorizontalAlignment="Stretch">
+                  <Expander.Header>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                      <TextBlock Text="&#xE037;" Classes="ms-icon" FontSize="18" VerticalAlignment="Center"/>
+                      <TextBlock Text="Playback" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                    </StackPanel>
+                  </Expander.Header>
+                  <StackPanel x:Name="grpSelectPlayback" Spacing="12" Margin="16,8,16,16" IsEnabled="False">
+                    <ComboBox x:Name="selPlayback" HorizontalAlignment="Stretch"/>
+                    <Grid ColumnDefinitions="*,8,*">
+                      <Button Grid.Column="0" x:Name="btnPlayPlayback" Content="Play"
+                              Click="btnPlayPlayback_Click" HorizontalAlignment="Stretch" Classes="primary"/>
+                      <Button Grid.Column="2" x:Name="btnStopPlayback" Content="Stop"
+                              Click="btnStopPlayback_Click" HorizontalAlignment="Stretch" Classes="outlined"/>
+                    </Grid>
+                    <StackPanel Spacing="4">
+                      <TextBlock Text="Date (YYYY-MM-DD)" FontSize="12" Foreground="{DynamicResource LabelFg}"/>
+                      <Grid ColumnDefinitions="*,8,48">
+                        <TextBox Grid.Column="0" x:Name="txtDatePlayback" Watermark="2024-01-15" HorizontalAlignment="Stretch"/>
+                        <Button Grid.Column="2" x:Name="btnPickDate" Click="btnPickDate_Click"
+                                ToolTip.Tip="Pick date" Classes="icon" Width="48" Height="48">
+                          <TextBlock Text="&#xE935;" Classes="ms-icon" FontSize="20"/>
+                        </Button>
+                      </Grid>
+                    </StackPanel>
+                    <StackPanel Spacing="4">
+                      <TextBlock Text="Time (HH:MM:SS)" FontSize="12" Foreground="{DynamicResource LabelFg}"/>
+                      <Grid ColumnDefinitions="*,8,48">
+                        <TextBox Grid.Column="0" x:Name="txtTimePlayback" Watermark="14:30:00" HorizontalAlignment="Stretch"/>
+                        <Button Grid.Column="2" x:Name="btnPickTime" Click="btnPickTime_Click"
+                                ToolTip.Tip="Pick time" Classes="icon" Width="48" Height="48">
+                          <TextBlock Text="&#xE8B5;" Classes="ms-icon" FontSize="20"/>
+                        </Button>
+                      </Grid>
+                    </StackPanel>
+                    <Button x:Name="btnGotoTime" Content="Go to Time" Click="btnGotoTime_Click"
+                            HorizontalAlignment="Stretch" Classes="primary"/>
+                  </StackPanel>
+                </Expander>
+              </Border>
+
+              <!-- Download Recording -->
+              <Border BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1">
+                <Expander x:Name="expDownloadRecording" IsExpanded="False" HorizontalAlignment="Stretch">
+                  <Expander.Header>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                      <TextBlock Text="&#xF090;" Classes="ms-icon" FontSize="18" VerticalAlignment="Center"/>
+                      <TextBlock Text="Download Recording" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                    </StackPanel>
+                  </Expander.Header>
+                  <StackPanel Spacing="8" Margin="16,8,16,16">
+                    <TextBlock Text="Export video recordings." FontSize="12"
+                               Foreground="{DynamicResource LabelFg}" TextWrapping="Wrap"/>
+                    <Button x:Name="btnDownload" Content="Download"
+                            Click="btnOpenDownloadWindow_Click"
+                            HorizontalAlignment="Stretch" Classes="outlined"/>
+                  </StackPanel>
+                </Expander>
+              </Border>
+
+            </StackPanel>
+          </ScrollViewer>
         </Border>
 
-        <!-- Main area: camera header + video placeholder -->
-        <Grid Grid.Column="1" RowDefinitions="Auto,*">
+        <!-- ===== Right area: camera header + video placeholder + messages ===== -->
+        <Grid Grid.Column="1" RowDefinitions="Auto,*,Auto,Auto">
 
-          <!-- Camera / video header bar -->
-          <Border x:Name="brdCameraHeader"
+          <!-- Camera header bar -->
+          <Border x:Name="brdVideoHeader"
                   Grid.Row="0"
-                  MinHeight="64"
+                  MinHeight="56"
                   Background="{DynamicResource VideoHeaderNeutral}"
                   Padding="16,0">
             <StackPanel VerticalAlignment="Center" Spacing="2">
-              <TextBlock x:Name="txtCameraTitle"
+              <TextBlock x:Name="txtVideoHeader"
                          Text="No Camera Selected"
-                         FontSize="18"
+                         FontSize="16"
                          FontWeight="SemiBold"
                          Foreground="{DynamicResource PrimaryHeaderFg}"/>
               <TextBlock x:Name="txtCameraSubtitle"
@@ -172,11 +403,11 @@
             </StackPanel>
           </Border>
 
-          <!-- Video area placeholder -->
+          <!-- Video placeholder -->
           <Border Grid.Row="1" Background="{DynamicResource VideoBg}">
             <StackPanel VerticalAlignment="Center"
                         HorizontalAlignment="Center"
-                        Spacing="16"
+                        Spacing="12"
                         Margin="32">
               <TextBlock x:Name="txtVideoPlaceholder"
                          Text="Select a camera to begin"
@@ -186,7 +417,7 @@
                          TextWrapping="Wrap"
                          TextAlignment="Center"
                          MaxWidth="400"/>
-              <TextBlock Text="Android video rendering will be connected in the next porting step"
+              <TextBlock Text="Video playback is not available on this platform"
                          FontSize="13"
                          Foreground="#50FFFFFF"
                          HorizontalAlignment="Center"
@@ -195,8 +426,102 @@
                          MaxWidth="400"/>
             </StackPanel>
           </Border>
+
+          <!-- Messages header -->
+          <Border Grid.Row="2"
+                  Background="{DynamicResource Surface3}"
+                  BorderBrush="{DynamicResource Divider}"
+                  BorderThickness="0,1,0,0"
+                  Cursor="Hand"
+                  PointerPressed="MessagesHeader_PointerPressed">
+            <Grid ColumnDefinitions="Auto,*">
+              <TextBlock x:Name="txtMessagesToggle" Text="▼" FontSize="12"
+                         Foreground="{DynamicResource SidebarHeaderFg}"
+                         Margin="16,10,4,10" VerticalAlignment="Center"/>
+              <TextBlock Grid.Column="1" Text="Messages" FontWeight="SemiBold" FontSize="14"
+                         Foreground="{DynamicResource SidebarHeaderFg}"
+                         Margin="4,10,16,10"/>
+            </Grid>
+          </Border>
+
+          <!-- Messages list -->
+          <Border Grid.Row="3"
+                  x:Name="brdMessages"
+                  Background="{DynamicResource Surface1}"
+                  MaxHeight="200"
+                  MinHeight="0">
+            <ListBox x:Name="lstMessages"
+                     Background="Transparent"
+                     FontSize="11"
+                     Margin="8,4">
+              <ListBox.Styles>
+                <Style Selector="ListBoxItem">
+                  <Setter Property="Padding" Value="4,1"/>
+                  <Setter Property="MinHeight" Value="0"/>
+                  <Setter Property="Margin" Value="0"/>
+                </Style>
+              </ListBox.Styles>
+              <ListBox.ItemTemplate>
+                <DataTemplate>
+                  <Border Background="{Binding Background}" CornerRadius="2" Padding="4,1">
+                    <TextBlock Text="{Binding Text}" Foreground="{Binding Color}" TextWrapping="Wrap"/>
+                  </Border>
+                </DataTemplate>
+              </ListBox.ItemTemplate>
+            </ListBox>
+          </Border>
         </Grid>
+
       </Grid>
+
+      <!-- ===== Picker overlay (date/time) ===== -->
+      <Border x:Name="pickerOverlay"
+              IsVisible="False"
+              Background="#80000000"
+              ZIndex="900">
+        <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Margin="16" MaxWidth="520">
+          <Border Background="{DynamicResource Surface1}"
+                  BorderBrush="{DynamicResource Divider}"
+                  BorderThickness="1"
+                  CornerRadius="8"
+                  MinWidth="320">
+            <Grid RowDefinitions="Auto,*,Auto">
+              <Border Grid.Row="0" Background="{DynamicResource Primary}" CornerRadius="8,8,0,0" Padding="20,14">
+                <StackPanel Spacing="2">
+                  <TextBlock x:Name="txtPickerOverlayTitle" Text="Select Date"
+                             FontSize="18" FontWeight="SemiBold" Foreground="White"/>
+                  <TextBlock x:Name="txtPickerOverlaySubtitle" Text="Choose a date for playback"
+                             FontSize="12" Foreground="White" Opacity="0.75"/>
+                </StackPanel>
+              </Border>
+              <Border Grid.Row="1" Padding="20">
+                <Grid>
+                  <DatePicker x:Name="overlayDatePicker" IsVisible="False" HorizontalAlignment="Stretch"/>
+                  <TimePicker x:Name="overlayTimePicker" IsVisible="False" HorizontalAlignment="Stretch"
+                              ClockIdentifier="24HourClock"/>
+                </Grid>
+              </Border>
+              <Border Grid.Row="2" Background="{DynamicResource Surface1}"
+                      BorderBrush="{DynamicResource Divider}" BorderThickness="0,1,0,0" Padding="16">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12">
+                  <Button Content="Cancel" Click="btnPickerOverlayCancel_Click"
+                          Classes="outlined" MinWidth="110" MinHeight="{DynamicResource ButtonMinHeight}"/>
+                  <Button Content="Apply" Click="btnPickerOverlayApply_Click"
+                          Classes="primary" MinWidth="110" MinHeight="{DynamicResource ButtonMinHeight}"/>
+                </StackPanel>
+              </Border>
+            </Grid>
+          </Border>
+        </Grid>
+      </Border>
+
+      <!-- Navigation Host overlay -->
+      <ContentControl x:Name="navigationHost"
+                      Background="{DynamicResource AppBg}"
+                      ZIndex="1000"
+                      IsVisible="False"
+                      HorizontalContentAlignment="Stretch"
+                      VerticalContentAlignment="Stretch"/>
 
     </Grid>
   </Grid>
