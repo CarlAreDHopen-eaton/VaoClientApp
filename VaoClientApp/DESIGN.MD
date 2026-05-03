@@ -40,7 +40,7 @@ This application **strictly adheres** to the Brightlayer UI design system. All c
 | `PrimaryLight` | `#0088D0` | Hover states only |
 | `PrimaryDark` | `#006BA1` | Pressed states, user avatars |
 
-> ?? **Never use hardcoded colors.** Always use `{DynamicResource TokenName}`.
+> ⚠️ **Never use hardcoded colors.** Always use `{DynamicResource TokenName}`.
 
 ### Semantic Colors
 
@@ -58,12 +58,11 @@ This application **strictly adheres** to the Brightlayer UI design system. All c
 | Token | Value | Description |
 |-------|-------|-------------|
 | `AppBg` | `#121212` | Application background |
-| `SectionBg` | `#1E1E1E` | Content sections, cards |
 | `SidebarBg` | `#121212` | Navigation drawer |
 | `SidebarCardBg` | `#1E1E1E` | Sidebar sections |
 | `VideoBg` | `#000000` | Video player |
 | `VideoHeaderBg` | `#1E1E1E` | Video panel header |
-| `Surface1` | `#1E1E1E` | Elevation level 1 |
+| `Surface1` | `#1E1E1E` | Elevation level 1 (content sections, cards) |
 | `Surface2` | `#2C2C2C` | Elevation level 2 |
 | `Surface3` | `#3D3D3D` | Elevation level 3 |
 
@@ -71,15 +70,14 @@ This application **strictly adheres** to the Brightlayer UI design system. All c
 
 | Token | Value | Description |
 |-------|-------|-------------|
-| `AppBg` | `#F4F4F4` | Application background |
-| `SectionBg` | `#FFFFFF` | Content sections, cards |
-| `SidebarBg` | `#FFFFFF` | Navigation drawer |
-| `SidebarCardBg` | `#FFFFFF` | Sidebar sections |
+| `AppBg` | `#EEEEEE` | Application background |
+| `SidebarBg` | `#F6F6F6` | Navigation drawer |
+| `SidebarCardBg` | `#F3F3F3` | Sidebar sections |
 | `VideoBg` | `#E0E0E0` | Video player |
 | `VideoHeaderBg` | `#007BC1` | Video panel header (Primary) |
-| `Surface1` | `#FFFFFF` | Elevation level 1 |
-| `Surface2` | `#F4F4F4` | Elevation level 2 |
-| `Surface3` | `#EBEBEB` | Elevation level 3 |
+| `Surface1` | `#FAFAFA` | Elevation level 1 (content sections, cards) |
+| `Surface2` | `#EFEFEF` | Elevation level 2 |
+| `Surface3` | `#E3E3E3` | Elevation level 3 |
 
 ### Text Colors (Opacity-Based)
 
@@ -94,7 +92,51 @@ This application **strictly adheres** to the Brightlayer UI design system. All c
 | Token | Dark Theme | Light Theme |
 |-------|------------|-------------|
 | `Divider` | `rgba(255,255,255,0.12)` | `rgba(0,0,0,0.12)` |
-| `SidebarBorder` | `rgba(255,255,255,0.12)` | `#E0E0E0` |
+| `SidebarBorder` | `rgba(255,255,255,0.12)` | `#D4D4D4` |
+
+### Video Panel Colors
+
+| Token | Dark Theme | Light Theme | Usage |
+|-------|------------|-------------|-------|
+| `VideoBg` | `#000000` | `#E0E0E0` | Video player background |
+| `VideoHeaderBg` | `#1E1E1E` | `#007BC1` | Video panel header |
+| `VideoHeaderNeutral` | `#1D3A4A` | `#007BC1` | Header idle/neutral state |
+| `VideoHeaderLive` | `#39B620` | `#2E7D32` | Header live streaming state |
+| `VideoHeaderPlayback` | `#CA3C3D` | `#B71C1C` | Header playback state |
+
+### Message Log Colors
+
+| Token | Dark Theme | Light Theme | Usage |
+|-------|------------|-------------|-------|
+| `MessageLogBackground` | Transparent | Transparent | Log panel background |
+| `MessageErrorForeground` | `#FF0000` | `#FF0000` | Error messages |
+| `MessageWarningForeground` | `#FFA500` | `#783F00` | Warning messages |
+| `MessageDebugForeground` | `#ADD8E6` | `#00437A` | Debug messages |
+| `MessageDefaultForeground` | `#FFFFFF` | `#000000` | Default messages |
+
+### User Profile Colors
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `UserProfileConnectedBackground` | `#006BA1` | Connected user avatar |
+| `UserProfileDisconnectedBackground` | `#808080` | Disconnected user avatar |
+
+### Camera Lock Colors
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `CameraLockAlarmForeground` | `#CA3C3D` | Alarm-locked camera indicator |
+| `CameraLockManualForeground` | `#F0AA1F` | User-locked camera indicator |
+
+### Alarm Status Colors
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `AlarmStatusActive` | `#FF0000` | Active alarm |
+| `AlarmStatusInactive` | `#808080` | Inactive alarm |
+| `AlarmStatusAcknowledged` | `#FFA500` | Acknowledged alarm |
+| `AlarmStatusTampered` | `#FF8C00` | Tampered alarm |
+| `AlarmStatusDefault` | `#808080` (47% opacity) | Default alarm state |
 
 ---
 
@@ -145,9 +187,9 @@ Consolas, Monaco, Courier New, monospace
 
 | Class | Size | Weight | Usage |
 |-------|------|--------|-------|
-| App Title | 20px | Medium (500) | App bar title |
-| Subtitle | 12px | Regular (400) | App bar subtitle, opacity 0.7 |
-| `.section-header` | 16px | SemiBold (600) | Section headings |
+| App Title | 17px | Medium (500) | App bar title (`PageHeaderTitleFontSize`) |
+| Subtitle | 11px | Regular (400) | App bar subtitle, opacity 0.7 (`PageHeaderSubtitleFontSize`) |
+| `.section-header` | 14px | SemiBold (600) | Section headings (`SectionHeaderFontSize`) |
 | `.subtitle1` | 16px | SemiBold (600) | Emphasized subtitles |
 | `.subtitle2` | 14px | SemiBold (600) | Secondary subtitles |
 | `.body1` | 16px | Regular (400) | Primary body text |
@@ -263,37 +305,36 @@ This application uses **font-based icons** from the Brightlayer UI icon packages
 
 | Element | Size |
 |---------|------|
-| `AppBarHeight` | 64px |
-| `SidebarWidth` | 280px |
-| `SidebarCollapsedWidth` | 56px |
-| `ButtonMinHeight` | 36px |
-| `InputMinHeight` | 36px |
-| `ListItemMinHeight` | 48px |
-| `AvatarSize` | 40px |
-| `IconSize` | 24px |
-| `IconSizeSmall` | 20px |
+| `AppBarHeight` | 56px |
+| `SidebarWidth` | 248px |
+| `ButtonMinHeight` | 34px |
+| `InputMinHeight` | 34px |
+| `ListItemMinHeight` | 38px |
+| `AvatarSize` | 36px |
+| `IconSize` | 20px |
+| `IconSizeSmall` | 16px |
 
 ### Layout Structure
 
 ```
-???????????????????????????????????????????????????????????
-?                 APP BAR (64px, Primary)                 ?
-?  [?]  Title                                       [??]  ?
-?       Subtitle (opacity: 0.7)                           ?
-???????????????????????????????????????????????????????????
-?              ?                                          ?
-?   SIDEBAR    ?           CONTENT AREA                   ?
-?   (280px)    ?                                          ?
-?              ?  ??????????????????????????????????????  ?
-?  [Expander]  ?  ?    VIDEO PLAYER                    ?  ?
-?  [Expander]  ?  ?    Header: VideoHeaderBg           ?  ?
-?  [Expander]  ?  ?    Body: VideoBg                   ?  ?
-?              ?  ??????????????????????????????????????  ?
-?              ?  ?????????? GridSplitter ??????????????? ?
-?              ?  ??????????????????????????????????????  ?
-?              ?  ?    MESSAGES (Surface2 header)      ?  ?
-?              ?  ??????????????????????????????????????  ?
-???????????????????????????????????????????????????????????
+┌─────────────────────────────────────────────────────────┐
+│                 APP BAR (56px, Primary)                 │
+│  [☰]  Title                                       [👤]  │
+│       Subtitle (opacity: 0.7)                           │
+├──────────────┬──────────────────────────────────────────┤
+│              │                                          │
+│   SIDEBAR    │           CONTENT AREA                   │
+│   (248px)    │                                          │
+│              │  ┌────────────────────────────────────┐  │
+│  [Expander]  │  │    VIDEO PLAYER                    │  │
+│  [Expander]  │  │    Header: VideoHeaderBg           │  │
+│  [Expander]  │  │    Body: VideoBg                   │  │
+│              │  └────────────────────────────────────┘  │
+│              │  ─────────── GridSplitter ─────────────  │
+│              │  ┌────────────────────────────────────┐  │
+│              │  │    MESSAGES (Surface2 header)      │  │
+│              │  └────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -304,13 +345,13 @@ This application uses **font-based icons** from the Brightlayer UI icon packages
 
 | Property | Value |
 |----------|-------|
-| Height | 64px (fixed) |
+| Height | 56px (fixed) |
 | Background | `{DynamicResource Primary}` |
 | Shadow | `0 2 4 0 #40000000` |
 | Left Padding | 8px |
 | Right Padding | 16px |
-| Title Font | 20px, Medium, White |
-| Subtitle Font | 12px, Regular, White, opacity 0.7 |
+| Title Font | 17px, Medium, White |
+| Subtitle Font | 11px, Regular, White, opacity 0.7 |
 
 ### Buttons (Strict Hierarchy)
 
@@ -327,8 +368,8 @@ This application uses **font-based icons** from the Brightlayer UI icon packages
 #### Button Specifications
 
 ```
-MinHeight: 36px
-Padding: 16px horizontal, 8px vertical
+MinHeight: 34px
+Padding: 12px horizontal, 6px vertical
 CornerRadius: 4px
 FontWeight: Medium (500)
 FontSize: 14px
@@ -364,12 +405,12 @@ FontSize: 14px
 
 **Header Structure:**
 ```
-???????????????????????????????????????????
-? [Icon]  Section Title              [?]  ?  48px height
-???????????????????????????????????????????
-? Content Area                            ?  16px padding
-? (Margin: 16,8,16,16)                    ?
-???????????????????????????????????????????
+┌─────────────────────────────────────────┐
+│ [Icon]  Section Title              [▾]  │  48px height
+├─────────────────────────────────────────┤
+│ Content Area                            │  16px padding
+│ (Margin: 16,8,16,16)                    │
+└─────────────────────────────────────────┘
 ```
 
 ### Form Controls
@@ -392,29 +433,29 @@ Margin: 0 (flush layout)
 ### Dialog Windows
 
 ```
-???????????????????????????????????????????
-? ???????????? HEADER (64px) ???????????? ?
-? ??  Title (20px, Medium)              ???
-? ??  Subtitle (12px, opacity 0.7)      ???
-???????????????????????????????????????????
-?                                         ?
-?   Content (24px padding)                ?
-?                                         ?
-?   ?????????????????????????             ?  Dividers between sections
-?                                         ?
-?   More content...                       ?
-?                                         ?
-???????????????????????????????????????????
-?              [Cancel] [Save]            ?  Footer (Surface1, 24,16 padding)
-???????????????????????????????????????????
+┌─────────────────────────────────────────┐
+│ ┌───────── HEADER (56px) ─────────────┐ │
+│ │  Title (17px, Medium)               │ │
+│ │  Subtitle (11px, opacity 0.7)       │ │
+├─────────────────────────────────────────┤
+│                                         │
+│   Content (24px padding)                │
+│                                         │
+│   ─────────────────────────             │  Dividers between sections
+│                                         │
+│   More content...                       │
+│                                         │
+├─────────────────────────────────────────┤
+│              [Cancel] [Save]            │  Footer (Surface1, 24,16 padding)
+└─────────────────────────────────────────┘
 ```
 
 ### User Avatar
 
 | Property | Value |
 |----------|-------|
-| Size | 40x40px |
-| CornerRadius | 20px (circular) |
+| Size | 36x36px |
+| CornerRadius | 18px (circular) |
 | Background | `PrimaryDark` |
 | Text | 18px, SemiBold, White |
 | Content | First letter of username |
@@ -427,11 +468,11 @@ Margin: 0 (flush layout)
 
 | Region | Width | Background |
 |--------|-------|------------|
-| Sidebar (expanded) | 280px | `SidebarBg` |
+| Sidebar (expanded) | 248px | `SidebarBg` |
 | Sidebar (collapsed) | 56px | `Surface1` |
 | Content | Flexible | `AppBg` |
-| Video Panel | Flexible | `SectionBg` |
-| Messages Panel | Flexible | `SectionBg` |
+| Video Panel | Flexible | `Surface1` |
+| Messages Panel | Flexible | `Surface1` |
 
 ### Settings Dialog
 
@@ -451,9 +492,9 @@ Margin: 0 (flush layout)
 
 | Element | Required Ratio | Achieved |
 |---------|----------------|----------|
-| Body text | 4.5:1 | ? 7:1+ |
-| Large text (18px+) | 3:1 | ? 7:1+ |
-| UI components | 3:1 | ? 4.5:1+ |
+| Body text | 4.5:1 | ✅ 7:1+ |
+| Large text (18px+) | 3:1 | ✅ 7:1+ |
+| UI components | 3:1 | ✅ 4.5:1+ |
 
 ### Focus Indicators
 
@@ -497,10 +538,10 @@ Margin: 0 (flush layout)
 All visual properties must use `DynamicResource`:
 
 ```xml
-<!-- ? Correct -->
+<!-- ✅ Correct -->
 <Border Background="{DynamicResource Primary}"/>
 
-<!-- ? Wrong - Never hardcode colors -->
+<!-- ❌ Wrong - Never hardcode colors -->
 <Border Background="#007BC1"/>
 ```
 
