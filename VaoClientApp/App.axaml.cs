@@ -171,10 +171,21 @@ namespace Vao.Sample
 
       public override void OnFrameworkInitializationCompleted()
       {
+#if !ANDROID
          if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
          {
             desktop.MainWindow = new MainWindow();
          }
+         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
+         {
+            singleViewPlatform.MainView = new MainWindow();
+         }
+#else
+         if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
+         {
+            singleViewPlatform.MainView = new AndroidMainView();
+         }
+#endif
          base.OnFrameworkInitializationCompleted();
       }
    }

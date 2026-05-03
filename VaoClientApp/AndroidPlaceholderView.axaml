@@ -1,0 +1,19 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Vao.Sample.AndroidPlaceholderView">
+  <ScrollViewer>
+    <StackPanel Margin="24" Spacing="16">
+      <TextBlock Text="VAO Client Android bootstrap"
+                 FontSize="28"
+                 FontWeight="Bold"
+                 TextWrapping="Wrap" />
+      <TextBlock Text="The project now builds as an Android target, but the desktop video shell is not enabled on Android yet."
+                 TextWrapping="Wrap"
+                 FontSize="16" />
+      <TextBlock Text="Current status: .NET Android workload, Java runtime, Android SDK, and emulator connectivity are configured on this machine."
+                 TextWrapping="Wrap" />
+      <TextBlock Text="Next porting step: replace desktop LibVLC and desktop window flows with Android-compatible views and playback components."
+                 TextWrapping="Wrap" />
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

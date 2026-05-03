@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.vao.clientapp">
+  <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="35" />
+  <application android:label="VaoClientApp" android:allowBackup="true" android:theme="@style/Theme.AppCompat.NoActionBar">
+    <activity android:name="com.vao.clientapp.MainActivity"
+              android:label="VaoClientApp"
+              android:exported="true"
+              android:configChanges="orientation|screenSize|uiMode">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+    </activity>
+  </application>
+</manifest>

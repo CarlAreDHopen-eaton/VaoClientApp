@@ -1,0 +1,203 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Vao.Sample.AndroidMainView"
+             Background="{DynamicResource AppBg}">
+  <Grid RowDefinitions="Auto,*">
+
+    <!-- ===== App Bar ===== -->
+    <Border Grid.Row="0"
+            Height="{DynamicResource AppBarHeight}"
+            Background="{DynamicResource Primary}"
+            BoxShadow="0 2 4 0 #40000000"
+            ClipToBounds="True">
+      <Grid ColumnDefinitions="*,Auto" Margin="16,0">
+        <StackPanel VerticalAlignment="Center" Spacing="2">
+          <TextBlock Text="VAO Client"
+                     FontSize="20" FontWeight="SemiBold"
+                     Foreground="{DynamicResource PrimaryHeaderFg}"/>
+          <TextBlock x:Name="txtConnectionStatus"
+                     Text="Not connected"
+                     FontSize="12"
+                     Foreground="{DynamicResource PrimaryHeaderFg}"
+                     Opacity="0.7"/>
+        </StackPanel>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+          <Ellipse x:Name="ellConnectionDot" Width="12" Height="12" Fill="#CA3C3D" VerticalAlignment="Center"/>
+          <Button x:Name="btnDisconnect"
+                  Content="Disconnect"
+                  IsVisible="False"
+                  Click="btnDisconnect_Click"
+                  MinHeight="36"
+                  Padding="12,6"/>
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <!-- ===== Main Content (switches between connect form and connected view) ===== -->
+    <Grid Grid.Row="1">
+
+      <!-- Connect Form (visible when disconnected) -->
+      <ScrollViewer x:Name="pnlDisconnect"
+                    HorizontalScrollBarVisibility="Disabled"
+                    VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="{DynamicResource PageMargin}"
+                    MaxWidth="480"
+                    HorizontalAlignment="Center"
+                    Spacing="16">
+
+          <TextBlock Text="Connect to VAO Server"
+                     FontSize="22" FontWeight="SemiBold"
+                     Margin="0,8,0,8"/>
+
+          <StackPanel Spacing="4">
+            <TextBlock Text="Host" Foreground="{DynamicResource LabelFg}" FontSize="13"/>
+            <TextBox x:Name="txtHost"
+                     Watermark="e.g. 192.168.1.100"
+                     MinHeight="{DynamicResource InputMinHeight}"
+                     Padding="{DynamicResource InputPadding}"/>
+          </StackPanel>
+
+          <StackPanel Spacing="4">
+            <TextBlock Text="Port" Foreground="{DynamicResource LabelFg}" FontSize="13"/>
+            <TextBox x:Name="txtPort"
+                     Watermark="444"
+                     MinHeight="{DynamicResource InputMinHeight}"
+                     Padding="{DynamicResource InputPadding}"/>
+          </StackPanel>
+
+          <StackPanel Spacing="4">
+            <TextBlock Text="Username" Foreground="{DynamicResource LabelFg}" FontSize="13"/>
+            <TextBox x:Name="txtUser"
+                     Watermark="Username"
+                     MinHeight="{DynamicResource InputMinHeight}"
+                     Padding="{DynamicResource InputPadding}"/>
+          </StackPanel>
+
+          <StackPanel Spacing="4">
+            <TextBlock Text="Password" Foreground="{DynamicResource LabelFg}" FontSize="13"/>
+            <TextBox x:Name="txtPassword"
+                     PasswordChar="●"
+                     Watermark="Password"
+                     MinHeight="{DynamicResource InputMinHeight}"
+                     Padding="{DynamicResource InputPadding}"/>
+          </StackPanel>
+
+          <CheckBox x:Name="chkUseHttps"
+                    Content="Use HTTPS (Secure)"
+                    IsChecked="True"
+                    MinHeight="{DynamicResource ButtonMinHeight}"
+                    Padding="12"
+                    FontSize="14"/>
+
+          <Button x:Name="btnConnect"
+                  Content="Connect"
+                  Click="btnConnect_Click"
+                  HorizontalAlignment="Stretch"
+                  HorizontalContentAlignment="Center"
+                  MinHeight="{DynamicResource ButtonMinHeight}"
+                  Padding="{DynamicResource ButtonPadding}"
+                  FontSize="16"/>
+
+          <TextBlock x:Name="txtConnectStatus"
+                     Text=""
+                     IsVisible="False"
+                     TextWrapping="Wrap"
+                     FontSize="14"/>
+        </StackPanel>
+      </ScrollViewer>
+
+      <!-- Connected View (visible after successful connect) -->
+      <Grid x:Name="pnlConnected"
+            IsVisible="False"
+            ColumnDefinitions="280,*">
+
+        <!-- Camera Sidebar -->
+        <Border Grid.Column="0"
+                Background="{DynamicResource SidebarBg}"
+                BorderBrush="{DynamicResource SidebarBorder}"
+                BorderThickness="0,0,1,0">
+          <Grid RowDefinitions="Auto,*">
+            <!-- Sidebar header -->
+            <Border Grid.Row="0"
+                    BorderBrush="{DynamicResource Divider}"
+                    BorderThickness="0,0,0,1"
+                    Padding="16,14">
+              <TextBlock Text="Cameras"
+                         FontSize="14"
+                         FontWeight="SemiBold"
+                         Foreground="{DynamicResource SidebarHeaderFg}"/>
+            </Border>
+
+            <!-- Camera list -->
+            <ListBox x:Name="lstCameras"
+                     Grid.Row="1"
+                     Background="Transparent"
+                     SelectionChanged="lstCameras_SelectionChanged">
+              <ListBox.ItemTemplate>
+                <DataTemplate>
+                  <StackPanel Margin="4,6" Spacing="2">
+                    <TextBlock Text="{Binding Name}"
+                               FontSize="14"
+                               TextTrimming="CharacterEllipsis"/>
+                    <TextBlock Text="{Binding ComponentNumber, StringFormat='Camera \{0\}'}"
+                               FontSize="11"
+                               Foreground="{DynamicResource LabelFg}"/>
+                  </StackPanel>
+                </DataTemplate>
+              </ListBox.ItemTemplate>
+            </ListBox>
+          </Grid>
+        </Border>
+
+        <!-- Main area: camera header + video placeholder -->
+        <Grid Grid.Column="1" RowDefinitions="Auto,*">
+
+          <!-- Camera / video header bar -->
+          <Border x:Name="brdCameraHeader"
+                  Grid.Row="0"
+                  MinHeight="64"
+                  Background="{DynamicResource VideoHeaderNeutral}"
+                  Padding="16,0">
+            <StackPanel VerticalAlignment="Center" Spacing="2">
+              <TextBlock x:Name="txtCameraTitle"
+                         Text="No Camera Selected"
+                         FontSize="18"
+                         FontWeight="SemiBold"
+                         Foreground="{DynamicResource PrimaryHeaderFg}"/>
+              <TextBlock x:Name="txtCameraSubtitle"
+                         Text="Select a camera from the sidebar"
+                         FontSize="12"
+                         Foreground="{DynamicResource PrimaryHeaderFg}"
+                         Opacity="0.7"/>
+            </StackPanel>
+          </Border>
+
+          <!-- Video area placeholder -->
+          <Border Grid.Row="1" Background="{DynamicResource VideoBg}">
+            <StackPanel VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Spacing="16"
+                        Margin="32">
+              <TextBlock x:Name="txtVideoPlaceholder"
+                         Text="Select a camera to begin"
+                         FontSize="18"
+                         Foreground="#80FFFFFF"
+                         HorizontalAlignment="Center"
+                         TextWrapping="Wrap"
+                         TextAlignment="Center"
+                         MaxWidth="400"/>
+              <TextBlock Text="Android video rendering will be connected in the next porting step"
+                         FontSize="13"
+                         Foreground="#50FFFFFF"
+                         HorizontalAlignment="Center"
+                         TextWrapping="Wrap"
+                         TextAlignment="Center"
+                         MaxWidth="400"/>
+            </StackPanel>
+          </Border>
+        </Grid>
+      </Grid>
+
+    </Grid>
+  </Grid>
+</UserControl>

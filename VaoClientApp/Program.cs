@@ -3,12 +3,15 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
+#if !ANDROID
 using LibVLCSharp.Shared;
+#endif
 
 namespace Vao.Sample
 {
    static class Program
    {
+#if !ANDROID
       [STAThread]
       static void Main(string[] args)
       {
@@ -17,7 +20,9 @@ namespace Vao.Sample
          Core.Initialize();
          BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
       }
+#endif
 
+#if !ANDROID
       private static void RegisterLinuxLibVlcResolver()
       {
          if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
@@ -87,10 +92,21 @@ namespace Vao.Sample
             Environment.SetEnvironmentVariable("LIBVLC_PLUGIN_PATH", fedoraPluginPath);
          }
       }
+#endif
 
       public static AppBuilder BuildAvaloniaApp()
-         => AppBuilder.Configure<App>()
+      {
+         var builder = AppBuilder.Configure<App>();
+
+#if ANDROID
+         return builder
+            .UseAndroid()
+            .LogToTrace();
+#else
+         return builder
             .UsePlatformDetect()
             .LogToTrace();
+#endif
+      }
    }
 }

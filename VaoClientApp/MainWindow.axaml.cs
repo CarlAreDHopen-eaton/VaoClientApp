@@ -1055,6 +1055,7 @@ namespace Vao.Sample
 
       private void StartInitializeVlc()
       {
+         Core.Initialize();
          WriteMessageLog(MessageSource.LibVlc, "Loading VLC", LogLevel.Notice);
          var options = new[] { "-vv", "--rtsp-timeout=300", "--network-caching=300" };
          mLibVlc = new LibVLC(true, options);

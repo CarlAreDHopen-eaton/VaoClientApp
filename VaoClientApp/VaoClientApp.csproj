@@ -1,19 +1,63 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFrameworks>net8.0</TargetFrameworks>
     <RootNamespace>Vao.Sample</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(EnableAndroidTarget)' == 'true'">
+    <TargetFrameworks>net8.0;net8.0-android</TargetFrameworks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net8.0'">
+    <OutputType>WinExe</OutputType>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net8.0-android'">
+    <OutputType>Exe</OutputType>
+    <AndroidApplication>true</AndroidApplication>
+    <AndroidPackageFormat>apk</AndroidPackageFormat>
+    <AndroidUseDesignerAssembly>true</AndroidUseDesignerAssembly>
+    <AndroidLinkMode>None</AndroidLinkMode>
+    <PublishTrimmed>false</PublishTrimmed>
+    <RunAOTCompilation>false</RunAOTCompilation>
+    <SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
+    <AndroidManifest>Platforms\Android\AndroidManifest.xml</AndroidManifest>
+    <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
+    <AndroidOptimizeForBrowse>false</AndroidOptimizeForBrowse>
+    <!--
+      Build only for x86_64 (Android emulator). Building all 4 ABIs causes each ABI's
+      System.Private.CoreLib to appear as a separate entry in _ResolvedFrameworkAssemblies,
+      which feeds GenerateCompressedAssembliesNativeSourceFiles. This inserts the per-ABI
+      CoreLibs at wrong positions in compressed_assemblies (relative to the blob ordering),
+      causing "Invalid assembly index N, exceeds maximum index of M" at runtime.
+      Single-ABI builds produce exactly one CoreLib entry → compressed_assemblies count
+      matches the APK blob count → no index mismatch.
+    -->
+    <RuntimeIdentifiers>android-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="11.2.3" />
-    <PackageReference Include="Avalonia.Desktop" Version="11.2.3" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.3" />
     <PackageReference Include="FluentFTP" Version="52.0.0" />
     <PackageReference Include="LibVLCSharp.Avalonia" Version="3.9.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+    <PackageReference Include="Avalonia.Desktop" Version="11.2.3" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0-android'">
+    <PackageReference Include="Avalonia.Android" Version="11.2.3" />
+    <PackageReference Include="VideoLAN.LibVLC.Android" Version="3.1.2" />
+    <Compile Remove="Platforms/Android/MainApplication.cs" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' != '' and '$(TargetFramework)' != 'net8.0-android'">
+    <Compile Remove="Platforms/Android/**/*.cs" />
   </ItemGroup>
 
   <ItemGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
@@ -41,5 +85,49 @@
   <ItemGroup>
     <ProjectReference Include="..\VaoClient\VaoClient.csproj" />
   </ItemGroup>
+
+  <!--
+    Workaround: Avalonia's InjectAvaloniaXamlOutput target redirects IntermediateAssembly to
+    obj/…/Avalonia/VaoClientApp.dll. In the per-RID inner build, _FixupIntermediateAssembly
+    restores this path from _OuterIntermediateAssembly. But then InjectAvaloniaXamlOutput fires
+    AGAIN (BeforeTargets="ComputeResolvedFilesToPublishList") and computes AvaloniaCompileOutput
+    using %(RelativeDir) of the already-Avalonia-redirected path → "Avalonia/Avalonia/" double
+    prefix → ProcessAssemblies crashes with DirectoryNotFoundException.
+
+    _FixAvaloniaDoubleRedirect (inner RID build — AfterTargets="InjectAvaloniaXamlOutput"):
+      Runs after the second InjectAvaloniaXamlOutput fires in the inner build and resets
+      @(IntermediateAssembly) back to $(_OuterIntermediateAssembly). ComputeResolvedFilesToPublishList
+      then picks up the correct single-"Avalonia/" path, ProcessAssemblies processes the file
+      successfully with DestinationSubPath="VaoClientApp.dll", and VaoClientApp ends up in the
+      APK assembly blob exactly once.
+
+    _EnsureAppDllForJavaStubs (outer build — AfterTargets="_PrepareAssemblies"):
+      Safety net: after _PrepareAssemblies, explicitly adds the asset-path copy of VaoClientApp.dll
+      to _ResolvedUserMonoAndroidAssemblies so _GenerateJavaStubs scans it for [Activity] MainActivity
+      and generates the Java ACW, even if HasMonoAndroidReference is not set.
+  -->
+
+  <!-- Inner RID build: prevent the double-"Avalonia/Avalonia/" redirect -->
+  <Target Name="_FixAvaloniaDoubleRedirect"
+          AfterTargets="InjectAvaloniaXamlOutput"
+          Condition="'$(_OuterIntermediateAssembly)' != '' and '$(_ComputeFilesToPublishForRuntimeIdentifiers)' == 'true'">
+    <ItemGroup>
+      <IntermediateAssembly Remove="@(IntermediateAssembly)" />
+      <IntermediateAssembly Include="$(_OuterIntermediateAssembly)" />
+    </ItemGroup>
+  </Target>
+
+  <!-- Outer build: ensure _GenerateJavaStubs scans VaoClientApp.dll for the [Activity] ACW -->
+  <Target Name="_EnsureAppDllForJavaStubs"
+          AfterTargets="_PrepareAssemblies"
+          BeforeTargets="_GenerateJavaStubs"
+          Condition="'$(TargetFramework)' == 'net8.0-android'">
+    <PropertyGroup>
+      <_AssetsAppDll>$(MonoAndroidIntermediateAssemblyDir)$(MSBuildProjectName).dll</_AssetsAppDll>
+    </PropertyGroup>
+    <ItemGroup Condition="Exists('$(_AssetsAppDll)')">
+      <_ResolvedUserMonoAndroidAssemblies Include="$(_AssetsAppDll)" />
+    </ItemGroup>
+  </Target>
 
 </Project>
