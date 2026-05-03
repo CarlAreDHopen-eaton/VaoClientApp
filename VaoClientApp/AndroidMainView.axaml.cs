@@ -9,6 +9,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Shapes;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
 using LibVLCSharp.Shared;
@@ -34,6 +35,7 @@ public partial class AndroidMainView : UserControl
    private Alarm mCurrentAlarm;
    private User mCurrentLoggedInUser;
    private NavigationService mNavigationService;
+   private bool mPendingConnectAfterSettings;
 
    private enum PickerOverlayMode { None, Date, Time }
    private PickerOverlayMode mPickerOverlayMode;
@@ -59,6 +61,7 @@ public partial class AndroidMainView : UserControl
       ClearPresetDropdown();
       ClearRecordingDropdown();
       UpdateEnabled();
+      UpdateUserInitial();
    }
 
    // ── Settings ──────────────────────────────────────────────────────────────
@@ -89,7 +92,21 @@ public partial class AndroidMainView : UserControl
    private void NavigationService_NavigationChanged(object sender, NavigationChangedEventArgs e)
    {
       if (!e.IsOverlayVisible)
+      {
+         LoadSettingsIntoForm();
+         UpdateUserInitial();
+
+         if (mPendingConnectAfterSettings)
+         {
+            mPendingConnectAfterSettings = false;
+            var s = AppSettings.Default;
+            if (!mIsConnected && !mIsConnecting && s.HasAnyConnectionAlternative()
+                && !string.IsNullOrWhiteSpace(s.User) && !string.IsNullOrWhiteSpace(s.Password))
+               btnConnect_Click(null, null);
+         }
+
          UpdateEnabled();
+      }
    }
 
    // ── Connect / Disconnect ──────────────────────────────────────────────────
@@ -758,6 +775,7 @@ public partial class AndroidMainView : UserControl
       if (btnDisconnect != null) btnDisconnect.IsVisible = true;
       if (txtConnectionStatus != null) txtConnectionStatus.Text = $"Connected · {host}:{port}";
       if (ellConnectionDot != null) ellConnectionDot.Fill = new SolidColorBrush(Color.Parse("#39B620"));
+      UpdateUserInitial();
    }
 
    private void TransitionToDisconnectedState()
@@ -770,6 +788,7 @@ public partial class AndroidMainView : UserControl
       if (ellConnectionDot != null) ellConnectionDot.Fill = new SolidColorBrush(Color.Parse("#CA3C3D"));
       if (txtVideoHeader != null) txtVideoHeader.Text = "No Camera Selected";
       if (brdVideoHeader != null) brdVideoHeader.Background = GetBrushResource("VideoHeaderNeutral", "#1D3A4A");
+      UpdateUserInitial();
    }
 
    private void ShowConnectStatus(string message, bool isError)
@@ -789,6 +808,154 @@ public partial class AndroidMainView : UserControl
       if (this.TryFindResource(key, this.ActualThemeVariant, out var resource) && resource is IBrush b)
          return b;
       return new SolidColorBrush(Color.Parse(fallback));
+   }
+
+   // ── User Profile ──────────────────────────────────────────────────────────
+
+   private bool IsDarkMode => ((App)Avalonia.Application.Current)?.CurrentTheme?.IsDark ?? true;
+
+   private void UpdateUserInitial()
+   {
+      string username = AppSettings.Default.User?.Trim() ?? "";
+      var txtMenuUsernameCtrl = this.FindControl<TextBlock>("txtMenuUsername");
+      var menuItemLoginCtrl = this.FindControl<MenuItem>("menuItemLogin");
+      var menuItemLogoutCtrl = this.FindControl<MenuItem>("menuItemLogout");
+
+      if (txtUserInitial != null)
+         txtUserInitial.Text = string.IsNullOrEmpty(username) ? "U" : username.Substring(0, 1).ToUpper();
+      if (txtMenuUsernameCtrl != null)
+         txtMenuUsernameCtrl.Text = string.IsNullOrEmpty(username) ? "Not logged in" : username;
+
+      if (menuItemLoginCtrl != null) menuItemLoginCtrl.IsEnabled = !mIsConnected && !mIsConnecting;
+      if (menuItemLogoutCtrl != null) menuItemLogoutCtrl.IsEnabled = mIsConnected && !mIsConnecting;
+
+      if (btnUserProfile != null)
+      {
+         var status = mIsConnecting ? "Connecting" : (mIsConnected ? "Connected" : "Disconnected");
+         var tip = string.IsNullOrEmpty(username) ? "Not logged in" : username;
+         tip += $"\n{status}";
+         ToolTip.SetTip(btnUserProfile, tip);
+         btnUserProfile.Background = mIsConnected
+            ? GetBrushResource("UserProfileConnectedBackground", "#006BA1")
+            : GetBrushResource("UserProfileDisconnectedBackground", "#808080");
+      }
+   }
+
+   private void btnUserProfile_Click(object sender, RoutedEventArgs e)
+   {
+      PopulateThemeSelectionMenuItems();
+   }
+
+   private void menuItemLogin_Click(object sender, RoutedEventArgs e)
+   {
+      var s = AppSettings.Default;
+      if (!s.HasAnyConnectionAlternative() || string.IsNullOrWhiteSpace(s.User) || string.IsNullOrWhiteSpace(s.Password))
+      {
+         mPendingConnectAfterSettings = true;
+         OpenSettingsPage();
+      }
+      else
+      {
+         btnConnect_Click(sender, e);
+      }
+   }
+
+   private void menuItemLogout_Click(object sender, RoutedEventArgs e)
+   {
+      if (mIsConnected)
+         btnDisconnect_Click(sender, e);
+   }
+
+   private void menuItemSettings_Click(object sender, RoutedEventArgs e)
+   {
+      OpenSettingsPage();
+   }
+
+   private void OpenSettingsPage()
+   {
+      var currentOverlay = navigationHost?.Content;
+      if (currentOverlay is SettingsPage)
+         return;
+
+      var settingsPage = new SettingsPage { NavigationService = mNavigationService };
+      mNavigationService.NavigateTo(settingsPage);
+   }
+
+   private void PopulateThemeSelectionMenuItems()
+   {
+      var menuItemThemeSelectCtrl = this.FindControl<MenuItem>("menuItemThemeSelect");
+      if (menuItemThemeSelectCtrl == null)
+         return;
+
+      var items = new System.Collections.Generic.List<object>();
+
+      var app = (App)Avalonia.Application.Current;
+      var targetTheme = app.GetNextThemeInCycle();
+      var toggleItem = new MenuItem();
+      toggleItem.Icon = new TextBlock
+      {
+         Text = IsDarkMode ? "\uE51C" : "\uE518",
+         Classes = { "ms-icon" },
+         FontSize = 18
+      };
+      toggleItem.Header = new StackPanel
+      {
+         Orientation = Orientation.Horizontal,
+         Spacing = 8,
+         Children =
+         {
+            new TextBlock { Text = $"Cycle to {targetTheme.DisplayName}" }
+         }
+      };
+      toggleItem.Click += menuItemToggleTheme_Click;
+
+      items.Add(toggleItem);
+      items.Add(new Separator());
+      items.AddRange(BuildThemeSelectionMenuItems());
+
+      menuItemThemeSelectCtrl.ItemsSource = items;
+   }
+
+   private System.Collections.Generic.List<object> BuildThemeSelectionMenuItems()
+   {
+      var app = (App)Avalonia.Application.Current;
+      var selectedThemeKey = AppSettings.Default.GetPreferredThemeKey();
+      var items = new System.Collections.Generic.List<object>();
+
+      foreach (var option in app.GetThemeOptions())
+      {
+         var item = new MenuItem { Header = option.DisplayName, Tag = option.Key };
+         if (string.Equals(option.Key, selectedThemeKey, StringComparison.OrdinalIgnoreCase))
+            item.Icon = new CheckBox { IsChecked = true, IsHitTestVisible = false };
+         item.Click += ThemeSelectionMenuItem_Click;
+         items.Add(item);
+      }
+
+      return items;
+   }
+
+   private void menuItemToggleTheme_Click(object sender, RoutedEventArgs e)
+   {
+      var app = (App)Avalonia.Application.Current;
+      app.CycleTheme();
+      CloseProfileMenuFlyout();
+      PopulateThemeSelectionMenuItems();
+   }
+
+   private void ThemeSelectionMenuItem_Click(object sender, RoutedEventArgs e)
+   {
+      if (sender is not MenuItem menuItem || menuItem.Tag is not string themeKey || string.IsNullOrWhiteSpace(themeKey))
+         return;
+
+      var app = (App)Avalonia.Application.Current;
+      app.ApplyTheme(themeKey, persistSelection: true);
+      Dispatcher.UIThread.Post(CloseProfileMenuFlyout, DispatcherPriority.Background);
+   }
+
+   private void CloseProfileMenuFlyout()
+   {
+      if (btnUserProfile?.Flyout is MenuFlyout flyout)
+         flyout.Hide();
    }
 
    // ── Old simple camera-selection handler (kept for reference, not wired) ───

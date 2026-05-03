@@ -30,6 +30,55 @@
                   Click="btnDisconnect_Click"
                   MinHeight="36"
                   Padding="12,6"/>
+          <Button x:Name="btnUserProfile"
+                  Width="{DynamicResource AvatarSize}" Height="{DynamicResource AvatarSize}"
+                  Background="{DynamicResource PrimaryDark}"
+                  CornerRadius="{DynamicResource AvatarCornerRadius}"
+                  Padding="0"
+                  BorderThickness="0"
+                  VerticalAlignment="Center"
+                  ToolTip.Tip="User Profile"
+                  Click="btnUserProfile_Click">
+            <TextBlock x:Name="txtUserInitial"
+                       Text="U"
+                       FontSize="18"
+                       FontWeight="SemiBold"
+                       Foreground="{DynamicResource PrimaryHeaderFg}"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"/>
+            <Button.Flyout>
+              <MenuFlyout Placement="BottomEdgeAlignedRight">
+                <MenuItem x:Name="menuItemUsername" IsEnabled="False">
+                  <MenuItem.Icon>
+                    <TextBlock Text="&#xF0D3;" Classes="ms-icon" FontSize="18"/>
+                  </MenuItem.Icon>
+                  <MenuItem.Header>
+                    <TextBlock x:Name="txtMenuUsername" Text="Not logged in"/>
+                  </MenuItem.Header>
+                </MenuItem>
+                <Separator/>
+                <MenuItem x:Name="menuItemLogin" Header="Login" Click="menuItemLogin_Click">
+                  <MenuItem.Icon>
+                    <TextBlock Text="&#xE73C;" Classes="ms-icon" FontSize="18"/>
+                  </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem x:Name="menuItemThemeSelect" Header="Theme"/>
+                <MenuItem Click="menuItemSettings_Click">
+                  <MenuItem.Icon>
+                    <TextBlock Text="&#xE8B8;" Classes="ms-icon" FontSize="18"/>
+                  </MenuItem.Icon>
+                  <MenuItem.Header>
+                    <TextBlock Text="Settings"/>
+                  </MenuItem.Header>
+                </MenuItem>
+                <MenuItem x:Name="menuItemLogout" Header="Logout" Click="menuItemLogout_Click">
+                  <MenuItem.Icon>
+                    <TextBlock Text="&#xE9BA;" Classes="ms-icon" FontSize="18"/>
+                  </MenuItem.Icon>
+                </MenuItem>
+              </MenuFlyout>
+            </Button.Flyout>
+          </Button>
         </StackPanel>
       </Grid>
     </Border>
