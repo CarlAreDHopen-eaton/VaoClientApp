@@ -183,7 +183,7 @@ namespace Vao.Sample
 #else
          if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
          {
-            singleViewPlatform.MainView = new AndroidMainView();
+            singleViewPlatform.MainView = new MainView();
          }
 #endif
          base.OnFrameworkInitializationCompleted();
