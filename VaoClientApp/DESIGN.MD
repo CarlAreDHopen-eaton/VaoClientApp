@@ -32,111 +32,105 @@ This application **strictly adheres** to the Brightlayer UI design system. All c
 
 ## Color System
 
-### Brand Colors (Eaton Blue)
-
-| Token | Value | Usage |
-|-------|-------|-------|
-| `Primary` | `#007BC1` | Primary actions, app bar, active states, links |
-| `PrimaryLight` | `#0088D0` | Hover states only |
-| `PrimaryDark` | `#006BA1` | Pressed states, user avatars |
-
 > ⚠️ **Never use hardcoded colors.** Always use `{DynamicResource TokenName}`.
+>
+> Actual color values are defined in the theme JSON files under `VaoClientApp/Themes/`.
+> See `VaoClientApp/Themes/THEMES.MD` for theme file documentation.
 
-### Semantic Colors
+### Accent Colors
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| `Success` | `#39B620` | Success states, live indicators, confirmations |
-| `Warning` | `#F0AA1F` | Warnings, caution states |
-| `Error` | `#CA3C3D` | Errors, destructive actions, playback mode |
-| `Info` | `#007BC1` | Informational messages (same as Primary) |
+| Token | Usage |
+|-------|-------|
+| `Primary` | Primary actions, app bar, active states, links |
+| `PrimaryLight` | Hover states only |
+| `PrimaryDark` | Pressed states, user avatars |
+| `PrimaryHeaderFg` | App bar text (kept readable across themes) |
 
-### Background Colors
+### Semantic/Status Colors
 
-#### Dark Theme
+| Token | Usage |
+|-------|-------|
+| `Success` | Success states, live indicators, confirmations |
+| `Warning` | Warnings, caution states |
+| `Error` | Errors, destructive actions, playback mode |
+| `Info` | Informational messages |
 
-| Token | Value | Description |
-|-------|-------|-------------|
-| `AppBg` | `#121212` | Application background |
-| `SidebarBg` | `#121212` | Navigation drawer |
-| `SidebarCardBg` | `#1E1E1E` | Sidebar sections |
-| `VideoBg` | `#000000` | Video player |
-| `VideoHeaderBg` | `#1E1E1E` | Video panel header |
-| `Surface1` | `#1E1E1E` | Elevation level 1 (content sections, cards) |
-| `Surface2` | `#2C2C2C` | Elevation level 2 |
-| `Surface3` | `#3D3D3D` | Elevation level 3 |
+### Background & Surface Colors
 
-#### Light Theme
-
-| Token | Value | Description |
-|-------|-------|-------------|
-| `AppBg` | `#EEEEEE` | Application background |
-| `SidebarBg` | `#F6F6F6` | Navigation drawer |
-| `SidebarCardBg` | `#F3F3F3` | Sidebar sections |
-| `VideoBg` | `#E0E0E0` | Video player |
-| `VideoHeaderBg` | `#007BC1` | Video panel header (Primary) |
-| `Surface1` | `#FAFAFA` | Elevation level 1 (content sections, cards) |
-| `Surface2` | `#EFEFEF` | Elevation level 2 |
-| `Surface3` | `#E3E3E3` | Elevation level 3 |
+| Token | Usage |
+|-------|-------|
+| `AppBg` | Application background |
+| `Surface1` | Elevation level 1 (content sections, cards) |
+| `Surface2` | Elevation level 2 |
+| `Surface3` | Elevation level 3 |
 
 ### Text Colors (Opacity-Based)
 
-| Token | Dark Theme | Light Theme | Usage |
-|-------|------------|-------------|-------|
-| `SidebarHeaderFg` | `rgba(255,255,255,0.87)` | `rgba(0,0,0,0.87)` | High emphasis |
-| `LabelFg` | `rgba(255,255,255,0.60)` | `rgba(0,0,0,0.60)` | Medium emphasis |
-| `TextSecondary` | `rgba(255,255,255,0.38)` | `rgba(0,0,0,0.38)` | Disabled/hint |
+| Token | Usage |
+|-------|-------|
+| `SidebarHeaderFg` | High emphasis text |
+| `LabelFg` | Medium emphasis text |
+| `TextSecondary` | Disabled/hint text |
 
 ### Border Colors
 
-| Token | Dark Theme | Light Theme |
-|-------|------------|-------------|
-| `Divider` | `rgba(255,255,255,0.12)` | `rgba(0,0,0,0.12)` |
-| `SidebarBorder` | `rgba(255,255,255,0.12)` | `#D4D4D4` |
+| Token | Usage |
+|-------|-------|
+| `Divider` | General dividers and separators |
+| `SidebarBorder` | Sidebar border |
+
+### Sidebar Colors
+
+| Token | Usage |
+|-------|-------|
+| `SidebarBg` | Navigation drawer background |
+| `SidebarCardBg` | Sidebar section card background |
+| `SidebarBorder` | Sidebar border |
+| `SidebarHeaderFg` | Sidebar header text |
 
 ### Video Panel Colors
 
-| Token | Dark Theme | Light Theme | Usage |
-|-------|------------|-------------|-------|
-| `VideoBg` | `#000000` | `#E0E0E0` | Video player background |
-| `VideoHeaderBg` | `#1E1E1E` | `#007BC1` | Video panel header |
-| `VideoHeaderNeutral` | `#1D3A4A` | `#007BC1` | Header idle/neutral state |
-| `VideoHeaderLive` | `#39B620` | `#2E7D32` | Header live streaming state |
-| `VideoHeaderPlayback` | `#CA3C3D` | `#B71C1C` | Header playback state |
+| Token | Usage |
+|-------|-------|
+| `VideoBg` | Video player background |
+| `VideoHeaderBg` | Video panel header background |
+| `VideoHeaderNeutral` | Header idle/neutral state |
+| `VideoHeaderLive` | Header live streaming state |
+| `VideoHeaderPlayback` | Header playback state |
 
 ### Message Log Colors
 
-| Token | Dark Theme | Light Theme | Usage |
-|-------|------------|-------------|-------|
-| `MessageLogBackground` | Transparent | Transparent | Log panel background |
-| `MessageErrorForeground` | `#FF0000` | `#FF0000` | Error messages |
-| `MessageWarningForeground` | `#FFA500` | `#783F00` | Warning messages |
-| `MessageDebugForeground` | `#ADD8E6` | `#00437A` | Debug messages |
-| `MessageDefaultForeground` | `#FFFFFF` | `#000000` | Default messages |
+| Token | Usage |
+|-------|-------|
+| `MessageLogBackground` | Log panel background |
+| `MessageErrorForeground` | Error messages |
+| `MessageWarningForeground` | Warning messages |
+| `MessageDebugForeground` | Debug messages |
+| `MessageDefaultForeground` | Default messages |
 
 ### User Profile Colors
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| `UserProfileConnectedBackground` | `#006BA1` | Connected user avatar |
-| `UserProfileDisconnectedBackground` | `#808080` | Disconnected user avatar |
+| Token | Usage |
+|-------|-------|
+| `UserProfileConnectedBackground` | Connected user avatar |
+| `UserProfileDisconnectedBackground` | Disconnected user avatar |
 
 ### Camera Lock Colors
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| `CameraLockAlarmForeground` | `#CA3C3D` | Alarm-locked camera indicator |
-| `CameraLockManualForeground` | `#F0AA1F` | User-locked camera indicator |
+| Token | Usage |
+|-------|-------|
+| `CameraLockAlarmForeground` | Alarm-locked camera indicator |
+| `CameraLockManualForeground` | User-locked camera indicator |
 
 ### Alarm Status Colors
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| `AlarmStatusActive` | `#FF0000` | Active alarm |
-| `AlarmStatusInactive` | `#808080` | Inactive alarm |
-| `AlarmStatusAcknowledged` | `#FFA500` | Acknowledged alarm |
-| `AlarmStatusTampered` | `#FF8C00` | Tampered alarm |
-| `AlarmStatusDefault` | `#808080` (47% opacity) | Default alarm state |
+| Token | Usage |
+|-------|-------|
+| `AlarmStatusActive` | Active alarm |
+| `AlarmStatusInactive` | Inactive alarm |
+| `AlarmStatusAcknowledged` | Acknowledged alarm |
+| `AlarmStatusTampered` | Tampered alarm |
+| `AlarmStatusDefault` | Default alarm state |
 
 ---
 
@@ -185,20 +179,22 @@ Consolas, Monaco, Courier New, monospace
 
 ### Type Scale (Brightlayer UI)
 
-| Class | Size | Weight | Usage |
-|-------|------|--------|-------|
-| App Title | 17px | Medium (500) | App bar title (`PageHeaderTitleFontSize`) |
-| Subtitle | 11px | Regular (400) | App bar subtitle, opacity 0.7 (`PageHeaderSubtitleFontSize`) |
-| `.section-header` | 14px | SemiBold (600) | Section headings (`SectionHeaderFontSize`) |
-| `.subtitle1` | 16px | SemiBold (600) | Emphasized subtitles |
-| `.subtitle2` | 14px | SemiBold (600) | Secondary subtitles |
-| `.body1` | 16px | Regular (400) | Primary body text |
-| `.body2` | 14px | Regular (400) | Secondary body text |
-| `.label` | 12px | Regular (400) | Form labels |
-| `.caption` | 11px | Regular (400) | Captions, hints |
-| `.overline` | 10px | SemiBold (600) | Overline text, uppercase |
-| `.monospace` | inherit | Regular (400) | Code, logs |
-| Button | 14px | SemiBold (600) | Button text |
+> Font sizes are defined in theme JSON files under `Sizing.Typography`. The values below describe the **role** of each style class.
+
+| Class | Weight | Usage |
+|-------|--------|-------|
+| App Title | Medium (500) | App bar title (`PageHeaderTitleFontSize`) |
+| Subtitle | Regular (400) | App bar subtitle, opacity 0.7 (`PageHeaderSubtitleFontSize`) |
+| `.section-header` | SemiBold (600) | Section headings (`SectionHeaderFontSize`) |
+| `.subtitle1` | SemiBold (600) | Emphasized subtitles |
+| `.subtitle2` | SemiBold (600) | Secondary subtitles |
+| `.body1` | Regular (400) | Primary body text |
+| `.body2` | Regular (400) | Secondary body text |
+| `.label` | Regular (400) | Form labels |
+| `.caption` | Regular (400) | Captions, hints |
+| `.overline` | SemiBold (600) | Overline text, uppercase |
+| `.monospace` | Regular (400) | Code, logs |
+| Button | SemiBold (600) | Button text |
 
 ### Font Weights
 
@@ -291,40 +287,46 @@ This application uses **font-based icons** from the Brightlayer UI icon packages
 
 ## Spacing & Layout
 
-### Spacing Scale (8px Grid - Mandatory)
+### Layout Resource Tokens
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| `Spacing-xs` | 4px | Icon gaps, tight spacing |
-| `Spacing-sm` | 8px | Default element spacing |
-| `Spacing-md` | 16px | Section padding, margins |
-| `Spacing-lg` | 24px | Large section spacing, dialog padding |
-| `Spacing-xl` | 32px | Page-level spacing |
+> All dimension values are defined in theme JSON files under `Sizing` and `Components`.
+> Use `{DynamicResource TokenName}` to reference them.
 
-### Fixed Dimensions
-
-| Element | Size |
-|---------|------|
-| `AppBarHeight` | 56px |
-| `SidebarWidth` | 248px |
-| `ButtonMinHeight` | 34px |
-| `InputMinHeight` | 34px |
-| `ListItemMinHeight` | 38px |
-| `AvatarSize` | 36px |
-| `IconSize` | 20px |
-| `IconSizeSmall` | 16px |
+| Token | Usage |
+|-------|-------|
+| `AppBarHeight` | App bar height |
+| `SidebarWidth` | Sidebar expanded width |
+| `ButtonMinHeight` | Minimum button height |
+| `ButtonPadding` | Button padding (Thickness) |
+| `InputMinHeight` | Minimum input field height |
+| `InputPadding` | Input field padding (Thickness) |
+| `ListItemMinHeight` | Minimum list item height |
+| `AvatarSize` | User avatar diameter |
+| `AvatarCornerRadius` | Avatar corner radius (circular) |
+| `IconSize` | Default icon size |
+| `IconSizeSmall` | Small icon size |
+| `PageMargin` | Page-level margin (Thickness) |
+| `PageMarginNoBottom` | Page margin without bottom (Thickness) |
+| `SidebarMenuHeaderFontSize` | Sidebar menu header font size |
+| `SidebarMenuHeaderMinHeight` | Sidebar menu header minimum height |
+| `SidebarMenuHeaderPadding` | Sidebar menu header padding (Thickness) |
+| `SidebarMenuItemHeight` | Sidebar menu item height |
+| `SidebarMenuSearchHeight` | Sidebar search field height |
+| `SectionHeaderFontSize` | Section header font size |
+| `PageHeaderTitleFontSize` | Page/app bar title font size |
+| `PageHeaderSubtitleFontSize` | Page/app bar subtitle font size |
 
 ### Layout Structure
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                 APP BAR (56px, Primary)                 │
+│                 APP BAR (Primary)                       │
 │  [☰]  Title                                       [👤]  │
 │       Subtitle (opacity: 0.7)                           │
 ├──────────────┬──────────────────────────────────────────┤
 │              │                                          │
 │   SIDEBAR    │           CONTENT AREA                   │
-│   (248px)    │                                          │
+│              │                                          │
 │              │  ┌────────────────────────────────────┐  │
 │  [Expander]  │  │    VIDEO PLAYER                    │  │
 │  [Expander]  │  │    Header: VideoHeaderBg           │  │
@@ -345,13 +347,10 @@ This application uses **font-based icons** from the Brightlayer UI icon packages
 
 | Property | Value |
 |----------|-------|
-| Height | 56px (fixed) |
+| Height | `{DynamicResource AppBarHeight}` |
 | Background | `{DynamicResource Primary}` |
-| Shadow | `0 2 4 0 #40000000` |
-| Left Padding | 8px |
-| Right Padding | 16px |
-| Title Font | 17px, Medium, White |
-| Subtitle Font | 11px, Regular, White, opacity 0.7 |
+| Title Font | `PageHeaderTitleFontSize`, Medium, `PrimaryHeaderFg` |
+| Subtitle Font | `PageHeaderSubtitleFontSize`, Regular, `PrimaryHeaderFg`, opacity 0.7 |
 
 ### Buttons (Strict Hierarchy)
 
@@ -368,11 +367,10 @@ This application uses **font-based icons** from the Brightlayer UI icon packages
 #### Button Specifications
 
 ```
-MinHeight: 34px
-Padding: 12px horizontal, 6px vertical
+MinHeight: {DynamicResource ButtonMinHeight}
+Padding: {DynamicResource ButtonPadding}
 CornerRadius: 4px
 FontWeight: Medium (500)
-FontSize: 14px
 ```
 
 #### Button States
@@ -406,10 +404,10 @@ FontSize: 14px
 **Header Structure:**
 ```
 ┌─────────────────────────────────────────┐
-│ [Icon]  Section Title              [▾]  │  48px height
+│ [Icon]  Section Title              [▾]  │
 ├─────────────────────────────────────────┤
-│ Content Area                            │  16px padding
-│ (Margin: 16,8,16,16)                    │
+│ Content Area                            │
+│                                         │
 └─────────────────────────────────────────┘
 ```
 
@@ -417,8 +415,8 @@ FontSize: 14px
 
 | Control | MinHeight | Padding | CornerRadius |
 |---------|-----------|---------|--------------|
-| TextBox | 36px | 12,8 | 4px |
-| ComboBox | 36px | 12,8 | 4px |
+| TextBox | `InputMinHeight` | `InputPadding` | 4px |
+| ComboBox | `InputMinHeight` | `InputPadding` | 4px |
 | CheckBox | auto | default | - |
 
 ### Cards/Sections
@@ -434,19 +432,19 @@ Margin: 0 (flush layout)
 
 ```
 ┌─────────────────────────────────────────┐
-│ ┌───────── HEADER (56px) ─────────────┐ │
-│ │  Title (17px, Medium)               │ │
-│ │  Subtitle (11px, opacity 0.7)       │ │
+│ ┌─────────── HEADER ─────────────────┐ │
+│ │  Title (PageHeaderTitleFontSize)    │ │
+│ │  Subtitle (PageHeaderSubtitleFontSize) │ │
 ├─────────────────────────────────────────┤
 │                                         │
-│   Content (24px padding)                │
+│   Content                               │
 │                                         │
 │   ─────────────────────────             │  Dividers between sections
 │                                         │
 │   More content...                       │
 │                                         │
 ├─────────────────────────────────────────┤
-│              [Cancel] [Save]            │  Footer (Surface1, 24,16 padding)
+│              [Cancel] [Save]            │  Footer (Surface1)
 └─────────────────────────────────────────┘
 ```
 
@@ -454,10 +452,10 @@ Margin: 0 (flush layout)
 
 | Property | Value |
 |----------|-------|
-| Size | 36x36px |
-| CornerRadius | 18px (circular) |
-| Background | `PrimaryDark` |
-| Text | 18px, SemiBold, White |
+| Size | `{DynamicResource AvatarSize}` |
+| CornerRadius | `{DynamicResource AvatarCornerRadius}` (circular) |
+| Background | `PrimaryDark` (connected) / `UserProfileDisconnectedBackground` |
+| Text | SemiBold, White |
 | Content | First letter of username |
 
 ---
@@ -468,8 +466,8 @@ Margin: 0 (flush layout)
 
 | Region | Width | Background |
 |--------|-------|------------|
-| Sidebar (expanded) | 248px | `SidebarBg` |
-| Sidebar (collapsed) | 56px | `Surface1` |
+| Sidebar (expanded) | `SidebarWidth` | `SidebarBg` |
+| Sidebar (collapsed) | - | `Surface1` |
 | Content | Flexible | `AppBg` |
 | Video Panel | Flexible | `Surface1` |
 | Messages Panel | Flexible | `Surface1` |
