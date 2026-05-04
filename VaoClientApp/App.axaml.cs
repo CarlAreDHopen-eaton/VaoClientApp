@@ -13,6 +13,9 @@ namespace Vao.Sample
    public class App : Application
    {
       private ThemeDefinition mCurrentTheme;
+#if ANDROID
+      public MainView AndroidMainView { get; private set; }
+#endif
 
       public ThemeDefinition CurrentTheme => mCurrentTheme;
 
@@ -183,7 +186,11 @@ namespace Vao.Sample
 #else
          if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
          {
-            singleViewPlatform.MainView = new MainView();
+            var mainView = new MainView();
+#if ANDROID
+            AndroidMainView = mainView;
+#endif
+            singleViewPlatform.MainView = mainView;
          }
 #endif
          base.OnFrameworkInitializationCompleted();
