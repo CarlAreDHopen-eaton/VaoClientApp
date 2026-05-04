@@ -279,26 +279,21 @@ namespace Vao.Client.Components
       /// <returns>The RTSP url for the camera live stream.</returns>
       public string GetCameraLiveStreamUrl(int iStream)
       {
-         RestResponse response = FlexRApiClient.ExecuteGetCameraInternal(ComponentNumber);
-         if (response != null && response.IsSuccessful)
-         {
-            // Request new camera data in case redundant video server has taken over.
-            var newCameraData = Utility.JsonParser.ParseSingleCamera(response.Content, FlexRApiClient);
-            // Update own data in case other properties has changed.
-            UpdateData(newCameraData);
-            // Return correct url.
-            if (iStream == 1)
-            {
-               return mJsonCameraObject.stream1url;
-            }
-            if (iStream == 2)
-            {
-               // If the 2nd stream is available we revert back to stream 1.
-               if (string.IsNullOrEmpty(mJsonCameraObject.stream2url))
-                  return mJsonCameraObject.stream1url;
+         // Request new camera data in case redundant video server has taken over.
+         UpdateCameraData();
 
-               return mJsonCameraObject.stream2url;
-            }
+         // Return correct url.
+         if (iStream == 1)
+         {
+            return mJsonCameraObject.stream1url;
+         }
+         if (iStream == 2)
+         {
+            // If the 2nd stream is available we revert back to stream 1.
+            if (string.IsNullOrEmpty(mJsonCameraObject.stream2url))
+               return mJsonCameraObject.stream1url;
+
+            return mJsonCameraObject.stream2url;
          }
          return "";
       }
@@ -311,6 +306,7 @@ namespace Vao.Client.Components
          if (response != null && response.IsSuccessful)
          {
             Camera newCameraData = JsonParser.ParseSingleCamera(response.Content, FlexRApiClient);
+            // Update own data in case other properties has changed.
             UpdateData(newCameraData);
          }
       }

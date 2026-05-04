@@ -55,17 +55,21 @@ namespace Vao.Client
       {
          lock (mUpdateCameraListLocker)
          {
-            if (mCameraList.TryGetValue(cameraNo, out var camera1))
-               return camera1;
+            if (mCameraList.TryGetValue(cameraNo, out var camera))
+            {
+               if (forceRequest)
+                  camera.UpdateCameraData();
+               return camera;
+            }
          }
-
+         
          RestResponse response = this.ExecuteGetCameraInternal(cameraNo);
          if (response == null)
             return null;
-         var camera = JsonParser.ParseSingleCamera(response.Content, this);
-         if (camera != null)
-            AddOrUpdateCamera(camera);
-         return camera;
+         Camera loadedCamera = JsonParser.ParseSingleCamera(response.Content, this);
+         if (loadedCamera != null)
+            AddOrUpdateCamera(loadedCamera);
+         return loadedCamera;
       }
      
       /// <summary>
@@ -363,7 +367,7 @@ namespace Vao.Client
             }
             else
             {
-               mCameraList[key].Name = camera.Name;
+               mCameraList[key].UpdateData(camera);
             }
          }
       }
