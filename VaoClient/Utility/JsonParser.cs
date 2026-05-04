@@ -68,13 +68,37 @@ namespace Vao.Client.Utility
          return null;
       }
 
-         /// <summary>
-         /// Parses the JSON message text to a camera object.
-         /// </summary>
-         /// <param name="strJson">The JSON formatted message text</param>
-         /// <param name="flexRApiClient">The client that received the message</param>
-         /// <returns></returns>
-         internal static Camera ParseSingleCamera(string strJson, FlexRApiClient flexRApiClient)
+      /// <summary>
+      /// Parses the JSON message text to a list of camera objects.
+      /// </summary>
+      /// <param name="strJson">The JSON formatted message text</param>
+      /// <param name="flexRApiClient">The client that received the message</param>
+      /// <returns></returns>
+      internal static List<Monitor> ParseVideoOutputList(string strJson, FlexRApiClient flexRApiClient)
+      {
+         if (!string.IsNullOrEmpty(strJson))
+         {
+            List<JsonVideoOutputEx> list = JsonConvert.DeserializeObject<List<JsonVideoOutputEx>>(strJson);
+            List<Monitor> returnList = new List<Monitor>();
+            foreach (JsonVideoOutputEx videoOutput in list)
+            {
+               Camera camera = flexRApiClient.GetCameraList().GetByLocalNo(videoOutput.inputId, flexRApiClient);
+               returnList.Add(new Monitor(videoOutput.outputId, videoOutput.outputName, flexRApiClient, camera));
+            }
+            return returnList;
+         }
+         return null;
+      }
+
+
+
+      /// <summary>
+      /// Parses the JSON message text to a camera object.
+      /// </summary>
+      /// <param name="strJson">The JSON formatted message text</param>
+      /// <param name="flexRApiClient">The client that received the message</param>
+      /// <returns></returns>
+      internal static Camera ParseSingleCamera(string strJson, FlexRApiClient flexRApiClient)
       {
          if (!string.IsNullOrEmpty(strJson))
          {

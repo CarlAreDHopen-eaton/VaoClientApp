@@ -25,6 +25,20 @@ namespace Vao.Client.Components
       }
 
       /// <summary>
+      /// Constructor
+      /// </summary>
+      /// <param name="monitorNo">The monitor number</param>
+      /// <param name="monitorName"></param>
+      /// <param name="client">The client that this camera belong to</param>
+      /// <param name="currentCamera">The camera currently active on this monitor</param>
+      public Monitor(int monitorNo, string monitorName, FlexRApiClient client, Camera currentCamera)
+         : base(client, monitorNo)
+      {
+         mMonitorName = monitorName;
+         mActiveCamera = currentCamera;
+      }
+
+      /// <summary>
       /// Gets the name of the monitor
       /// NOTE The VAO API does not support monitor names, therefor they will all have default names.
       /// </summary>
@@ -33,6 +47,10 @@ namespace Vao.Client.Components
          get
          {
             return mMonitorName;
+         }
+         internal set
+         {
+            mMonitorName = value;
          }
       }
 
@@ -45,10 +63,14 @@ namespace Vao.Client.Components
          {
             return mActiveCamera;
          }
+         internal set
+         {
+            mActiveCamera = value;
+         }
       }
 
       /// <summary>
-      /// This method does not have any functionallity.
+      /// This method does not have any functionality.
       /// </summary>
       /// <param name="newName"></param>
       /// <returns></returns>

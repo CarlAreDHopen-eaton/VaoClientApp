@@ -136,6 +136,26 @@ namespace Vao.Client.Utility
          return true;
       }
 
+      internal static List<Monitor> ExecuteGetMonitorList(this FlexRApiClient flexRApiClient)
+      {
+         RestClient client = flexRApiClient.GetRestClient();
+
+         // ReSharper disable once RedundantArgumentDefaultValue
+         RestRequest request = new RestRequest($"video-output", Method.Get);
+
+         mRateLimiter.WaitForSlot();
+         RestResponse response = client.Execute(request);
+
+         string strResponse = flexRApiClient.ValidateResponseContent(response);
+         if (strResponse == null)
+         {
+            // Empty list.
+            return null;
+         }
+
+         var monitors = JsonParser.ParseVideoOutputList(strResponse, flexRApiClient);
+         return monitors;
+      }
       internal static Monitor ExecuteGetMonitor(this FlexRApiClient flexRApiClient, int iVideoOutput)
       {
          RestClient client = flexRApiClient.GetRestClient();

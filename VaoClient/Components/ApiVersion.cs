@@ -1,4 +1,5 @@
-﻿using Vao.Client.Contracts;
+﻿using System;
+using Vao.Client.Contracts;
 
 namespace Vao.Client.Components
 {
@@ -53,5 +54,10 @@ namespace Vao.Client.Components
          get { return mMinorVersion; }
       }
       #endregion
+
+      public Version ToVersion()
+      {
+         return new Version(MajorVersion, MinorVersion);   
+      }
    }
 }

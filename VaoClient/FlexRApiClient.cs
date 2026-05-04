@@ -8,6 +8,7 @@ using RestSharp.Authenticators;
 using Vao.Client.Components;
 using Vao.Client.Enum;
 using Vao.Client.Utility;
+using Monitor = Vao.Client.Components.Monitor;
 
 namespace Vao.Client
 {
@@ -18,7 +19,7 @@ namespace Vao.Client
       private RestClient mRestClient;
       private FeedbackHandler mFeedbackHandler;
       private readonly Dictionary<int, Camera> mCameraList = new Dictionary<int, Camera>();
-      private readonly Dictionary<int, Components.Monitor> mMonitorList = new Dictionary<int, Components.Monitor>();
+      private readonly Dictionary<int, Monitor> mMonitorList = new Dictionary<int, Monitor>();
       private readonly ManualResetEvent mStopLoadData = new ManualResetEvent(false);
       private Thread mInitializeThread;
       private readonly object mUpdateCameraListLocker = new object();
@@ -73,20 +74,27 @@ namespace Vao.Client
       /// <returns></returns>
       public List<Camera> GetCameraList()
       {
-         if (mCameraList != null && mCameraList.Count > 0)
+         if (mCameraList.Count > 0)
          {
             return mCameraList.Values.ToList();
          }
-         var cameras = this.ExecuteGetCameraList();
+         return LoadCamerasFromApi();
+      }
+
+      private List<Camera> LoadCamerasFromApi()
+      {
+         List<Camera> cameras = this.ExecuteGetCameraList();
          if (cameras != null)
          {
-            foreach (var camera in cameras)
+            foreach (Camera camera in cameras)
             {
                AddOrUpdateCamera(camera);
             }
          }
+
          return cameras;
       }
+
       /// <summary>
       /// Gets download information for video download
       /// </summary>
@@ -106,16 +114,60 @@ namespace Vao.Client
       /// Gets a list of monitors.
       /// </summary>
       /// <returns></returns>
-      public List<Components.Monitor> GetMonitorList()
+      public List<Monitor> GetMonitorList()
       {
-         if (mMonitorList != null && mMonitorList.Count > 0)
+         if (mMonitorList.Count > 0)
          {
             return mMonitorList.Values.ToList();
          }
-         
-         // NOTE there is no single request method to get all monitors.
 
-         return null;
+         return LoadMonitorsFromApi();
+      }
+
+      private List<Monitor> LoadMonitorsFromApi()
+      {
+         List<Monitor> monitors = new List<Monitor>();
+
+         Version minVersion = new Version(1, 2);
+         if (GetApiVersion().ToVersion() >= minVersion)
+         {
+            var receivedMonitors = this.ExecuteGetMonitorList();
+            foreach (var monitor in receivedMonitors)
+            {
+               AddOrUpdateMonitor(monitor, monitor.ActiveCamera);
+            }
+         }
+
+         // Fallback in case we have an older API version that does not support getting all monitors.
+         if (mMonitorList.Count == 0)
+         {
+            for (int i = 1; i < 255; i++)
+            {
+               if (!mMonitorList.ContainsKey(i))
+               {
+                  // Request the monitor
+                  Monitor monitor = this.ExecuteGetMonitor(i);
+
+                  // No more monitors.
+                  if (monitor == null)
+                  {
+                     Debug.WriteLine($"Finished loading monitors at Monitor {i - 1}");
+                     break;
+                  }
+
+                  // Add to the monitor list (Note Need to fix as this is not thread safe)
+                  mMonitorList.Add(i, monitor);
+
+                  // Stop signaled
+                  if (mStopLoadData.WaitOne(0))
+                  {
+                     RaiseOnMessage(MessageLevel.Info, "Stopping async load of data.", null);
+                     return monitors;
+                  }
+               }
+            }
+         }
+         return monitors;
       }
 
       /// <summary>
@@ -314,14 +366,31 @@ namespace Vao.Client
                mCameraList[key].Name = camera.Name;
             }
          }
+      }
+
+      private void AddOrUpdateMonitor(Monitor monitor, Camera camera)
+      {
+         var key = monitor.ComponentNumber;
+         lock (mUpdateCameraListLocker)
+         {
+            if (!mMonitorList.ContainsKey(key))
+            {
+               mMonitorList.Add(key, monitor);
+               monitor.ActiveCamera = camera;
+            }
+            else
+            {
+               mMonitorList[key].Name = monitor.Name;
+            }
+         }
 
       }
+
 
       private void StartLoadAsync()
       {
          RaiseOnMessage(MessageLevel.Info, "Async load of data started", null);
 
-         int iLoadDelay = 200;
          int iState = 0;
 
          while (true)
@@ -333,31 +402,8 @@ namespace Vao.Client
                   GetCameraList();
                   break;
                case 1:
-                  for (int i = 1; i < 255; i++)
-                  {
-                     if (!mMonitorList.ContainsKey(i))
-                     {
-                        // Request the monitor
-                        Components.Monitor monitor = this.ExecuteGetMonitor(i);
-
-                        // No more monitors.
-                        if (monitor == null)
-                        {
-                           Debug.WriteLine($"Finished loading monitors at Monitor {i - 1}");
-                           break;
-                        }
-
-                        // Add to the monitor list (Note Need to fix as this is not thread safe)
-                        mMonitorList.Add(i, monitor);
-
-                        // Stop signaled
-                        if (mStopLoadData.WaitOne(iLoadDelay))
-                        {
-                           RaiseOnMessage(MessageLevel.Info, "Async load of data started", null);
-                           return;
-                        }
-                     }
-                  }
+                  // Filling the monitor list.
+                  GetMonitorList();
                   break;
                case 2:
                   // TODO add additional loading.
@@ -365,10 +411,9 @@ namespace Vao.Client
                default:
                   RaiseOnMessage(MessageLevel.Info, "Async load of data completed", null);
                   return;
-
             }
 
-            if (mStopLoadData.WaitOne(iLoadDelay))
+            if (mStopLoadData.WaitOne())
             {
                RaiseOnMessage(MessageLevel.Info, "Async load of data aborted", null);
                return;
