@@ -12,462 +12,419 @@ using Monitor = Vao.Client.Components.Monitor;
 
 namespace Vao.Client
 {
-   public class FlexRApiClient
-   {
-      #region Private Members
+    public class FlexRApiClient
+    {
+        #region Private Members
 
-      private RestClient mRestClient;
-      private FeedbackHandler mFeedbackHandler;
-      private readonly Dictionary<int, Camera> mCameraList = new Dictionary<int, Camera>();
-      private readonly Dictionary<int, Monitor> mMonitorList = new Dictionary<int, Monitor>();
-      private readonly ManualResetEvent mStopLoadData = new ManualResetEvent(false);
-      private Thread mInitializeThread;
-      private readonly object mUpdateCameraListLocker = new object();
-      private readonly Dictionary<int, Alarm> mAlarmList = new Dictionary<int, Alarm>();
-      #endregion
+        private RestClient mRestClient;
+        private FeedbackHandler mFeedbackHandler;
+        private readonly DataManager mDataManager;
+        private readonly ManualResetEvent mStopLoadData = new ManualResetEvent(false);
+        private Thread mInitializeThread;
+        private readonly object mUpdateCameraListLocker = new object();
+        #endregion
 
-      #region Public Events
+        #region Public Events
 
-      public event EventHandler<MessageEventArgs> OnMessage;
+        public event EventHandler<MessageEventArgs> OnMessage;
 
-      #endregion
+        #endregion
 
-      #region Public Methods
-     
-      /// <summary>
-      /// Gets the status messages.
-      /// </summary>
-      /// <param name="lastCheck"></param>
-      /// <returns></returns>
-      internal string GetStatusMessages(DateTime lastCheck)
-      {
-         return this.ExecuteGetStatusMessages(lastCheck);
-      }
+        #region Constructors
 
-      /// <summary>
-      /// Gets a camera object.
-      /// NOTE: The <see cref="FlexRApiClient"/> caches cameras to limit requests to the API.
-      /// </summary>
-      /// <param name="cameraNo">The camera number to get</param>
-      /// <param name="forceRequest">If true a request will be sent to the API even if the camera is already available.</param>
-      /// <returns></returns>
-      public Camera GetCamera(int cameraNo, bool forceRequest = false)
-      {
-         lock (mUpdateCameraListLocker)
-         {
-            if (mCameraList.TryGetValue(cameraNo, out var camera))
+        public FlexRApiClient()
+        {
+            mDataManager = new DataManager(this);
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Gets the status messages.
+        /// </summary>
+        /// <param name="lastCheck"></param>
+        /// <returns></returns>
+        internal string GetStatusMessages(DateTime lastCheck)
+        {
+            return this.ExecuteGetStatusMessages(lastCheck);
+        }
+
+        /// <summary>
+        /// Gets a camera object.
+        /// NOTE: The <see cref="FlexRApiClient"/> caches cameras to limit requests to the API.
+        /// </summary>
+        /// <param name="cameraNo">The camera number to get</param>
+        /// <param name="forceRequest">If true a request will be sent to the API even if the camera is already available.</param>
+        /// <returns></returns>
+        public Camera GetCamera(int cameraNo, bool forceRequest = false)
+        {
+            var camera = mDataManager.GetCamera(cameraNo);
+            if (camera != null)
             {
-               if (forceRequest)
-                  camera.UpdateCameraData();
-               return camera;
+                if (forceRequest)
+                    camera.UpdateCameraData();
+                return camera;
             }
-         }
-         
-         RestResponse response = this.ExecuteGetCameraInternal(cameraNo);
-         if (response == null)
-            return null;
-         Camera loadedCamera = JsonParser.ParseSingleCamera(response.Content, this);
-         if (loadedCamera != null)
-            AddOrUpdateCamera(loadedCamera);
-         return loadedCamera;
-      }
-     
-      /// <summary>
-      /// Gets the list of cameras for this client.
-      /// </summary>
-      /// <returns></returns>
-      public List<Camera> GetCameraList()
-      {
-         if (mCameraList.Count > 0)
-         {
-            return mCameraList.Values.ToList();
-         }
-         return LoadCamerasFromApi();
-      }
 
-      private List<Camera> LoadCamerasFromApi()
-      {
-         List<Camera> cameras = this.ExecuteGetCameraList();
-         if (cameras != null)
-         {
-            foreach (Camera camera in cameras)
+            RestResponse response = this.ExecuteGetCameraInternal(cameraNo);
+            if (response == null)
+                return null;
+            Camera loadedCamera = JsonParser.ParseSingleCamera(response.Content, this);
+            if (loadedCamera != null)
+                mDataManager.AddOrUpdateCamera(loadedCamera);
+            return loadedCamera;
+        }
+
+        /// <summary>
+        /// Gets the list of cameras for this client.
+        /// </summary>
+        /// <returns></returns>
+        public List<Camera> GetCameraList()
+        {
+            var cached = mDataManager.GetCameraList();
+            if (cached != null)
+                return cached;
+            return LoadCamerasFromApi();
+        }
+
+        private List<Camera> LoadCamerasFromApi()
+        {
+            List<Camera> cameras = this.ExecuteGetCameraList();
+            if (cameras != null)
             {
-               AddOrUpdateCamera(camera);
+                foreach (Camera camera in cameras)
+                {
+                    mDataManager.AddOrUpdateCamera(camera);
+                }
             }
-         }
 
-         return cameras;
-      }
+            return cameras;
+        }
 
-      /// <summary>
-      /// Gets download information for video download
-      /// </summary>
-      /// <param name="ownerCamera">The camera which the recording is from.</param>
-      /// <param name="recorderAddress">The HVR address.</param>
-      /// <param name="streamNo">The stream number (1 for Main channel and 2 for Sub channel).</param>
-      /// <param name="startTime">Start time of the video recording.</param>
-      /// <param name="duration">Duration of the video recording.</param>
-      /// <returns></returns>
-      public DownloadInfo GetDownloadInfo(Camera ownerCamera, string recorderAddress, int streamNo, string startTime, string duration)
-      {
-         DownloadInfo downloadInfo = this.ExecuteGetDownloadInfo(ownerCamera, recorderAddress, streamNo, startTime, duration);
-         return downloadInfo;
-      }
+        /// <summary>
+        /// Gets download information for video download
+        /// </summary>
+        /// <param name="ownerCamera">The camera which the recording is from.</param>
+        /// <param name="recorderAddress">The HVR address.</param>
+        /// <param name="streamNo">The stream number (1 for Main channel and 2 for Sub channel).</param>
+        /// <param name="startTime">Start time of the video recording.</param>
+        /// <param name="duration">Duration of the video recording.</param>
+        /// <returns></returns>
+        public DownloadInfo GetDownloadInfo(Camera ownerCamera, string recorderAddress, int streamNo, string startTime, string duration)
+        {
+            DownloadInfo downloadInfo = this.ExecuteGetDownloadInfo(ownerCamera, recorderAddress, streamNo, startTime, duration);
+            return downloadInfo;
+        }
 
-      /// <summary>
-      /// Gets a list of monitors.
-      /// </summary>
-      /// <returns></returns>
-      public List<Monitor> GetMonitorList()
-      {
-         if (mMonitorList.Count > 0)
-         {
-            return mMonitorList.Values.ToList();
-         }
+        /// <summary>
+        /// Gets a list of monitors.
+        /// </summary>
+        /// <returns></returns>
+        public List<Monitor> GetMonitorList()
+        {
+            var cached = mDataManager.GetMonitorList();
+            if (cached != null)
+                return cached;
 
-         return LoadMonitorsFromApi();
-      }
+            return LoadMonitorsFromApi();
+        }
 
-      private List<Monitor> LoadMonitorsFromApi()
-      {
-         List<Monitor> monitors = new List<Monitor>();
+        private List<Monitor> LoadMonitorsFromApi()
+        {
+            List<Monitor> monitors = new List<Monitor>();
 
-         Version minVersion = new Version(1, 2);
-         if (GetApiVersion().ToVersion() >= minVersion)
-         {
-            var receivedMonitors = this.ExecuteGetMonitorList();
-            foreach (var monitor in receivedMonitors)
+            Version minVersion = new Version(1, 2);
+            if (GetApiVersion().ToVersion() >= minVersion)
             {
-               AddOrUpdateMonitor(monitor, monitor.ActiveCamera);
+                var receivedMonitors = this.ExecuteGetMonitorList();
+                foreach (var monitor in receivedMonitors)
+                {
+                    mDataManager.AddOrUpdateMonitor(monitor, monitor.ActiveCamera);
+                }
             }
-         }
 
-         // Fallback in case we have an older API version that does not support getting all monitors.
-         if (mMonitorList.Count == 0)
-         {
-            for (int i = 1; i < 255; i++)
+            // Fallback in case we have an older API version that does not support getting all monitors.
+            if (mDataManager.GetMonitorCount() == 0)
             {
-               if (!mMonitorList.ContainsKey(i))
-               {
-                  // Request the monitor
-                  Monitor monitor = this.ExecuteGetMonitor(i);
+                for (int i = 1; i < 255; i++)
+                {
+                    if (!mDataManager.ContainsMonitor(i))
+                    {
+                        // Request the monitor
+                        Monitor monitor = this.ExecuteGetMonitor(i);
 
-                  // No more monitors.
-                  if (monitor == null)
-                  {
-                     Debug.WriteLine($"Finished loading monitors at Monitor {i - 1}");
-                     break;
-                  }
+                        // No more monitors.
+                        if (monitor == null)
+                        {
+                            Debug.WriteLine($"Finished loading monitors at Monitor {i - 1}");
+                            break;
+                        }
 
-                  // Add to the monitor list (Note Need to fix as this is not thread safe)
-                  mMonitorList.Add(i, monitor);
+                        // Add to the monitor list
+                        mDataManager.AddMonitor(i, monitor);
 
-                  // Stop signaled
-                  if (mStopLoadData.WaitOne(0))
-                  {
-                     RaiseOnMessage(MessageLevel.Info, "Stopping async load of data.", null);
-                     return monitors;
-                  }
-               }
+                        // Stop signaled
+                        if (mStopLoadData.WaitOne(0))
+                        {
+                            RaiseOnMessage(MessageLevel.Info, "Stopping async load of data.", null);
+                            return monitors;
+                        }
+                    }
+                }
             }
-         }
-         return monitors;
-      }
+            return monitors;
+        }
 
-      /// <summary>
-      /// Starts the client.
-      /// </summary>
-      /// <returns>Returns true if start was successful</returns>
-      public bool StartClient()
-      {
-         if (mInitializeThread != null)
-            StopClient();
+        /// <summary>
+        /// Starts the client.
+        /// </summary>
+        /// <returns>Returns true if start was successful</returns>
+        public bool StartClient()
+        {
+            if (mInitializeThread != null)
+                StopClient();
 
-         // Start async load.
-         mInitializeThread = new Thread(StartLoadAsync);
-         mInitializeThread.Start();
-         mInitializeThread = null;
+            // Start async load.
+            mInitializeThread = new Thread(StartLoadAsync);
+            mInitializeThread.Start();
+            mInitializeThread = null;
 
-         StartStatusThread();
+            StartStatusThread();
 
-         string statusTime = GetLastStatusTime();
-         if (statusTime != null)
-         {
-            return true;
-         }
-         return false;
-
-         }
-
-      /// <summary>
-      /// Gets the latest status message time of the system
-      /// </summary>
-      /// <returns></returns>
-      public string GetLastStatusTime()
-      {
-         return this.ExecuteGetStatus();
-      }
-
-      /// <summary>
-      /// Gets the VaoRApi version number
-      /// </summary>
-      /// <returns></returns>
-      public ApiVersion GetApiVersion()
-      {
-         return this.ExecuteGetApiVersion();
-      }
-
-      /// <summary>
-      /// Gets the system implementation version (name and version string).
-      /// </summary>
-      /// <returns></returns>
-      public ImplementationVersion GetImplementationVersion()
-      {
-         return this.ExecuteGetImplementationVersion();
-      }
-
-      /// <summary>
-      /// Stops  the client.
-      /// </summary>
-      public void StopClient()
-      {
-         mStopLoadData.Set();
-
-         if (mFeedbackHandler != null)
-         {
-            mFeedbackHandler.Stop();
-            mFeedbackHandler = null;
-         }
-         
-         mCameraList.Clear();
-
-         mRestClient = null;
-      }
-
-      public List<Alarm> GetAlarmList()
-      {
-         if (mAlarmList != null && mAlarmList.Count > 0)
-         {
-            return mAlarmList.Values.ToList();
-         }
-         List<Alarm> alarms = this.ExecuteGetAlarmList();
-         if (alarms != null)
-         {
-            foreach (Alarm alarm in alarms)
+            string statusTime = GetLastStatusTime();
+            if (statusTime != null)
             {
-               AddOrUpdateAlarm(alarm);
+                return true;
             }
-         }
-         return alarms;
-      }
+            return false;
 
-      public Alarm GetSingleAlarm(int alarmNo)
-      {
-         return this.ExecuteGetAlarm(alarmNo);
-      }
+        }
 
-      public RestResponse SendAlarmCommand(int iAlarmNo, string command)
-      {
-        return this.ExecuteAlarmCommand(iAlarmNo, command);
-      }
+        /// <summary>
+        /// Gets the latest status message time of the system
+        /// </summary>
+        /// <returns></returns>
+        public string GetLastStatusTime()
+        {
+            return this.ExecuteGetStatus();
+        }
 
-      public RestResponse SendAbsolutePosition(int iCameraNo, float? pan, float? tilt, float? zoom)
-      {
-         return this.ExecuteCameraAbsolutePosition(iCameraNo, pan, tilt, zoom);
-      }
+        /// <summary>
+        /// Gets the VaoRApi version number
+        /// </summary>
+        /// <returns></returns>
+        public ApiVersion GetApiVersion()
+        {
+            return this.ExecuteGetApiVersion();
+        }
 
-      public RestResponse SendLockCamera(int iCameraNo, string timeout)
-      {
-         return this.ExecuteLockCamera(iCameraNo, timeout);
-      }
-      public RestResponse SendUnlockCamera(int iCameraNo)
-      {
-         return this.ExecuteUnlockCamera(iCameraNo);
-      }
+        /// <summary>
+        /// Gets the system implementation version (name and version string).
+        /// </summary>
+        /// <returns></returns>
+        public ImplementationVersion GetImplementationVersion()
+        {
+            return this.ExecuteGetImplementationVersion();
+        }
 
-      public User GetLoggedInUserInfo()
-      {
-         return this.ExecuteGetLoggedInUserInfo();
-      }
+        /// <summary>
+        /// Stops  the client.
+        /// </summary>
+        public void StopClient()
+        {
+            mStopLoadData.Set();
 
-      #endregion
+            if (mFeedbackHandler != null)
+            {
+                mFeedbackHandler.Stop();
+                mFeedbackHandler = null;
+            }
 
-      #region Internal Methods
+            mDataManager.ClearDataManager();
 
-      internal void RaiseOnMessage(MessageLevel messageType, string message, StatusMessage statusMessage)
-      {
-         OnMessage?.Invoke(this, new MessageEventArgs(messageType, message, statusMessage));
-      }
+            mRestClient = null;
+        }
 
-      internal RestClient GetRestClient()
-      {
-         if (mRestClient != null)
+        public List<Alarm> GetAlarmList()
+        {
+            var cached = mDataManager.GetAlarmList();
+            if (cached != null)
+                return cached;
+            List<Alarm> alarms = this.ExecuteGetAlarmList();
+            if (alarms != null)
+            {
+                foreach (Alarm alarm in alarms)
+                {
+                    mDataManager.AddOrUpdateAlarm(alarm);
+                }
+            }
+            return alarms;
+        }
+
+        public Alarm GetSingleAlarm(int alarmNo)
+        {
+            return this.ExecuteGetAlarm(alarmNo);
+        }
+
+        public RestResponse SendAlarmCommand(int iAlarmNo, string command)
+        {
+            return this.ExecuteAlarmCommand(iAlarmNo, command);
+        }
+
+        public RestResponse SendAbsolutePosition(int iCameraNo, float? pan, float? tilt, float? zoom)
+        {
+            return this.ExecuteCameraAbsolutePosition(iCameraNo, pan, tilt, zoom);
+        }
+
+        public RestResponse SendLockCamera(int iCameraNo, string timeout)
+        {
+            return this.ExecuteLockCamera(iCameraNo, timeout);
+        }
+        public RestResponse SendUnlockCamera(int iCameraNo)
+        {
+            return this.ExecuteUnlockCamera(iCameraNo);
+        }
+
+        public User GetLoggedInUserInfo()
+        {
+            return this.ExecuteGetLoggedInUserInfo();
+        }
+
+        #endregion
+
+        #region Internal Methods
+
+        internal void RaiseOnMessage(MessageLevel messageType, string message, StatusMessage statusMessage)
+        {
+            OnMessage?.Invoke(this, new MessageEventArgs(messageType, message, statusMessage));
+        }
+
+        internal RestClient GetRestClient()
+        {
+            if (mRestClient != null)
+                return mRestClient;
+
+            string addressLine = $"{(UseHttps ? "https" : "http")}://{Host}:{Port}";
+            var requestTimeout = TimeSpan.FromMilliseconds(ConnectionTimeoutMs <= 0 ? 8000 : ConnectionTimeoutMs);
+
+            RestClientOptions options;
+            if (UseHttps && IgnoreCertificateErrors)
+            {
+                // Bypass ssl validation check.
+                options = new RestClientOptions(addressLine)
+                {
+                    Authenticator = new HttpBasicAuthenticator(User, Password),
+                    RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true,
+                    Timeout = requestTimeout
+                };
+            }
+            else
+            {
+                // Bypass ssl validation check.
+                options = new RestClientOptions(addressLine)
+                {
+                    Authenticator = new HttpBasicAuthenticator(User, Password),
+                    Timeout = requestTimeout
+                };
+            }
+            mRestClient = new RestClient(options);
             return mRestClient;
+        }
 
-         string addressLine = $"{(UseHttps ? "https" : "http")}://{Host}:{Port}";
-         var requestTimeout = TimeSpan.FromMilliseconds(ConnectionTimeoutMs <= 0 ? 8000 : ConnectionTimeoutMs);
-
-         RestClientOptions options;
-         if (UseHttps && IgnoreCertificateErrors)
-         {
-            // Bypass ssl validation check.
-            options = new RestClientOptions(addressLine)
+        internal string ValidateResponseContent(RestResponse response)
+        {
+            if (!response.IsSuccessful)
             {
-               Authenticator = new HttpBasicAuthenticator(User, Password),
-               RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true,
-               Timeout = requestTimeout
-            };            
-         }
-         else
-         {
-            // Bypass ssl validation check.
-            options = new RestClientOptions(addressLine)
-            {
-               Authenticator = new HttpBasicAuthenticator(User, Password),
-               Timeout = requestTimeout
-            };
-         }
-         mRestClient = new RestClient(options);
-         return mRestClient;
-      }
-
-      internal string ValidateResponseContent(RestResponse response)
-      {
-         if (!response.IsSuccessful)
-         {
-            string strMessage;
-            if (response.ErrorException != null)
-            {
-               var inner = response.ErrorException.InnerException;
-               var detail = inner != null ? $" [{inner.GetType().Name}: {inner.Message}]" : string.Empty;
-               strMessage = $"{response.ErrorException.Message}{detail} {response.StatusDescription}";
+                string strMessage;
+                if (response.ErrorException != null)
+                {
+                    var inner = response.ErrorException.InnerException;
+                    var detail = inner != null ? $" [{inner.GetType().Name}: {inner.Message}]" : string.Empty;
+                    strMessage = $"{response.ErrorException.Message}{detail} {response.StatusDescription}";
+                }
+                else
+                {
+                    strMessage = response.ErrorMessage ?? $"Unknown connection error {response.StatusCode}";
+                }
+                RaiseOnMessage(MessageLevel.Error, strMessage, null);
+                return null;
             }
-            else
+            return response.Content;
+        }
+
+        #endregion
+
+        #region Private Methods
+
+
+
+
+
+
+        private void StartLoadAsync()
+        {
+            RaiseOnMessage(MessageLevel.Info, "Async load of data started", null);
+
+            int iState = 0;
+
+            while (true)
             {
-               strMessage = response.ErrorMessage ?? $"Unknown connection error {response.StatusCode}";
+                switch (iState)
+                {
+                    case 0:
+                        // Filling the camera list.
+                        GetCameraList();
+                        break;
+                    case 1:
+                        // Filling the monitor list.
+                        GetMonitorList();
+                        break;
+                    case 2:
+                        // TODO add additional loading.
+                        break;
+                    default:
+                        RaiseOnMessage(MessageLevel.Info, "Async load of data completed", null);
+                        return;
+                }
+
+                if (mStopLoadData.WaitOne())
+                {
+                    RaiseOnMessage(MessageLevel.Info, "Async load of data aborted", null);
+                    return;
+                }
+
+                iState++;
             }
-            RaiseOnMessage(MessageLevel.Error, strMessage, null);
-            return null;
-         }
-         return response.Content;
-      }
+        }
 
-      #endregion
-
-      #region Private Methods
-
-      private void AddOrUpdateCamera(Camera camera)
-      {
-         var key = camera.ComponentNumber;
-         lock (mUpdateCameraListLocker)
-         {
-            if (!mCameraList.ContainsKey(key))
-            {
-               mCameraList.Add(key, camera);
-            }
-            else
-            {
-               mCameraList[key].UpdateData(camera);
-            }
-         }
-      }
-
-      private void AddOrUpdateMonitor(Monitor monitor, Camera camera)
-      {
-         var key = monitor.ComponentNumber;
-         lock (mUpdateCameraListLocker)
-         {
-            if (!mMonitorList.ContainsKey(key))
-            {
-               mMonitorList.Add(key, monitor);
-               monitor.ActiveCamera = camera;
-            }
-            else
-            {
-               mMonitorList[key].Name = monitor.Name;
-            }
-         }
-
-      }
+        private void StartStatusThread()
+        {
+            mFeedbackHandler = new FeedbackHandler(this);
+            mFeedbackHandler.Start();
+        }
 
 
-      private void StartLoadAsync()
-      {
-         RaiseOnMessage(MessageLevel.Info, "Async load of data started", null);
 
-         int iState = 0;
+        #endregion
 
-         while (true)
-         {
-            switch (iState)
-            {
-               case 0:
-                  // Filling the camera list.
-                  GetCameraList();
-                  break;
-               case 1:
-                  // Filling the monitor list.
-                  GetMonitorList();
-                  break;
-               case 2:
-                  // TODO add additional loading.
-                  break;
-               default:
-                  RaiseOnMessage(MessageLevel.Info, "Async load of data completed", null);
-                  return;
-            }
+        #region Public Properties
 
-            if (mStopLoadData.WaitOne())
-            {
-               RaiseOnMessage(MessageLevel.Info, "Async load of data aborted", null);
-               return;
-            }
+        public string Password { get; set; }
 
-            iState++;
-         }
-      }
+        public string User { get; set; }
 
-      private void StartStatusThread()
-      {
-         mFeedbackHandler = new FeedbackHandler(this);
-         mFeedbackHandler.Start();
-      }
+        public bool IgnoreCertificateErrors { get; set; }
 
-      private void AddOrUpdateAlarm(Alarm alarm)
-      {
-         var key = alarm.ComponentNumber;
-         lock (mUpdateCameraListLocker)
-         {
-            if (!mAlarmList.ContainsKey(key))
-            {
-               mAlarmList.Add(key, alarm);
-            }
-            else
-            {
-               mAlarmList[key].Name = alarm.Name;
-            }
-         }
+        public string Host { get; set; }
 
-      }
+        public string Port { get; set; }
 
-      #endregion
+        public bool UseHttps { get; set; }
 
-      #region Public Properties
+        public int ConnectionTimeoutMs { get; set; } = 8000;
 
-      public string Password { get; set; }
-
-      public string User { get; set; }
-
-      public bool IgnoreCertificateErrors { get; set; }
-
-      public string Host { get; set; }
-
-      public string Port { get; set; }
-
-      public bool UseHttps { get; set; }
-
-      public int ConnectionTimeoutMs { get; set; } = 8000;
-
-      #endregion
-   }
+        #endregion
+    }
 }
