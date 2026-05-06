@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
 using Vao.Client.Components;
 using Vao.Client.Enum;
@@ -22,8 +23,11 @@ namespace Vao.Client
       { 
          if (mStatusCheckThread == null)
          {
-            mStatusCheckThread = new Thread(StatusCheckThread);
-            mStatusCheckThread.IsBackground = true;
+            mStatusCheckThread = new Thread(StatusCheckThread)
+            {
+               Name = $"{nameof(FeedbackHandler)} status check thread for connection to {mClient.Host}",
+               IsBackground = true
+            };
             mStatusCheckThread.Start();
             return true;
          }
@@ -38,8 +42,8 @@ namespace Vao.Client
             string rawMessages = mClient.GetStatusMessages(lastCheck);
             if (!string.IsNullOrEmpty(rawMessages))
             {
-               var statusMessages = Utility.JsonParser.ParseStatusMessages(rawMessages, mClient);
-               if (statusMessages != null && statusMessages.Count > 0)
+               List<StatusMessage> statusMessages = Utility.JsonParser.ParseStatusMessages(rawMessages, mClient);
+               if (statusMessages?.Count > 0)
                {
                   foreach (var message in statusMessages)
                   {
@@ -105,30 +109,24 @@ namespace Vao.Client
       {
          List<Camera> cameras = message.FlexApiClient.GetCameraList();
 
-         foreach (Camera camera in cameras)
+         // NOTE! Ending space to ensure correct match
+         Camera camera = cameras.FirstOrDefault(c => message.Message.Contains($"Camera_{c.ComponentNumber} "));
+         if (camera != null)
          {
-            if (message.Message.Contains($"Camera_{camera.ComponentNumber}"))
-            {
-               return camera;
-            }
+            return camera;
          }
 
-         return null;
+         // Fallback for old API with camera name instead of component number in the message.
+         // NOTE! Ending space to ensure correct match
+         return cameras.FirstOrDefault(c => message.Message.Contains($"Camera_{c.Name} "));
       }
 
       private static Alarm FindAlarm(StatusMessage message)
       {
          List<Alarm> alarms = message.FlexApiClient.GetAlarmList();
 
-         foreach (Alarm alarm in alarms)
-         {
-            if (message.Message.Contains($"Alarm_{alarm.ComponentNumber}"))
-            {
-               return alarm;
-            }
-         }
-
-         return null;
+         // NOTE! Ending space to ensure correct match
+         return alarms.FirstOrDefault(c => message.Message.Contains($"Alarm_{c.ComponentNumber} ")); ;
       }
 
       private void RaiseOnMessageEvents(StatusMessage message)
