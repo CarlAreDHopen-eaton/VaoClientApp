@@ -908,7 +908,7 @@ namespace Vao.Sample
          var item = btn.DataContext as AlarmSelectionItem;
          if (item?.Alarm == null) return;
          SelectAlarm(item.Alarm.ComponentNumber);
-         var alarmPage = new AlarmActionPage(mFlexApiClient, CurrentAlarm, mCurrentLoggedInUser)
+         var alarmPage = new AlarmActionPage(CurrentAlarm)
          {
             NavigationService = mNavigationService
          };
@@ -1629,10 +1629,11 @@ namespace Vao.Sample
 
       private void HandleRenameCameraAsync()
       {
-         if (mCurrentLoggedInUser == null || mCurrentLoggedInUser.Privilege < UserPrivilege.Supervisor) return;
-
          var selectedItem = lstCameraSelection?.SelectedItem as CameraSelectionItem;
          if (selectedItem?.Camera == null) return;
+
+         var currentUser = selectedItem.Camera.FlexApiClient.CurrentUser;
+         if (currentUser == null || currentUser.Privilege < UserPrivilege.Supervisor) return;
 
          var container = lstCameraSelection.ContainerFromItem(selectedItem) as Control;
          if (container == null) return;
