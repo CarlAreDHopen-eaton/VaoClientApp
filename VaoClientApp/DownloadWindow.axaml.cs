@@ -20,7 +20,7 @@ namespace Vao.Sample
    public partial class DownloadWindow : Window
    {
       private bool mIsFtpConnected = false;
-      private readonly FlexRApiClient mFlexRApiClient;
+      private readonly FlexApiClient mFlexApiClient;
       private FtpClient mFTPClient;
       private Camera mCurrentCamera;
 
@@ -33,11 +33,11 @@ namespace Vao.Sample
          InitializeComponent();
       }
 
-      public DownloadWindow(FlexRApiClient client)
+      public DownloadWindow(FlexApiClient client)
       {
          InitializeComponent();
-         mFlexRApiClient = client;
-         mFlexRApiClient.OnMessage += FlexRApiClientOnMessage;
+         mFlexApiClient = client;
+         mFlexApiClient.OnMessage += FlexApiClientOnMessage;
 
          lstPendingDownloads.ItemsSource = mPendingDownloads;
          lstFinishedDownloads.ItemsSource = mFinishedDownloads;
@@ -80,11 +80,11 @@ namespace Vao.Sample
          mDownloadMessages.Add($"{strTime} [{level}] - {source} - {message}");
       }
 
-      private void FlexRApiClientOnMessage(object sender, MessageEventArgs e)
+      private void FlexApiClientOnMessage(object sender, MessageEventArgs e)
       {
          if (!Dispatcher.UIThread.CheckAccess())
          {
-            Dispatcher.UIThread.Post(() => FlexRApiClientOnMessage(sender, e));
+            Dispatcher.UIThread.Post(() => FlexApiClientOnMessage(sender, e));
             return;
          }
 
@@ -203,7 +203,7 @@ namespace Vao.Sample
 
       private void FillCameraSelectionList()
       {
-         List<Camera> cameraList = mFlexRApiClient.GetCameraList();
+         List<Camera> cameraList = mFlexApiClient.GetCameraList();
          if (cameraList?.Count > 0)
          {
             selCamera.ItemsSource = cameraList;
@@ -288,7 +288,7 @@ namespace Vao.Sample
          var time = startTimePicker.SelectedTime ?? TimeSpan.Zero;
          var startTimeStr = (date.Date + time).ToString("yyyy-MM-dd HH:mm:ss");
 
-         DownloadInfo downloadInfo = mFlexRApiClient.GetDownloadInfo(mCurrentCamera, txtRecorderAddress.Text ?? "", streamNumber, startTimeStr, durationIsoString);
+         DownloadInfo downloadInfo = mFlexApiClient.GetDownloadInfo(mCurrentCamera, txtRecorderAddress.Text ?? "", streamNumber, startTimeStr, durationIsoString);
          if (downloadInfo != null)
          {
             mPendingDownloads.Add(new DownloadItem

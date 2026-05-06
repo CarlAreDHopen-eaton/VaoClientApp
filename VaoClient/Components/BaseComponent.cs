@@ -7,16 +7,16 @@ namespace Vao.Client.Components
    {
       #region Private Members
 
-      private readonly FlexRApiClient mFlexRApiClient;
+      private readonly FlexApiClient mFlexApiClient;
       private readonly int mComponentNumber;
 
       #endregion
 
       #region Constructors
 
-      public BaseComponent(FlexRApiClient client, int componentNumber)
+      public BaseComponent(FlexApiClient client, int componentNumber)
       { 
-         mFlexRApiClient = client;
+         mFlexApiClient = client;
          mComponentNumber = componentNumber;
       }
 
@@ -27,7 +27,7 @@ namespace Vao.Client.Components
       /// <summary>
       /// The client that this object belong to.
       /// </summary>
-      public FlexRApiClient FlexRApiClient { get { return mFlexRApiClient; } }
+      public FlexApiClient FlexApiClient { get { return mFlexApiClient; } }
 
       /// <summary>
       /// The component number that identifies this component.

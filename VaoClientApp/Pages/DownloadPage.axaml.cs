@@ -21,7 +21,7 @@ namespace Vao.Sample.Pages
     public partial class DownloadPage : NavigableViewBase
     {
         private bool mIsFtpConnected = false;
-        private readonly FlexRApiClient mFlexRApiClient;
+        private readonly FlexApiClient mFlexApiClient;
         private FtpClient mFtpClient;
         private Camera mCurrentCamera;
 
@@ -34,10 +34,10 @@ namespace Vao.Sample.Pages
             InitializeComponent();
         }
 
-        public DownloadPage(FlexRApiClient client) : this()
+        public DownloadPage(FlexApiClient client) : this()
         {
-            mFlexRApiClient = client;
-            mFlexRApiClient.OnMessage += FlexRApiClientOnMessage;
+            mFlexApiClient = client;
+            mFlexApiClient.OnMessage += FlexApiClientOnMessage;
 
             var lstPending = this.FindControl<ListBox>("lstPendingDownloads");
             var lstFinished = this.FindControl<ListBox>("lstFinishedDownloads");
@@ -102,11 +102,11 @@ namespace Vao.Sample.Pages
             mDownloadMessages.Add($"{strTime} [{level}] - {source} - {message}");
         }
 
-        private void FlexRApiClientOnMessage(object sender, MessageEventArgs e)
+        private void FlexApiClientOnMessage(object sender, MessageEventArgs e)
         {
             if (!Dispatcher.UIThread.CheckAccess())
             {
-                Dispatcher.UIThread.Post(() => FlexRApiClientOnMessage(sender, e));
+                Dispatcher.UIThread.Post(() => FlexApiClientOnMessage(sender, e));
                 return;
             }
 
@@ -239,7 +239,7 @@ namespace Vao.Sample.Pages
             var selCamera = this.FindControl<ComboBox>("selCamera");
             if (selCamera == null) return;
 
-            List<Camera> cameraList = mFlexRApiClient.GetCameraList();
+            List<Camera> cameraList = mFlexApiClient.GetCameraList();
             if (cameraList?.Count > 0)
             {
                 selCamera.ItemsSource = cameraList;
@@ -335,7 +335,7 @@ namespace Vao.Sample.Pages
             var time = timeStart?.SelectedTime ?? TimeSpan.Zero;
             var startTimeStr = (date.Date + time).ToString("yyyy-MM-dd HH:mm:ss");
 
-            DownloadInfo downloadInfo = mFlexRApiClient.GetDownloadInfo(mCurrentCamera, txtRecorder?.Text ?? "", streamNumber, startTimeStr, durationIsoString);
+            DownloadInfo downloadInfo = mFlexApiClient.GetDownloadInfo(mCurrentCamera, txtRecorder?.Text ?? "", streamNumber, startTimeStr, durationIsoString);
             if (downloadInfo != null)
             {
                 mPendingDownloads.Add(new DownloadItem
@@ -365,7 +365,7 @@ namespace Vao.Sample.Pages
         public override void OnNavigatingFrom()
         {
             DisconnectFromFtpServer();
-            mFlexRApiClient.OnMessage -= FlexRApiClientOnMessage;
+            mFlexApiClient.OnMessage -= FlexApiClientOnMessage;
         }
     }
 

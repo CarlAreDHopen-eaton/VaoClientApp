@@ -16,8 +16,8 @@ namespace Vao.Client.Components
       private bool mDownloadAccess = false;
 
 
-      internal User(int alarmNumber, JsonUserObject user, FlexRApiClient flexRApiClient)
-         : base(flexRApiClient, alarmNumber)
+      internal User(int alarmNumber, JsonUserObject user, FlexApiClient flexApiClient)
+         : base(flexApiClient, alarmNumber)
       {
          mUserName = user.name;
          Privilege = System.Enum.TryParse(user.privilege, ignoreCase: true, out UserPrivilege parsedUserPrivilege) ? parsedUserPrivilege : UserPrivilege.None;

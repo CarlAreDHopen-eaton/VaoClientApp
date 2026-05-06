@@ -10,13 +10,13 @@ namespace Vao.Client
 {
     public class DataManager
     {
-        private readonly FlexRApiClient mApiClient;
+        private readonly FlexApiClient mApiClient;
         private readonly Dictionary<int, Camera> mCameraList = new Dictionary<int, Camera>();
         private readonly Dictionary<int, Monitor> mMonitorList = new Dictionary<int, Monitor>();
         private readonly Dictionary<int, Alarm> mAlarmList = new Dictionary<int, Alarm>();
         private readonly object mUpdateCameraListLocker = new object();
 
-        public DataManager(FlexRApiClient apiClient)
+        public DataManager(FlexApiClient apiClient)
         {
             mApiClient = apiClient;
         }

@@ -8,7 +8,7 @@ namespace Vao.Sample.Pages
 {
     public partial class AbsolutePositionPage : NavigableViewBase
     {
-        private readonly FlexRApiClient mFlexRApiClient;
+        private readonly FlexApiClient mFlexApiClient;
         private readonly Camera mCurrentCamera;
 
         public AbsolutePositionPage()
@@ -16,15 +16,15 @@ namespace Vao.Sample.Pages
             InitializeComponent();
         }
 
-        public AbsolutePositionPage(FlexRApiClient client, Camera camera) : this()
+        public AbsolutePositionPage(FlexApiClient client, Camera camera) : this()
         {
-            mFlexRApiClient = client;
+            mFlexApiClient = client;
             mCurrentCamera = camera;
         }
 
         private void btnSendAbsolutePosition_Click(object sender, RoutedEventArgs e)
         {
-            if (mFlexRApiClient == null || mCurrentCamera == null) return;
+            if (mFlexApiClient == null || mCurrentCamera == null) return;
 
             var txtAbsolutePan = this.FindControl<TextBox>("txtAbsolutePan");
             var txtAbsoluteTilt = this.FindControl<TextBox>("txtAbsoluteTilt");
@@ -34,7 +34,7 @@ namespace Vao.Sample.Pages
             float? tilt = TryParseOrNull(txtAbsoluteTilt?.Text);
             float? zoom = TryParseOrNull(txtAbsoluteZoom?.Text);
 
-            mFlexRApiClient.SendAbsolutePosition(mCurrentCamera.ComponentNumber, pan, tilt, zoom);
+            mFlexApiClient.SendAbsolutePosition(mCurrentCamera.ComponentNumber, pan, tilt, zoom);
             GoBack();
         }
 

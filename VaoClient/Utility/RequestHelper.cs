@@ -16,9 +16,9 @@ namespace Vao.Client.Utility
       /// </summary>
       private static readonly RateLimiter mRateLimiter = new RateLimiter(9);
 
-      internal static List<Camera> ExecuteGetCameraList(this FlexRApiClient flexRApiClient)
+      internal static List<Camera> ExecuteGetCameraList(this FlexApiClient flexApiClient)
       {
-         RestClient client = flexRApiClient.GetRestClient();
+         RestClient client = flexApiClient.GetRestClient();
 
          // ReSharper disable once RedundantArgumentDefaultValue
          RestRequest request = new RestRequest("inputs", Method.Get);
@@ -26,20 +26,20 @@ namespace Vao.Client.Utility
          mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
 
-         string strResponse = flexRApiClient.ValidateResponseContent(response);
+         string strResponse = flexApiClient.ValidateResponseContent(response);
          if (strResponse == null)
          {
             // Empty list.
             return null;
          }
 
-         List<Camera> cameras = JsonParser.ParseCameraList(strResponse, flexRApiClient);
+         List<Camera> cameras = JsonParser.ParseCameraList(strResponse, flexApiClient);
          return cameras;
       }
 
-      internal static List<Preset> ExecuteGetPresetList(this FlexRApiClient flexRApiClient, Camera ownerCamera)
+      internal static List<Preset> ExecuteGetPresetList(this FlexApiClient flexApiClient, Camera ownerCamera)
       {
-         RestClient client = flexRApiClient.GetRestClient();
+         RestClient client = flexApiClient.GetRestClient();
 
          // ReSharper disable once RedundantArgumentDefaultValue
          RestRequest request = new RestRequest($"inputs/{ownerCamera.ComponentNumber}/presets", Method.Get);
@@ -47,20 +47,20 @@ namespace Vao.Client.Utility
          mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
 
-         string strResponse = flexRApiClient.ValidateResponseContent(response);
+         string strResponse = flexApiClient.ValidateResponseContent(response);
          if (strResponse == null)
          {
             // Empty list.
             return null;
          }
 
-         List<Preset> presets = JsonParser.ParsePresetList(strResponse, flexRApiClient, ownerCamera);
+         List<Preset> presets = JsonParser.ParsePresetList(strResponse, flexApiClient, ownerCamera);
          return presets;
       }
 
-      internal static List<PlaybackInfo> ExecuteGetRecordingList(this FlexRApiClient flexRApiClient, Camera ownerCamera, Guid viewerId)
+      internal static List<PlaybackInfo> ExecuteGetRecordingList(this FlexApiClient flexApiClient, Camera ownerCamera, Guid viewerId)
       {
-         RestClient client = flexRApiClient.GetRestClient();
+         RestClient client = flexApiClient.GetRestClient();
 
          // ReSharper disable once RedundantArgumentDefaultValue
          RestRequest request = new RestRequest($"inputs/{ownerCamera.ComponentNumber}/recordings", Method.Post);
@@ -73,20 +73,20 @@ namespace Vao.Client.Utility
 
          mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
-         string strResponse = flexRApiClient.ValidateResponseContent(response);
+         string strResponse = flexApiClient.ValidateResponseContent(response);
          if (strResponse == null)
          {
             // Empty list.
             return null;
          }
 
-         List<PlaybackInfo> playbackInfoList = JsonParser.ParsePlaybackInfoList(strResponse, flexRApiClient);
+         List<PlaybackInfo> playbackInfoList = JsonParser.ParsePlaybackInfoList(strResponse, flexApiClient);
          return playbackInfoList;
       }
 
-      internal static DownloadInfo ExecuteGetDownloadInfo(this FlexRApiClient flexRApiClient, Camera ownerCamera, string recorderAddress, int streamNo, string startTime, string duration)
+      internal static DownloadInfo ExecuteGetDownloadInfo(this FlexApiClient flexApiClient, Camera ownerCamera, string recorderAddress, int streamNo, string startTime, string duration)
       {
-         RestClient client = flexRApiClient.GetRestClient();
+         RestClient client = flexApiClient.GetRestClient();
 
          // ReSharper disable once RedundantArgumentDefaultValue
          RestRequest request = new RestRequest($"inputs/{ownerCamera.ComponentNumber}/downloads", Method.Post);
@@ -102,20 +102,20 @@ namespace Vao.Client.Utility
 
          mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
-         string strResponse = flexRApiClient.ValidateResponseContent(response);
+         string strResponse = flexApiClient.ValidateResponseContent(response);
          if (strResponse == null)
          {
             // Empty list.
             return null;
          }
 
-         DownloadInfo downloadInfo = JsonParser.ParseDownloadResponse(strResponse, flexRApiClient);
+         DownloadInfo downloadInfo = JsonParser.ParseDownloadResponse(strResponse, flexApiClient);
          return downloadInfo;
       }
 
-      internal static bool ExecuteSetCameraName(this FlexRApiClient flexRApiClient, int videoInput, string name)
+      internal static bool ExecuteSetCameraName(this FlexApiClient flexApiClient, int videoInput, string name)
       {
-         RestClient client = flexRApiClient.GetRestClient();
+         RestClient client = flexApiClient.GetRestClient();
 
          // ReSharper disable once RedundantArgumentDefaultValue
          RestRequest request = new RestRequest($"inputs/{videoInput}", Method.Post);
@@ -126,7 +126,7 @@ namespace Vao.Client.Utility
 
          mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
-         string strResponse = flexRApiClient.ValidateResponseContent(response);
+         string strResponse = flexApiClient.ValidateResponseContent(response);
          if (strResponse == null)
          {
             // Empty list.
@@ -136,9 +136,9 @@ namespace Vao.Client.Utility
          return true;
       }
 
-      internal static List<Monitor> ExecuteGetMonitorList(this FlexRApiClient flexRApiClient)
+      internal static List<Monitor> ExecuteGetMonitorList(this FlexApiClient flexApiClient)
       {
-         RestClient client = flexRApiClient.GetRestClient();
+         RestClient client = flexApiClient.GetRestClient();
 
          // ReSharper disable once RedundantArgumentDefaultValue
          RestRequest request = new RestRequest($"video-output", Method.Get);
@@ -146,19 +146,19 @@ namespace Vao.Client.Utility
          mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
 
-         string strResponse = flexRApiClient.ValidateResponseContent(response);
+         string strResponse = flexApiClient.ValidateResponseContent(response);
          if (strResponse == null)
          {
             // Empty list.
             return null;
          }
 
-         var monitors = JsonParser.ParseVideoOutputList(strResponse, flexRApiClient);
+         var monitors = JsonParser.ParseVideoOutputList(strResponse, flexApiClient);
          return monitors;
       }
-      internal static Monitor ExecuteGetMonitor(this FlexRApiClient flexRApiClient, int iVideoOutput)
+      internal static Monitor ExecuteGetMonitor(this FlexApiClient flexApiClient, int iVideoOutput)
       {
-         RestClient client = flexRApiClient.GetRestClient();
+         RestClient client = flexApiClient.GetRestClient();
 
          // ReSharper disable once RedundantArgumentDefaultValue
          RestRequest request = new RestRequest($"video-output/{iVideoOutput}", Method.Get);
@@ -166,66 +166,66 @@ namespace Vao.Client.Utility
          mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
 
-         string strResponse = flexRApiClient.ValidateResponseContent(response);
+         string strResponse = flexApiClient.ValidateResponseContent(response);
          if (strResponse == null)
          {
             // Empty list.
             return null;
          }
 
-         Monitor monitor = JsonParser.ParseVideoOutput(strResponse, flexRApiClient, iVideoOutput);        
+         Monitor monitor = JsonParser.ParseVideoOutput(strResponse, flexApiClient, iVideoOutput);        
          return monitor;
       }
 
-      internal static string ExecuteGetStatus(this FlexRApiClient flexRApiClient)
+      internal static string ExecuteGetStatus(this FlexApiClient flexApiClient)
       {
-         RestClient client = flexRApiClient.GetRestClient();
+         RestClient client = flexApiClient.GetRestClient();
          RestRequest request = new RestRequest("status", Method.Options);
          
          mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
 
-         return flexRApiClient.ValidateResponseContent(response);
+         return flexApiClient.ValidateResponseContent(response);
       }
 
-      internal static ApiVersion ExecuteGetApiVersion(this FlexRApiClient flexRApiClient)
+      internal static ApiVersion ExecuteGetApiVersion(this FlexApiClient flexApiClient)
       {
-         RestClient client = flexRApiClient.GetRestClient();
+         RestClient client = flexApiClient.GetRestClient();
          RestRequest request = new RestRequest("version/api", Method.Options);
 
          mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
-         string strResponse = flexRApiClient.ValidateResponseContent(response);
+         string strResponse = flexApiClient.ValidateResponseContent(response);
          if (strResponse == null)
          {
             // Empty list.
             return null;
          }
 
-         ApiVersion apiVersion = JsonParser.ParseApiVersion(strResponse, flexRApiClient);
+         ApiVersion apiVersion = JsonParser.ParseApiVersion(strResponse, flexApiClient);
          return apiVersion;
       }
 
-      internal static ImplementationVersion ExecuteGetImplementationVersion(this FlexRApiClient flexRApiClient)
+      internal static ImplementationVersion ExecuteGetImplementationVersion(this FlexApiClient flexApiClient)
       {
-         RestClient client = flexRApiClient.GetRestClient();
+         RestClient client = flexApiClient.GetRestClient();
          RestRequest request = new RestRequest("version/implementation", Method.Options);
 
          mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
-         string strResponse = flexRApiClient.ValidateResponseContent(response);
+         string strResponse = flexApiClient.ValidateResponseContent(response);
          if (strResponse == null)
          {
             return null;
          }
 
-         ImplementationVersion implVersion = JsonParser.ParseImplementationVersion(strResponse, flexRApiClient);
+         ImplementationVersion implVersion = JsonParser.ParseImplementationVersion(strResponse, flexApiClient);
          return implVersion;
       }
 
-      internal static string ExecuteGetStatusMessages(this FlexRApiClient flexRApiClient, DateTime dateTime)
+      internal static string ExecuteGetStatusMessages(this FlexApiClient flexApiClient, DateTime dateTime)
       {
-         RestClient client = flexRApiClient.GetRestClient();
+         RestClient client = flexApiClient.GetRestClient();
          RestRequest request = new RestRequest("status");
          dateTime = dateTime.AddSeconds(1);
          string formattedDateTime = dateTime.ToUniversalTime().ToString("r");
@@ -234,12 +234,12 @@ namespace Vao.Client.Utility
          mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
 
-         return flexRApiClient.ValidateResponseContent(response);
+         return flexApiClient.ValidateResponseContent(response);
       }
 
-      internal static RestResponse ExecuteMoveTargetStart(this FlexRApiClient flexRApiClient, int cameraNumber, int? panSpeed, int? tiltSpeed, int? zoomSpeed, string focus)
+      internal static RestResponse ExecuteMoveTargetStart(this FlexApiClient flexApiClient, int cameraNumber, int? panSpeed, int? tiltSpeed, int? zoomSpeed, string focus)
       {
-         RestClient client = flexRApiClient.GetRestClient();
+         RestClient client = flexApiClient.GetRestClient();
          // ReSharper disable once RedundantArgumentDefaultValue
          RestRequest request = new RestRequest($"inputs/{cameraNumber}/MoveTarget", Method.Post);
 
@@ -264,7 +264,7 @@ namespace Vao.Client.Utility
          mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
 
-         string strResponse = flexRApiClient.ValidateResponseContent(response);
+         string strResponse = flexApiClient.ValidateResponseContent(response);
          if (strResponse == null)
          {
             return null;
@@ -272,9 +272,9 @@ namespace Vao.Client.Utility
          return response;
       }
 
-      internal static RestResponse ExecuteMoveTargetStop(this FlexRApiClient flexRApiClient, int cameraNumber)
+      internal static RestResponse ExecuteMoveTargetStop(this FlexApiClient flexApiClient, int cameraNumber)
       {
-         RestClient client = flexRApiClient.GetRestClient();
+         RestClient client = flexApiClient.GetRestClient();
          // ReSharper disable once RedundantArgumentDefaultValue
          RestRequest request = new RestRequest($"inputs/{cameraNumber}/MoveTarget", Method.Delete);
 
@@ -283,16 +283,16 @@ namespace Vao.Client.Utility
          return response;
       }
 
-      internal static RestResponse ExecuteGetCameraInternal(this FlexRApiClient flexRApiClient, int iCameraNo)
+      internal static RestResponse ExecuteGetCameraInternal(this FlexApiClient flexApiClient, int iCameraNo)
       {
-         RestClient client = flexRApiClient.GetRestClient();
+         RestClient client = flexApiClient.GetRestClient();
          // ReSharper disable once RedundantArgumentDefaultValue
          RestRequest request = new RestRequest($"inputs/{iCameraNo}", Method.Get);
          
          mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
 
-         string strResponse = flexRApiClient.ValidateResponseContent(response);
+         string strResponse = flexApiClient.ValidateResponseContent(response);
          if (strResponse == null)
          {
             return null;
@@ -300,16 +300,16 @@ namespace Vao.Client.Utility
          return response;
       }
 
-      internal static RestResponse ExecuteMoveCameraToPreset(this FlexRApiClient flexRApiClient,  int iCameraNo, int iPresetNumber)
+      internal static RestResponse ExecuteMoveCameraToPreset(this FlexApiClient flexApiClient,  int iCameraNo, int iPresetNumber)
       {
-         RestClient client = flexRApiClient.GetRestClient();
+         RestClient client = flexApiClient.GetRestClient();
          // ReSharper disable once RedundantArgumentDefaultValue
          RestRequest request = new RestRequest($"inputs/{iCameraNo}/presets/{iPresetNumber}", Method.Post);
          
          mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
 
-         string strResponse = flexRApiClient.ValidateResponseContent(response);
+         string strResponse = flexApiClient.ValidateResponseContent(response);
          if (strResponse == null)
          {
             return null;
@@ -318,9 +318,9 @@ namespace Vao.Client.Utility
       }
 
 
-      internal static List<Alarm> ExecuteGetAlarmList(this FlexRApiClient flexRApiClient)
+      internal static List<Alarm> ExecuteGetAlarmList(this FlexApiClient flexApiClient)
       {
-         RestClient client = flexRApiClient.GetRestClient();
+         RestClient client = flexApiClient.GetRestClient();
 
          // ReSharper disable once RedundantArgumentDefaultValue
          RestRequest request = new RestRequest("alarms", Method.Get);
@@ -328,20 +328,20 @@ namespace Vao.Client.Utility
          mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
 
-         string strResponse = flexRApiClient.ValidateResponseContent(response);
+         string strResponse = flexApiClient.ValidateResponseContent(response);
          if (strResponse == null)
          {
             // Empty list.
             return null;
          }
 
-         List<Alarm> alarms = JsonParser.ParseAlarmList(strResponse, flexRApiClient);
+         List<Alarm> alarms = JsonParser.ParseAlarmList(strResponse, flexApiClient);
          return alarms;
       }
 
-      internal static Alarm ExecuteGetAlarm(this FlexRApiClient flexRApiClient, int iAlarmNo)
+      internal static Alarm ExecuteGetAlarm(this FlexApiClient flexApiClient, int iAlarmNo)
       {
-         RestClient client = flexRApiClient.GetRestClient();
+         RestClient client = flexApiClient.GetRestClient();
 
          // ReSharper disable once RedundantArgumentDefaultValue
          RestRequest request = new RestRequest($"alarms/{iAlarmNo}", Method.Get);
@@ -349,20 +349,20 @@ namespace Vao.Client.Utility
          mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
 
-         string strResponse = flexRApiClient.ValidateResponseContent(response);
+         string strResponse = flexApiClient.ValidateResponseContent(response);
          if (strResponse == null)
          {
             // Empty list.
             return null;
          }
 
-         Alarm alarm = JsonParser.ParseSingleAlarm(strResponse, flexRApiClient);
+         Alarm alarm = JsonParser.ParseSingleAlarm(strResponse, flexApiClient);
          return alarm;
       }
 
-      internal static RestResponse ExecuteAlarmCommand(this FlexRApiClient flexRApiClient, int iAlarmNo, string command)
+      internal static RestResponse ExecuteAlarmCommand(this FlexApiClient flexApiClient, int iAlarmNo, string command)
       {
-         RestClient client = flexRApiClient.GetRestClient();
+         RestClient client = flexApiClient.GetRestClient();
          // ReSharper disable once RedundantArgumentDefaultValue
          RestRequest request = new RestRequest($"alarms/{iAlarmNo}", Method.Post);
 
@@ -380,7 +380,7 @@ namespace Vao.Client.Utility
          mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
 
-         string strResponse = flexRApiClient.ValidateResponseContent(response);
+         string strResponse = flexApiClient.ValidateResponseContent(response);
          if (strResponse == null)
          {
             return null;
@@ -388,9 +388,9 @@ namespace Vao.Client.Utility
          return response;
       }
 
-      internal static RestResponse ExecuteCameraAbsolutePosition(this FlexRApiClient flexRApiClient, int iCameraNo, float? pan, float? tilt, float? zoom)
+      internal static RestResponse ExecuteCameraAbsolutePosition(this FlexApiClient flexApiClient, int iCameraNo, float? pan, float? tilt, float? zoom)
       {
-         RestClient client = flexRApiClient.GetRestClient();
+         RestClient client = flexApiClient.GetRestClient();
          // ReSharper disable once RedundantArgumentDefaultValue
          RestRequest request = new RestRequest($"inputs/{iCameraNo}/target", Method.Post);
 
@@ -410,7 +410,7 @@ namespace Vao.Client.Utility
          mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
 
-         string strResponse = flexRApiClient.ValidateResponseContent(response);
+         string strResponse = flexApiClient.ValidateResponseContent(response);
          if (strResponse == null)
          {
             return null;
@@ -418,9 +418,9 @@ namespace Vao.Client.Utility
          return response;
       }
 
-      internal static RestResponse ExecuteLockCamera(this FlexRApiClient flexRApiClient, int iCameraNo, string timeout = null)
+      internal static RestResponse ExecuteLockCamera(this FlexApiClient flexApiClient, int iCameraNo, string timeout = null)
       {
-         RestClient client = flexRApiClient.GetRestClient();
+         RestClient client = flexApiClient.GetRestClient();
          // ReSharper disable once RedundantArgumentDefaultValue
          RestRequest request = new RestRequest($"inputs/{iCameraNo}/lock", Method.Post);
 
@@ -436,7 +436,7 @@ namespace Vao.Client.Utility
          mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
 
-         string strResponse = flexRApiClient.ValidateResponseContent(response);
+         string strResponse = flexApiClient.ValidateResponseContent(response);
          if (strResponse == null)
          {
             return null;
@@ -444,16 +444,16 @@ namespace Vao.Client.Utility
          return response;
       }
 
-      internal static RestResponse ExecuteUnlockCamera(this FlexRApiClient flexRApiClient, int iCameraNo)
+      internal static RestResponse ExecuteUnlockCamera(this FlexApiClient flexApiClient, int iCameraNo)
       {
-         RestClient client = flexRApiClient.GetRestClient();
+         RestClient client = flexApiClient.GetRestClient();
          // ReSharper disable once RedundantArgumentDefaultValue
          RestRequest request = new RestRequest($"inputs/{iCameraNo}/lock", Method.Delete);
          
          mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
 
-         string strResponse = flexRApiClient.ValidateResponseContent(response);
+         string strResponse = flexApiClient.ValidateResponseContent(response);
          if (strResponse == null)
          {
             return null;
@@ -461,21 +461,21 @@ namespace Vao.Client.Utility
          return response;
       }
 
-      internal static User ExecuteGetLoggedInUserInfo(this FlexRApiClient flexRApiClient)
+      internal static User ExecuteGetLoggedInUserInfo(this FlexApiClient flexApiClient)
       {
-         RestClient client = flexRApiClient.GetRestClient();
+         RestClient client = flexApiClient.GetRestClient();
          // ReSharper disable once RedundantArgumentDefaultValue
          RestRequest request = new RestRequest($"user", Method.Get);
          
          mRateLimiter.WaitForSlot();
          RestResponse response = client.Execute(request);
 
-         string strResponse = flexRApiClient.ValidateResponseContent(response);
+         string strResponse = flexApiClient.ValidateResponseContent(response);
          if (strResponse == null)
          {
             return null;
          }
-         User user = JsonParser.ParseSingleUser(strResponse, flexRApiClient);
+         User user = JsonParser.ParseSingleUser(strResponse, flexApiClient);
          return user;
       }
    }

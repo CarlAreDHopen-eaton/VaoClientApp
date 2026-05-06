@@ -12,7 +12,7 @@ using Monitor = Vao.Client.Components.Monitor;
 
 namespace Vao.Client
 {
-    public class FlexRApiClient
+    public class FlexApiClient
     {
         #region Private Members
 
@@ -32,7 +32,7 @@ namespace Vao.Client
 
         #region Constructors
 
-        public FlexRApiClient()
+        public FlexApiClient()
         {
             mDataManager = new DataManager(this);
         }
@@ -53,7 +53,7 @@ namespace Vao.Client
 
         /// <summary>
         /// Gets a camera object.
-        /// NOTE: The <see cref="FlexRApiClient"/> caches cameras to limit requests to the API.
+        /// NOTE: The <see cref="FlexApiClient"/> caches cameras to limit requests to the API.
         /// </summary>
         /// <param name="cameraNo">The camera number to get</param>
         /// <param name="forceRequest">If true a request will be sent to the API even if the camera is already available.</param>

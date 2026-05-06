@@ -9,7 +9,7 @@ namespace Vao.Sample.Pages
 {
     public partial class AlarmActionPage : NavigableViewBase
     {
-        private readonly FlexRApiClient mFlexRApiClient;
+        private readonly FlexApiClient mFlexApiClient;
         private readonly Alarm mCurrentAlarm;
         private readonly User mCurrentLoggedInUser;
 
@@ -18,9 +18,9 @@ namespace Vao.Sample.Pages
             InitializeComponent();
         }
 
-        public AlarmActionPage(FlexRApiClient client, Alarm alarm, User user) : this()
+        public AlarmActionPage(FlexApiClient client, Alarm alarm, User user) : this()
         {
-            mFlexRApiClient = client;
+            mFlexApiClient = client;
             mCurrentAlarm = alarm;
             mCurrentLoggedInUser = user;
             UpdateEnabled();
@@ -79,31 +79,31 @@ namespace Vao.Sample.Pages
         
         private void btnAlarmActivate_Click(object sender, RoutedEventArgs e) 
         {
-            mFlexRApiClient?.SendAlarmCommand(mCurrentAlarm.ComponentNumber, nameof(AlarmCommands.Activate));
+            mFlexApiClient?.SendAlarmCommand(mCurrentAlarm.ComponentNumber, nameof(AlarmCommands.Activate));
             GoBack();
         }
 
         private void btnAlarmAcknowledge_Click(object sender, RoutedEventArgs e) 
         {
-            mFlexRApiClient?.SendAlarmCommand(mCurrentAlarm.ComponentNumber, nameof(AlarmCommands.Acknowledge));
+            mFlexApiClient?.SendAlarmCommand(mCurrentAlarm.ComponentNumber, nameof(AlarmCommands.Acknowledge));
             GoBack();
         }
 
         private void btnAlarmEnable_Click(object sender, RoutedEventArgs e) 
         {
-            mFlexRApiClient?.SendAlarmCommand(mCurrentAlarm.ComponentNumber, nameof(AlarmCommands.Enable));
+            mFlexApiClient?.SendAlarmCommand(mCurrentAlarm.ComponentNumber, nameof(AlarmCommands.Enable));
             GoBack();
         }
 
         private void btnAlarmDisable_Click(object sender, RoutedEventArgs e) 
         {
-            mFlexRApiClient?.SendAlarmCommand(mCurrentAlarm.ComponentNumber, nameof(AlarmCommands.Disable));
+            mFlexApiClient?.SendAlarmCommand(mCurrentAlarm.ComponentNumber, nameof(AlarmCommands.Disable));
             GoBack();
         }
 
         private void btnAlarmExpediate_Click(object sender, RoutedEventArgs e) 
         {
-            mFlexRApiClient?.SendAlarmCommand(mCurrentAlarm.ComponentNumber, nameof(AlarmCommands.Expediate));
+            mFlexApiClient?.SendAlarmCommand(mCurrentAlarm.ComponentNumber, nameof(AlarmCommands.Expediate));
             GoBack();
         }
 

@@ -9,7 +9,7 @@ namespace Vao.Sample.Pages
 {
     public partial class CameraLockPage : NavigableViewBase
     {
-        private readonly FlexRApiClient mFlexRApiClient;
+        private readonly FlexApiClient mFlexApiClient;
         private readonly Camera mCurrentCamera;
 
         public CameraLockPage()
@@ -17,15 +17,15 @@ namespace Vao.Sample.Pages
             InitializeComponent();
         }
 
-        public CameraLockPage(FlexRApiClient client, Camera camera) : this()
+        public CameraLockPage(FlexApiClient client, Camera camera) : this()
         {
-            mFlexRApiClient = client;
+            mFlexApiClient = client;
             mCurrentCamera = camera;
         }
 
         private void btnSend_Click(object sender, RoutedEventArgs e)
         {
-            if (mFlexRApiClient == null || mCurrentCamera == null) return;
+            if (mFlexApiClient == null || mCurrentCamera == null) return;
 
             var numHour = this.FindControl<NumericUpDown>("numUpDownHour");
             var numMin = this.FindControl<NumericUpDown>("numUpDownMin");
@@ -37,7 +37,7 @@ namespace Vao.Sample.Pages
 
             if (hours == 0 && minutes == 0 && seconds == 0)
             {
-                mFlexRApiClient.SendLockCamera(mCurrentCamera.ComponentNumber, null);
+                mFlexApiClient.SendLockCamera(mCurrentCamera.ComponentNumber, null);
                 GoBack();
                 return;
             }
@@ -47,7 +47,7 @@ namespace Vao.Sample.Pages
             if (minutes > 0) duration.Append($"{minutes}M");
             if (seconds > 0) duration.Append($"{seconds}S");
 
-            mFlexRApiClient.SendLockCamera(mCurrentCamera.ComponentNumber, duration.ToString());
+            mFlexApiClient.SendLockCamera(mCurrentCamera.ComponentNumber, duration.ToString());
             GoBack();
         }
 

@@ -33,7 +33,7 @@ namespace Vao.Sample
       private bool mApiSupportsPlayback;
       private ApiVersion mApiVersion;
       private ImplementationVersion mImplementationVersion;
-      private FlexRApiClient mFlexRApiClient;
+      private FlexApiClient mFlexApiClient;
       private Guid mViewerID = Guid.NewGuid();
       private Camera mCurrentCamera;
       private Alarm mCurrentAlarm;
@@ -157,7 +157,7 @@ namespace Vao.Sample
 
       public void SelectCameraHotkey(int cameraNo)
       {
-         if (!IsStarted || mFlexRApiClient == null) return;
+         if (!IsStarted || mFlexApiClient == null) return;
          int streamNo = tglSubChannel?.IsChecked == true ? 2 : 1;
          SelectCamera(cameraNo, streamNo);
       }
@@ -416,14 +416,14 @@ namespace Vao.Sample
          List<Camera> cameraList = null;
          List<Alarm> alarmList = null;
          ApiVersion apiVersion = null;
-         FlexRApiClient connectClient = null;
+         FlexApiClient connectClient = null;
          ConnectionAlternative connectedEndpoint = null;
 
          try
          {
             foreach (var endpoint in endpoints)
             {
-               var candidateClient = new FlexRApiClient
+               var candidateClient = new FlexApiClient
                {
                   Host = endpoint.Host,
                   Port = endpoint.Port,
@@ -433,7 +433,7 @@ namespace Vao.Sample
                   IgnoreCertificateErrors = true,
                   ConnectionTimeoutMs = 8000
                };
-               candidateClient.OnMessage += OnFlexRApiClientMessage;
+               candidateClient.OnMessage += OnFlexApiClientMessage;
 
                WriteMessageLog(MessageSource.FlexApi, $"Trying {endpoint.Host}:{endpoint.Port}...", LogLevel.Notice);
 
@@ -461,13 +461,13 @@ namespace Vao.Sample
                   WriteMessageLog(MessageSource.FlexApi, $"Connection attempt failed for {endpoint.Host}:{endpoint.Port}: {ex.Message}", LogLevel.Warning);
                }
 
-               candidateClient.OnMessage -= OnFlexRApiClientMessage;
+               candidateClient.OnMessage -= OnFlexApiClientMessage;
                candidateClient.StopClient();
             }
 
             if (started)
             {
-               mFlexRApiClient = connectClient;
+               mFlexApiClient = connectClient;
                mConnectedEndpointDisplay = $"{connectedEndpoint?.Host}:{connectedEndpoint?.Port}";
                if (connectedEndpoint != null && s.PromoteConnectionAlternativeToTop(connectedEndpoint.Host, connectedEndpoint.Port))
                   s.Save();
@@ -496,7 +496,7 @@ namespace Vao.Sample
             WriteMessageLog(MessageSource.FlexApi, $"Connection failed: {ex.Message}", LogLevel.Error);
             if (connectClient != null)
             {
-               connectClient.OnMessage -= OnFlexRApiClientMessage;
+               connectClient.OnMessage -= OnFlexApiClientMessage;
                connectClient.StopClient();
             }
             ClearPresetDropdown();
@@ -526,11 +526,11 @@ namespace Vao.Sample
          if (mIsConnecting) return;
 
          IsStarted = false;
-         if (mFlexRApiClient != null)
+         if (mFlexApiClient != null)
          {
-            mFlexRApiClient.OnMessage -= OnFlexRApiClientMessage;
-            mFlexRApiClient.StopClient();
-            mFlexRApiClient = null;
+            mFlexApiClient.OnMessage -= OnFlexApiClientMessage;
+            mFlexApiClient.StopClient();
+            mFlexApiClient = null;
          }
 
          mConnectedEndpointDisplay = string.Empty;
@@ -554,7 +554,7 @@ namespace Vao.Sample
          UpdateUserInitial();
       }
 
-      private void OnFlexRApiClientMessage(object sender, MessageEventArgs e)
+      private void OnFlexApiClientMessage(object sender, MessageEventArgs e)
       {
          if (e.StatusMessage is StatusMessage statusMessage)
          {
@@ -702,7 +702,7 @@ namespace Vao.Sample
       private void FillSelectCameraButtonList(List<Camera> cameraList = null)
       {
          ClearCameraSelection();
-         cameraList ??= mFlexRApiClient?.GetCameraList();
+         cameraList ??= mFlexApiClient?.GetCameraList();
          if (cameraList == null) return;
          foreach (var camera in cameraList.OrderBy(c => c.ComponentNumber))
             mCameraSelectionItems.Add(new CameraSelectionItem(camera));
@@ -759,8 +759,8 @@ namespace Vao.Sample
 
       private void SelectCamera(int cameraNo, int streamNo)
       {
-         if (mFlexRApiClient == null) return;
-         var camera = mFlexRApiClient.GetCamera(cameraNo);
+         if (mFlexApiClient == null) return;
+         var camera = mFlexApiClient.GetCamera(cameraNo);
          if (camera == null) return;
 
          CurrentCamera = camera;
@@ -789,15 +789,15 @@ namespace Vao.Sample
 
       private void SelectAlarm(int alarmNo)
       {
-         if (mFlexRApiClient == null) return;
-         var alarm = mFlexRApiClient.GetSingleAlarm(alarmNo);
+         if (mFlexApiClient == null) return;
+         var alarm = mFlexApiClient.GetSingleAlarm(alarmNo);
          if (alarm != null) CurrentAlarm = alarm;
       }
 
       private void NavigateToPreviousCamera()
       {
-         if (!IsStarted || mCurrentCamera == null || mFlexRApiClient == null) return;
-         var cameraList = mFlexRApiClient.GetCameraList();
+         if (!IsStarted || mCurrentCamera == null || mFlexApiClient == null) return;
+         var cameraList = mFlexApiClient.GetCameraList();
          if (cameraList == null || cameraList.Count == 0) return;
          int idx = cameraList.FindIndex(c => c.ComponentNumber == mCurrentCamera.ComponentNumber);
          if (idx < 0) return;
@@ -807,8 +807,8 @@ namespace Vao.Sample
 
       private void NavigateToNextCamera()
       {
-         if (!IsStarted || mCurrentCamera == null || mFlexRApiClient == null) return;
-         var cameraList = mFlexRApiClient.GetCameraList();
+         if (!IsStarted || mCurrentCamera == null || mFlexApiClient == null) return;
+         var cameraList = mFlexApiClient.GetCameraList();
          if (cameraList == null || cameraList.Count == 0) return;
          int idx = cameraList.FindIndex(c => c.ComponentNumber == mCurrentCamera.ComponentNumber);
          if (idx < 0) return;
@@ -854,7 +854,7 @@ namespace Vao.Sample
       private void FillSelectAlarmButtonList(List<Alarm> alarmList = null)
       {
          ClearAlarmSelection();
-         alarmList ??= mFlexRApiClient?.GetAlarmList();
+         alarmList ??= mFlexApiClient?.GetAlarmList();
          if (alarmList == null) return;
 
          foreach (var alarm in alarmList.OrderBy(a => a.ComponentNumber))
@@ -908,7 +908,7 @@ namespace Vao.Sample
          var item = btn.DataContext as AlarmSelectionItem;
          if (item?.Alarm == null) return;
          SelectAlarm(item.Alarm.ComponentNumber);
-         var alarmPage = new AlarmActionPage(mFlexRApiClient, CurrentAlarm, mCurrentLoggedInUser)
+         var alarmPage = new AlarmActionPage(mFlexApiClient, CurrentAlarm, mCurrentLoggedInUser)
          {
             NavigationService = mNavigationService
          };
@@ -1038,22 +1038,22 @@ namespace Vao.Sample
 
       private void btnOpenAbsolutePositionWindow_Click(object sender, RoutedEventArgs e)
       {
-         if (mFlexRApiClient == null || mCurrentCamera == null) return;
-         var page = new AbsolutePositionPage(mFlexRApiClient, mCurrentCamera) { NavigationService = mNavigationService };
+         if (mFlexApiClient == null || mCurrentCamera == null) return;
+         var page = new AbsolutePositionPage(mFlexApiClient, mCurrentCamera) { NavigationService = mNavigationService };
          mNavigationService.NavigateTo(page);
       }
 
       private void btnCameraLock_Click(object sender, RoutedEventArgs e)
       {
-         if (mFlexRApiClient == null || mCurrentCamera == null) return;
+         if (mFlexApiClient == null || mCurrentCamera == null) return;
          if (!mCurrentCamera.IsLocked)
          {
-            var page = new CameraLockPage(mFlexRApiClient, mCurrentCamera) { NavigationService = mNavigationService };
+            var page = new CameraLockPage(mFlexApiClient, mCurrentCamera) { NavigationService = mNavigationService };
             mNavigationService.NavigateTo(page);
          }
          else
          {
-            mFlexRApiClient.SendUnlockCamera(mCurrentCamera.ComponentNumber);
+            mFlexApiClient.SendUnlockCamera(mCurrentCamera.ComponentNumber);
          }
       }
 
@@ -1147,7 +1147,7 @@ namespace Vao.Sample
 
       private void CheckApiVersion(ApiVersion apiVersion = null)
       {
-         apiVersion ??= mFlexRApiClient?.GetApiVersion();
+         apiVersion ??= mFlexApiClient?.GetApiVersion();
          mApiVersion = apiVersion;
          if (apiVersion != null)
          {
@@ -1156,7 +1156,7 @@ namespace Vao.Sample
                ApiSupportsPlayback = true;
          }
 
-         try { mImplementationVersion = mFlexRApiClient?.GetImplementationVersion(); }
+         try { mImplementationVersion = mFlexApiClient?.GetImplementationVersion(); }
          catch { mImplementationVersion = null; }
 
          UpdateEnabled();
@@ -1236,8 +1236,8 @@ namespace Vao.Sample
 
       private void btnOpenDownloadWindow_Click(object sender, RoutedEventArgs e)
       {
-         if (mFlexRApiClient == null) return;
-         var page = new DownloadPage(mFlexRApiClient) { NavigationService = mNavigationService };
+         if (mFlexApiClient == null) return;
+         var page = new DownloadPage(mFlexApiClient) { NavigationService = mNavigationService };
          mNavigationService.NavigateTo(page);
       }
 
@@ -1268,7 +1268,7 @@ namespace Vao.Sample
       private List<object> BuildVideoContextMenuItems()
       {
          var rootItems = new List<object>();
-         if (mFlexRApiClient == null) { rootItems.Add(new MenuItem { Header = "Not connected", IsEnabled = false }); return rootItems; }
+         if (mFlexApiClient == null) { rootItems.Add(new MenuItem { Header = "Not connected", IsEnabled = false }); return rootItems; }
 
          var cameraList = GetAvailableCamerasForMenu();
          if (cameraList == null || cameraList.Count == 0) { rootItems.Add(new MenuItem { Header = "No cameras available", IsEnabled = false }); return rootItems; }
@@ -1296,7 +1296,7 @@ namespace Vao.Sample
 
       private List<Camera> GetAvailableCamerasForMenu()
       {
-         var list = mFlexRApiClient?.GetCameraList();
+         var list = mFlexApiClient?.GetCameraList();
          if (list != null && list.Count > 0) return list;
          return mCameraSelectionItems.Select(i => i.Camera).Where(c => c != null)
             .GroupBy(c => c.ComponentNumber).Select(g => g.First()).OrderBy(c => c.ComponentNumber).ToList();

@@ -5,7 +5,7 @@ namespace Vao.Client.Utility
 {
    internal static class ListExtensions
    {
-      internal static Camera GetByLocalNo(this List<Camera> cameras, int cameraNo, FlexRApiClient client)
+      internal static Camera GetByLocalNo(this List<Camera> cameras, int cameraNo, FlexApiClient client)
       {
          foreach (Camera camera in client.GetCameraList())
          {

@@ -7,7 +7,7 @@ namespace Vao.Sample
 {
    public partial class AbsolutePositionWindow : Window
    {
-      private readonly FlexRApiClient mFlexRApiClient;
+      private readonly FlexApiClient mFlexApiClient;
       private readonly Camera mCurrentCamera;
 
       public AbsolutePositionWindow()
@@ -15,10 +15,10 @@ namespace Vao.Sample
          InitializeComponent();
       }
 
-      public AbsolutePositionWindow(FlexRApiClient client, Camera camera)
+      public AbsolutePositionWindow(FlexApiClient client, Camera camera)
       {
          InitializeComponent();
-         mFlexRApiClient = client;
+         mFlexApiClient = client;
          mCurrentCamera = camera;
       }
 
@@ -27,7 +27,7 @@ namespace Vao.Sample
          float? pan = TryParseOrNull(txtAbsolutePan.Text);
          float? tilt = TryParseOrNull(txtAbsoluteTilt.Text);
          float? zoom = TryParseOrNull(txtAbsoluteZoom.Text);
-         mFlexRApiClient.SendAbsolutePosition(mCurrentCamera.ComponentNumber, pan, tilt, zoom);
+         mFlexApiClient.SendAbsolutePosition(mCurrentCamera.ComponentNumber, pan, tilt, zoom);
       }
 
       private static float? TryParseOrNull(string text)

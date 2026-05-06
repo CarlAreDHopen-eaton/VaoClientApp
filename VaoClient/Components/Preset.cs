@@ -16,8 +16,8 @@ namespace Vao.Client.Components
 
       #region Constructor
 
-      internal Preset(int number, JsonPresetObject jsonObject, FlexRApiClient flexRApiClient, Camera ownerCamera)
-         : base(flexRApiClient, number)
+      internal Preset(int number, JsonPresetObject jsonObject, FlexApiClient flexApiClient, Camera ownerCamera)
+         : base(flexApiClient, number)
       {
          mPresetName = jsonObject.name;
          mOwnerCamera = ownerCamera;
@@ -50,7 +50,7 @@ namespace Vao.Client.Components
       {
          int iPreset = ComponentNumber;
          int iCamera = OwnerCamera.ComponentNumber;
-         RestResponse response = FlexRApiClient.ExecuteMoveCameraToPreset(iCamera, iPreset);
+         RestResponse response = FlexApiClient.ExecuteMoveCameraToPreset(iCamera, iPreset);
          if (response != null && response.IsSuccessful)
          {
             return true;

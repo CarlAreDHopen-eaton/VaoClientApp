@@ -18,8 +18,8 @@ namespace Vao.Client.Components
 
       #region Constructor
 
-      internal DownloadInfo(JsonDownloadResponseObject jsonObject, FlexRApiClient flexRApiClient)
-         : base(flexRApiClient, 0)
+      internal DownloadInfo(JsonDownloadResponseObject jsonObject, FlexApiClient flexApiClient)
+         : base(flexApiClient, 0)
       {
          mDownloadId = jsonObject.downloadId;  
          mInputId = jsonObject.inputId;

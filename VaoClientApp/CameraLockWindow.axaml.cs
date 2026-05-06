@@ -8,7 +8,7 @@ namespace Vao.Sample
 {
    public partial class CameraLockWindow : Window
    {
-      private readonly FlexRApiClient mFlexRApiClient;
+      private readonly FlexApiClient mFlexApiClient;
       private readonly Camera mCurrentCamera;
 
       public CameraLockWindow()
@@ -16,10 +16,10 @@ namespace Vao.Sample
          InitializeComponent();
       }
 
-      public CameraLockWindow(FlexRApiClient client, Camera camera)
+      public CameraLockWindow(FlexApiClient client, Camera camera)
       {
          InitializeComponent();
-         mFlexRApiClient = client;
+         mFlexApiClient = client;
          mCurrentCamera = camera;
       }
 
@@ -31,7 +31,7 @@ namespace Vao.Sample
 
          if (hours == 0 && minutes == 0 && seconds == 0)
          {
-            mFlexRApiClient.SendLockCamera(mCurrentCamera.ComponentNumber, null);
+            mFlexApiClient.SendLockCamera(mCurrentCamera.ComponentNumber, null);
             return;
          }
 
@@ -40,7 +40,7 @@ namespace Vao.Sample
          if (minutes > 0) duration.Append($"{minutes}M");
          if (seconds > 0) duration.Append($"{seconds}S");
 
-         mFlexRApiClient.SendLockCamera(mCurrentCamera.ComponentNumber, duration.ToString());
+         mFlexApiClient.SendLockCamera(mCurrentCamera.ComponentNumber, duration.ToString());
       }
 
       private void numUpDown_ValueChanged(object sender, NumericUpDownValueChangedEventArgs e)
