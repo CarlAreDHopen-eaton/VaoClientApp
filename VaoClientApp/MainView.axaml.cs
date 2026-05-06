@@ -1039,7 +1039,7 @@ namespace Vao.Sample
       private void btnOpenAbsolutePositionWindow_Click(object sender, RoutedEventArgs e)
       {
          if (mFlexApiClient == null || mCurrentCamera == null) return;
-         var page = new AbsolutePositionPage(mFlexApiClient, mCurrentCamera) { NavigationService = mNavigationService };
+         var page = new AbsolutePositionPage(mCurrentCamera) { NavigationService = mNavigationService };
          mNavigationService.NavigateTo(page);
       }
 
@@ -1048,12 +1048,12 @@ namespace Vao.Sample
          if (mFlexApiClient == null || mCurrentCamera == null) return;
          if (!mCurrentCamera.IsLocked)
          {
-            var page = new CameraLockPage(mFlexApiClient, mCurrentCamera) { NavigationService = mNavigationService };
+            var page = new CameraLockPage(mCurrentCamera) { NavigationService = mNavigationService };
             mNavigationService.NavigateTo(page);
          }
          else
          {
-            mFlexApiClient.SendUnlockCamera(mCurrentCamera.ComponentNumber);
+            mCurrentCamera.Unlock();
          }
       }
 

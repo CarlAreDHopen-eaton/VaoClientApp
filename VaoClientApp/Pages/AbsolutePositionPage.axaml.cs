@@ -6,64 +6,62 @@ using Vao.Sample.Navigation;
 
 namespace Vao.Sample.Pages
 {
-    public partial class AbsolutePositionPage : NavigableViewBase
-    {
-        private readonly FlexApiClient mFlexApiClient;
-        private readonly Camera mCurrentCamera;
+   public partial class AbsolutePositionPage : NavigableViewBase
+   {
+      private readonly Camera mCurrentCamera;
 
-        public AbsolutePositionPage()
-        {
-            InitializeComponent();
-        }
+      public AbsolutePositionPage()
+      {
+         InitializeComponent();
+      }
 
-        public AbsolutePositionPage(FlexApiClient client, Camera camera) : this()
-        {
-            mFlexApiClient = client;
-            mCurrentCamera = camera;
-        }
+      public AbsolutePositionPage(Camera camera) : this()
+      {
+         mCurrentCamera = camera;
+      }
 
-        private void btnSendAbsolutePosition_Click(object sender, RoutedEventArgs e)
-        {
-            if (mFlexApiClient == null || mCurrentCamera == null) return;
+      private void btnSendAbsolutePosition_Click(object sender, RoutedEventArgs e)
+      {
+         if (mCurrentCamera == null) return;
 
-            var txtAbsolutePan = this.FindControl<TextBox>("txtAbsolutePan");
-            var txtAbsoluteTilt = this.FindControl<TextBox>("txtAbsoluteTilt");
-            var txtAbsoluteZoom = this.FindControl<TextBox>("txtAbsoluteZoom");
+         var txtAbsolutePan = this.FindControl<TextBox>("txtAbsolutePan");
+         var txtAbsoluteTilt = this.FindControl<TextBox>("txtAbsoluteTilt");
+         var txtAbsoluteZoom = this.FindControl<TextBox>("txtAbsoluteZoom");
 
-            float? pan = TryParseOrNull(txtAbsolutePan?.Text);
-            float? tilt = TryParseOrNull(txtAbsoluteTilt?.Text);
-            float? zoom = TryParseOrNull(txtAbsoluteZoom?.Text);
+         float? pan = TryParseOrNull(txtAbsolutePan?.Text);
+         float? tilt = TryParseOrNull(txtAbsoluteTilt?.Text);
+         float? zoom = TryParseOrNull(txtAbsoluteZoom?.Text);
 
-            mFlexApiClient.SendAbsolutePosition(mCurrentCamera.ComponentNumber, pan, tilt, zoom);
-            GoBack();
-        }
+         mCurrentCamera.FlexApiClient.SendAbsolutePosition(mCurrentCamera.ComponentNumber, pan, tilt, zoom);
+         GoBack();
+      }
 
-        private static float? TryParseOrNull(string text)
-        {
-            return float.TryParse(text, out float value) ? value : null;
-        }
+      private static float? TryParseOrNull(string text)
+      {
+         return float.TryParse(text, out float value) ? value : null;
+      }
 
-        private static bool IsValidFloat(string text)
-        {
-            if (string.IsNullOrWhiteSpace(text)) return false;
-            return float.TryParse(text, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out _);
-        }
+      private static bool IsValidFloat(string text)
+      {
+         if (string.IsNullOrWhiteSpace(text)) return false;
+         return float.TryParse(text, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out _);
+      }
 
-        private void btnCancel_Click(object sender, RoutedEventArgs e) => GoBack();
+      private void btnCancel_Click(object sender, RoutedEventArgs e) => GoBack();
 
-        private void txtAbsoluteValue_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            var txtAbsolutePan = this.FindControl<TextBox>("txtAbsolutePan");
-            var txtAbsoluteTilt = this.FindControl<TextBox>("txtAbsoluteTilt");
-            var txtAbsoluteZoom = this.FindControl<TextBox>("txtAbsoluteZoom");
-            var btnSend = this.FindControl<Button>("btnSendAbsolutePosition");
+      private void txtAbsoluteValue_TextChanged(object sender, TextChangedEventArgs e)
+      {
+         var txtAbsolutePan = this.FindControl<TextBox>("txtAbsolutePan");
+         var txtAbsoluteTilt = this.FindControl<TextBox>("txtAbsoluteTilt");
+         var txtAbsoluteZoom = this.FindControl<TextBox>("txtAbsoluteZoom");
+         var btnSend = this.FindControl<Button>("btnSendAbsolutePosition");
 
-            if (btnSend != null)
-                btnSend.IsEnabled = IsValidFloat(txtAbsolutePan?.Text) || IsValidFloat(txtAbsoluteTilt?.Text) || IsValidFloat(txtAbsoluteZoom?.Text);
-        }
+         if (btnSend != null)
+            btnSend.IsEnabled = IsValidFloat(txtAbsolutePan?.Text) || IsValidFloat(txtAbsoluteTilt?.Text) || IsValidFloat(txtAbsoluteZoom?.Text);
+      }
 
-        private void btnBack_Click(object sender, RoutedEventArgs e) => GoBack();
+      private void btnBack_Click(object sender, RoutedEventArgs e) => GoBack();
 
-        public override string GetPageTitle() => "Absolute Position";
-    }
+      public override string GetPageTitle() => "Absolute Position";
+   }
 }

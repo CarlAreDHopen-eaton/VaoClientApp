@@ -415,6 +415,28 @@ namespace Vao.Client.Components
          return FlexApiClient.ExecuteSetCameraName(ComponentNumber, newName);
       }
 
+      /// <summary>
+      /// Locks the camera for a specified duration. During the lock duration, only the user that has locked the camera can control it.
+      /// </summary>
+      /// <param name="duration">The duration for which the camera should be locked, in ISO 8601 format (e.g., "PT60S" for 60 seconds).</param>
+      /// <returns><see langword="true"/> if the lock operation was successful; otherwise, <see langword="false"/>.</returns>
+      public bool Lock(string duration = "PT60S")
+      {
+         RestResponse response = FlexApiClient.SendLockCamera(ComponentNumber, duration.ToString());
+         return response?.IsSuccessStatusCode ?? false;
+      }
+
+      /// <summary>
+      /// Unlocks the camera.
+      /// </summary>
+      /// <returns><see langword="true"/> if the unlock operation was successful; otherwise, <see langword="false"/>.</returns>
+      public bool Unlock()
+      {
+         RestResponse response = FlexApiClient.SendUnlockCamera(ComponentNumber);
+         return response?.IsSuccessStatusCode ?? false;
+      }
+
+
       #endregion
 
       #region Internal Methods
