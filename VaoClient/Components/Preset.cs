@@ -75,14 +75,16 @@ namespace Vao.Client.Components
       /// </summary>
       /// <returns></returns>
       public bool Delete()
-      { return false;}
+      { 
+         return false;}
 
       /// <summary>
       /// Sets the preset position
       /// </summary>
       /// <returns></returns>
       public bool Set()
-      { return false; }
+      { 
+         return false; }
 
 
       public override string ToString()
