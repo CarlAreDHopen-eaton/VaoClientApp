@@ -39,18 +39,6 @@ namespace Vao.Sample
          return GetTheme("dark-tablet") ?? Themes.First();
       }
 
-      public ThemeDefinition GetOppositeBrightnessTheme(string themeKey)
-      {
-         var currentTheme = GetTheme(themeKey) ?? Themes.First();
-         var targetKey = BuildThemeKey(!currentTheme.IsDark, currentTheme.IsTablet);
-         return GetTheme(targetKey) ?? currentTheme;
-      }
-
-      public static string BuildThemeKey(bool isDark, bool isTablet)
-      {
-         return $"{(isDark ? "dark" : "light")}-{(isTablet ? "tablet" : "desktop")}";
-      }
-
       public IReadOnlyList<ThemeOption> GetThemeOptions()
       {
          return Themes

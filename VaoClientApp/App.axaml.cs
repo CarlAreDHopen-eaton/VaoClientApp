@@ -121,13 +121,6 @@ namespace Vao.Sample
          return Color.FromArgb(color.A, mix(color.R), mix(color.G), mix(color.B));
       }
 
-      public ThemeDefinition ToggleThemeBrightness()
-      {
-         var toggledTheme = ThemeCatalog.Reload().GetOppositeBrightnessTheme(AppSettings.Default.GetPreferredThemeKey());
-         ApplyTheme(toggledTheme.Key);
-         return toggledTheme;
-      }
-
       public ThemeDefinition CycleTheme()
       {
          var catalog = ThemeCatalog.Reload();
@@ -146,11 +139,6 @@ namespace Vao.Sample
 
          ApplyTheme(nextTheme.Key);
          return nextTheme;
-      }
-
-      public ThemeDefinition GetToggleBrightnessTargetTheme()
-      {
-         return ThemeCatalog.Reload().GetOppositeBrightnessTheme(AppSettings.Default.GetPreferredThemeKey());
       }
 
       public ThemeDefinition GetNextThemeInCycle()
