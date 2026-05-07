@@ -335,7 +335,7 @@ namespace Vao.Sample.Pages
             var time = timeStart?.SelectedTime ?? TimeSpan.Zero;
             var startTimeStr = (date.Date + time).ToString("yyyy-MM-dd HH:mm:ss");
 
-            DownloadInfo downloadInfo = mFlexApiClient.GetDownloadInfo(mCurrentCamera, txtRecorder?.Text ?? "", streamNumber, startTimeStr, durationIsoString);
+            DownloadInfo downloadInfo = mCurrentCamera.FlexApiClient.GetDownloadInfo(mCurrentCamera, txtRecorder?.Text ?? "", streamNumber, startTimeStr, durationIsoString);
             if (downloadInfo != null)
             {
                 mPendingDownloads.Add(new DownloadItem

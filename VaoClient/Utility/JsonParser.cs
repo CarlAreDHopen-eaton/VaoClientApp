@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Newtonsoft.Json;
 using Vao.Client.Components;
 using Vao.Client.Contracts;
@@ -62,7 +63,9 @@ namespace Vao.Client.Utility
          {
             JsonVideoOutput jsonObject = JsonConvert.DeserializeObject<JsonVideoOutput>(strJson);
             Camera camera = flexApiClient.GetCamera(jsonObject.inputId);
-            Monitor monitor = new Monitor(iVideoOutput, flexApiClient, camera);
+            // Older API versions does not send the name.
+            string name = string.IsNullOrEmpty(jsonObject.name) ? $"Monitor {iVideoOutput}" : jsonObject.name;
+            Monitor monitor = new Monitor(iVideoOutput, name, flexApiClient, camera);
             return monitor;
          }
          return null;
