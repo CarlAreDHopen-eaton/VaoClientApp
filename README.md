@@ -6,30 +6,37 @@ The application allows the user to select and control cameras. The video streams
 
 # Important 3rd party libraries
 - RestSharp, communication with the VMS system REST API. (https://github.com/restsharp/RestSharp)
-- DarkUI, dark mode user interface for WinForms. (https://github.com/RobinPerris/DarkUI)
+- Avalonia, cross-platform UI framework. (https://github.com/AvaloniaUI/Avalonia)
 - FluentFTP, download of video from the VMS system. (https://github.com/robinrodricks/FluentFTP)
 - LibVLCSharp, view RTSP video from the VMS system. (https://github.com/videolan/libvlcsharp)
+- Newtonsoft.Json, JSON serialization and deserialization. (https://github.com/JamesNK/Newtonsoft.Json)
 
 # Current Features
 - Secure and Insecure connection to the VMS System
-- Camera Selection
+- User login and access level management
+- Camera Selection with search filtering
 - Camera Pan/Tilt
 - Camera Zoom
 - Camera Focus
+- Camera Absolute Positioning
+- Camera Locking
 - RTSP Video Streaming (TCP and UDP)
-- Feedback processing and message log
+- Feedback processing and message log with source filtering
 - Camera Names
 - Camera Renaming
 - Preset Positions
 - Video Playback (Requires API version 1.1 or later)
 - Video Download (Requires API version 1.1 or later)
-  
+- Alarm monitoring, activation, acknowledgement, and management
+- Configurable themes (dark, light, blue, and more)
+- Cross-platform support (Windows, Linux, Android)
+- Support for multiple API servers (alternate between servers)
+
 # Future:
-- Support for multiple API servers (alernate between servers)
-- Wipe / WipeWash
+- Wipe / WipeWash UI controls
 
 # Build
-Built using Visual Studio 2019
+Built using .NET 8 and Visual Studio 2022 or later. The UI is built with Avalonia and supports cross-platform deployment (Windows, Linux, Android).
 
 # Linux Setup (Fedora)
 If you run the Avalonia client on Fedora, VLC/LibVLC must have working H.264 codec support.
