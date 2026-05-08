@@ -64,6 +64,7 @@ namespace Vao.Sample
       protected override void OnClosing(WindowClosingEventArgs e)
       {
          mainView.SaveCurrentSettings();
+         mainView.StopClient();
          base.OnClosing(e);
       }
 

@@ -142,6 +142,16 @@ namespace Vao.Sample
 
       public void SaveCurrentSettings() => SaveSettings();
 
+      public void StopClient()
+      {
+         if (mFlexApiClient != null)
+         {
+            mFlexApiClient.OnMessage -= OnFlexApiClientMessage;
+            mFlexApiClient.StopClient();
+            mFlexApiClient = null;
+         }
+      }
+
       public void CycleThemeFromKeyboard()
       {
          if (mApp != null)
