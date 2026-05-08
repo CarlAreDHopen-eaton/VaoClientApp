@@ -28,6 +28,7 @@ namespace Vao.Sample
 
          mainView.RtspStreamRequested    += OnRtspStreamRequested;
          mainView.AnyOverlayStateChanged += OnAnyOverlayStateChanged;
+         mainView.ConnectionStateChanged += (_, _) => UpdateWindowTitle();
 
          Opened += MainWindow_Opened;
          AddHandler(KeyDownEvent, MainWindow_KeyDown, handledEventsToo: true);
@@ -38,6 +39,8 @@ namespace Vao.Sample
             mApp.ThemeApplied += OnThemeApplied;
 
          Closed += MainWindow_Closed;
+
+         UpdateWindowTitle();
       }
 
       // ── Window events ───────────────────────────────────────────────────────
@@ -314,8 +317,10 @@ namespace Vao.Sample
 
       private void UpdateWindowTitle()
       {
-         const string C_BASE = "HERNIS FLEX VAO API Demo";
-         Title = mainView.IsStarted ? C_BASE : $"{C_BASE} (Not connected)";
+         var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+         string versionString = version != null ? $" v{version.Major}.{version.Minor}.{version.Build}" : "";
+         string baseTitle = $"HERNIS FLEX VAO API Demo{versionString}";
+         Title = mainView.IsStarted ? baseTitle : $"{baseTitle} (Not connected)";
       }
    }
 }

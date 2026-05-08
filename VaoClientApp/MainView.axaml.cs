@@ -101,6 +101,9 @@ namespace Vao.Sample
       /// Desktop uses this to detach/reattach the native VideoView.</summary>
       public event EventHandler<bool> AnyOverlayStateChanged;
 
+      /// <summary>Fired when the connection state changes (connected or disconnected).</summary>
+      public event EventHandler ConnectionStateChanged;
+
       // ── Public properties ──────────────────────────────────────────────────
 
       public Panel VideoSlot => pnlVideo;
@@ -108,7 +111,7 @@ namespace Vao.Sample
       public bool IsStarted
       {
          get => mIsStarted;
-         set { mIsStarted = value; UpdateEnabled(); }
+         set { mIsStarted = value; UpdateEnabled(); ConnectionStateChanged?.Invoke(this, EventArgs.Empty); }
       }
 
       public bool ApiSupportsPlayback
