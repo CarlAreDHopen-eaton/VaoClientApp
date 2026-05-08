@@ -1,0 +1,65 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 x:Class="Vao.Sample.Controls.CameraSelectorPanel">
+
+	<Grid x:Name="pnlCameraSelection" Margin="0" RowDefinitions="Auto,Auto,Auto">
+		<TextBox Grid.Row="0"
+				 x:Name="txtCameraSearch"
+				 Watermark="Search by number or name"
+				 Classes="borderless"
+				 MinHeight="{DynamicResource SidebarMenuSearchHeight}"
+				 TextChanged="txtCameraSearch_TextChanged"/>
+		<ListBox Grid.Row="1"
+				 x:Name="lstCameraSelection"
+				 SelectionChanged="lstCameraSelection_SelectionChanged"
+				 ScrollViewer.VerticalScrollBarVisibility="Auto"
+				 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+				 Background="Transparent"
+				 BorderBrush="{DynamicResource Divider}"
+				 BorderThickness="1"
+				 CornerRadius="4"
+				 Padding="0"
+				 Margin="0">
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<Grid ColumnDefinitions="Auto,Auto,*" Margin="0">
+						<TextBlock Grid.Column="0"
+								   Text="{Binding CameraTypeIcon}"
+								   Classes="blui-icon"
+								   FontSize="18"
+								   Foreground="{DynamicResource LabelFg}"
+								   VerticalAlignment="Center"/>
+						<TextBlock Grid.Column="1"
+								   Text="{Binding CameraNumberText}"
+								   Margin="6,0,6,0"
+								   FontWeight="SemiBold"
+								   Foreground="{DynamicResource LabelFg}"
+								   VerticalAlignment="Center"/>
+						<Panel Grid.Column="2">
+							<TextBlock Text="{Binding CameraName}"
+									   TextTrimming="CharacterEllipsis"
+									   ToolTip.Tip="{Binding CameraName}"
+									   VerticalAlignment="Center"
+									   Name="txtCameraItemName"/>
+							<TextBox MaxLength="19"
+									 IsVisible="False"
+									 VerticalAlignment="Center"
+									 VerticalContentAlignment="Center"
+									 Padding="2"
+									 Margin="-2,0,0,0"
+									 Name="txtCameraItemEdit"/>
+						</Panel>
+					</Grid>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+		<Border Grid.Row="2"
+				Classes="sidebar-menu-resize-handle"
+				Tag="camera"
+				PointerPressed="ResizeHandle_PointerPressed"
+				PointerMoved="ResizeHandle_PointerMoved"
+				PointerReleased="ResizeHandle_PointerReleased"
+				PointerCaptureLost="ResizeHandle_PointerCaptureLost"/>
+	</Grid>
+
+</UserControl>

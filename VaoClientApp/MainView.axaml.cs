@@ -1,8 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
@@ -18,6 +15,7 @@ using LibVLCSharp.Shared;
 using Vao.Client;
 using Vao.Client.Components;
 using Vao.Client.Enum;
+using Vao.Sample.Controls;
 using Vao.Sample.Navigation;
 using Vao.Sample.Pages;
 
@@ -41,22 +39,12 @@ namespace Vao.Sample
 
       // ── UI state ───────────────────────────────────────────────────────────
 
-      private bool mIsUpdatingCameraSelection;
-      private bool mIsUpdatingAlarmSelection;
-      private bool mIsResizingSidebarMenu;
       private bool mIsLoadingSettings;
-      private bool mIsMessagesCollapsed;
       private bool mIsNavigationOverlayVisible;
       private bool mIsPickerOverlayVisible;
       private bool mIsConnecting;
       private bool mPendingConnectAfterSettings;
       private string mConnectedEndpointDisplay = string.Empty;
-      private ListBox mActiveResizableList;
-      private double mResizeStartHeight;
-      private Point mResizeStartPoint;
-      private GridLength mMessagesExpandedRowHeight = new GridLength(1, GridUnitType.Star);
-      private ContextMenu mVideoContextMenu;
-      private string mActiveRtspUrl;
 
       private App mApp;
 
@@ -65,32 +53,6 @@ namespace Vao.Sample
 
       private enum PickerOverlayMode { None, Date, Time }
       private PickerOverlayMode mPickerOverlayMode = PickerOverlayMode.None;
-
-      // ── Collections ────────────────────────────────────────────────────────
-
-      private ObservableCollection<MessageItem> mMessages = new();
-      private ObservableCollection<MessageItem> mFilteredMessages = new();
-      private readonly ObservableCollection<CameraSelectionItem> mCameraSelectionItems = new();
-      private readonly ObservableCollection<CameraSelectionItem> mFilteredCameraSelectionItems = new();
-      private readonly ObservableCollection<AlarmSelectionItem> mAlarmSelectionItems = new();
-      private readonly ObservableCollection<AlarmSelectionItem> mFilteredAlarmSelectionItems = new();
-
-      private Dictionary<MessageSource, bool> mSourceFilters = new()
-      {
-         { MessageSource.FlexApi, true },
-         { MessageSource.LibVlc, true },
-         { MessageSource.Config, true }
-      };
-
-      private Dictionary<AlarmGeneralStatus, bool> mAlarmStatusFilters = new()
-      {
-         { AlarmGeneralStatus.Active, true },
-         { AlarmGeneralStatus.Inactive, true },
-         { AlarmGeneralStatus.Acknowledged, true },
-         { AlarmGeneralStatus.Tampered, true },
-         { AlarmGeneralStatus.Disabled, true },
-         { AlarmGeneralStatus.Unknown, true }
-      };
 
       // ── Public events (desktop subscribes for VLC management) ──────────────
 
@@ -106,7 +68,7 @@ namespace Vao.Sample
 
       // ── Public properties ──────────────────────────────────────────────────
 
-      public Panel VideoSlot => pnlVideo;
+      public Panel VideoSlot => videoPanel.VideoSlot;
 
       public bool IsStarted
       {
@@ -132,7 +94,7 @@ namespace Vao.Sample
          set { mIsCameraSelected = value; UpdateEnabled(); }
       }
 
-      public bool IsPlayback => IsActiveRtspPlayback(mActiveRtspUrl);
+      public bool IsPlayback => videoPanel.IsPlayback;
 
       // ── Public methods (called by MainWindow thin shell) ───────────────────
 
@@ -162,7 +124,7 @@ namespace Vao.Sample
 
       public void HandleEscapeKey() => HandleEscapeNavigation();
 
-      public void HandleRenameCameraKey() => HandleRenameCameraAsync();
+      public void HandleRenameCameraKey() => cameraSelectorPanel.HandleRename(UserPrivilege.Supervisor);
 
       public void NavigatePreviousCamera() => NavigateToPreviousCamera();
 
@@ -171,7 +133,7 @@ namespace Vao.Sample
       public void SelectCameraHotkey(int cameraNo)
       {
          if (!IsStarted || mFlexApiClient == null) return;
-         int streamNo = tglSubChannel?.IsChecked == true ? 2 : 1;
+         int streamNo = videoPanel.GetStreamNo();
          SelectCamera(cameraNo, streamNo);
       }
 
@@ -183,7 +145,7 @@ namespace Vao.Sample
          WriteMessageLog(MessageSource.Config, $"Camera {mCurrentCamera.ComponentNumber} assigned to slot {slot} (Ctrl+{slot})", LogLevel.Notice);
       }
 
-      public int GetSubChannelStreamNo() => tglSubChannel?.IsChecked == true ? 2 : 1;
+      public int GetSubChannelStreamNo() => videoPanel.GetStreamNo();
 
       /// <summary>Called by MainWindow once the window is open and sized to restore all saved UI state.</summary>
       public void OnWindowOpened(double windowWidth)
@@ -200,16 +162,13 @@ namespace Vao.Sample
          SetSidebarCollapsed(s.IsSidebarCollapsed, persistSetting: false);
          ApplyResponsiveSidebarLayout(windowWidth);
 
-         if (brdMessages?.Parent is Grid mg && mg.RowDefinitions.Count > 2)
+         if (messageLogPanel?.Parent is Grid mg && mg.RowDefinitions.Count > 2)
          {
             mg.RowDefinitions[0].Height = new GridLength(s.MessagesSplitVideoStars, GridUnitType.Star);
             mg.RowDefinitions[2].Height = new GridLength(s.MessagesSplitMessagesStars, GridUnitType.Star);
          }
-         if (s.IsMessagesCollapsed)
-         {
-            mIsMessagesCollapsed = false;
-            MessagesHeader_PointerPressed(null, null);
-         }
+
+         messageLogPanel.RestoreCollapsedState(s.IsMessagesCollapsed);
 
          if (s.AutoConnectOnStartup)
             btnConnect_Click(null, null);
@@ -220,17 +179,17 @@ namespace Vao.Sample
       public MainView()
       {
          InitializeComponent();
-         EnsureVideoContextMenu();
 
-         lstMessages.ItemsSource = mFilteredMessages;
-         lstCameraSelection.ItemsSource = mFilteredCameraSelectionItems;
-         lstAlarmSelection.ItemsSource = mFilteredAlarmSelectionItems;
+         // Wire child control events
+         WireVideoPanel();
+         WireCameraSelectorPanel();
+         WireAlarmSelectorPanel();
+         WirePtzControlPanel();
+         WirePlaybackControlPanel();
+         WireMessageLogPanel();
 
-         InitializeAlarmStatusFilterMenu();
-         InitializeSidebarMenuHeights(useSavedHeights: true);
-         RegisterPtzButtonHandlers();
          ClearPresetDropdown();
-         ClearRecordingDropdown();
+         playbackControlPanel.ClearRecordings(false);
 
          InitializeNavigationService();
 
@@ -238,12 +197,110 @@ namespace Vao.Sample
          LoadSettings();
          mIsLoadingSettings = false;
 
+         InitializeSidebarMenuHeights(useSavedHeights: true);
          UpdateEnabled();
          UpdateUserInitial();
 
          mApp = (App)Application.Current;
          if (mApp != null)
             mApp.ThemeApplied += OnThemeApplied;
+      }
+
+      // ── Wire child controls ────────────────────────────────────────────────
+
+      private void WireVideoPanel()
+      {
+         videoPanel.RtspStreamRequested += (_, url) => RtspStreamRequested?.Invoke(this, url);
+         videoPanel.SubChannelChanged += (_, isSubChannel) =>
+         {
+            if (mIsLoadingSettings) return;
+            if (IsStarted && mCurrentCamera != null)
+               SelectCamera(mCurrentCamera.ComponentNumber, isSubChannel ? 2 : 1);
+         };
+         videoPanel.CameraSelectedFromMenu += (_, cameraNo) => SelectCamera(cameraNo, videoPanel.GetStreamNo());
+         videoPanel.SetCameraListProvider(
+            () => mFlexApiClient?.GetCameraList(),
+            () => cameraSelectorPanel.Items);
+      }
+
+      private void WireCameraSelectorPanel()
+      {
+         cameraSelectorPanel.CameraSelected += (_, cameraNo) =>
+         {
+            int streamNo = videoPanel.GetStreamNo();
+            SelectCamera(cameraNo, streamNo);
+         };
+         cameraSelectorPanel.LayoutChanged += (_, _) => SaveSettings();
+      }
+
+      private void WireAlarmSelectorPanel()
+      {
+         alarmSelectorPanel.AlarmSelected += (_, alarmNo) => SelectAlarm(alarmNo);
+         alarmSelectorPanel.AlarmEditRequested += (_, alarm) =>
+         {
+            SelectAlarm(alarm.ComponentNumber);
+            var alarmPage = new AlarmActionPage(mCurrentAlarm) { NavigationService = mNavigationService };
+            mNavigationService.NavigateTo(alarmPage);
+         };
+         alarmSelectorPanel.LayoutChanged += (_, _) => SaveSettings();
+         alarmSelectorPanel.ActiveAlarmStateChanged += (_, _) => UpdateAlarmSidebarIcon();
+      }
+
+      private void WirePtzControlPanel()
+      {
+         ptzControlPanel.AbsolutePositionRequested += (_, _) =>
+         {
+            if (mFlexApiClient == null || mCurrentCamera == null) return;
+            var page = new AbsolutePositionPage(mCurrentCamera) { NavigationService = mNavigationService };
+            mNavigationService.NavigateTo(page);
+         };
+         ptzControlPanel.CameraLockRequested += (_, _) =>
+         {
+            if (mFlexApiClient == null || mCurrentCamera == null) return;
+            if (!mCurrentCamera.IsLocked)
+            {
+               var page = new CameraLockPage(mCurrentCamera) { NavigationService = mNavigationService };
+               mNavigationService.NavigateTo(page);
+            }
+            else
+            {
+               mCurrentCamera.Unlock();
+            }
+         };
+      }
+
+      private void WirePlaybackControlPanel()
+      {
+         playbackControlPanel.PlayRequested += (_, url) =>
+         {
+            if (string.IsNullOrEmpty(url)) return;
+            var cameraNo = mCurrentCamera?.ComponentNumber ?? 0;
+            videoPanel.ShowPlaybackStream(url, cameraNo);
+            IsPlaybackStarted = true;
+            UpdateEnabled();
+         };
+         playbackControlPanel.StopRequested += (_, _) =>
+         {
+            IsPlaybackStarted = false;
+            if (mCurrentCamera != null)
+               SelectCamera(mCurrentCamera.ComponentNumber, videoPanel.GetStreamNo());
+            UpdateEnabled();
+         };
+         playbackControlPanel.GotoTimeRequested += (_, url) =>
+         {
+            if (string.IsNullOrEmpty(url)) return;
+            var cameraNo = mCurrentCamera?.ComponentNumber ?? 0;
+            videoPanel.ShowPlaybackStream(url, cameraNo);
+            IsPlaybackStarted = true;
+            UpdateEnabled();
+         };
+         playbackControlPanel.PickDateRequested += (_, _) => OpenDatePicker();
+         playbackControlPanel.PickTimeRequested += (_, _) => OpenTimePicker();
+      }
+
+      private void WireMessageLogPanel()
+      {
+         messageLogPanel.LayoutChanged += (_, _) => SaveSettings();
       }
 
       // ── Theme applied ──────────────────────────────────────────────────────
@@ -317,22 +374,11 @@ namespace Vao.Sample
             return Math.Clamp(preferred, minHeight, maxHeight);
          }
 
-         var cameraTarget = ResolveTargetHeight(settings.CameraSidebarMenuHeight, lstCameraSelection?.Height ?? 0);
-         var alarmTarget = ResolveTargetHeight(settings.AlarmSidebarMenuHeight, lstAlarmSelection?.Height ?? 0);
+         var cameraTarget = ResolveTargetHeight(settings.CameraSidebarMenuHeight, cameraSelectorPanel.ListHeight);
+         var alarmTarget = ResolveTargetHeight(settings.AlarmSidebarMenuHeight, alarmSelectorPanel.ListHeight);
 
-         if (lstCameraSelection != null)
-         {
-            lstCameraSelection.MinHeight = minHeight;
-            lstCameraSelection.MaxHeight = maxHeight;
-            lstCameraSelection.Height = cameraTarget;
-         }
-
-         if (lstAlarmSelection != null)
-         {
-            lstAlarmSelection.MinHeight = minHeight;
-            lstAlarmSelection.MaxHeight = maxHeight;
-            lstAlarmSelection.Height = alarmTarget;
-         }
+         cameraSelectorPanel.InitializeHeight(cameraTarget, minHeight, maxHeight);
+         alarmSelectorPanel.InitializeHeight(alarmTarget, minHeight, maxHeight);
       }
 
       // ── Navigation service ─────────────────────────────────────────────────
@@ -357,8 +403,8 @@ namespace Vao.Sample
          {
             LoadSettings();
             UpdateUserInitial();
-            RefreshMessageColors();
-            RefreshVideoHeaderState();
+            messageLogPanel.RefreshColors();
+            videoPanel.RefreshHeaderState(IsStarted, mCurrentCamera, IsPlayback, IsPlaybackStarted);
 
             if (mPendingConnectAfterSettings)
             {
@@ -417,8 +463,7 @@ namespace Vao.Sample
             return;
          }
 
-         txtVideoHeader.Text = "No Camera Selected";
-         brdVideoHeader.Background = GetNeutralHeaderBrush();
+         videoPanel.ResetHeader();
          mIsConnecting = true;
          UpdateEnabled();
          UpdateUserInitial();
@@ -488,10 +533,10 @@ namespace Vao.Sample
                IsStarted = true;
                WriteMessageLog(MessageSource.FlexApi, $"Client started on {mConnectedEndpointDisplay}.", LogLevel.Notice);
                CurrentLoggedInUser = loggedInUser;
-               FillSelectCameraButtonList(cameraList);
-               FillSelectAlarmButtonList(alarmList);
+               cameraSelectorPanel.Fill(cameraList);
+               alarmSelectorPanel.Fill(alarmList, GetBrushForStatus);
                CheckApiVersion(apiVersion);
-               ClearRecordingDropdown();
+               playbackControlPanel.ClearRecordings(ApiSupportsPlayback);
                ClearPresetDropdown();
                UpdateConnectionStatus(connectedEndpoint?.Host, connectedEndpoint?.Port);
 
@@ -550,20 +595,16 @@ namespace Vao.Sample
          mApiVersion = null;
          mImplementationVersion = null;
 
-         RtspStreamRequested?.Invoke(this, null);
-         mActiveRtspUrl = null;
-         txtCurrentRtspUrl.Text = string.Empty;
-         txtVideoHeader.Text = "No Camera Selected";
-         brdVideoHeader.Background = GetNeutralHeaderBrush();
+         videoPanel.ClearStream();
          if (txtAppSubtitle != null) txtAppSubtitle.Text = "Not connected";
 
          IsCameraSelected = false;
          CurrentCamera = null;
          CurrentAlarm = null;
          ClearPresetDropdown();
-         ClearRecordingDropdown();
-         ClearCameraSelection();
-         ClearAlarmSelection();
+         playbackControlPanel.ClearRecordings(false);
+         cameraSelectorPanel.Clear();
+         alarmSelectorPanel.Clear();
          UpdateUserInitial();
       }
 
@@ -598,19 +639,19 @@ namespace Vao.Sample
          if (menuItemLogout != null) menuItemLogout.IsEnabled = IsStarted && !mIsConnecting;
 
          bool canUseConnectedFeatures = IsStarted && !mIsConnecting;
-         if (pnlCameraSelection != null) pnlCameraSelection.IsEnabled = canUseConnectedFeatures;
-         if (pnlAlarmsSelection != null) pnlAlarmsSelection.IsEnabled = canUseConnectedFeatures;
-         if (tglSubChannel != null) tglSubChannel.IsEnabled = canUseConnectedFeatures && !IsPlayback && mCurrentCamera != null && !string.IsNullOrEmpty(mCurrentCamera?.Stream2Resolution);
-         if (grpSelectPreset != null) grpSelectPreset.IsEnabled = canUseConnectedFeatures;
-         if (grpSelectPlayback != null) grpSelectPlayback.IsEnabled = canUseConnectedFeatures && ApiSupportsPlayback;
-         if (grpCameraControl != null) grpCameraControl.IsEnabled = canUseConnectedFeatures && mCurrentCamera != null;
+         if (cameraSelectorPanel != null) cameraSelectorPanel.IsEnabled = canUseConnectedFeatures;
+         if (alarmSelectorPanel != null) alarmSelectorPanel.IsEnabled = canUseConnectedFeatures;
 
-         if (btnStopPlayback != null) btnStopPlayback.IsEnabled = canUseConnectedFeatures && IsPlayback && ApiSupportsPlayback;
-         if (btnPlayPlayback != null) btnPlayPlayback.IsEnabled = canUseConnectedFeatures && IsCameraSelected && !IsPlaybackStarted && ApiSupportsPlayback;
-         if (btnGotoTime != null) btnGotoTime.IsEnabled = canUseConnectedFeatures && IsCameraSelected && ApiSupportsPlayback;
+         videoPanel.UpdateSubChannelEnabled(canUseConnectedFeatures && !IsPlayback && mCurrentCamera != null && !string.IsNullOrEmpty(mCurrentCamera?.Stream2Resolution));
+
+         if (grpSelectPreset != null) grpSelectPreset.IsEnabled = canUseConnectedFeatures;
+         if (playbackControlPanel != null) playbackControlPanel.IsEnabled = canUseConnectedFeatures && ApiSupportsPlayback;
+         if (ptzControlPanel != null) ptzControlPanel.ControlGroup.IsEnabled = canUseConnectedFeatures && mCurrentCamera != null;
+
+         playbackControlPanel.UpdateButtonStates(canUseConnectedFeatures, IsCameraSelected, IsPlaybackStarted, ApiSupportsPlayback, IsPlayback);
          if (btnDownload != null) btnDownload.IsEnabled = canUseConnectedFeatures && ApiSupportsPlayback;
 
-         UpdateCameraControl();
+         ptzControlPanel.UpdateButtonStates();
       }
 
       // ── Camera ─────────────────────────────────────────────────────────────
@@ -620,35 +661,22 @@ namespace Vao.Sample
          get => mCurrentCamera;
          set
          {
-            if (mCurrentCamera != null)
-            {
-               mCurrentCamera.PropertyChanged -= Camera_PropertyChanged;
-               mCurrentCamera.LockStatusChanged -= Camera_LockStatusChanged;
-            }
-
             mCurrentCamera = value;
+            ptzControlPanel.SetCamera(mCurrentCamera);
+            cameraSelectorPanel.SyncSelection(mCurrentCamera);
 
             if (mCurrentCamera != null)
             {
-               mCurrentCamera.PropertyChanged += Camera_PropertyChanged;
-               mCurrentCamera.LockStatusChanged += Camera_LockStatusChanged;
-            }
-
-            SyncCameraSelectionWithCurrent();
-
-            if (mCurrentCamera != null)
-            {
-               lblCurrentCamera.Text = $"Camera : {mCurrentCamera.Name}";
                IsCameraSelected = true;
                FillSelectPresetList();
                if (ApiSupportsPlayback)
-                  FillPlaybackSelectionList();
+                  playbackControlPanel.FillRecordings(mCurrentCamera, mViewerID);
                AppSettings.Default.CurrentCamera = mCurrentCamera.ComponentNumber;
             }
             else
             {
                ClearPresetDropdown();
-               ClearRecordingDropdown();
+               playbackControlPanel.ClearRecordings(ApiSupportsPlayback);
             }
 
             UpdateEnabled();
@@ -658,118 +686,6 @@ namespace Vao.Sample
       private Alarm CurrentAlarm { get => mCurrentAlarm; set { mCurrentAlarm = value; UpdateEnabled(); } }
       private User CurrentLoggedInUser { get => mCurrentLoggedInUser; set { mCurrentLoggedInUser = value; UpdateEnabled(); } }
 
-      private void Camera_PropertyChanged(object sender, PropertyChangedEventArgs e)
-      {
-         if (e.PropertyName == nameof(Camera.IsLocked) || e.PropertyName == nameof(Camera.LockOwner) || e.PropertyName == nameof(Camera.CanUnlock))
-            return;
-         Dispatcher.UIThread.Post(UpdateCameraControl);
-      }
-
-      private void Camera_LockStatusChanged(object sender, EventArgs e)
-      {
-         Dispatcher.UIThread.Post(() =>
-         {
-            var iconLock = this.FindControl<TextBlock>("iconCameraLock");
-            if (mCurrentCamera != null && mCurrentCamera.IsLocked && mCurrentCamera.LockOwner == "Alarm")
-            {
-               if (iconLock != null) { iconLock.Text = "\uE899"; iconLock.Foreground = GetBrushResource("CameraLockAlarmForeground", "#CA3C3D"); }
-               if (btnCameraLock != null) btnCameraLock.IsEnabled = true;
-            }
-            else if (mCurrentCamera != null && mCurrentCamera.IsLocked)
-            {
-               if (iconLock != null) { iconLock.Text = "\uE899"; iconLock.Foreground = GetBrushResource("CameraLockManualForeground", "#F0AA1F"); }
-               if (btnCameraLock != null) btnCameraLock.IsEnabled = true;
-            }
-            else if (mCurrentCamera != null && !mCurrentCamera.IsLocked)
-            {
-               if (iconLock != null)
-               {
-                  iconLock.Text = "\uE898";
-                  if (this.TryFindResource("SidebarHeaderFg", this.ActualThemeVariant, out var brush) && brush is IBrush b)
-                     iconLock.Foreground = b;
-               }
-               if (btnCameraLock != null) btnCameraLock.IsEnabled = true;
-            }
-
-            if (mCurrentCamera != null && mCurrentCamera.CanUnlock == false)
-               if (btnCameraLock != null) btnCameraLock.IsEnabled = false;
-         });
-      }
-
-      private void UpdateCameraControl()
-      {
-         if (btnPanLeft != null) btnPanLeft.IsEnabled = mCurrentCamera?.HasPanTiltControl ?? false;
-         if (btnPanRight != null) btnPanRight.IsEnabled = mCurrentCamera?.HasPanTiltControl ?? false;
-         if (btnTiltDown != null) btnTiltDown.IsEnabled = mCurrentCamera?.HasPanTiltControl ?? false;
-         if (btnTiltUp != null) btnTiltUp.IsEnabled = mCurrentCamera?.HasPanTiltControl ?? false;
-         if (btnZoomIn != null) btnZoomIn.IsEnabled = mCurrentCamera?.HasLensControl ?? false;
-         if (btnZoomOut != null) btnZoomOut.IsEnabled = mCurrentCamera?.HasLensControl ?? false;
-         if (btnFocusFar != null) btnFocusFar.IsEnabled = mCurrentCamera?.HasLensControl ?? false;
-         if (btnFocusNear != null) btnFocusNear.IsEnabled = mCurrentCamera?.HasLensControl ?? false;
-
-         bool hasPanTiltOrLens = (mCurrentCamera?.HasPanTiltControl ?? false) || (mCurrentCamera?.HasLensControl ?? false);
-         if (btnAbsolutePosition != null) btnAbsolutePosition.IsEnabled = hasPanTiltOrLens;
-         if (btnGotoPreset != null) btnGotoPreset.IsEnabled = hasPanTiltOrLens;
-      }
-
-      private void FillSelectCameraButtonList(List<Camera> cameraList = null)
-      {
-         ClearCameraSelection();
-         cameraList ??= mFlexApiClient?.GetCameraList();
-         if (cameraList == null) return;
-         foreach (var camera in cameraList.OrderBy(c => c.ComponentNumber))
-            mCameraSelectionItems.Add(new CameraSelectionItem(camera));
-         ApplyCameraSearchFilter();
-      }
-
-      private void ClearCameraSelection()
-      {
-         mCameraSelectionItems.Clear();
-         mFilteredCameraSelectionItems.Clear();
-         mIsUpdatingCameraSelection = true;
-         if (lstCameraSelection != null) lstCameraSelection.SelectedItem = null;
-         mIsUpdatingCameraSelection = false;
-         if (txtCameraSearch != null) txtCameraSearch.Text = string.Empty;
-      }
-
-      private void txtCameraSearch_TextChanged(object sender, TextChangedEventArgs e) => ApplyCameraSearchFilter();
-
-      private void ApplyCameraSearchFilter()
-      {
-         string query = txtCameraSearch?.Text?.Trim() ?? string.Empty;
-         var filtered = string.IsNullOrWhiteSpace(query)
-            ? mCameraSelectionItems
-            : mCameraSelectionItems.Where(item => item.Matches(query));
-
-         mFilteredCameraSelectionItems.Clear();
-         foreach (var item in filtered)
-            mFilteredCameraSelectionItems.Add(item);
-
-         SyncCameraSelectionWithCurrent();
-      }
-
-      private void SyncCameraSelectionWithCurrent()
-      {
-         mIsUpdatingCameraSelection = true;
-         if (lstCameraSelection != null)
-         {
-            lstCameraSelection.SelectedItem = mCurrentCamera == null
-               ? null
-               : mFilteredCameraSelectionItems.FirstOrDefault(item => item.Camera?.ComponentNumber == mCurrentCamera.ComponentNumber);
-            if (lstCameraSelection.SelectedItem != null)
-               lstCameraSelection.ScrollIntoView(lstCameraSelection.SelectedItem);
-         }
-         mIsUpdatingCameraSelection = false;
-      }
-
-      private void lstCameraSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
-      {
-         if (mIsUpdatingCameraSelection) return;
-         if (lstCameraSelection?.SelectedItem is not CameraSelectionItem selected || selected.Camera == null) return;
-         int streamNo = tglSubChannel?.IsChecked == true ? 2 : 1;
-         SelectCamera(selected.Camera.ComponentNumber, streamNo);
-      }
-
       private void SelectCamera(int cameraNo, int streamNo)
       {
          if (mFlexApiClient == null) return;
@@ -777,27 +693,7 @@ namespace Vao.Sample
          if (camera == null) return;
 
          CurrentCamera = camera;
-
-         string url = camera.GetCameraLiveStreamUrl(streamNo);
-         bool hasSubChannel = !string.IsNullOrEmpty(camera.Stream2Resolution);
-         if (streamNo == 2 && !hasSubChannel) streamNo = 1;
-
-         if (!string.IsNullOrEmpty(url))
-         {
-            mActiveRtspUrl = url;
-            if (txtCurrentRtspUrl != null) txtCurrentRtspUrl.Text = GetMaskedUrl(url);
-            if (txtVideoHeader != null) txtVideoHeader.Text = $"LIVE - Camera {cameraNo}";
-            if (brdVideoHeader != null) brdVideoHeader.Background = GetLiveHeaderBrush();
-            RtspStreamRequested?.Invoke(this, url);
-         }
-
-         mIsLoadingSettings = true;
-         if (tglSubChannel != null)
-         {
-            tglSubChannel.IsChecked = (streamNo == 2);
-            tglSubChannel.IsEnabled = hasSubChannel && !IsPlayback;
-         }
-         mIsLoadingSettings = false;
+         videoPanel.ShowLiveStream(camera, streamNo);
       }
 
       private void SelectAlarm(int alarmNo)
@@ -848,7 +744,7 @@ namespace Vao.Sample
 
       private void ClearPresetDropdown()
       {
-         if (lblCurrentCamera != null) lblCurrentCamera.Text = "Camera : (No camera selected)";
+         ptzControlPanel.ClearLabel();
          if (selPreset != null)
          {
             selPreset.ItemsSource = null;
@@ -862,118 +758,11 @@ namespace Vao.Sample
          if (selPreset?.SelectedItem is Preset preset) preset.GotoPreset();
       }
 
-      // ── Alarms ─────────────────────────────────────────────────────────────
-
-      private void FillSelectAlarmButtonList(List<Alarm> alarmList = null)
-      {
-         ClearAlarmSelection();
-         alarmList ??= mFlexApiClient?.GetAlarmList();
-         if (alarmList == null) return;
-
-         foreach (var alarm in alarmList.OrderBy(a => a.ComponentNumber))
-         {
-            var item = new AlarmSelectionItem(alarm, GetBrushForStatus(alarm.Status), GetTextForStatus(alarm.Status))
-            {
-               AlarmIcon = GetIconForAlarmStatus(alarm.Status)
-            };
-            mAlarmSelectionItems.Add(item);
-            alarm.PropertyChanged += (s, ev) =>
-            {
-               if (ev.PropertyName == nameof(Alarm.Status))
-               {
-                  Dispatcher.UIThread.Post(() =>
-                  {
-                     item.StatusBrush = GetBrushForStatus(alarm.Status);
-                     item.StatusText = GetTextForStatus(alarm.Status);
-                     item.AlarmIcon = GetIconForAlarmStatus(alarm.Status);
-                     UpdateAlarmSidebarIcon();
-                  });
-               }
-            };
-         }
-
-         ApplyAlarmSearchFilter();
-         UpdateAlarmSidebarIcon();
-      }
-
-      private void ClearAlarmSelection()
-      {
-         mAlarmSelectionItems.Clear();
-         mFilteredAlarmSelectionItems.Clear();
-         mIsUpdatingAlarmSelection = true;
-         if (lstAlarmSelection != null) lstAlarmSelection.SelectedItem = null;
-         mIsUpdatingAlarmSelection = false;
-         if (txtAlarmSearch != null) txtAlarmSearch.Text = string.Empty;
-      }
-
-      private void txtAlarmSearch_TextChanged(object sender, TextChangedEventArgs e) => ApplyAlarmSearchFilter();
-
-      private void lstAlarmSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
-      {
-         if (mIsUpdatingAlarmSelection) return;
-         if (lstAlarmSelection?.SelectedItem is not AlarmSelectionItem selected || selected.Alarm == null) return;
-         SelectAlarm(selected.Alarm.ComponentNumber);
-      }
-
-      private void btnAlarmEdit_Click(object sender, RoutedEventArgs e)
-      {
-         if (sender is not Button btn) return;
-         var item = btn.DataContext as AlarmSelectionItem;
-         if (item?.Alarm == null) return;
-         SelectAlarm(item.Alarm.ComponentNumber);
-         var alarmPage = new AlarmActionPage(CurrentAlarm)
-         {
-            NavigationService = mNavigationService
-         };
-         mNavigationService.NavigateTo(alarmPage);
-      }
-
-      private void ApplyAlarmSearchFilter()
-      {
-         string query = txtAlarmSearch?.Text?.Trim() ?? string.Empty;
-         var filtered = string.IsNullOrWhiteSpace(query)
-            ? mAlarmSelectionItems.AsEnumerable()
-            : mAlarmSelectionItems.Where(item => item.Matches(query));
-
-         filtered = filtered.Where(item => item.Alarm != null && mAlarmStatusFilters.GetValueOrDefault(item.Alarm.Status, true));
-
-         mFilteredAlarmSelectionItems.Clear();
-         foreach (var item in filtered)
-            mFilteredAlarmSelectionItems.Add(item);
-
-         mIsUpdatingAlarmSelection = true;
-         if (lstAlarmSelection != null)
-         {
-            lstAlarmSelection.SelectedItem = mCurrentAlarm == null
-               ? null
-               : mFilteredAlarmSelectionItems.FirstOrDefault(item => item.Alarm?.ComponentNumber == mCurrentAlarm.ComponentNumber);
-         }
-         mIsUpdatingAlarmSelection = false;
-      }
-
-      private void AlarmStatusFilter_Click(object sender, RoutedEventArgs e)
-      {
-         if (sender is not MenuItem menuItem || menuItem.Tag is not string tagValue) return;
-         if (!Enum.TryParse<AlarmGeneralStatus>(tagValue, ignoreCase: true, out var status)) return;
-         mAlarmStatusFilters[status] = !mAlarmStatusFilters[status];
-         menuItem.Icon = mAlarmStatusFilters[status] ? new TextBlock { Text = "\u2713" } : null;
-         ApplyAlarmSearchFilter();
-         SaveSettings();
-      }
-
-      private void InitializeAlarmStatusFilterMenu()
-      {
-         if (ctxAlarmStatusFilter?.Items == null) return;
-         foreach (var item in ctxAlarmStatusFilter.Items.OfType<MenuItem>())
-         {
-            if (item.Tag is string tagValue && Enum.TryParse<AlarmGeneralStatus>(tagValue, ignoreCase: true, out var status))
-               item.Icon = mAlarmStatusFilters.GetValueOrDefault(status, true) ? new TextBlock { Text = "\u2713" } : null;
-         }
-      }
+      // ── Alarm icon ─────────────────────────────────────────────────────────
 
       private void UpdateAlarmSidebarIcon()
       {
-         bool hasActiveAlarm = mAlarmSelectionItems.Any(item => item.Alarm?.Status == AlarmGeneralStatus.Active);
+         bool hasActiveAlarm = alarmSelectorPanel.HasActiveAlarm;
          if (iconSidebarAlarm != null)
          {
             if (hasActiveAlarm) iconSidebarAlarm.Foreground = GetBrushForStatus(AlarmGeneralStatus.Active);
@@ -996,167 +785,7 @@ namespace Vao.Sample
          _                               => GetBrushResource("AlarmStatusDefault", "#78808080"),
       };
 
-      private static string GetTextForStatus(AlarmGeneralStatus status) => status switch
-      {
-         AlarmGeneralStatus.Active       => "(Active)",
-         AlarmGeneralStatus.Inactive     => "(Inactive)",
-         AlarmGeneralStatus.Acknowledged => "(Acknowledged)",
-         AlarmGeneralStatus.Tampered     => "(Tampered)",
-         AlarmGeneralStatus.Disabled     => "(Disabled)",
-         _                               => "(Unknown)",
-      };
-
-      private static string GetIconForAlarmStatus(AlarmGeneralStatus status) => status switch
-      {
-         AlarmGeneralStatus.Active   => "\uE7F7",
-         AlarmGeneralStatus.Tampered => "\uE004",
-         AlarmGeneralStatus.Inactive => "\uE7F4",
-         AlarmGeneralStatus.Disabled => "\uE7F6",
-         _                           => "\uE7F4",
-      };
-
-      // ── PTZ ────────────────────────────────────────────────────────────────
-
-      private void RegisterPtzButtonHandlers()
-      {
-         var ptzButtons = new[] { btnPanLeft, btnPanRight, btnTiltUp, btnTiltDown, btnZoomIn, btnZoomOut, btnFocusFar, btnFocusNear };
-         foreach (var btn in ptzButtons)
-         {
-            if (btn == null) continue;
-            btn.AddHandler(PointerPressedEvent, OnControlCameraPointerPressed, RoutingStrategies.Bubble, handledEventsToo: true);
-            btn.AddHandler(PointerReleasedEvent, OnControlCameraPointerReleased, RoutingStrategies.Bubble, handledEventsToo: true);
-         }
-      }
-
-      private void OnControlCameraPointerPressed(object sender, PointerPressedEventArgs e)
-      {
-         var camera = mCurrentCamera;
-         if (camera == null) return;
-         if (sender == btnPanLeft) camera.PanLeft(80);
-         else if (sender == btnPanRight) camera.PanRight(80);
-         else if (sender == btnTiltUp) camera.TiltUp(80);
-         else if (sender == btnTiltDown) camera.TiltDown(80);
-         else if (sender == btnZoomIn) camera.ZoomIn(80);
-         else if (sender == btnZoomOut) camera.ZoomOut(80);
-         else if (sender == btnFocusFar) camera.FocusFar();
-         else if (sender == btnFocusNear) camera.FocusNear();
-      }
-
-      private void OnControlCameraPointerReleased(object sender, PointerReleasedEventArgs e)
-      {
-         mCurrentCamera?.PanTiltZoomStop();
-      }
-
-      // ── Absolute Position / Camera Lock ────────────────────────────────────
-
-      private void btnOpenAbsolutePositionWindow_Click(object sender, RoutedEventArgs e)
-      {
-         if (mFlexApiClient == null || mCurrentCamera == null) return;
-         var page = new AbsolutePositionPage(mCurrentCamera) { NavigationService = mNavigationService };
-         mNavigationService.NavigateTo(page);
-      }
-
-      private void btnCameraLock_Click(object sender, RoutedEventArgs e)
-      {
-         if (mFlexApiClient == null || mCurrentCamera == null) return;
-         if (!mCurrentCamera.IsLocked)
-         {
-            var page = new CameraLockPage(mCurrentCamera) { NavigationService = mNavigationService };
-            mNavigationService.NavigateTo(page);
-         }
-         else
-         {
-            mCurrentCamera.Unlock();
-         }
-      }
-
-      // ── Playback ───────────────────────────────────────────────────────────
-
-      private void FillPlaybackSelectionList()
-      {
-         var list = mCurrentCamera?.GetPlaybackInfoList(mViewerID);
-         if (list != null && list.Count > 0)
-            selPlayback.ItemsSource = list;
-         else
-            ClearRecordingDropdown();
-      }
-
-      private void ClearRecordingDropdown()
-      {
-         if (selPlayback != null)
-         {
-            selPlayback.ItemsSource = null;
-            var items = new List<object>();
-            items.Add(!ApiSupportsPlayback && IsStarted ? "Api Version does not support playback" : "No camera selected");
-            selPlayback.ItemsSource = items;
-            selPlayback.SelectedIndex = 0;
-         }
-      }
-
-      private void btnPlayPlayback_Click(object sender, RoutedEventArgs e)
-      {
-         if (selPlayback?.SelectedItem is PlaybackInfo recording)
-         {
-            string url = recording.PlaybackUrl;
-            if (!string.IsNullOrEmpty(url))
-            {
-               mActiveRtspUrl = url;
-               if (txtCurrentRtspUrl != null) txtCurrentRtspUrl.Text = GetMaskedUrl(url);
-               var cameraNo = mCurrentCamera?.ComponentNumber ?? 0;
-               if (txtVideoHeader != null) txtVideoHeader.Text = $"PLAYBACK - Camera {cameraNo}";
-               if (brdVideoHeader != null) brdVideoHeader.Background = GetPlaybackHeaderBrush();
-               RtspStreamRequested?.Invoke(this, url);
-               IsPlaybackStarted = true;
-               UpdateEnabled();
-            }
-         }
-      }
-
-      private void btnGotoTime_Click(object sender, RoutedEventArgs e)
-      {
-         if (selPlayback?.SelectedItem is not PlaybackInfo recording) return;
-         try
-         {
-            DateTime date = DateTime.Now.Date;
-            if (!string.IsNullOrWhiteSpace(txtDatePlayback?.Text) && DateTime.TryParse(txtDatePlayback.Text, out DateTime parsedDate))
-               date = parsedDate.Date;
-
-            TimeSpan time = TimeSpan.Zero;
-            if (!string.IsNullOrWhiteSpace(txtTimePlayback?.Text) && TimeSpan.TryParse(txtTimePlayback.Text, out TimeSpan parsedTime))
-               time = parsedTime;
-
-            var dt = date + time;
-            string url = recording.PlaybackUrl + $"?start={dt:yyyyMMddHHmmss}";
-            mActiveRtspUrl = url;
-            if (txtCurrentRtspUrl != null) txtCurrentRtspUrl.Text = GetMaskedUrl(recording.PlaybackUrl);
-            var cameraNo = mCurrentCamera?.ComponentNumber ?? 0;
-            if (txtVideoHeader != null) txtVideoHeader.Text = $"PLAYBACK - Camera {cameraNo}";
-            if (brdVideoHeader != null) brdVideoHeader.Background = GetPlaybackHeaderBrush();
-            RtspStreamRequested?.Invoke(this, url);
-            IsPlaybackStarted = true;
-            UpdateEnabled();
-         }
-         catch { }
-      }
-
-      private void btnStopPlayback_Click(object sender, RoutedEventArgs e)
-      {
-         IsPlaybackStarted = false;
-         if (mCurrentCamera != null)
-            SelectCamera(mCurrentCamera.ComponentNumber, GetSubChannelStreamNo());
-         UpdateEnabled();
-      }
-
-      private void selPlayback_SelectedIndexChanged(object sender, SelectionChangedEventArgs e) { }
-
-      private void tglSubChannel_CheckedChanged(object sender, RoutedEventArgs e)
-      {
-         if (mIsLoadingSettings) return;
-         if (IsStarted && mCurrentCamera != null)
-            SelectCamera(mCurrentCamera.ComponentNumber, tglSubChannel.IsChecked == true ? 2 : 1);
-      }
-
-      // ── API Version / Title ────────────────────────────────────────────────
+      // ── API Version ────────────────────────────────────────────────────────
 
       private void CheckApiVersion(ApiVersion apiVersion = null)
       {
@@ -1177,7 +806,7 @@ namespace Vao.Sample
 
       // ── Date/Time picker overlay ───────────────────────────────────────────
 
-      private void btnPickDate_Click(object sender, RoutedEventArgs e)
+      private void OpenDatePicker()
       {
          mPickerOverlayMode = PickerOverlayMode.Date;
          if (txtPickerOverlayTitle != null) txtPickerOverlayTitle.Text = "Select Date";
@@ -1185,11 +814,11 @@ namespace Vao.Sample
          if (overlayDatePicker != null) overlayDatePicker.IsVisible = true;
          if (overlayTimePicker != null) overlayTimePicker.IsVisible = false;
          if (overlayDatePicker != null)
-            overlayDatePicker.SelectedDate = DateTime.TryParse(txtDatePlayback?.Text, out DateTime d) ? new DateTimeOffset(d) : new DateTimeOffset(DateTime.Now);
+            overlayDatePicker.SelectedDate = DateTime.TryParse(playbackControlPanel.DateText, out DateTime d) ? new DateTimeOffset(d) : new DateTimeOffset(DateTime.Now);
          ShowPickerOverlay();
       }
 
-      private void btnPickTime_Click(object sender, RoutedEventArgs e)
+      private void OpenTimePicker()
       {
          mPickerOverlayMode = PickerOverlayMode.Time;
          if (txtPickerOverlayTitle != null) txtPickerOverlayTitle.Text = "Select Time";
@@ -1198,7 +827,7 @@ namespace Vao.Sample
          if (overlayTimePicker != null)
          {
             overlayTimePicker.IsVisible = true;
-            overlayTimePicker.SelectedTime = TimeSpan.TryParse(txtTimePlayback?.Text, out TimeSpan t) ? t : DateTime.Now.TimeOfDay;
+            overlayTimePicker.SelectedTime = TimeSpan.TryParse(playbackControlPanel.TimeText, out TimeSpan t) ? t : DateTime.Now.TimeOfDay;
          }
          ShowPickerOverlay();
       }
@@ -1206,9 +835,9 @@ namespace Vao.Sample
       private void btnPickerOverlayApply_Click(object sender, RoutedEventArgs e)
       {
          if (mPickerOverlayMode == PickerOverlayMode.Date && overlayDatePicker?.SelectedDate.HasValue == true)
-            if (txtDatePlayback != null) txtDatePlayback.Text = overlayDatePicker.SelectedDate.Value.ToString("yyyy-MM-dd");
+            playbackControlPanel.DateText = overlayDatePicker.SelectedDate.Value.ToString("yyyy-MM-dd");
          else if (mPickerOverlayMode == PickerOverlayMode.Time && overlayTimePicker?.SelectedTime.HasValue == true)
-            if (txtTimePlayback != null) txtTimePlayback.Text = overlayTimePicker.SelectedTime.Value.ToString(@"hh\:mm\:ss");
+            playbackControlPanel.TimeText = overlayTimePicker.SelectedTime.Value.ToString(@"hh\:mm\:ss");
 
          mPickerOverlayMode = PickerOverlayMode.None;
          HidePickerOverlay();
@@ -1254,99 +883,14 @@ namespace Vao.Sample
          mNavigationService.NavigateTo(page);
       }
 
-      // ── Video menu ─────────────────────────────────────────────────────────
+      // ── Messages (delegate to MessageLogPanel) ─────────────────────────────
 
-      private void EnsureVideoContextMenu()
+      public void WriteMessageLog(MessageSource source, string strMessage, LogLevel level)
       {
-         mVideoContextMenu ??= new ContextMenu();
+         messageLogPanel.WriteMessageLog(source, strMessage, level);
       }
 
-      private void VideoMenuButton_Click(object sender, RoutedEventArgs e)
-      {
-         try
-         {
-            EnsureVideoContextMenu();
-            mVideoContextMenu.ItemsSource = BuildVideoContextMenuItems();
-            var target = sender as Control ?? brdVideoHeader;
-            target.ContextMenu = mVideoContextMenu;
-            mVideoContextMenu.PlacementTarget = target;
-            target.ContextMenu.Open();
-         }
-         catch (Exception ex)
-         {
-            WriteMessageLog(MessageSource.Config, $"Failed to open video menu: {ex.Message}", LogLevel.Error);
-         }
-      }
-
-      private List<object> BuildVideoContextMenuItems()
-      {
-         var rootItems = new List<object>();
-         if (mFlexApiClient == null) { rootItems.Add(new MenuItem { Header = "Not connected", IsEnabled = false }); return rootItems; }
-
-         var cameraList = GetAvailableCamerasForMenu();
-         if (cameraList == null || cameraList.Count == 0) { rootItems.Add(new MenuItem { Header = "No cameras available", IsEnabled = false }); return rootItems; }
-
-         const int C_MAX_CAMERAS_PER_SUBMENU = 25;
-         if (cameraList.Count <= C_MAX_CAMERAS_PER_SUBMENU)
-         {
-            foreach (var camera in cameraList) rootItems.Add(CreateCameraMenuItem(camera));
-         }
-         else
-         {
-            for (int i = 0; i < cameraList.Count; i += C_MAX_CAMERAS_PER_SUBMENU)
-            {
-               int end = Math.Min(i + C_MAX_CAMERAS_PER_SUBMENU, cameraList.Count);
-               var batch = cameraList.GetRange(i, end - i);
-               var rangeItems = new List<object>();
-               var rangeMenu = new MenuItem { Header = $"{batch.First().Name} – {batch.Last().Name}", ItemsSource = rangeItems };
-               foreach (var camera in batch) rangeItems.Add(CreateCameraMenuItem(camera));
-               rootItems.Add(rangeMenu);
-            }
-         }
-
-         return rootItems;
-      }
-
-      private List<Camera> GetAvailableCamerasForMenu()
-      {
-         var list = mFlexApiClient?.GetCameraList();
-         if (list != null && list.Count > 0) return list;
-         return mCameraSelectionItems.Select(i => i.Camera).Where(c => c != null)
-            .GroupBy(c => c.ComponentNumber).Select(g => g.First()).OrderBy(c => c.ComponentNumber).ToList();
-      }
-
-      private MenuItem CreateCameraMenuItem(Camera camera)
-      {
-         int hotkeySlot = GetCameraHotkeySlot(camera.ComponentNumber);
-         object header;
-         string labelText = $"#{camera.ComponentNumber:D4} [{(camera.HasPanTiltControl ? "PTZ" : "Fixed")}] {camera.Name}";
-         if (hotkeySlot >= 0)
-         {
-            var panel = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8 };
-            panel.Children.Add(new TextBlock { Text = labelText });
-            panel.Children.Add(new TextBlock { Text = $"Ctrl+{hotkeySlot}", Opacity = 0.5, FontSize = 11, VerticalAlignment = VerticalAlignment.Center });
-            header = panel;
-         }
-         else
-         {
-            header = labelText;
-         }
-
-         var item = new MenuItem { Header = header, Tag = camera };
-         if (mCurrentCamera == camera)
-            item.Icon = new CheckBox { IsChecked = true, IsHitTestVisible = false };
-         item.Click += (s, e) => SelectCamera(camera.ComponentNumber, GetSubChannelStreamNo());
-         return item;
-      }
-
-      private static int GetCameraHotkeySlot(int cameraNumber)
-      {
-         var hotkeys = AppSettings.Default.CameraHotkeys;
-         if (hotkeys == null) return -1;
-         foreach (var kvp in hotkeys)
-            if (kvp.Value == cameraNumber) return kvp.Key;
-         return -1;
-      }
+      private void MessagesSplitter_DragCompleted(object sender, Avalonia.Input.VectorEventArgs e) => SaveSettings();
 
       // ── Sidebar ────────────────────────────────────────────────────────────
 
@@ -1412,297 +956,6 @@ namespace Vao.Sample
       private void btnExpandPlayback_Click(object sender, RoutedEventArgs e)         { SetSidebarCollapsed(false, persistSetting: true); CollapseAllExpandersExcept(expPlaybackSelection); }
       private void btnExpandDownload_Click(object sender, RoutedEventArgs e)         { SetSidebarCollapsed(false, persistSetting: true); CollapseAllExpandersExcept(expDownloadRecording); }
 
-      // ── Sidebar resize handles ─────────────────────────────────────────────
-
-      private ListBox ResolveResizableList(object sender)
-      {
-         if (sender is not Control control) return null;
-         return control.Tag?.ToString() switch
-         {
-            "camera" => lstCameraSelection,
-            "alarm"  => lstAlarmSelection,
-            _        => null
-         };
-      }
-
-      private void SidebarMenuResizeHandle_PointerPressed(object sender, PointerPressedEventArgs e)
-      {
-         var list = ResolveResizableList(sender);
-         if (list == null) return;
-         mActiveResizableList = list;
-         mIsResizingSidebarMenu = true;
-         mResizeStartPoint = e.GetPosition(this);
-         mResizeStartHeight = list.Height > 0 ? list.Height : list.Bounds.Height;
-         if (sender is InputElement inputElement) e.Pointer.Capture(inputElement);
-      }
-
-      private void SidebarMenuResizeHandle_PointerMoved(object sender, PointerEventArgs e)
-      {
-         if (!mIsResizingSidebarMenu || mActiveResizableList == null) return;
-         var minH = AppConstants.Default.ResizableSidebarMenuMinHeight;
-         var maxH = AppConstants.Default.ResizableSidebarMenuMaxHeight;
-         var delta = e.GetPosition(this).Y - mResizeStartPoint.Y;
-         mActiveResizableList.Height = Math.Clamp(mResizeStartHeight + delta, minH, maxH);
-      }
-
-      private void SidebarMenuResizeHandle_PointerReleased(object sender, PointerReleasedEventArgs e) => EndSidebarMenuResize(e.Pointer);
-      private void SidebarMenuResizeHandle_PointerCaptureLost(object sender, PointerCaptureLostEventArgs e) => EndSidebarMenuResize(null);
-
-      private void EndSidebarMenuResize(IPointer pointer)
-      {
-         if (!mIsResizingSidebarMenu) return;
-         mIsResizingSidebarMenu = false;
-         mActiveResizableList = null;
-         pointer?.Capture(null);
-         SaveSettings();
-      }
-
-      // ── Messages ───────────────────────────────────────────────────────────
-
-      public void WriteMessageLog(MessageSource source, string strMessage, LogLevel level)
-      {
-         if (!Dispatcher.UIThread.CheckAccess())
-         {
-            Dispatcher.UIThread.Post(() => WriteMessageLog(source, strMessage, level));
-            return;
-         }
-
-         string strSource = source.ToString().PadRight(7);
-         var strTime = DateTime.Now.ToString(CultureInfo.InvariantCulture);
-         var strLevel = level.ToString().PadRight(7);
-         var strMsg = $"{strTime} [{strLevel}][{strSource}] - {strMessage}";
-
-         IBrush color = GetColorForLogLevel(level);
-
-         var item = new MessageItem
-         {
-            Text = strMsg,
-            Color = color,
-            Background = GetBackgroundForLogLevel(level),
-            Source = source,
-            Level = level
-         };
-
-         mMessages.Add(item);
-         if (mSourceFilters.TryGetValue(source, out bool visible) && visible)
-         {
-            bool wasAtEnd = mFilteredMessages.Count == 0 || IsScrolledToEnd();
-            mFilteredMessages.Add(item);
-            if (wasAtEnd && lstMessages != null)
-               lstMessages.ScrollIntoView(mFilteredMessages.Count - 1);
-         }
-      }
-
-      private IBrush GetColorForLogLevel(LogLevel level) => level switch
-      {
-         LogLevel.Error   => GetBrushResource("MessageErrorForeground", "#FF0000"),
-         LogLevel.Warning => GetBrushResource("MessageWarningForeground", "#F0AA1F"),
-         LogLevel.Debug   => GetBrushResource("MessageDebugForeground", "#ADD8E6"),
-         _                => GetBrushResource("MessageDefaultForeground", "#FFFFFF"),
-      };
-
-      private IBrush GetBackgroundForLogLevel(LogLevel level) => GetBrushResource("MessageLogBackground", "#00000000");
-
-      private void RefreshMessageColors()
-      {
-         foreach (var item in mMessages)
-         {
-            item.Color = GetColorForLogLevel(item.Level);
-            item.Background = GetBackgroundForLogLevel(item.Level);
-         }
-      }
-
-      private void RefreshVideoHeaderState()
-      {
-         if (!IsStarted || mCurrentCamera == null)
-         {
-            if (txtVideoHeader != null) txtVideoHeader.Text = "No Camera Selected";
-            if (brdVideoHeader != null) brdVideoHeader.Background = GetNeutralHeaderBrush();
-            return;
-         }
-
-         var cameraNo = mCurrentCamera.ComponentNumber;
-         if (IsPlayback || IsPlaybackStarted)
-         {
-            if (txtVideoHeader != null) txtVideoHeader.Text = $"PLAYBACK - Camera {cameraNo}";
-            if (brdVideoHeader != null) brdVideoHeader.Background = GetPlaybackHeaderBrush();
-         }
-         else
-         {
-            if (txtVideoHeader != null) txtVideoHeader.Text = $"LIVE - Camera {cameraNo}";
-            if (brdVideoHeader != null) brdVideoHeader.Background = GetLiveHeaderBrush();
-         }
-      }
-
-      private void MessagesHeader_PointerPressed(object sender, PointerPressedEventArgs e)
-      {
-         mIsMessagesCollapsed = !mIsMessagesCollapsed;
-         var messagesGrid = brdMessages?.Parent as Grid;
-         if (messagesGrid == null) return;
-         var messagesRow = messagesGrid.RowDefinitions[2];
-
-         if (mIsMessagesCollapsed)
-         {
-            mMessagesExpandedRowHeight = messagesRow.Height;
-            messagesRow.Height = GridLength.Auto;
-            if (brdMessages != null) brdMessages.MaxHeight = 36;
-            if (lstMessages != null) lstMessages.IsVisible = false;
-            if (messagesSplitter != null) messagesSplitter.IsEnabled = false;
-            if (txtMessagesToggle != null) txtMessagesToggle.Text = "▶";
-         }
-         else
-         {
-            if (brdMessages != null) brdMessages.MaxHeight = double.PositiveInfinity;
-            messagesRow.Height = mMessagesExpandedRowHeight;
-            if (lstMessages != null) lstMessages.IsVisible = true;
-            if (messagesSplitter != null) messagesSplitter.IsEnabled = true;
-            if (txtMessagesToggle != null) txtMessagesToggle.Text = "▼";
-         }
-
-         SaveSettings();
-      }
-
-      private void MessagesSplitter_DragCompleted(object sender, Avalonia.Input.VectorEventArgs e) => SaveSettings();
-
-      private bool IsScrolledToEnd()
-      {
-         var scrollViewer = FindScrollViewer(lstMessages);
-         if (scrollViewer != null)
-            return scrollViewer.Offset.Y >= scrollViewer.Extent.Height - scrollViewer.Viewport.Height - 20;
-         return true;
-      }
-
-      private ScrollViewer FindScrollViewer(Control parent)
-      {
-         if (parent is ScrollViewer sv) return sv;
-         foreach (var child in Avalonia.VisualTree.VisualExtensions.GetVisualChildren(parent))
-            if (child is Control c) { var result = FindScrollViewer(c); if (result != null) return result; }
-         return null;
-      }
-
-      private void ApplyMessageFilter()
-      {
-         mFilteredMessages.Clear();
-         foreach (var msg in mMessages)
-            if (mSourceFilters.TryGetValue(msg.Source, out bool visible) && visible)
-               mFilteredMessages.Add(msg);
-         if (mFilteredMessages.Count > 0 && lstMessages != null)
-            lstMessages.ScrollIntoView(mFilteredMessages.Count - 1);
-      }
-
-      private void btnClearMessages_Click(object sender, RoutedEventArgs e) { mMessages.Clear(); mFilteredMessages.Clear(); }
-
-      private async void menuCopyMessages_Click(object sender, RoutedEventArgs e)
-      {
-         var text = string.Join(Environment.NewLine, mFilteredMessages.Select(m => m.Text));
-         var clipboard = TopLevel.GetTopLevel(this)?.Clipboard;
-         if (clipboard is { } cb) await cb.SetTextAsync(text);
-      }
-
-      private async void menuCopySelectedMessages_Click(object sender, RoutedEventArgs e) => await CopySelectedMessagesAsync();
-
-      private async void lstMessages_KeyDown(object sender, KeyEventArgs e)
-      {
-         if (e.Key == Key.C && (e.KeyModifiers & KeyModifiers.Control) == KeyModifiers.Control)
-         {
-            await CopySelectedMessagesAsync();
-            e.Handled = true;
-         }
-      }
-
-      private async Task CopySelectedMessagesAsync()
-      {
-         var selectedText = string.Join(Environment.NewLine, lstMessages.SelectedItems.Cast<MessageItem>().Select(m => m.Text));
-         var clipboard = TopLevel.GetTopLevel(this)?.Clipboard;
-         if (!string.IsNullOrEmpty(selectedText) && clipboard is { } cb)
-            await cb.SetTextAsync(selectedText);
-      }
-
-      private void menuScrollToEnd_Click(object sender, RoutedEventArgs e)
-      {
-         if (mFilteredMessages.Count > 0 && lstMessages != null)
-            lstMessages.ScrollIntoView(mFilteredMessages.Count - 1);
-      }
-
-      private void menuFilterFlexApi_Click(object sender, RoutedEventArgs e) => ToggleSourceFilter(sender, MessageSource.FlexApi);
-      private void menuFilterLibVlc_Click(object sender, RoutedEventArgs e)  => ToggleSourceFilter(sender, MessageSource.LibVlc);
-      private void menuFilterConfig_Click(object sender, RoutedEventArgs e)  => ToggleSourceFilter(sender, MessageSource.Config);
-
-      private void ToggleSourceFilter(object sender, MessageSource source)
-      {
-         if (sender is MenuItem menuItem && menuItem.Icon is CheckBox cb)
-         {
-            cb.IsChecked = !(cb.IsChecked ?? false);
-            mSourceFilters[source] = cb.IsChecked ?? false;
-            ApplyMessageFilter();
-         }
-      }
-
-      // ── Camera rename (F2) ─────────────────────────────────────────────────
-
-      private void HandleRenameCameraAsync()
-      {
-         var selectedItem = lstCameraSelection?.SelectedItem as CameraSelectionItem;
-         if (selectedItem?.Camera == null) return;
-
-         var currentUser = selectedItem.Camera.FlexApiClient.CurrentUser;
-         if (currentUser == null || currentUser.Privilege < UserPrivilege.Supervisor) return;
-
-         var container = lstCameraSelection.ContainerFromItem(selectedItem) as Control;
-         if (container == null) return;
-
-         var textBlock = container.GetVisualDescendants().OfType<TextBlock>().FirstOrDefault(tb => tb.Name == "txtCameraItemName");
-         var textBox   = container.GetVisualDescendants().OfType<TextBox>().FirstOrDefault(tb => tb.Name == "txtCameraItemEdit");
-         if (textBlock == null || textBox == null) return;
-
-         var camera = selectedItem.Camera;
-         textBox.Text = camera.Name;
-         textBlock.IsVisible = false;
-         textBox.IsVisible = true;
-         textBox.Focus();
-         textBox.SelectAll();
-
-         const string C_ALLOWED_CHARS = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm1234567890,.()?!-/_ ";
-
-         void CommitEdit()
-         {
-            string newName = textBox.Text?.Trim();
-            textBlock.IsVisible = true;
-            textBox.IsVisible = false;
-            if (!string.IsNullOrEmpty(newName) && newName != camera.Name)
-            {
-               bool success = camera.SetName(newName);
-               if (success) { camera.UpdateCameraData(); ApplyCameraSearchFilter(); }
-            }
-         }
-
-         void CancelEdit() { textBlock.IsVisible = true; textBox.IsVisible = false; }
-
-         void OnTextInput(object s, TextInputEventArgs args)
-         {
-            if (args.Text != null && args.Text.Any(c => !C_ALLOWED_CHARS.Contains(c)))
-               args.Handled = true;
-         }
-
-         void OnKeyDown(object s, KeyEventArgs args)
-         {
-            if (args.Key == Key.Enter) { CommitEdit(); args.Handled = true; }
-            else if (args.Key == Key.Escape) { CancelEdit(); args.Handled = true; }
-         }
-
-         void OnLostFocus(object s, RoutedEventArgs args)
-         {
-            CommitEdit();
-            textBox.RemoveHandler(InputElement.TextInputEvent, OnTextInput);
-            textBox.KeyDown -= OnKeyDown;
-            textBox.LostFocus -= OnLostFocus;
-         }
-
-         textBox.AddHandler(InputElement.TextInputEvent, OnTextInput, RoutingStrategies.Tunnel);
-         textBox.KeyDown += OnKeyDown;
-         textBox.LostFocus += OnLostFocus;
-      }
-
       public bool IsTextInputFocused()
       {
          var focusedElement = TopLevel.GetTopLevel(this)?.FocusManager?.GetFocusedElement();
@@ -1716,15 +969,18 @@ namespace Vao.Sample
       private void LoadSettings()
       {
          var s = AppSettings.Default;
-         if (tglSubChannel != null) tglSubChannel.IsChecked = s.PreferSubChannel;
+         videoPanel.SetSubChannelChecked(s.PreferSubChannel, suppressEvent: true);
          UpdateUserInitial();
 
-         mAlarmStatusFilters[AlarmGeneralStatus.Active]       = s.ShowActiveAlarms;
-         mAlarmStatusFilters[AlarmGeneralStatus.Tampered]     = s.ShowTamperedAlarms;
-         mAlarmStatusFilters[AlarmGeneralStatus.Acknowledged] = s.ShowAcknowledgedAlarms;
-         mAlarmStatusFilters[AlarmGeneralStatus.Inactive]     = s.ShowPassiveAlarms;
-         mAlarmStatusFilters[AlarmGeneralStatus.Disabled]     = s.ShowDisabledAlarms;
-         InitializeAlarmStatusFilterMenu();
+         var filters = new Dictionary<AlarmGeneralStatus, bool>
+         {
+            { AlarmGeneralStatus.Active, s.ShowActiveAlarms },
+            { AlarmGeneralStatus.Tampered, s.ShowTamperedAlarms },
+            { AlarmGeneralStatus.Acknowledged, s.ShowAcknowledgedAlarms },
+            { AlarmGeneralStatus.Inactive, s.ShowPassiveAlarms },
+            { AlarmGeneralStatus.Disabled, s.ShowDisabledAlarms }
+         };
+         alarmSelectorPanel.SetStatusFilters(filters);
       }
 
       private void SaveSettings()
@@ -1737,22 +993,25 @@ namespace Vao.Sample
          if (expAlarms != null)          s.IsAlarmsExpanded = expAlarms.IsExpanded;
          if (expPlaybackSelection != null) s.IsPlaybackSelectionExpanded = expPlaybackSelection.IsExpanded;
          if (expDownloadRecording != null) s.IsDownloadRecordingExpanded = expDownloadRecording.IsExpanded;
-         s.IsMessagesCollapsed = mIsMessagesCollapsed;
+         s.IsMessagesCollapsed = messageLogPanel.IsMessagesCollapsed;
 
-         if (brdMessages?.Parent is Grid mg && mg.RowDefinitions.Count > 2 && !mIsMessagesCollapsed)
+         if (messageLogPanel?.Parent is Grid mg && mg.RowDefinitions.Count > 2 && !messageLogPanel.IsMessagesCollapsed)
          {
             s.MessagesSplitVideoStars   = mg.RowDefinitions[0].Height.Value;
             s.MessagesSplitMessagesStars = mg.RowDefinitions[2].Height.Value;
          }
 
-         if (lstCameraSelection?.Height > 0) s.CameraSidebarMenuHeight = lstCameraSelection.Height;
-         if (lstAlarmSelection?.Height > 0)  s.AlarmSidebarMenuHeight  = lstAlarmSelection.Height;
+         var cameraHeight = cameraSelectorPanel.ListHeight;
+         var alarmHeight = alarmSelectorPanel.ListHeight;
+         if (cameraHeight > 0) s.CameraSidebarMenuHeight = cameraHeight;
+         if (alarmHeight > 0)  s.AlarmSidebarMenuHeight  = alarmHeight;
 
-         s.ShowActiveAlarms      = mAlarmStatusFilters.GetValueOrDefault(AlarmGeneralStatus.Active, true);
-         s.ShowTamperedAlarms    = mAlarmStatusFilters.GetValueOrDefault(AlarmGeneralStatus.Tampered, true);
-         s.ShowAcknowledgedAlarms = mAlarmStatusFilters.GetValueOrDefault(AlarmGeneralStatus.Acknowledged, true);
-         s.ShowPassiveAlarms     = mAlarmStatusFilters.GetValueOrDefault(AlarmGeneralStatus.Inactive, true);
-         s.ShowDisabledAlarms    = mAlarmStatusFilters.GetValueOrDefault(AlarmGeneralStatus.Disabled, true);
+         var alarmFilters = alarmSelectorPanel.GetStatusFilters();
+         s.ShowActiveAlarms      = alarmFilters.GetValueOrDefault(AlarmGeneralStatus.Active, true);
+         s.ShowTamperedAlarms    = alarmFilters.GetValueOrDefault(AlarmGeneralStatus.Tampered, true);
+         s.ShowAcknowledgedAlarms = alarmFilters.GetValueOrDefault(AlarmGeneralStatus.Acknowledged, true);
+         s.ShowPassiveAlarms     = alarmFilters.GetValueOrDefault(AlarmGeneralStatus.Inactive, true);
+         s.ShowDisabledAlarms    = alarmFilters.GetValueOrDefault(AlarmGeneralStatus.Disabled, true);
          s.Save();
       }
 
@@ -1890,8 +1149,8 @@ namespace Vao.Sample
 
       private void ApplySharedThemeRefresh()
       {
-         RefreshMessageColors();
-         RefreshVideoHeaderState();
+         messageLogPanel.RefreshColors();
+         videoPanel.RefreshHeaderState(IsStarted, mCurrentCamera, IsPlayback, IsPlaybackStarted);
          SaveSettings();
          UpdateThemeMenus();
       }
@@ -1908,18 +1167,6 @@ namespace Vao.Sample
          if (this.TryFindResource(key, this.ActualThemeVariant, out var resource) && resource is IBrush b)
             return b;
          return new SolidColorBrush(Color.Parse(fallback));
-      }
-
-      private IBrush GetNeutralHeaderBrush()  => GetBrushResource("VideoHeaderNeutral", "#1D3A4A");
-      private IBrush GetLiveHeaderBrush()     => GetBrushResource("VideoHeaderLive", "#39B620");
-      private IBrush GetPlaybackHeaderBrush() => GetBrushResource("VideoHeaderPlayback", "#CA3C3D");
-
-      private static bool IsActiveRtspPlayback(string url) => url != null && url.Contains("playback");
-
-      private static string GetMaskedUrl(string url)
-      {
-         try { return new UriBuilder(url) { Password = "******", UserName = "******" }.ToString(); }
-         catch { return url ?? string.Empty; }
       }
    }
 

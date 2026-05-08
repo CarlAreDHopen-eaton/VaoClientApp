@@ -1,0 +1,78 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 x:Class="Vao.Sample.Controls.AlarmSelectorPanel">
+
+	<Grid x:Name="pnlAlarmsSelection" Margin="0" RowDefinitions="Auto,Auto,Auto">
+		<TextBox Grid.Row="0"
+				 x:Name="txtAlarmSearch"
+				 Watermark="Search by number or name"
+				 Classes="borderless"
+				 MinHeight="{DynamicResource SidebarMenuSearchHeight}"
+				 TextChanged="txtAlarmSearch_TextChanged">
+			<TextBox.ContextMenu>
+				<ContextMenu x:Name="ctxAlarmStatusFilter">
+					<MenuItem x:Name="mnuAlarmFilterActive" Header="Active" Click="AlarmStatusFilter_Click" Tag="Active"/>
+					<MenuItem x:Name="mnuAlarmFilterTampered" Header="Tampered" Click="AlarmStatusFilter_Click" Tag="Tampered"/>
+					<MenuItem x:Name="mnuAlarmFilterAcknowledged" Header="Acknowledged" Click="AlarmStatusFilter_Click" Tag="Acknowledged"/>
+					<MenuItem x:Name="mnuAlarmFilterInactive" Header="Passive" Click="AlarmStatusFilter_Click" Tag="Inactive"/>
+					<MenuItem x:Name="mnuAlarmFilterDisabled" Header="Disabled" Click="AlarmStatusFilter_Click" Tag="Disabled"/>
+				</ContextMenu>
+			</TextBox.ContextMenu>
+		</TextBox>
+		<ListBox Grid.Row="1"
+				 x:Name="lstAlarmSelection"
+				 SelectionChanged="lstAlarmSelection_SelectionChanged"
+				 ScrollViewer.VerticalScrollBarVisibility="Auto"
+				 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+				 Background="Transparent"
+				 BorderBrush="{DynamicResource Divider}"
+				 BorderThickness="1"
+				 CornerRadius="4"
+				 Padding="0"
+				 Margin="0">
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<Grid ColumnDefinitions="Auto,Auto,*,Auto" Margin="0" ToolTip.Tip="{Binding TooltipText}">
+						<TextBlock Grid.Column="0"
+								   Text="{Binding AlarmIcon}"
+								   Classes="ms-icon"
+								   FontSize="16"
+								   Foreground="{Binding StatusBrush}"
+								   VerticalAlignment="Center"/>
+						<TextBlock Grid.Column="1"
+								   Text="{Binding AlarmNumberText}"
+								   Margin="6,0,6,0"
+								   FontWeight="SemiBold"
+								   Foreground="{DynamicResource LabelFg}"
+								   VerticalAlignment="Center"/>
+						<TextBlock Grid.Column="2"
+								   Text="{Binding AlarmName}"
+								   TextTrimming="CharacterEllipsis"
+								   VerticalAlignment="Center"/>
+						<Button Grid.Column="3"
+								Classes="icon"
+								ToolTip.Tip="Open Alarm Details"
+								Click="btnAlarmEdit_Click"
+								Padding="2"
+								Margin="2,0,0,0"
+								MinWidth="0"
+								MinHeight="0"
+								Width="24"
+								Height="24"
+								VerticalAlignment="Center">
+							<TextBlock Text="&#xE3C9;" Classes="ms-icon" FontSize="14" Foreground="{DynamicResource LabelFg}"/>
+						</Button>
+					</Grid>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+		<Border Grid.Row="2"
+				Classes="sidebar-menu-resize-handle"
+				Tag="alarm"
+				PointerPressed="ResizeHandle_PointerPressed"
+				PointerMoved="ResizeHandle_PointerMoved"
+				PointerReleased="ResizeHandle_PointerReleased"
+				PointerCaptureLost="ResizeHandle_PointerCaptureLost"/>
+	</Grid>
+
+</UserControl>

@@ -1,5 +1,6 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="using:Vao.Sample.Controls"
              x:Class="Vao.Sample.MainView"
              Background="{DynamicResource AppBg}">
 
@@ -128,44 +129,7 @@
                                             <TextBlock Text="Camera Control" VerticalAlignment="Center"/>
                                         </StackPanel>
                                     </Expander.Header>
-                                    <StackPanel Spacing="8" Margin="16,8,16,16" x:Name="grpCameraControl" IsEnabled="False">
-                                       <Grid ColumnDefinitions="48,48,48,*,48,48" RowDefinitions="48,48,48">
-                                           <Button Grid.Row="0" Grid.Column="0" x:Name="btnFocusNear" ToolTip.Tip="Focus Near" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}" Padding="2" Classes="ptz-icon">
-                                               <TextBlock x:Name="iconFocusNear" Text="&#xE883;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
-                                           </Button>
-                                           <Button Grid.Row="0" Grid.Column="1" x:Name="btnTiltUp" ToolTip.Tip="Tilt Up" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}" Padding="2" Classes="ptz-icon">
-                                               <TextBlock x:Name="iconTiltUp" Text="&#xE5D8;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
-                                           </Button>
-                                           <Button Grid.Row="0" Grid.Column="2" x:Name="btnZoomIn" ToolTip.Tip="Zoom In" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}" Padding="2" Classes="ptz-icon">
-                                               <TextBlock x:Name="iconZoomIn" Text="&#xE8FF;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
-                                           </Button>
-                                           <Button Grid.Row="1" Grid.Column="0" x:Name="btnPanLeft" ToolTip.Tip="Pan Left" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}" Padding="2" Classes="ptz-icon">
-                                               <TextBlock x:Name="iconPanLeft" Text="&#xE5C4;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
-                                           </Button>
-                                           <Button Grid.Row="1" Grid.Column="1" x:Name="btnCenterCamera" IsHitTestVisible="False" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}" Padding="2" Classes="ptz-icon ptz-icon-transparent">
-                                               <TextBlock x:Name="iconCenterCamera" Text="&#xE074;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
-                                           </Button>
-                                           <Button Grid.Row="1" Grid.Column="2" x:Name="btnPanRight" ToolTip.Tip="Pan Right" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}" Padding="2" Classes="ptz-icon">
-                                               <TextBlock x:Name="iconPanRight" Text="&#xE5C8;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
-                                           </Button>
-                                           <Button Grid.Row="2" Grid.Column="0" x:Name="btnFocusFar" ToolTip.Tip="Focus Far" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}" Padding="2" Classes="ptz-icon">
-                                               <TextBlock x:Name="iconFocusFar" Text="&#xE882;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
-                                           </Button>
-                                           <Button Grid.Row="2" Grid.Column="1" x:Name="btnTiltDown" ToolTip.Tip="Tilt Down" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}" Padding="2" Classes="ptz-icon">
-                                               <TextBlock x:Name="iconTiltDown" Text="&#xE5DB;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
-                                           </Button>
-                                           <Button Grid.Row="2" Grid.Column="2" x:Name="btnZoomOut" ToolTip.Tip="Zoom Out" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}" Padding="2" Classes="ptz-icon">
-                                               <TextBlock x:Name="iconZoomOut" Text="&#xE900;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
-                                           </Button>
-                                           <Button Grid.Row="0" Grid.Column="4" x:Name="btnAbsolutePosition" ToolTip.Tip="Absolute Position" Click="btnOpenAbsolutePositionWindow_Click" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}" Padding="2" Classes="ptz-icon">
-                                               <TextBlock x:Name="iconAbsolutePosition" Text="&#xE074;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
-                                           </Button>
-                                           <Button Grid.Row="1" Grid.Column="4" x:Name="btnCameraLock" ToolTip.Tip="Camera Lock" Click="btnCameraLock_Click" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}" Padding="2" Classes="ptz-icon">
-                                               <TextBlock x:Name="iconCameraLock" Text="&#xE898;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
-                                           </Button>
-                                       </Grid>
-                                        <TextBlock x:Name="lblCurrentCamera" Text="Camera: (No camera selected)" Foreground="{DynamicResource LabelFg}" FontSize="12"/>
-                                    </StackPanel>
+                                    <controls:PtzControlPanel x:Name="ptzControlPanel"/>
                                 </Expander>
                             </Border>
 
@@ -178,65 +142,7 @@
                                             <TextBlock Text="Camera Selection" VerticalAlignment="Center"/>
                                         </StackPanel>
                                     </Expander.Header>
-                                    <Grid x:Name="pnlCameraSelection" Margin="0" IsEnabled="False" RowDefinitions="Auto,Auto,Auto">
-                                        <TextBox Grid.Row="0"
-                                                 x:Name="txtCameraSearch"
-                                                 Watermark="Search by number or name"
-                                                 Classes="borderless"
-                                                 MinHeight="{DynamicResource SidebarMenuSearchHeight}"
-                                                 TextChanged="txtCameraSearch_TextChanged"/>
-                                        <ListBox Grid.Row="1"
-                                                 x:Name="lstCameraSelection"
-                                                 SelectionChanged="lstCameraSelection_SelectionChanged"
-                                                 ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                                 Background="Transparent"
-                                                 BorderBrush="{DynamicResource Divider}"
-                                                 BorderThickness="1"
-                                                 CornerRadius="4"
-                                                 Padding="0"
-                                                 Margin="0">
-                                            <ListBox.ItemTemplate>
-                                                <DataTemplate>
-                                                    <Grid ColumnDefinitions="Auto,Auto,*" Margin="0">
-                                                        <TextBlock Grid.Column="0"
-                                                                   Text="{Binding CameraTypeIcon}"
-                                                                   Classes="blui-icon"
-                                                                   FontSize="18"
-                                                                   Foreground="{DynamicResource LabelFg}"
-                                                                   VerticalAlignment="Center"/>
-                                                        <TextBlock Grid.Column="1"
-                                                                   Text="{Binding CameraNumberText}"
-                                                                   Margin="6,0,6,0"
-                                                                   FontWeight="SemiBold"
-                                                                   Foreground="{DynamicResource LabelFg}"
-                                                                   VerticalAlignment="Center"/>
-                                                        <Panel Grid.Column="2">
-                                                            <TextBlock Text="{Binding CameraName}"
-                                                                       TextTrimming="CharacterEllipsis"
-                                                                       ToolTip.Tip="{Binding CameraName}"
-                                                                       VerticalAlignment="Center"
-                                                                       Name="txtCameraItemName"/>
-                                                            <TextBox MaxLength="19"
-                                                                     IsVisible="False"
-                                                                     VerticalAlignment="Center"
-                                                                     VerticalContentAlignment="Center"
-                                                                     Padding="2"
-                                                                     Margin="-2,0,0,0"
-                                                                     Name="txtCameraItemEdit"/>
-                                                        </Panel>
-                                                    </Grid>
-                                                </DataTemplate>
-                                            </ListBox.ItemTemplate>
-                                        </ListBox>
-                                        <Border Grid.Row="2"
-                                                Classes="sidebar-menu-resize-handle"
-                                                Tag="camera"
-                                                PointerPressed="SidebarMenuResizeHandle_PointerPressed"
-                                                PointerMoved="SidebarMenuResizeHandle_PointerMoved"
-                                                PointerReleased="SidebarMenuResizeHandle_PointerReleased"
-                                                PointerCaptureLost="SidebarMenuResizeHandle_PointerCaptureLost"/>
-                                    </Grid>
+                                    <controls:CameraSelectorPanel x:Name="cameraSelectorPanel" IsEnabled="False"/>
                                 </Expander>
                             </Border>
 
@@ -267,78 +173,7 @@
                                             <TextBlock Text="Alarms" VerticalAlignment="Center"/>
                                         </StackPanel>
                                     </Expander.Header>
-                                    <Grid x:Name="pnlAlarmsSelection" Margin="0" IsEnabled="False" RowDefinitions="Auto,Auto,Auto">
-                                        <TextBox Grid.Row="0"
-                                                 x:Name="txtAlarmSearch"
-                                                 Watermark="Search by number or name"
-                                                 Classes="borderless"
-                                                 MinHeight="{DynamicResource SidebarMenuSearchHeight}"
-                                                 TextChanged="txtAlarmSearch_TextChanged">
-                                            <TextBox.ContextMenu>
-                                                <ContextMenu x:Name="ctxAlarmStatusFilter">
-                                                    <MenuItem x:Name="mnuAlarmFilterActive" Header="Active" Click="AlarmStatusFilter_Click" Tag="Active"/>
-                                                    <MenuItem x:Name="mnuAlarmFilterTampered" Header="Tampered" Click="AlarmStatusFilter_Click" Tag="Tampered"/>
-                                                    <MenuItem x:Name="mnuAlarmFilterAcknowledged" Header="Acknowledged" Click="AlarmStatusFilter_Click" Tag="Acknowledged"/>
-                                                    <MenuItem x:Name="mnuAlarmFilterInactive" Header="Passive" Click="AlarmStatusFilter_Click" Tag="Inactive"/>
-                                                    <MenuItem x:Name="mnuAlarmFilterDisabled" Header="Disabled" Click="AlarmStatusFilter_Click" Tag="Disabled"/>
-                                                </ContextMenu>
-                                            </TextBox.ContextMenu>
-                                        </TextBox>
-                                        <ListBox Grid.Row="1"
-                                                 x:Name="lstAlarmSelection"
-                                                 SelectionChanged="lstAlarmSelection_SelectionChanged"
-                                                 ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                                 Background="Transparent"
-                                                 BorderBrush="{DynamicResource Divider}"
-                                                 BorderThickness="1"
-                                                 CornerRadius="4"
-                                                 Padding="0"
-                                                 Margin="0">
-                                            <ListBox.ItemTemplate>
-                                                <DataTemplate>
-                                                    <Grid ColumnDefinitions="Auto,Auto,*,Auto" Margin="0" ToolTip.Tip="{Binding TooltipText}">
-                                                        <TextBlock Grid.Column="0"
-                                                                   Text="{Binding AlarmIcon}"
-                                                                   Classes="ms-icon"
-                                                                   FontSize="16"
-                                                                   Foreground="{Binding StatusBrush}"
-                                                                   VerticalAlignment="Center"/>
-                                                        <TextBlock Grid.Column="1"
-                                                                   Text="{Binding AlarmNumberText}"
-                                                                   Margin="6,0,6,0"
-                                                                   FontWeight="SemiBold"
-                                                                   Foreground="{DynamicResource LabelFg}"
-                                                                   VerticalAlignment="Center"/>
-                                                        <TextBlock Grid.Column="2"
-                                                                   Text="{Binding AlarmName}"
-                                                                   TextTrimming="CharacterEllipsis"
-                                                                   VerticalAlignment="Center"/>
-                                                        <Button Grid.Column="3"
-                                                                Classes="icon"
-                                                                ToolTip.Tip="Open Alarm Details"
-                                                                Click="btnAlarmEdit_Click"
-                                                                Padding="2"
-                                                                Margin="2,0,0,0"
-                                                                MinWidth="0"
-                                                                MinHeight="0"
-                                                                Width="24"
-                                                                Height="24"
-                                                                VerticalAlignment="Center">
-                                                            <TextBlock Text="&#xE3C9;" Classes="ms-icon" FontSize="14" Foreground="{DynamicResource LabelFg}"/>
-                                                        </Button>
-                                                    </Grid>
-                                                </DataTemplate>
-                                            </ListBox.ItemTemplate>
-                                        </ListBox>
-                                        <Border Grid.Row="2"
-                                                Classes="sidebar-menu-resize-handle"
-                                                Tag="alarm"
-                                                PointerPressed="SidebarMenuResizeHandle_PointerPressed"
-                                                PointerMoved="SidebarMenuResizeHandle_PointerMoved"
-                                                PointerReleased="SidebarMenuResizeHandle_PointerReleased"
-                                                PointerCaptureLost="SidebarMenuResizeHandle_PointerCaptureLost"/>
-                                    </Grid>
+                                    <controls:AlarmSelectorPanel x:Name="alarmSelectorPanel" IsEnabled="False"/>
                                 </Expander>
                             </Border>
 
@@ -351,32 +186,7 @@
                                             <TextBlock Text="Playback Selection" VerticalAlignment="Center"/>
                                         </StackPanel>
                                     </Expander.Header>
-                                    <StackPanel x:Name="grpSelectPlayback" Spacing="16" Margin="16,8,16,16" IsEnabled="False">
-                                        <ComboBox x:Name="selPlayback" MinWidth="200" HorizontalAlignment="Stretch" SelectionChanged="selPlayback_SelectedIndexChanged"/>
-                                        <Grid ColumnDefinitions="*,8,*">
-                                            <Button Grid.Column="0" x:Name="btnPlayPlayback" Content="Play" Click="btnPlayPlayback_Click" HorizontalAlignment="Stretch" Classes="primary"/>
-                                            <Button Grid.Column="2" x:Name="btnStopPlayback" Content="Stop" Click="btnStopPlayback_Click" HorizontalAlignment="Stretch" Classes="outlined"/>
-                                        </Grid>
-                                        <StackPanel Spacing="4">
-                                            <TextBlock Text="Date (YYYY-MM-DD)" Classes="label"/>
-                                            <Grid ColumnDefinitions="*,8,44">
-                                                <TextBox Grid.Column="0" x:Name="txtDatePlayback" Watermark="2024-01-15" HorizontalAlignment="Stretch"/>
-                                                <Button Grid.Column="2" x:Name="btnPickDate" Click="btnPickDate_Click" ToolTip.Tip="Pick date" Classes="icon" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}">
-                                                    <TextBlock Text="&#xE935;" Classes="ms-icon" FontSize="20"/>
-                                                </Button>
-                                            </Grid>
-                                        </StackPanel>
-                                        <StackPanel Spacing="4">
-                                            <TextBlock Text="Time (HH:MM:SS)" Classes="label"/>
-                                            <Grid ColumnDefinitions="*,8,44">
-                                                <TextBox Grid.Column="0" x:Name="txtTimePlayback" Watermark="14:30:00" HorizontalAlignment="Stretch"/>
-                                                <Button Grid.Column="2" x:Name="btnPickTime" Click="btnPickTime_Click" ToolTip.Tip="Pick time" Classes="icon" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}">
-                                                    <TextBlock Text="&#xE8B5;" Classes="ms-icon" FontSize="20"/>
-                                                </Button>
-                                            </Grid>
-                                        </StackPanel>
-                                        <Button x:Name="btnGotoTime" Content="Go to Time" Click="btnGotoTime_Click" HorizontalAlignment="Stretch" Classes="primary"/>
-                                    </StackPanel>
+                                    <controls:PlaybackControlPanel x:Name="playbackControlPanel" IsEnabled="False"/>
                                 </Expander>
                             </Border>
 
@@ -419,47 +229,7 @@
                 </Button>
 
                 <!-- Video area -->
-                <Border Grid.Row="0" x:Name="grpVideoControl" Background="{DynamicResource Surface1}" CornerRadius="4">
-                    <Grid RowDefinitions="Auto,*,Auto">
-                        <Border Grid.Row="0" x:Name="brdVideoHeader" Background="{DynamicResource VideoHeaderBg}" CornerRadius="4,4,0,0">
-                            <Grid ColumnDefinitions="*,Auto">
-                                <TextBlock x:Name="txtVideoHeader" Text="No Camera Selected" FontWeight="SemiBold" FontSize="14" Foreground="White" Margin="16,6" Opacity="0.87" VerticalAlignment="Center"/>
-                                <Grid Grid.Column="1"
-                                      ColumnDefinitions="Auto,Auto"
-                                      HorizontalAlignment="Right"
-                                      VerticalAlignment="Center"
-                                      Margin="0,0,8,0">
-                                    <ToggleSwitch x:Name="tglSubChannel"
-                                                  Grid.Column="0"
-                                                  OnContent="Sub" OffContent="Main"
-                                                  IsChecked="True"
-                                                  Checked="tglSubChannel_CheckedChanged"
-                                                  Unchecked="tglSubChannel_CheckedChanged"
-                                                  VerticalAlignment="Center"
-                                                  VerticalContentAlignment="Center"
-                                                  HorizontalContentAlignment="Center"
-                                                  Padding="0"
-                                                  Margin="0,0,8,0"
-                                                  MinHeight="0"
-                                                  Foreground="White"/>
-                                    <Button x:Name="btnVideoMenuHeader"
-                                            Grid.Column="1"
-                                            Classes="appbar-icon"
-                                            Click="VideoMenuButton_Click"
-                                            ToolTip.Tip="Video menu"
-                                            VerticalAlignment="Center"
-                                            Width="{DynamicResource ButtonMinHeight}"
-                                            Height="{DynamicResource ButtonMinHeight}"
-                                            Padding="0">
-                                        <TextBlock Text="&#xE5D4;" Classes="ms-icon" FontSize="18" Foreground="White"/>
-                                    </Button>
-                                </Grid>
-                            </Grid>
-                        </Border>
-                        <Panel Grid.Row="1" x:Name="pnlVideo" Background="{DynamicResource VideoBg}"/>
-                        <TextBox Grid.Row="2" x:Name="txtCurrentRtspUrl" IsReadOnly="True" FontSize="11" Margin="16,8,16,12" Background="Transparent" BorderThickness="0" Foreground="{DynamicResource LabelFg}" IsVisible="False"/>
-                    </Grid>
-                </Border>
+                <controls:VideoPanel Grid.Row="0" x:Name="videoPanel"/>
 
                 <!-- Splitter between video and messages -->
                 <GridSplitter Grid.Row="1" x:Name="messagesSplitter" Height="6" HorizontalAlignment="Stretch"
@@ -468,60 +238,7 @@
                               DragCompleted="MessagesSplitter_DragCompleted"/>
 
                 <!-- Messages -->
-                <Border Grid.Row="2" x:Name="brdMessages" Background="{DynamicResource Surface1}" BorderBrush="{DynamicResource Divider}" BorderThickness="1" CornerRadius="4" MinHeight="36">
-                    <Grid RowDefinitions="Auto,*">
-                        <Border Grid.Row="0" Background="{DynamicResource Surface3}" CornerRadius="4,4,0,0"
-                                Cursor="Hand" PointerPressed="MessagesHeader_PointerPressed">
-                            <Grid ColumnDefinitions="Auto,*">
-                                <TextBlock x:Name="txtMessagesToggle" Text="▼" FontSize="12" Foreground="{DynamicResource SidebarHeaderFg}"
-                                           Margin="16,12,4,12" VerticalAlignment="Center"/>
-                                <TextBlock Grid.Column="1" Text="Messages" FontWeight="SemiBold" FontSize="14"
-                                           Foreground="{DynamicResource SidebarHeaderFg}" Margin="4,12,16,12"/>
-                            </Grid>
-                        </Border>
-                        <ListBox Grid.Row="1" x:Name="lstMessages" Background="Transparent" FontFamily="{StaticResource MonospaceFont}" FontSize="12" Margin="12,8" SelectionMode="Multiple" KeyDown="lstMessages_KeyDown">
-                            <ListBox.Styles>
-                                <Style Selector="ListBoxItem">
-                                    <Setter Property="Padding" Value="4,1"/>
-                                    <Setter Property="MinHeight" Value="0"/>
-                                    <Setter Property="Margin" Value="0"/>
-                                </Style>
-                            </ListBox.Styles>
-                            <ListBox.ContextMenu>
-                                <ContextMenu>
-                                    <MenuItem Header="Scroll to End" Click="menuScrollToEnd_Click"/>
-                                    <Separator/>
-                                    <MenuItem Header="Copy Selected" Click="menuCopySelectedMessages_Click"/>
-                                    <MenuItem Header="Copy All" Click="menuCopyMessages_Click"/>
-                                    <MenuItem Header="Clear" Click="btnClearMessages_Click"/>
-                                    <Separator/>
-                                    <MenuItem x:Name="menuFilterFlexApi" Header="Show FlexApi" Click="menuFilterFlexApi_Click">
-                                        <MenuItem.Icon>
-                                            <CheckBox IsChecked="True" IsHitTestVisible="False"/>
-                                        </MenuItem.Icon>
-                                    </MenuItem>
-                                    <MenuItem x:Name="menuFilterLibVlc" Header="Show LibVlc" Click="menuFilterLibVlc_Click">
-                                        <MenuItem.Icon>
-                                            <CheckBox IsChecked="True" IsHitTestVisible="False"/>
-                                        </MenuItem.Icon>
-                                    </MenuItem>
-                                    <MenuItem x:Name="menuFilterConfig" Header="Show Config" Click="menuFilterConfig_Click">
-                                        <MenuItem.Icon>
-                                            <CheckBox IsChecked="True" IsHitTestVisible="False"/>
-                                        </MenuItem.Icon>
-                                    </MenuItem>
-                                </ContextMenu>
-                            </ListBox.ContextMenu>
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <Border Background="{Binding Background}" CornerRadius="2" Padding="4,1">
-                                        <TextBlock Text="{Binding Text}" Foreground="{Binding Color}"/>
-                                    </Border>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                    </Grid>
-                </Border>
+                <controls:MessageLogPanel Grid.Row="2" x:Name="messageLogPanel"/>
             </Grid>
 
             <!-- Picker overlay (date/time) -->

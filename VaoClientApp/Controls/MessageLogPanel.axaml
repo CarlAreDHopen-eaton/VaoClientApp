@@ -1,0 +1,60 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 x:Class="Vao.Sample.Controls.MessageLogPanel">
+
+	<Border x:Name="brdMessages" Background="{DynamicResource Surface1}" BorderBrush="{DynamicResource Divider}" BorderThickness="1" CornerRadius="4" MinHeight="36">
+		<Grid RowDefinitions="Auto,*">
+			<Border Grid.Row="0" Background="{DynamicResource Surface3}" CornerRadius="4,4,0,0"
+					Cursor="Hand" PointerPressed="MessagesHeader_PointerPressed">
+				<Grid ColumnDefinitions="Auto,*">
+					<TextBlock x:Name="txtMessagesToggle" Text="▼" FontSize="12" Foreground="{DynamicResource SidebarHeaderFg}"
+							   Margin="16,12,4,12" VerticalAlignment="Center"/>
+					<TextBlock Grid.Column="1" Text="Messages" FontWeight="SemiBold" FontSize="14"
+							   Foreground="{DynamicResource SidebarHeaderFg}" Margin="4,12,16,12"/>
+				</Grid>
+			</Border>
+			<ListBox Grid.Row="1" x:Name="lstMessages" Background="Transparent" FontFamily="{StaticResource MonospaceFont}" FontSize="12" Margin="12,8" SelectionMode="Multiple" KeyDown="lstMessages_KeyDown">
+				<ListBox.Styles>
+					<Style Selector="ListBoxItem">
+						<Setter Property="Padding" Value="4,1"/>
+						<Setter Property="MinHeight" Value="0"/>
+						<Setter Property="Margin" Value="0"/>
+					</Style>
+				</ListBox.Styles>
+				<ListBox.ContextMenu>
+					<ContextMenu>
+						<MenuItem Header="Scroll to End" Click="menuScrollToEnd_Click"/>
+						<Separator/>
+						<MenuItem Header="Copy Selected" Click="menuCopySelectedMessages_Click"/>
+						<MenuItem Header="Copy All" Click="menuCopyMessages_Click"/>
+						<MenuItem Header="Clear" Click="btnClearMessages_Click"/>
+						<Separator/>
+						<MenuItem x:Name="menuFilterFlexApi" Header="Show FlexApi" Click="menuFilterFlexApi_Click">
+							<MenuItem.Icon>
+								<CheckBox IsChecked="True" IsHitTestVisible="False"/>
+							</MenuItem.Icon>
+						</MenuItem>
+						<MenuItem x:Name="menuFilterLibVlc" Header="Show LibVlc" Click="menuFilterLibVlc_Click">
+							<MenuItem.Icon>
+								<CheckBox IsChecked="True" IsHitTestVisible="False"/>
+							</MenuItem.Icon>
+						</MenuItem>
+						<MenuItem x:Name="menuFilterConfig" Header="Show Config" Click="menuFilterConfig_Click">
+							<MenuItem.Icon>
+								<CheckBox IsChecked="True" IsHitTestVisible="False"/>
+							</MenuItem.Icon>
+						</MenuItem>
+					</ContextMenu>
+				</ListBox.ContextMenu>
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<Border Background="{Binding Background}" CornerRadius="2" Padding="4,1">
+							<TextBlock Text="{Binding Text}" Foreground="{Binding Color}"/>
+						</Border>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
+		</Grid>
+	</Border>
+
+</UserControl>

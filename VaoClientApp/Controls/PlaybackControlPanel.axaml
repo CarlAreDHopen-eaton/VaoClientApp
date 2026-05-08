@@ -1,0 +1,32 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 x:Class="Vao.Sample.Controls.PlaybackControlPanel">
+
+	<StackPanel x:Name="grpSelectPlayback" Spacing="16" Margin="16,8,16,16">
+		<ComboBox x:Name="selPlayback" MinWidth="200" HorizontalAlignment="Stretch" SelectionChanged="selPlayback_SelectedIndexChanged"/>
+		<Grid ColumnDefinitions="*,8,*">
+			<Button Grid.Column="0" x:Name="btnPlayPlayback" Content="Play" Click="btnPlayPlayback_Click" HorizontalAlignment="Stretch" Classes="primary"/>
+			<Button Grid.Column="2" x:Name="btnStopPlayback" Content="Stop" Click="btnStopPlayback_Click" HorizontalAlignment="Stretch" Classes="outlined"/>
+		</Grid>
+		<StackPanel Spacing="4">
+			<TextBlock Text="Date (YYYY-MM-DD)" Classes="label"/>
+			<Grid ColumnDefinitions="*,8,44">
+				<TextBox Grid.Column="0" x:Name="txtDatePlayback" Watermark="2024-01-15" HorizontalAlignment="Stretch"/>
+				<Button Grid.Column="2" x:Name="btnPickDate" Click="btnPickDate_Click" ToolTip.Tip="Pick date" Classes="icon" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}">
+					<TextBlock Text="&#xE935;" Classes="ms-icon" FontSize="20"/>
+				</Button>
+			</Grid>
+		</StackPanel>
+		<StackPanel Spacing="4">
+			<TextBlock Text="Time (HH:MM:SS)" Classes="label"/>
+			<Grid ColumnDefinitions="*,8,44">
+				<TextBox Grid.Column="0" x:Name="txtTimePlayback" Watermark="14:30:00" HorizontalAlignment="Stretch"/>
+				<Button Grid.Column="2" x:Name="btnPickTime" Click="btnPickTime_Click" ToolTip.Tip="Pick time" Classes="icon" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}">
+					<TextBlock Text="&#xE8B5;" Classes="ms-icon" FontSize="20"/>
+				</Button>
+			</Grid>
+		</StackPanel>
+		<Button x:Name="btnGotoTime" Content="Go to Time" Click="btnGotoTime_Click" HorizontalAlignment="Stretch" Classes="primary"/>
+	</StackPanel>
+
+</UserControl>

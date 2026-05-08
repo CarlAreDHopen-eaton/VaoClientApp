@@ -1,0 +1,44 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 x:Class="Vao.Sample.Controls.PtzControlPanel">
+
+	<StackPanel Spacing="8" Margin="16,8,16,16" x:Name="grpCameraControl">
+		<Grid ColumnDefinitions="48,48,48,*,48,48" RowDefinitions="48,48,48">
+			<Button Grid.Row="0" Grid.Column="0" x:Name="btnFocusNear" ToolTip.Tip="Focus Near" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}" Padding="2" Classes="ptz-icon">
+				<TextBlock Text="&#xE883;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
+			</Button>
+			<Button Grid.Row="0" Grid.Column="1" x:Name="btnTiltUp" ToolTip.Tip="Tilt Up" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}" Padding="2" Classes="ptz-icon">
+				<TextBlock Text="&#xE5D8;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
+			</Button>
+			<Button Grid.Row="0" Grid.Column="2" x:Name="btnZoomIn" ToolTip.Tip="Zoom In" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}" Padding="2" Classes="ptz-icon">
+				<TextBlock Text="&#xE8FF;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
+			</Button>
+			<Button Grid.Row="1" Grid.Column="0" x:Name="btnPanLeft" ToolTip.Tip="Pan Left" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}" Padding="2" Classes="ptz-icon">
+				<TextBlock Text="&#xE5C4;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
+			</Button>
+			<Button Grid.Row="1" Grid.Column="1" x:Name="btnCenterCamera" IsHitTestVisible="False" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}" Padding="2" Classes="ptz-icon ptz-icon-transparent">
+				<TextBlock Text="&#xE074;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
+			</Button>
+			<Button Grid.Row="1" Grid.Column="2" x:Name="btnPanRight" ToolTip.Tip="Pan Right" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}" Padding="2" Classes="ptz-icon">
+				<TextBlock Text="&#xE5C8;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
+			</Button>
+			<Button Grid.Row="2" Grid.Column="0" x:Name="btnFocusFar" ToolTip.Tip="Focus Far" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}" Padding="2" Classes="ptz-icon">
+				<TextBlock Text="&#xE882;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
+			</Button>
+			<Button Grid.Row="2" Grid.Column="1" x:Name="btnTiltDown" ToolTip.Tip="Tilt Down" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}" Padding="2" Classes="ptz-icon">
+				<TextBlock Text="&#xE5DB;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
+			</Button>
+			<Button Grid.Row="2" Grid.Column="2" x:Name="btnZoomOut" ToolTip.Tip="Zoom Out" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}" Padding="2" Classes="ptz-icon">
+				<TextBlock Text="&#xE900;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
+			</Button>
+			<Button Grid.Row="0" Grid.Column="4" x:Name="btnAbsolutePosition" ToolTip.Tip="Absolute Position" Click="btnAbsolutePosition_Click" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}" Padding="2" Classes="ptz-icon">
+				<TextBlock Text="&#xE074;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
+			</Button>
+			<Button Grid.Row="1" Grid.Column="4" x:Name="btnCameraLock" ToolTip.Tip="Camera Lock" Click="btnCameraLock_Click" Width="{DynamicResource ButtonMinHeight}" Height="{DynamicResource ButtonMinHeight}" Padding="2" Classes="ptz-icon">
+				<TextBlock x:Name="iconCameraLock" Text="&#xE898;" Classes="ms-icon" Foreground="{DynamicResource SidebarHeaderFg}"/>
+			</Button>
+		</Grid>
+		<TextBlock x:Name="lblCurrentCamera" Text="Camera: (No camera selected)" Foreground="{DynamicResource LabelFg}" FontSize="12"/>
+	</StackPanel>
+
+</UserControl>
