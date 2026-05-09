@@ -1,0 +1,11 @@
+{
+  "Key": "triple-stacked",
+  "DisplayName": "3 - Triple (Stacked)",
+  "Rows": 3,
+  "Columns": 1,
+  "Slots": [
+    { "Index": 0, "Row": 0, "Column": 0, "RowSpan": 1, "ColumnSpan": 1 },
+    { "Index": 1, "Row": 1, "Column": 0, "RowSpan": 1, "ColumnSpan": 1 },
+    { "Index": 2, "Row": 2, "Column": 0, "RowSpan": 1, "ColumnSpan": 1 }
+  ]
+}

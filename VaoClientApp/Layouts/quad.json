@@ -1,0 +1,12 @@
+{
+  "Key": "quad",
+  "DisplayName": "4 - Quad",
+  "Rows": 2,
+  "Columns": 2,
+  "Slots": [
+    { "Index": 0, "Row": 0, "Column": 0, "RowSpan": 1, "ColumnSpan": 1 },
+    { "Index": 1, "Row": 0, "Column": 1, "RowSpan": 1, "ColumnSpan": 1 },
+    { "Index": 2, "Row": 1, "Column": 0, "RowSpan": 1, "ColumnSpan": 1 },
+    { "Index": 3, "Row": 1, "Column": 1, "RowSpan": 1, "ColumnSpan": 1 }
+  ]
+}

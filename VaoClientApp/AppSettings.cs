@@ -66,6 +66,12 @@ namespace Vao.Sample
       public bool ShowPassiveAlarms { get; set; } = true;
       public bool ShowDisabledAlarms { get; set; } = true;
 
+      /// <summary>Key of the currently selected video layout (from Layouts/*.json).</summary>
+      public string SelectedLayout { get; set; } = "single";
+
+      /// <summary>Last selected camera per video slot index (slot index → camera component number, 0 = none).</summary>
+      public Dictionary<int, int> SlotCameras { get; set; } = new Dictionary<int, int>();
+
       public void Save()
       {
          NormalizeConnections();

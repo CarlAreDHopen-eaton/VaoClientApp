@@ -1,0 +1,12 @@
+{
+  "Key": "1-plus-3",
+  "DisplayName": "1+3 - Main + Side",
+  "Rows": 3,
+  "Columns": 3,
+  "Slots": [
+    { "Index": 0, "Row": 0, "Column": 0, "RowSpan": 3, "ColumnSpan": 2 },
+    { "Index": 1, "Row": 0, "Column": 2, "RowSpan": 1, "ColumnSpan": 1 },
+    { "Index": 2, "Row": 1, "Column": 2, "RowSpan": 1, "ColumnSpan": 1 },
+    { "Index": 3, "Row": 2, "Column": 2, "RowSpan": 1, "ColumnSpan": 1 }
+  ]
+}

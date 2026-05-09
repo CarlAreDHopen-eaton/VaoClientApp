@@ -59,6 +59,9 @@ namespace Vao.Sample
       /// <summary>Fired when an RTSP stream should start (non-null URL) or stop (null).</summary>
       public event EventHandler<string> RtspStreamRequested;
 
+      /// <summary>Fired when an RTSP stream should start/stop on a specific slot.</summary>
+      public event EventHandler<VideoSlotStreamEventArgs> SlotRtspStreamRequested;
+
       /// <summary>Fired when any overlay becomes visible (true) or all overlays hide (false).
       /// Desktop uses this to detach/reattach the native VideoView.</summary>
       public event EventHandler<bool> AnyOverlayStateChanged;
@@ -66,9 +69,24 @@ namespace Vao.Sample
       /// <summary>Fired when the connection state changes (connected or disconnected).</summary>
       public event EventHandler ConnectionStateChanged;
 
+      /// <summary>Fired before the video layout grid is rebuilt.</summary>
+      public event EventHandler<LayoutChangeEventArgs> VideoLayoutChanging;
+
+      /// <summary>Fired when the video layout changes.</summary>
+      public event EventHandler<LayoutChangeEventArgs> VideoLayoutChanged;
+
       // ── Public properties ──────────────────────────────────────────────────
 
       public Panel VideoSlot => videoPanel.VideoSlot;
+
+      /// <summary>Returns video slots for all active panels based on layout.</summary>
+      public IReadOnlyList<Panel> GetAllActiveVideoSlots() => videoPanel.GetAllActiveVideoSlots();
+
+      /// <summary>Returns the video slot for a specific slot index.</summary>
+      public Panel GetVideoSlot(int slotIndex) => videoPanel.GetVideoSlot(slotIndex);
+
+      /// <summary>The current video layout key.</summary>
+      public string CurrentLayoutKey => videoPanel.CurrentLayoutKey;
 
       public bool IsStarted
       {
@@ -211,6 +229,7 @@ namespace Vao.Sample
       private void WireVideoPanel()
       {
          videoPanel.RtspStreamRequested += (_, url) => RtspStreamRequested?.Invoke(this, url);
+         videoPanel.SlotRtspStreamRequested += (_, e) => SlotRtspStreamRequested?.Invoke(this, e);
          videoPanel.SubChannelChanged += (_, isSubChannel) =>
          {
             if (mIsLoadingSettings) return;
@@ -218,6 +237,21 @@ namespace Vao.Sample
                SelectCamera(mCurrentCamera.ComponentNumber, isSubChannel ? 2 : 1);
          };
          videoPanel.CameraSelectedFromMenu += (_, cameraNo) => SelectCamera(cameraNo, videoPanel.GetStreamNo());
+         videoPanel.LayoutChanging += (_, args) =>
+         {
+            VideoLayoutChanging?.Invoke(this, args);
+         };
+         videoPanel.LayoutChanged += (_, args) =>
+         {
+            SaveSettings();
+            VideoLayoutChanged?.Invoke(this, args);
+         };
+         videoPanel.ActiveSlotChanged += (_, slotIndex) =>
+         {
+            var slotCamera = videoPanel.GetActiveCamera();
+            if (slotCamera != null)
+               CurrentCamera = slotCamera;
+         };
          videoPanel.SetCameraListProvider(
             () => mFlexApiClient?.GetCameraList(),
             () => cameraSelectorPanel.Items);
@@ -981,9 +1015,13 @@ namespace Vao.Sample
             { AlarmGeneralStatus.Disabled, s.ShowDisabledAlarms }
          };
          alarmSelectorPanel.SetStatusFilters(filters);
+
+         // Restore the saved layout
+         if (!string.IsNullOrWhiteSpace(s.SelectedLayout))
+            videoPanel.SetLayout(s.SelectedLayout);
       }
 
-      private void SaveSettings()
+       private void SaveSettings()
       {
          var s = AppSettings.Default;
          if (mCurrentCamera != null) s.CurrentCamera = mCurrentCamera.ComponentNumber;
@@ -1012,6 +1050,10 @@ namespace Vao.Sample
          s.ShowAcknowledgedAlarms = alarmFilters.GetValueOrDefault(AlarmGeneralStatus.Acknowledged, true);
          s.ShowPassiveAlarms     = alarmFilters.GetValueOrDefault(AlarmGeneralStatus.Inactive, true);
          s.ShowDisabledAlarms    = alarmFilters.GetValueOrDefault(AlarmGeneralStatus.Disabled, true);
+
+         s.SelectedLayout = videoPanel.CurrentLayoutKey;
+         s.SlotCameras = videoPanel.GetSlotCameraMap();
+
          s.Save();
       }
 

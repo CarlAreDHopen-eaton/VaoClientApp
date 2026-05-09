@@ -7,17 +7,29 @@ using Avalonia.Interactivity;
 using Avalonia.Threading;
 using LibVLCSharp.Avalonia;
 using LibVLCSharp.Shared;
+using Vao.Sample.Controls;
 
 namespace Vao.Sample
 {
    public partial class MainWindow : Window
    {
+      private const int C_MAX_SLOT_COUNT = 4;
+
       private LibVLC mLibVlc;
+
+      // ── Single mode VLC state ──────────────────────────────────────────────
       private MediaPlayer mMediaPlayer;
       private VideoView mVideoControl;
       private string mActiveRtspUrl;
       private bool mIsVideoStarted;
       private bool mIsVideoTemporarilyDetached;
+
+      // ── Multi-slot VLC state ───────────────────────────────────────────────
+      private readonly MediaPlayer[] mSlotMediaPlayers = new MediaPlayer[C_MAX_SLOT_COUNT];
+      private readonly VideoView[] mSlotVideoControls = new VideoView[C_MAX_SLOT_COUNT];
+      private readonly string[] mSlotRtspUrls = new string[C_MAX_SLOT_COUNT];
+      private readonly bool[] mSlotIsStarted = new bool[C_MAX_SLOT_COUNT];
+
       private App mApp;
 
       public MainWindow()
@@ -27,7 +39,10 @@ namespace Vao.Sample
          StartInitializeVlc();
 
          mainView.RtspStreamRequested    += OnRtspStreamRequested;
+         mainView.SlotRtspStreamRequested += OnSlotRtspStreamRequested;
          mainView.AnyOverlayStateChanged += OnAnyOverlayStateChanged;
+         mainView.VideoLayoutChanging    += OnVideoLayoutChanging;
+         mainView.VideoLayoutChanged     += OnVideoLayoutChanged;
          mainView.ConnectionStateChanged += (_, _) => UpdateWindowTitle();
 
          Opened += MainWindow_Opened;
@@ -251,7 +266,7 @@ namespace Vao.Sample
             if (mVideoControl != null)
             {
                mVideoControl.MediaPlayer = null;
-               if (pnlVideo.Children.Contains(mVideoControl))
+               if (pnlVideo != null && pnlVideo.Children.Contains(mVideoControl))
                   pnlVideo.Children.Remove(mVideoControl);
                mVideoControl = null;
             }
@@ -269,43 +284,85 @@ namespace Vao.Sample
 
       private void DetachVideoSurfaceForOverlay()
       {
+         // Detach single-view
          var pnlVideo = mainView.VideoSlot;
-         if (mVideoControl == null || !pnlVideo.Children.Contains(mVideoControl)) return;
-         if (mMediaPlayer != null) mVideoControl.MediaPlayer = null;
-         pnlVideo.Children.Remove(mVideoControl);
-         mIsVideoTemporarilyDetached = true;
+         if (pnlVideo != null && mVideoControl != null && pnlVideo.Children.Contains(mVideoControl))
+         {
+            if (mMediaPlayer != null) mVideoControl.MediaPlayer = null;
+            pnlVideo.Children.Remove(mVideoControl);
+            mIsVideoTemporarilyDetached = true;
+         }
+
+         // Detach slot views
+         for (int i = 0; i < C_MAX_SLOT_COUNT; i++)
+         {
+            var slotView = mSlotVideoControls[i];
+            if (slotView == null) continue;
+            if (mSlotMediaPlayers[i] != null) slotView.MediaPlayer = null;
+            var parent = slotView.Parent as Panel;
+            parent?.Children.Remove(slotView);
+         }
       }
 
       private void ReattachVideoSurfaceAfterOverlay()
       {
+         // Reattach single-view
          var pnlVideo = mainView.VideoSlot;
-         bool shouldAttach = mIsVideoTemporarilyDetached ||
-            (mIsVideoStarted && mMediaPlayer != null &&
-             (mVideoControl == null || !pnlVideo.Children.Contains(mVideoControl)));
-         if (!shouldAttach) return;
-
-         if (mVideoControl != null && pnlVideo.Children.Contains(mVideoControl))
-            pnlVideo.Children.Remove(mVideoControl);
-
-         mVideoControl = new VideoView();
-         mVideoControl.Focusable = false;
-         pnlVideo.Children.Add(mVideoControl);
-
-         if (mMediaPlayer != null)
+         if (pnlVideo != null)
          {
-            mVideoControl.MediaPlayer = null;
-            mVideoControl.MediaPlayer = mMediaPlayer;
-
-            if (mIsVideoStarted && !string.IsNullOrWhiteSpace(mActiveRtspUrl))
+            bool shouldAttach = mIsVideoTemporarilyDetached ||
+               (mIsVideoStarted && mMediaPlayer != null &&
+                (mVideoControl == null || !pnlVideo.Children.Contains(mVideoControl)));
+            if (shouldAttach)
             {
-               Dispatcher.UIThread.Post(() =>
+               if (mVideoControl != null && pnlVideo.Children.Contains(mVideoControl))
+                  pnlVideo.Children.Remove(mVideoControl);
+
+               mVideoControl = new VideoView();
+               mVideoControl.Focusable = false;
+               pnlVideo.Children.Add(mVideoControl);
+
+               if (mMediaPlayer != null)
                {
-                  if (mIsVideoStarted) StartRtspStream(mActiveRtspUrl);
-               }, DispatcherPriority.Background);
+                  mVideoControl.MediaPlayer = null;
+                  mVideoControl.MediaPlayer = mMediaPlayer;
+
+                  if (mIsVideoStarted && !string.IsNullOrWhiteSpace(mActiveRtspUrl))
+                  {
+                     Dispatcher.UIThread.Post(() =>
+                     {
+                        if (mIsVideoStarted) StartRtspStream(mActiveRtspUrl);
+                     }, DispatcherPriority.Background);
+                  }
+               }
+
+               mIsVideoTemporarilyDetached = false;
             }
          }
 
-         mIsVideoTemporarilyDetached = false;
+         // Reattach slot views
+         for (int i = 0; i < C_MAX_SLOT_COUNT; i++)
+         {
+            var slotView = mSlotVideoControls[i];
+            if (slotView == null || !mSlotIsStarted[i]) continue;
+            var slotPanel = mainView.GetVideoSlot(i);
+            if (slotPanel == null) continue;
+
+            // Recreate the VideoView for the slot (LibVLC requires fresh surface)
+            var newView = new VideoView { Focusable = false };
+            mSlotVideoControls[i] = newView;
+            slotPanel.Children.Add(newView);
+            newView.MediaPlayer = mSlotMediaPlayers[i];
+
+            if (!string.IsNullOrWhiteSpace(mSlotRtspUrls[i]))
+            {
+               int idx = i;
+               Dispatcher.UIThread.Post(() =>
+               {
+                  if (mSlotIsStarted[idx]) StartSlotStream(idx, mSlotRtspUrls[idx]);
+               }, DispatcherPriority.Background);
+            }
+         }
       }
 
       private void MediaPlayer_EncounteredError(object sender, EventArgs e)
@@ -313,6 +370,100 @@ namespace Vao.Sample
 
       private void MediaPlayer_Opening(object sender, EventArgs e)
          => mainView.WriteMessageLog(MessageSource.LibVlc, $"LibVLC opening {mMediaPlayer?.Media?.Mrl ?? ""}", LogLevel.Notice);
+
+      // ── Quad mode VLC ──────────────────────────────────────────────────────
+
+      private void OnSlotRtspStreamRequested(object sender, VideoSlotStreamEventArgs e)
+      {
+         if (string.IsNullOrEmpty(e.Url))
+            StopSlotStream(e.SlotIndex);
+         else
+            StartSlotStream(e.SlotIndex, e.Url);
+      }
+
+      /// <summary>Before layout rebuild: detach surviving VideoViews from their current parents so they can be reparented.</summary>
+      private void OnVideoLayoutChanging(object sender, LayoutChangeEventArgs e)
+      {
+         // Detach surviving slot VideoViews from old panels (without disposing)
+         foreach (int idx in e.SurvivingSlotIndices)
+         {
+            var videoView = mSlotVideoControls[idx];
+            if (videoView == null) continue;
+            var parent = videoView.Parent as Panel;
+            parent?.Children.Remove(videoView);
+         }
+      }
+
+      /// <summary>After layout rebuild: reattach surviving VideoViews to new panels, stop removed slots.</summary>
+      private void OnVideoLayoutChanged(object sender, LayoutChangeEventArgs e)
+      {
+         // Stop streams for removed slots
+         foreach (int idx in e.RemovedSlotIndices)
+            StopSlotStream(idx);
+
+         // Reattach surviving slot VideoViews to their new panels
+         foreach (int idx in e.SurvivingSlotIndices)
+         {
+            var videoView = mSlotVideoControls[idx];
+            if (videoView == null) continue;
+            var pnlVideo = mainView.GetVideoSlot(idx);
+            if (pnlVideo != null && !pnlVideo.Children.Contains(videoView))
+               pnlVideo.Children.Add(videoView);
+         }
+      }
+
+      private void StartSlotStream(int slotIndex, string rtspUrl)
+      {
+         mSlotRtspUrls[slotIndex] = rtspUrl;
+         if (mSlotIsStarted[slotIndex]) StopSlotStream(slotIndex);
+
+         var pnlVideo = mainView.GetVideoSlot(slotIndex);
+         if (pnlVideo == null) return;
+
+         var videoView = new VideoView { Focusable = false };
+         mSlotVideoControls[slotIndex] = videoView;
+         if (!pnlVideo.Children.Contains(videoView))
+            pnlVideo.Children.Add(videoView);
+
+         var uri = new Uri(rtspUrl);
+         var media = new Media(mLibVlc, uri);
+         if (AppSettings.Default.UseTcp) media.AddOption(":rtsp-tcp");
+
+         var mp = new MediaPlayer(media)
+         {
+            EnableKeyInput = false,
+            EnableMouseInput = false
+         };
+         mp.EncounteredError += (_, _) =>
+            mainView.WriteMessageLog(MessageSource.LibVlc, $"LibVLC error on slot {slotIndex}.", LogLevel.Error);
+         mp.Opening += (_, _) =>
+            mainView.WriteMessageLog(MessageSource.LibVlc, $"LibVLC opening slot {slotIndex}: {mp.Media?.Mrl ?? ""}", LogLevel.Notice);
+
+         mSlotMediaPlayers[slotIndex] = mp;
+         videoView.MediaPlayer = mp;
+         mp.Play();
+         mSlotIsStarted[slotIndex] = true;
+      }
+
+      private void StopSlotStream(int slotIndex)
+      {
+         var mp = mSlotMediaPlayers[slotIndex];
+         if (mp == null) return;
+
+         mSlotMediaPlayers[slotIndex] = null;
+         var pnlVideo = mainView.GetVideoSlot(slotIndex);
+         var videoView = mSlotVideoControls[slotIndex];
+         if (videoView != null)
+         {
+            videoView.MediaPlayer = null;
+            if (pnlVideo != null && pnlVideo.Children.Contains(videoView))
+               pnlVideo.Children.Remove(videoView);
+            mSlotVideoControls[slotIndex] = null;
+         }
+         mSlotIsStarted[slotIndex] = false;
+         mSlotRtspUrls[slotIndex] = null;
+         DisposeMediaPlayerAsync(mp);
+      }
 
       // ── Window title ────────────────────────────────────────────────────────
 

@@ -1,0 +1,9 @@
+{
+  "Key": "single",
+  "DisplayName": "1 - Single",
+  "Rows": 1,
+  "Columns": 1,
+  "Slots": [
+    { "Index": 0, "Row": 0, "Column": 0, "RowSpan": 1, "ColumnSpan": 1 }
+  ]
+}
