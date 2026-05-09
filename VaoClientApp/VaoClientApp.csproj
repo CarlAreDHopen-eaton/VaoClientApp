@@ -56,6 +56,10 @@
     <PackageReference Include="Avalonia.Android" Version="11.2.3" />
     <PackageReference Include="VideoLAN.LibVLC.Android" Version="3.6.5" />
     <Compile Remove="Platforms/Android/MainApplication.cs" />
+    <!-- Bundle data files into the APK assets so they can be read at runtime via AssetManager -->
+    <AndroidAsset Include="Layouts\*.json" />
+    <AndroidAsset Include="Themes\*.json" />
+    <AndroidAsset Include="AppConstants.json" />
     <!-- VideoLAN.LibVLC.Android 3.6.5 targets detects android-x64 via
          RuntimeIdentifiers.Contains('android-x64'), so no explicit
          AndroidNativeLibrary items are needed here. -->

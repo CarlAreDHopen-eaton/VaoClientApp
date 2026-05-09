@@ -8,7 +8,9 @@ namespace Vao.Sample
 {
    public sealed class VideoLayoutCatalog
    {
+#if !ANDROID
       private static readonly string LayoutsDirectoryPath = Path.Combine(AppContext.BaseDirectory, "Layouts");
+#endif
 
       private static VideoLayoutCatalog mDefault;
       public static VideoLayoutCatalog Default => mDefault ??= Load();
@@ -44,6 +46,43 @@ namespace Vao.Sample
       {
          var catalog = new VideoLayoutCatalog();
 
+#if ANDROID
+         try
+         {
+            var assets = Android.App.Application.Context.Assets;
+            var files = assets?.List("Layouts");
+            if (files != null)
+            {
+               foreach (var file in files.Where(f => f.EndsWith(".json", StringComparison.OrdinalIgnoreCase)).OrderBy(f => f))
+               {
+                  try
+                  {
+                     using var stream = assets.Open($"Layouts/{file}");
+                     using var reader = new System.IO.StreamReader(stream);
+                     var layout = JsonConvert.DeserializeObject<VideoLayoutDefinition>(reader.ReadToEnd());
+                     if (layout == null || layout.Slots == null || layout.Slots.Count == 0)
+                        continue;
+
+                     layout.Key = string.IsNullOrWhiteSpace(layout.Key)
+                        ? Path.GetFileNameWithoutExtension(file).ToLowerInvariant()
+                        : layout.Key.Trim().ToLowerInvariant();
+                     layout.DisplayName = string.IsNullOrWhiteSpace(layout.DisplayName) ? layout.Key : layout.DisplayName;
+
+                     if (layout.Rows < 1) layout.Rows = 1;
+                     if (layout.Columns < 1) layout.Columns = 1;
+
+                     catalog.Layouts.Add(layout);
+                  }
+                  catch
+                  {
+                  }
+               }
+            }
+         }
+         catch
+         {
+         }
+#else
          if (Directory.Exists(LayoutsDirectoryPath))
          {
             foreach (var filePath in Directory.GetFiles(LayoutsDirectoryPath, "*.json", SearchOption.TopDirectoryOnly).OrderBy(path => path))
@@ -69,6 +108,7 @@ namespace Vao.Sample
                }
             }
          }
+#endif
 
          if (catalog.Layouts.Count == 0)
             catalog.Layouts.Add(CreateFallbackSingle());

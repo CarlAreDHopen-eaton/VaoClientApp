@@ -11,7 +11,9 @@ namespace Vao.Sample
 {
    public sealed class ThemeCatalog
    {
+#if !ANDROID
       private static readonly string ThemesDirectoryPath = Path.Combine(AppContext.BaseDirectory, "Themes");
+#endif
 
       private static ThemeCatalog mDefault;
       public static ThemeCatalog Default => mDefault ??= Load();
@@ -51,6 +53,40 @@ namespace Vao.Sample
       {
          var catalog = new ThemeCatalog();
 
+#if ANDROID
+         try
+         {
+            var assets = Android.App.Application.Context.Assets;
+            var files = assets?.List("Themes");
+            if (files != null)
+            {
+               foreach (var file in files.Where(f => f.EndsWith(".json", StringComparison.OrdinalIgnoreCase)).OrderBy(f => f))
+               {
+                  try
+                  {
+                     using var stream = assets.Open($"Themes/{file}");
+                     using var reader = new StreamReader(stream);
+                     var theme = JsonConvert.DeserializeObject<ThemeDefinition>(reader.ReadToEnd());
+                     if (theme == null)
+                        continue;
+
+                     theme.Key = NormalizeKey(string.IsNullOrWhiteSpace(theme.Key) ? Path.GetFileNameWithoutExtension(file) : theme.Key);
+                     theme.DisplayName = string.IsNullOrWhiteSpace(theme.DisplayName) ? theme.Key : theme.DisplayName;
+                     theme.Colors ??= ThemeColors.CreateDefaults(theme.IsDark);
+                     theme.Sizing ??= ThemeSizing.CreateDefaults(theme.IsTablet);
+                     theme.Components ??= ThemeComponents.CreateDefaults(theme.IsDark, theme.IsTablet);
+                     catalog.Themes.Add(theme);
+                  }
+                  catch
+                  {
+                  }
+               }
+            }
+         }
+         catch
+         {
+         }
+#else
          if (Directory.Exists(ThemesDirectoryPath))
          {
             foreach (var filePath in Directory.GetFiles(ThemesDirectoryPath, "*.json", SearchOption.TopDirectoryOnly).OrderBy(path => path))
@@ -73,6 +109,7 @@ namespace Vao.Sample
                }
             }
          }
+#endif
 
          if (catalog.Themes.Count == 0)
          {
