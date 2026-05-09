@@ -101,7 +101,7 @@ namespace Vao.Sample.Controls
       private void MessagesHeader_PointerPressed(object sender, PointerPressedEventArgs e)
       {
          mIsMessagesCollapsed = !mIsMessagesCollapsed;
-         var messagesGrid = brdMessages?.Parent as Grid;
+         var messagesGrid = this.Parent as Grid;
          if (messagesGrid == null) return;
 
          if (messagesGrid.RowDefinitions.Count <= 2) return;
