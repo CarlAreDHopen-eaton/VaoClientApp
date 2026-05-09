@@ -18,9 +18,11 @@ if [ -n "$ANDROID_SERIAL" ]; then
     echo "    Using ANDROID_SERIAL=$ANDROID_SERIAL"
     ADB_TARGET="-s $ANDROID_SERIAL"
 else
+    ADB_DEVICES=$("$ADB" devices)
     # Prefer physical devices over emulators
-    PHYSICAL=$("$ADB" devices | awk 'NR>1 && $2=="device" && $1!~/^emulator/ {print $1}')
-    EMULATORS=$("$ADB" devices | awk 'NR>1 && $2=="device" && $1~/^emulator/ {print $1}')
+    PHYSICAL=$(echo "$ADB_DEVICES" | awk 'NR>1 && $2=="device" && $1!~/^emulator/ {print $1}')
+    EMULATORS=$(echo "$ADB_DEVICES" | awk 'NR>1 && $2=="device" && $1~/^emulator/ {print $1}')
+    UNAUTHORIZED=$(echo "$ADB_DEVICES" | awk 'NR>1 && $2=="unauthorized" && $1!~/^emulator/ {print $1}')
     COUNT=$(echo "$PHYSICAL" | grep -c . || true)
     if [ "$COUNT" -eq 1 ]; then
         SERIAL="$PHYSICAL"
@@ -31,6 +33,13 @@ else
         echo "$PHYSICAL"
         exit 1
     else
+        # Warn about unauthorized physical devices before falling back
+        UNAUTH_COUNT=$(echo "$UNAUTHORIZED" | grep -c . || true)
+        if [ "$UNAUTH_COUNT" -gt 0 ]; then
+            echo "WARNING: Physical device(s) found but not authorized:"
+            echo "$UNAUTHORIZED"
+            echo "         Accept the 'Allow USB debugging' prompt on the device, then re-run."
+        fi
         # Fall back to emulator
         EMU_COUNT=$(echo "$EMULATORS" | grep -c . || true)
         if [ "$EMU_COUNT" -eq 1 ]; then
@@ -42,6 +51,8 @@ else
             exit 1
         else
             echo "ERROR: No connected devices found. Connect a device or start an emulator."
+            echo "       Connected devices:"
+            echo "$ADB_DEVICES"
             exit 1
         fi
     fi

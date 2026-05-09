@@ -3,7 +3,7 @@
           package="com.vao.clientapp">
   <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="35" />
   <uses-permission android:name="android.permission.INTERNET" />
-  <application android:label="VaoClientApp" android:allowBackup="true" android:theme="@style/Theme.AppCompat.NoActionBar">
+  <application android:label="VaoClientApp" android:allowBackup="true" android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
     <activity android:name="com.vao.clientapp.MainActivity"
               android:label="VaoClientApp"
               android:exported="true"
