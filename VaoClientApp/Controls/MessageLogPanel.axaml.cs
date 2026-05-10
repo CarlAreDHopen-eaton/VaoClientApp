@@ -55,6 +55,19 @@ namespace Vao.Sample.Controls
          var strLevel = level.ToString().PadRight(7);
          var strMsg = $"{strTime} [{strLevel}][{strSource}] - {strMessage}";
 
+#if ANDROID
+         string adbTag = $"VaoClient/{source}";
+         string adbMsg = $"[{strLevel.Trim()}] {strMessage}";
+         switch (level)
+         {
+            case LogLevel.Debug:   Android.Util.Log.Debug(adbTag, adbMsg);   break;
+            case LogLevel.Notice:  Android.Util.Log.Info (adbTag, adbMsg);   break;
+            case LogLevel.Warning: Android.Util.Log.Warn (adbTag, adbMsg);   break;
+            case LogLevel.Error:   Android.Util.Log.Error(adbTag, adbMsg);   break;
+            default:               Android.Util.Log.Verbose(adbTag, adbMsg); break;
+         }
+#endif
+
          IBrush color = GetColorForLogLevel(level);
 
          var item = new MessageItem
