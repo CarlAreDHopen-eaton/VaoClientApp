@@ -48,6 +48,8 @@ namespace Vao.Sample
 
       private App mApp;
 
+      private readonly Controls.MessageLogPanel messageLogPanel = new();
+
       private const double C_SIDEBAR_AUTO_COLLAPSE_BREAKPOINT = 1100;
       private const double C_COLLAPSED_SIDEBAR_WIDTH = 56;
 
@@ -140,6 +142,8 @@ namespace Vao.Sample
 
       public void OpenSettingsFromKeyboard() => OpenSettingsPage();
 
+      public void OpenMessageLogFromKeyboard() => OpenMessageLogPage();
+
       public void HandleEscapeKey() => HandleEscapeNavigation();
 
       public void HandleRenameCameraKey() => cameraSelectorPanel.HandleRename(UserPrivilege.Supervisor);
@@ -180,14 +184,6 @@ namespace Vao.Sample
          SetSidebarCollapsed(s.IsSidebarCollapsed, persistSetting: false);
          ApplyResponsiveSidebarLayout(windowWidth);
 
-         if (messageLogPanel?.Parent is Grid mg && mg.RowDefinitions.Count > 2)
-         {
-            mg.RowDefinitions[0].Height = new GridLength(s.MessagesSplitVideoStars, GridUnitType.Star);
-            mg.RowDefinitions[2].Height = new GridLength(s.MessagesSplitMessagesStars, GridUnitType.Star);
-         }
-
-         messageLogPanel.RestoreCollapsedState(s.IsMessagesCollapsed);
-
          if (s.AutoConnectOnStartup)
             btnConnect_Click(null, null);
       }
@@ -204,7 +200,6 @@ namespace Vao.Sample
          WireAlarmSelectorPanel();
          WirePtzControlPanel();
          WirePlaybackControlPanel();
-         WireMessageLogPanel();
 
          ClearPresetDropdown();
          playbackControlPanel.ClearRecordings(false);
@@ -330,11 +325,6 @@ namespace Vao.Sample
          };
          playbackControlPanel.PickDateRequested += (_, _) => OpenDatePicker();
          playbackControlPanel.PickTimeRequested += (_, _) => OpenTimePicker();
-      }
-
-      private void WireMessageLogPanel()
-      {
-         messageLogPanel.LayoutChanged += (_, _) => SaveSettings();
       }
 
       // ── Theme applied ──────────────────────────────────────────────────────
@@ -924,8 +914,6 @@ namespace Vao.Sample
          messageLogPanel.WriteMessageLog(source, strMessage, level);
       }
 
-      private void MessagesSplitter_DragCompleted(object sender, Avalonia.Input.VectorEventArgs e) => SaveSettings();
-
       // ── Sidebar ────────────────────────────────────────────────────────────
 
       private void btnToggleSidebar_Click(object sender, RoutedEventArgs e)
@@ -1031,13 +1019,6 @@ namespace Vao.Sample
          if (expAlarms != null)          s.IsAlarmsExpanded = expAlarms.IsExpanded;
          if (expPlaybackSelection != null) s.IsPlaybackSelectionExpanded = expPlaybackSelection.IsExpanded;
          if (expDownloadRecording != null) s.IsDownloadRecordingExpanded = expDownloadRecording.IsExpanded;
-         s.IsMessagesCollapsed = messageLogPanel.IsMessagesCollapsed;
-
-         if (messageLogPanel?.Parent is Grid mg && mg.RowDefinitions.Count > 2 && !messageLogPanel.IsMessagesCollapsed)
-         {
-            s.MessagesSplitVideoStars   = mg.RowDefinitions[0].Height.Value;
-            s.MessagesSplitMessagesStars = mg.RowDefinitions[2].Height.Value;
-         }
 
          var cameraHeight = cameraSelectorPanel.ListHeight;
          var alarmHeight = alarmSelectorPanel.ListHeight;
@@ -1111,6 +1092,15 @@ namespace Vao.Sample
 
       private void menuItemSettings_Click(object sender, RoutedEventArgs e) => OpenSettingsPage();
 
+      private void menuItemMessageLog_Click(object sender, RoutedEventArgs e) => OpenMessageLogPage();
+
+      private void OpenMessageLogPage()
+      {
+         if (navigationHost?.Content is MessageLogPage) return;
+         var page = new MessageLogPage(messageLogPanel) { NavigationService = mNavigationService };
+         mNavigationService.NavigateTo(page);
+      }
+
       private void OpenSettingsPage()
       {
          if (navigationHost?.Content is SettingsPage) return;
@@ -1121,6 +1111,7 @@ namespace Vao.Sample
       private void HandleEscapeNavigation()
       {
          if (navigationHost?.Content is SettingsPage sp) { sp.CancelAndGoBack(); return; }
+         if (navigationHost?.Content is MessageLogPage) { mNavigationService.GoBack(); return; }
          if (navigationHost?.IsVisible == true) mNavigationService.GoBack();
       }
 

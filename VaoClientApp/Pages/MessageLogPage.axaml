@@ -1,0 +1,36 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:controls="using:Vao.Sample.Controls"
+			 x:Class="Vao.Sample.Pages.MessageLogPage"
+			 Background="{DynamicResource AppBg}">
+
+	<Grid RowDefinitions="Auto,*">
+		<Border Grid.Row="0" Height="{DynamicResource AppBarHeight}" Background="{DynamicResource Primary}" BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1" Padding="16,0" ClipToBounds="True">
+			<Grid ColumnDefinitions="Auto,*">
+				<Button Grid.Column="0"
+						x:Name="btnBack"
+						Click="btnBack_Click"
+						ToolTip.Tip="Go Back"
+						Width="40" Height="40"
+						Padding="0"
+						Background="Transparent"
+						BorderThickness="0">
+					<TextBlock Text="&#xE5C4;" Classes="ms-icon" FontSize="20" Foreground="{DynamicResource PrimaryHeaderFg}"/>
+				</Button>
+
+				<StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="12,0,0,0" Spacing="2">
+					<TextBlock Text="Message Log"
+							   Classes="page-header-title"
+							   FontWeight="SemiBold"
+							   Foreground="{DynamicResource PrimaryHeaderFg}"/>
+					<TextBlock Text="Application messages and diagnostics"
+							   Classes="page-header-subtitle"
+							   Foreground="{DynamicResource PrimaryHeaderFg}"
+							   Opacity="0.7"/>
+				</StackPanel>
+			</Grid>
+		</Border>
+
+		<Border Grid.Row="1" x:Name="messageLogHost" Margin="16"/>
+	</Grid>
+</UserControl>

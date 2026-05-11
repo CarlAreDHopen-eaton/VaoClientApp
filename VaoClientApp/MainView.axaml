@@ -64,6 +64,17 @@
                                     </MenuItem.Icon>
                                 </MenuItem>
                                 <MenuItem x:Name="menuItemThemeSelect" Header="Theme"/>
+                                <MenuItem Click="menuItemMessageLog_Click">
+                                    <MenuItem.Icon>
+                                        <TextBlock Text="&#xE8DE;" Classes="ms-icon" FontSize="18"/>
+                                    </MenuItem.Icon>
+                                    <MenuItem.Header>
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <TextBlock Text="Message Log"/>
+                                            <TextBlock Text="F11" Opacity="0.5" FontSize="11" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </MenuItem.Header>
+                                </MenuItem>
                                 <MenuItem Click="menuItemSettings_Click">
                                     <MenuItem.Icon>
                                         <TextBlock Text="&#xE8B8;" Classes="ms-icon" FontSize="18"/>
@@ -211,8 +222,8 @@
                 </ScrollViewer>
             </Grid>
 
-            <!-- Right panel - video + messages -->
-            <Grid Grid.Column="1" RowDefinitions="3*,Auto,*" Margin="8">
+            <!-- Right panel - video -->
+            <Grid Grid.Column="1" Margin="8">
                 <!-- Floating hamburger button (when sidebar collapsed) -->
                 <Button x:Name="btnOpenSidebar"
                         Click="btnToggleSidebar_Click"
@@ -223,22 +234,12 @@
                         Margin="16"
                         IsVisible="False"
                         ToolTip.Tip="Open sidebar"
-                        Grid.Row="0"
                         ZIndex="100">
                     <TextBlock Text="&#xE5D2;" Classes="ms-icon" FontSize="20" Foreground="White"/>
                 </Button>
 
                 <!-- Video area -->
-                <controls:VideoPanel Grid.Row="0" x:Name="videoPanel"/>
-
-                <!-- Splitter between video and messages -->
-                <GridSplitter Grid.Row="1" x:Name="messagesSplitter" Height="6" HorizontalAlignment="Stretch"
-                              Background="Transparent" Margin="0,2"
-                              ResizeDirection="Rows"
-                              DragCompleted="MessagesSplitter_DragCompleted"/>
-
-                <!-- Messages -->
-                <controls:MessageLogPanel Grid.Row="2" x:Name="messageLogPanel"/>
+                <controls:VideoPanel x:Name="videoPanel"/>
             </Grid>
 
             <!-- Picker overlay (date/time) -->

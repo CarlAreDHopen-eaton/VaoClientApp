@@ -19,8 +19,6 @@ namespace Vao.Sample.Controls
    {
       private readonly ObservableCollection<MessageItem> mMessages = new();
       private readonly ObservableCollection<MessageItem> mFilteredMessages = new();
-      private bool mIsMessagesCollapsed;
-      private GridLength mMessagesExpandedRowHeight = new GridLength(1, GridUnitType.Star);
 
       private readonly Dictionary<MessageSource, bool> mSourceFilters = new()
       {
@@ -28,11 +26,6 @@ namespace Vao.Sample.Controls
          { MessageSource.LibVlc, true },
          { MessageSource.Config, true }
       };
-
-      /// <summary>Fired when the user collapses/expands or drags the splitter, so settings can be saved.</summary>
-      public event EventHandler LayoutChanged;
-
-      public bool IsMessagesCollapsed => mIsMessagesCollapsed;
 
       public MessageLogPanel()
       {
@@ -98,46 +91,7 @@ namespace Vao.Sample.Controls
          }
       }
 
-      public void RestoreCollapsedState(bool collapsed)
-      {
-         if (collapsed)
-         {
-            mIsMessagesCollapsed = false;
-            MessagesHeader_PointerPressed(null, null);
-         }
-      }
-
-      public Border MessagesBorder => brdMessages;
-
       // ── Event handlers ─────────────────────────────────────────────────────
-
-      private void MessagesHeader_PointerPressed(object sender, PointerPressedEventArgs e)
-      {
-         mIsMessagesCollapsed = !mIsMessagesCollapsed;
-         var messagesGrid = this.Parent as Grid;
-         if (messagesGrid == null) return;
-
-         if (messagesGrid.RowDefinitions.Count <= 2) return;
-         var messagesRow = messagesGrid.RowDefinitions[2];
-
-         if (mIsMessagesCollapsed)
-         {
-            mMessagesExpandedRowHeight = messagesRow.Height;
-            messagesRow.Height = GridLength.Auto;
-            if (brdMessages != null) brdMessages.MaxHeight = 36;
-            if (lstMessages != null) lstMessages.IsVisible = false;
-            if (txtMessagesToggle != null) txtMessagesToggle.Text = "▶";
-         }
-         else
-         {
-            if (brdMessages != null) brdMessages.MaxHeight = double.PositiveInfinity;
-            messagesRow.Height = mMessagesExpandedRowHeight;
-            if (lstMessages != null) lstMessages.IsVisible = true;
-            if (txtMessagesToggle != null) txtMessagesToggle.Text = "▼";
-         }
-
-         LayoutChanged?.Invoke(this, EventArgs.Empty);
-      }
 
       private void btnClearMessages_Click(object sender, RoutedEventArgs e) { mMessages.Clear(); mFilteredMessages.Clear(); }
 

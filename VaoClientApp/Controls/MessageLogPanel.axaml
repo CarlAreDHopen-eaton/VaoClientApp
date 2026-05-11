@@ -2,18 +2,8 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 x:Class="Vao.Sample.Controls.MessageLogPanel">
 
-	<Border x:Name="brdMessages" Background="{DynamicResource Surface1}" BorderBrush="{DynamicResource Divider}" BorderThickness="1" CornerRadius="4" MinHeight="36">
-		<Grid RowDefinitions="Auto,*">
-			<Border Grid.Row="0" Background="{DynamicResource Surface3}" CornerRadius="4,4,0,0"
-					Cursor="Hand" PointerPressed="MessagesHeader_PointerPressed">
-				<Grid ColumnDefinitions="Auto,*">
-					<TextBlock x:Name="txtMessagesToggle" Text="▼" FontSize="12" Foreground="{DynamicResource SidebarHeaderFg}"
-							   Margin="16,12,4,12" VerticalAlignment="Center"/>
-					<TextBlock Grid.Column="1" Text="Messages" FontWeight="SemiBold" FontSize="14"
-							   Foreground="{DynamicResource SidebarHeaderFg}" Margin="4,12,16,12"/>
-				</Grid>
-			</Border>
-			<ListBox Grid.Row="1" x:Name="lstMessages" Background="Transparent" FontFamily="{StaticResource MonospaceFont}" FontSize="12" Margin="12,8" SelectionMode="Multiple" KeyDown="lstMessages_KeyDown">
+	<Border x:Name="brdMessages" Background="{DynamicResource Surface1}" BorderBrush="{DynamicResource Divider}" BorderThickness="1" CornerRadius="4">
+		<ListBox x:Name="lstMessages" Background="Transparent" FontFamily="{StaticResource MonospaceFont}" FontSize="12" Margin="12,8" SelectionMode="Multiple" KeyDown="lstMessages_KeyDown">
 				<ListBox.Styles>
 					<Style Selector="ListBoxItem">
 						<Setter Property="Padding" Value="4,1"/>
@@ -53,8 +43,7 @@
 						</Border>
 					</DataTemplate>
 				</ListBox.ItemTemplate>
-			</ListBox>
-		</Grid>
-	</Border>
+				</ListBox>
+			</Border>
 
 </UserControl>

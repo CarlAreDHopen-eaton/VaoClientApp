@@ -111,6 +111,11 @@ namespace Vao.Sample
             mainView.CycleThemeFromKeyboard();
             e.Handled = true;
          }
+         else if (e.Key == Key.F11)
+         {
+            mainView.OpenMessageLogFromKeyboard();
+            e.Handled = true;
+         }
          else if (e.Key == Key.F12)
          {
             mainView.OpenSettingsFromKeyboard();
