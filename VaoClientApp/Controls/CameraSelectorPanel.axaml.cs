@@ -157,8 +157,85 @@ namespace Vao.Sample.Controls
       private void lstCameraSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
       {
          if (mIsUpdatingSelection) return;
+         if (mDragStartPoint != null) return; // Suppress selection while a drag gesture may be starting
          if (lstCameraSelection?.SelectedItem is not CameraSelectionItem selected || selected.Camera == null) return;
          CameraSelected?.Invoke(this, selected.Camera.ComponentNumber);
+      }
+
+      // ── Drag support ──────────────────────────────────────────────────────
+
+      private Point? mDragStartPoint;
+      private bool mIsDragging;
+      private object mSelectionBeforeDrag;
+      private const double C_DRAG_THRESHOLD = 8;
+
+      public void InitializeDragSupport()
+      {
+         lstCameraSelection.AddHandler(InputElement.PointerPressedEvent, CameraDrag_PointerPressed, RoutingStrategies.Tunnel);
+         lstCameraSelection.AddHandler(InputElement.PointerMovedEvent, CameraDrag_PointerMoved, RoutingStrategies.Tunnel);
+         lstCameraSelection.AddHandler(InputElement.PointerReleasedEvent, CameraDrag_PointerReleased, RoutingStrategies.Tunnel);
+      }
+
+      private void CameraDrag_PointerPressed(object sender, PointerPressedEventArgs e)
+      {
+         if (e.GetCurrentPoint(lstCameraSelection).Properties.IsLeftButtonPressed)
+         {
+            mSelectionBeforeDrag = lstCameraSelection.SelectedItem;
+            mDragStartPoint = e.GetPosition(lstCameraSelection);
+            mIsDragging = false;
+         }
+      }
+
+      private async void CameraDrag_PointerMoved(object sender, PointerEventArgs e)
+      {
+         if (mDragStartPoint == null || mIsDragging) return;
+
+         var currentPos = e.GetPosition(lstCameraSelection);
+         var delta = currentPos - mDragStartPoint.Value;
+         if (Math.Abs(delta.X) < C_DRAG_THRESHOLD && Math.Abs(delta.Y) < C_DRAG_THRESHOLD) return;
+
+         // Find which CameraSelectionItem is under the start point
+         var item = GetCameraItemAtPoint(mDragStartPoint.Value);
+         if (item?.Camera == null) { mDragStartPoint = null; return; }
+
+         mIsDragging = true;
+
+         // Restore the selection that was active before the pointer press
+         mIsUpdatingSelection = true;
+         lstCameraSelection.SelectedItem = mSelectionBeforeDrag;
+         mIsUpdatingSelection = false;
+
+         var data = new DataObject();
+         data.Set("CameraComponentNumber", item.Camera.ComponentNumber);
+         await DragDrop.DoDragDrop(e, data, DragDropEffects.Copy);
+         mDragStartPoint = null;
+         mIsDragging = false;
+      }
+
+      private void CameraDrag_PointerReleased(object sender, PointerReleasedEventArgs e)
+      {
+         if (mDragStartPoint != null && !mIsDragging)
+         {
+            // No drag occurred — commit the selection that the ListBox made on pointer press
+            mDragStartPoint = null;
+            if (lstCameraSelection?.SelectedItem is CameraSelectionItem selected && selected.Camera != null)
+               CameraSelected?.Invoke(this, selected.Camera.ComponentNumber);
+         }
+         mDragStartPoint = null;
+         mIsDragging = false;
+      }
+
+      private CameraSelectionItem GetCameraItemAtPoint(Point point)
+      {
+         foreach (var item in mFilteredCameraSelectionItems)
+         {
+            var container = lstCameraSelection.ContainerFromItem(item) as Control;
+            if (container == null) continue;
+            var bounds = container.Bounds;
+            if (bounds.Contains(point))
+               return item;
+         }
+         return null;
       }
 
       private void ApplySearchFilter()

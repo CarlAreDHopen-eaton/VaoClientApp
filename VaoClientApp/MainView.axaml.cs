@@ -252,7 +252,7 @@ namespace Vao.Sample
             () => cameraSelectorPanel.Items);
       }
 
-      private void WireCameraSelectorPanel()
+       private void WireCameraSelectorPanel()
       {
          cameraSelectorPanel.CameraSelected += (_, cameraNo) =>
          {
@@ -260,6 +260,7 @@ namespace Vao.Sample
             SelectCamera(cameraNo, streamNo);
          };
          cameraSelectorPanel.LayoutChanged += (_, _) => SaveSettings();
+         cameraSelectorPanel.InitializeDragSupport();
       }
 
       private void WireAlarmSelectorPanel()

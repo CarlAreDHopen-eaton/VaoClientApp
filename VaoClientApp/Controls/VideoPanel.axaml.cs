@@ -56,6 +56,15 @@ namespace Vao.Sample.Controls
          for (int i = 0; i < C_MAX_SLOT_COUNT; i++)
             mSlots[i] = new VideoSlotState();
          mCurrentLayout = VideoLayoutCatalog.Default.GetDefaultLayout();
+
+         // Enable drop on single-view video area
+         DragDrop.SetAllowDrop(pnlVideo, true);
+         pnlVideo.AddHandler(DragDrop.DropEvent, SingleView_Drop);
+         pnlVideo.AddHandler(DragDrop.DragOverEvent, Video_DragOver);
+
+         DragDrop.SetAllowDrop(grpVideoControl, true);
+         grpVideoControl.AddHandler(DragDrop.DropEvent, SingleView_Drop);
+         grpVideoControl.AddHandler(DragDrop.DragOverEvent, Video_DragOver);
       }
 
       // ── Public API ─────────────────────────────────────────────────────────
@@ -267,19 +276,34 @@ namespace Vao.Sample.Controls
       }
 
       public void UpdateSubChannelEnabled(bool enabled)
-      {
-         if (tglSubChannel != null) tglSubChannel.IsEnabled = enabled;
-      }
+       {
+          if (tglSubChannel != null) tglSubChannel.IsEnabled = enabled;
+          var slotToggle = mSlots[mActiveSlotIndex]?.SubChannelToggle;
+          if (slotToggle != null) slotToggle.IsEnabled = enabled;
+       }
 
-      public bool IsSubChannel => tglSubChannel?.IsChecked == true;
-      public int GetStreamNo() => tglSubChannel?.IsChecked == true ? 2 : 1;
+       public bool IsSubChannel
+       {
+          get
+          {
+             if (!IsSingleView)
+             {
+                var slotToggle = mSlots[mActiveSlotIndex]?.SubChannelToggle;
+                if (slotToggle != null) return slotToggle.IsChecked == true;
+             }
+             return tglSubChannel?.IsChecked == true;
+          }
+       }
+       public int GetStreamNo() => IsSubChannel ? 2 : 1;
 
-      public void SetSubChannelChecked(bool isChecked, bool suppressEvent = false)
-      {
-         if (suppressEvent) mIsLoadingSettings = true;
-         if (tglSubChannel != null) tglSubChannel.IsChecked = isChecked;
-         if (suppressEvent) mIsLoadingSettings = false;
-      }
+       public void SetSubChannelChecked(bool isChecked, bool suppressEvent = false)
+       {
+          if (suppressEvent) mIsLoadingSettings = true;
+          if (tglSubChannel != null) tglSubChannel.IsChecked = isChecked;
+          var slotToggle = mSlots[mActiveSlotIndex]?.SubChannelToggle;
+          if (slotToggle != null) slotToggle.IsChecked = isChecked;
+          if (suppressEvent) mIsLoadingSettings = false;
+       }
 
       public string ActiveRtspUrl
       {
@@ -394,16 +418,18 @@ namespace Vao.Sample.Controls
             SlotRtspStreamRequested?.Invoke(this, new VideoSlotStreamEventArgs(slotIndex, url));
          }
 
-         if (slotIndex == mActiveSlotIndex)
+         mIsLoadingSettings = true;
+         if (slot.SubChannelToggle != null)
          {
-            mIsLoadingSettings = true;
-            if (tglSubChannel != null)
-            {
-               tglSubChannel.IsChecked = (streamNo == 2);
-               tglSubChannel.IsEnabled = hasSubChannel && !IsActiveRtspPlayback(slot.ActiveRtspUrl);
-            }
-            mIsLoadingSettings = false;
+            slot.SubChannelToggle.IsChecked = (streamNo == 2);
+            slot.SubChannelToggle.IsEnabled = hasSubChannel && !IsActiveRtspPlayback(slot.ActiveRtspUrl);
          }
+         if (slotIndex == mActiveSlotIndex && tglSubChannel != null)
+         {
+            tglSubChannel.IsChecked = (streamNo == 2);
+            tglSubChannel.IsEnabled = hasSubChannel && !IsActiveRtspPlayback(slot.ActiveRtspUrl);
+         }
+         mIsLoadingSettings = false;
       }
 
       private void ClearSlotStream(int slotIndex)
@@ -506,13 +532,37 @@ namespace Vao.Sample.Controls
                VideoMenuButton_Click(s, e);
             };
 
+            var slotToggle = new ToggleSwitch
+            {
+               OnContent = "Sub",
+               OffContent = "Main",
+               IsChecked = true,
+               VerticalAlignment = VerticalAlignment.Center,
+               VerticalContentAlignment = VerticalAlignment.Center,
+               HorizontalContentAlignment = HorizontalAlignment.Center,
+               Padding = new Thickness(0),
+               Margin = new Thickness(0, 0, 4, 0),
+               MinHeight = 0,
+               Foreground = Brushes.White,
+               IsEnabled = false
+            };
+            int toggleSlotIndex = slotIndex;
+            slotToggle.IsCheckedChanged += (s, e) =>
+            {
+               if (mIsLoadingSettings) return;
+               SetActiveSlot(toggleSlotIndex);
+               SubChannelChanged?.Invoke(this, slotToggle.IsChecked == true);
+            };
+
             var headerGrid = new Grid
             {
-               ColumnDefinitions = { new ColumnDefinition(new GridLength(1, GridUnitType.Star)), new ColumnDefinition(GridLength.Auto) }
+               ColumnDefinitions = { new ColumnDefinition(new GridLength(1, GridUnitType.Star)), new ColumnDefinition(GridLength.Auto), new ColumnDefinition(GridLength.Auto) }
             };
             Grid.SetColumn(headerText, 0);
-            Grid.SetColumn(menuButton, 1);
+            Grid.SetColumn(slotToggle, 1);
+            Grid.SetColumn(menuButton, 2);
             headerGrid.Children.Add(headerText);
+            headerGrid.Children.Add(slotToggle);
             headerGrid.Children.Add(menuButton);
 
             var headerBorder = new Border
@@ -550,6 +600,12 @@ namespace Vao.Sample.Controls
                e.Handled = true;
             };
 
+            // Enable drag-drop on each slot
+            DragDrop.SetAllowDrop(slotBorder, true);
+            slotBorder.AddHandler(DragDrop.DragOverEvent, Video_DragOver);
+            int dropSlotIndex = slotIndex;
+            slotBorder.AddHandler(DragDrop.DropEvent, (object s, DragEventArgs e) => SlotBorder_Drop(s, e, dropSlotIndex));
+
             Grid.SetRow(slotBorder, slotDef.Row);
             Grid.SetColumn(slotBorder, slotDef.Column);
             if (slotDef.RowSpan > 1) Grid.SetRowSpan(slotBorder, slotDef.RowSpan);
@@ -557,9 +613,10 @@ namespace Vao.Sample.Controls
             quadGrid.Children.Add(slotBorder);
 
             mSlots[slotIndex].HeaderText = headerText;
-            mSlots[slotIndex].HeaderBorder = headerBorder;
-            mSlots[slotIndex].VideoPanel = videoPanel;
-            mSlotBorders[slotIndex] = slotBorder;
+             mSlots[slotIndex].HeaderBorder = headerBorder;
+             mSlots[slotIndex].VideoPanel = videoPanel;
+             mSlots[slotIndex].SubChannelToggle = slotToggle;
+             mSlotBorders[slotIndex] = slotBorder;
 
             // Restore header if this slot already has a camera remembered
             if (mSlots[slotIndex].Camera != null)
@@ -692,6 +749,29 @@ namespace Vao.Sample.Controls
 
       // ── Helpers ────────────────────────────────────────────────────────────
 
+      private void Video_DragOver(object sender, DragEventArgs e)
+      {
+         if (e.Data.Contains("CameraComponentNumber"))
+            e.DragEffects = DragDropEffects.Copy;
+         else
+            e.DragEffects = DragDropEffects.None;
+      }
+
+      private void SingleView_Drop(object sender, DragEventArgs e)
+      {
+         if (e.Data.Get("CameraComponentNumber") is int cameraNo)
+            CameraSelectedFromMenu?.Invoke(this, cameraNo);
+      }
+
+      private void SlotBorder_Drop(object sender, DragEventArgs e, int slotIndex)
+      {
+         if (e.Data.Get("CameraComponentNumber") is int cameraNo)
+         {
+            SetActiveSlot(slotIndex);
+            CameraSelectedFromMenu?.Invoke(this, cameraNo);
+         }
+      }
+
       private static bool IsActiveRtspPlayback(string url) => url != null && url.Contains("playback");
 
       private static string GetMaskedUrl(string url)
@@ -720,6 +800,7 @@ namespace Vao.Sample.Controls
          public TextBlock HeaderText { get; set; }
          public Border HeaderBorder { get; set; }
          public Panel VideoPanel { get; set; }
+         public ToggleSwitch SubChannelToggle { get; set; }
 
          /// <summary>Resets UI elements but preserves the Camera reference so it can be remembered across layout switches.</summary>
          public void ResetUi()
@@ -728,6 +809,7 @@ namespace Vao.Sample.Controls
             HeaderText = null;
             HeaderBorder = null;
             VideoPanel = null;
+            SubChannelToggle = null;
          }
 
          public void ResetAll()
