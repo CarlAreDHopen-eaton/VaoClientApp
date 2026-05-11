@@ -169,6 +169,10 @@ namespace Vao.Sample
 
       public int GetSubChannelStreamNo() => videoPanel.GetStreamNo();
 
+      public void SetActiveVideoSlot(int slotIndex) => videoPanel.SetActiveSlot(slotIndex);
+
+      public void HandleSlotDrop(int slotIndex, DragEventArgs e) => videoPanel.HandleSlotDrop(slotIndex, e);
+
       /// <summary>Called by MainWindow once the window is open and sized to restore all saved UI state.</summary>
       public void OnWindowOpened(double windowWidth)
       {

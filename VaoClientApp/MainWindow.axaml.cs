@@ -354,8 +354,8 @@ namespace Vao.Sample
             if (slotPanel == null) continue;
 
             // Recreate the VideoView for the slot (LibVLC requires fresh surface)
-            var newView = new VideoView { Focusable = false };
-            mSlotVideoControls[i] = newView;
+             var newView = CreateSlotVideoView(i);
+             mSlotVideoControls[i] = newView;
             slotPanel.Children.Add(newView);
             newView.MediaPlayer = mSlotMediaPlayers[i];
 
@@ -372,6 +372,38 @@ namespace Vao.Sample
 
       private void MediaPlayer_EncounteredError(object sender, EventArgs e)
          => mainView.WriteMessageLog(MessageSource.LibVlc, "LibVLC error encountered.", LogLevel.Error);
+
+      private VideoView CreateSlotVideoView(int slotIndex)
+      {
+         var videoView = new VideoView { Focusable = false };
+         int capturedSlotIndex = slotIndex;
+         var overlay = new Avalonia.Controls.Border
+         {
+            Background = Avalonia.Media.Brushes.Transparent,
+            HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch,
+            VerticalAlignment = Avalonia.Layout.VerticalAlignment.Stretch,
+            IsHitTestVisible = true
+         };
+         overlay.PointerPressed += (_, e) =>
+         {
+            mainView.SetActiveVideoSlot(capturedSlotIndex);
+         };
+
+         // Allow drag-drop to pass through to the slot border underneath
+         DragDrop.SetAllowDrop(overlay, true);
+         overlay.AddHandler(DragDrop.DragOverEvent, (object s, DragEventArgs e) =>
+         {
+            e.DragEffects = DragDropEffects.Copy;
+         });
+         overlay.AddHandler(DragDrop.DropEvent, (object s, DragEventArgs e) =>
+         {
+            mainView.SetActiveVideoSlot(capturedSlotIndex);
+            mainView.HandleSlotDrop(capturedSlotIndex, e);
+         });
+
+         videoView.Content = overlay;
+         return videoView;
+      }
 
       private void MediaPlayer_Opening(object sender, EventArgs e)
          => mainView.WriteMessageLog(MessageSource.LibVlc, $"LibVLC opening {mMediaPlayer?.Media?.Mrl ?? ""}", LogLevel.Notice);
@@ -425,8 +457,9 @@ namespace Vao.Sample
          var pnlVideo = mainView.GetVideoSlot(slotIndex);
          if (pnlVideo == null) return;
 
-         var videoView = new VideoView { Focusable = false };
+         var videoView = CreateSlotVideoView(slotIndex);
          mSlotVideoControls[slotIndex] = videoView;
+
          if (!pnlVideo.Children.Contains(videoView))
             pnlVideo.Children.Add(videoView);
 

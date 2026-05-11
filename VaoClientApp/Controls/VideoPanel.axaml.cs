@@ -442,7 +442,7 @@ namespace Vao.Sample.Controls
          if (slot.HeaderBorder != null) slot.HeaderBorder.Background = GetNeutralHeaderBrush();
       }
 
-      private void SetActiveSlot(int slotIndex)
+      public void SetActiveSlot(int slotIndex)
       {
          int slotCount = mCurrentLayout?.SlotCount ?? 1;
          if (slotIndex < 0 || slotIndex >= slotCount) return;
@@ -764,6 +764,11 @@ namespace Vao.Sample.Controls
       }
 
       private void SlotBorder_Drop(object sender, DragEventArgs e, int slotIndex)
+      {
+         HandleSlotDrop(slotIndex, e);
+      }
+
+      public void HandleSlotDrop(int slotIndex, DragEventArgs e)
       {
          if (e.Data.Get("CameraComponentNumber") is int cameraNo)
          {
