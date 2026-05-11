@@ -464,10 +464,8 @@ namespace Vao.Sample.Controls
             {
                mSlotBorders[i].BorderBrush = i == mActiveSlotIndex
                   ? GetBrushResource("Primary", "#0066CC")
-                  : new SolidColorBrush(Colors.Transparent);
-               mSlotBorders[i].BorderThickness = i == mActiveSlotIndex
-                  ? new Thickness(2)
-                  : new Thickness(0);
+                  : new SolidColorBrush(Color.Parse("#555555"));
+               mSlotBorders[i].BorderThickness = new Thickness(2);
             }
          }
       }
