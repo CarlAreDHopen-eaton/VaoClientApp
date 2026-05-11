@@ -109,24 +109,24 @@ namespace Vao.Client
       {
          List<Camera> cameras = message.FlexApiClient.GetCameraList();
 
-         // NOTE! Ending space to ensure correct match
-         Camera camera = cameras.FirstOrDefault(c => message.Message.Contains($"Camera_{c.ComponentNumber} "));
+         // NOTE! Ending : to ensure correct match
+         Camera camera = cameras.FirstOrDefault(c => message.Message.Contains($"Camera_{c.ComponentNumber}:"));
          if (camera != null)
          {
             return camera;
          }
 
          // Fallback for old API with camera name instead of component number in the message.
-         // NOTE! Ending space to ensure correct match
-         return cameras.FirstOrDefault(c => message.Message.Contains($"Camera_{c.Name} "));
+         // NOTE! Ending : to ensure correct match
+         return cameras.FirstOrDefault(c => message.Message.Contains($"Camera_{c.Name}:"));
       }
 
       private static Alarm FindAlarm(StatusMessage message)
       {
          List<Alarm> alarms = message.FlexApiClient.GetAlarmList();
 
-         // NOTE! Ending space to ensure correct match
-         return alarms.FirstOrDefault(c => message.Message.Contains($"Alarm_{c.ComponentNumber} ")); ;
+         // NOTE! Ending : to ensure correct match
+         return alarms.FirstOrDefault(c => message.Message.Contains($"Alarm_{c.ComponentNumber}:")); ;
       }
 
       private void RaiseOnMessageEvents(StatusMessage message)

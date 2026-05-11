@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
@@ -17,6 +18,7 @@ namespace Vao.Sample.Controls
    {
       private readonly ObservableCollection<AlarmSelectionItem> mAlarmSelectionItems = new();
       private readonly ObservableCollection<AlarmSelectionItem> mFilteredAlarmSelectionItems = new();
+      private readonly Dictionary<Alarm, PropertyChangedEventHandler> mAlarmStatusChangedHandlers = new();
       private bool mIsUpdatingSelection;
       private Alarm mCurrentAlarm;
 
@@ -71,7 +73,7 @@ namespace Vao.Sample.Controls
                AlarmIcon = GetIconForAlarmStatus(alarm.Status)
             };
             mAlarmSelectionItems.Add(item);
-            alarm.PropertyChanged += (s, ev) =>
+            PropertyChangedEventHandler alarmPropertyChangedHandler = (s, ev) =>
             {
                if (ev.PropertyName == nameof(Alarm.Status))
                {
@@ -80,10 +82,13 @@ namespace Vao.Sample.Controls
                      item.StatusBrush = brushResolver(alarm.Status);
                      item.StatusText = GetTextForStatus(alarm.Status);
                      item.AlarmIcon = GetIconForAlarmStatus(alarm.Status);
+                     ApplySearchFilter();
                      ActiveAlarmStateChanged?.Invoke(this, EventArgs.Empty);
                   });
                }
             };
+            mAlarmStatusChangedHandlers[alarm] = alarmPropertyChangedHandler;
+            alarm.PropertyChanged += alarmPropertyChangedHandler;
          }
 
          ApplySearchFilter();
@@ -92,6 +97,7 @@ namespace Vao.Sample.Controls
 
       public void Clear()
       {
+         UnsubscribeAlarmHandlers();
          mAlarmSelectionItems.Clear();
          mFilteredAlarmSelectionItems.Clear();
          mIsUpdatingSelection = true;
@@ -224,6 +230,14 @@ namespace Vao.Sample.Controls
          mIsResizing = false;
          pointer?.Capture(null);
          LayoutChanged?.Invoke(this, EventArgs.Empty);
+      }
+
+      private void UnsubscribeAlarmHandlers()
+      {
+         foreach (var kvp in mAlarmStatusChangedHandlers)
+            kvp.Key.PropertyChanged -= kvp.Value;
+
+         mAlarmStatusChangedHandlers.Clear();
       }
 
       // ── Helpers ────────────────────────────────────────────────────────────
