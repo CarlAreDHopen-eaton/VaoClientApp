@@ -43,14 +43,14 @@ namespace Vao.Sample.Controls
             return;
          }
 
-         string strSource = source.ToString().PadRight(7);
+         string strSource = source.ToString();
          var strTime = DateTime.Now.ToString(CultureInfo.InvariantCulture);
-         var strLevel = level.ToString().PadRight(7);
-         var strMsg = $"{strTime} [{strLevel}][{strSource}] - {strMessage}";
+         var strLevel = level.ToString();
+         var strMsg = $"{strTime} [{strLevel.PadRight(7)}][{strSource.PadRight(7)}] - {strMessage}";
 
 #if ANDROID
          string adbTag = $"VaoClient/{source}";
-         string adbMsg = $"[{strLevel.Trim()}] {strMessage}";
+         string adbMsg = $"[{strLevel}] {strMessage}";
          switch (level)
          {
             case LogLevel.Debug:   Android.Util.Log.Debug(adbTag, adbMsg);   break;
@@ -66,6 +66,10 @@ namespace Vao.Sample.Controls
          var item = new MessageItem
          {
             Text = strMsg,
+            Timestamp = strTime,
+            LevelText = strLevel,
+            SourceText = strSource,
+            Message = strMessage,
             Color = color,
             Background = GetBackgroundForLogLevel(level),
             Source = source,

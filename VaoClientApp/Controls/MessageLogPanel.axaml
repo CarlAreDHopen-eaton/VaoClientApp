@@ -3,10 +3,20 @@
 			 x:Class="Vao.Sample.Controls.MessageLogPanel">
 
 	<Border x:Name="brdMessages" Background="{DynamicResource Surface1}" BorderBrush="{DynamicResource Divider}" BorderThickness="1" CornerRadius="4">
-		<ListBox x:Name="lstMessages" Background="Transparent" FontFamily="{StaticResource MonospaceFont}" FontSize="12" Margin="12,8" SelectionMode="Multiple" KeyDown="lstMessages_KeyDown">
+		<Grid RowDefinitions="Auto,*">
+			<!-- Column headers -->
+			<Border Grid.Row="0" Background="{DynamicResource Surface3}" CornerRadius="4,4,0,0" Padding="16,6">
+				<Grid ColumnDefinitions="160,80,80,*">
+					<TextBlock Grid.Column="0" Text="Time" FontWeight="SemiBold" FontSize="12" Foreground="{DynamicResource SidebarHeaderFg}"/>
+					<TextBlock Grid.Column="1" Text="Level" FontWeight="SemiBold" FontSize="12" Foreground="{DynamicResource SidebarHeaderFg}"/>
+					<TextBlock Grid.Column="2" Text="Source" FontWeight="SemiBold" FontSize="12" Foreground="{DynamicResource SidebarHeaderFg}"/>
+					<TextBlock Grid.Column="3" Text="Message" FontWeight="SemiBold" FontSize="12" Foreground="{DynamicResource SidebarHeaderFg}"/>
+				</Grid>
+			</Border>
+			<ListBox Grid.Row="1" x:Name="lstMessages" Background="Transparent" FontFamily="{StaticResource MonospaceFont}" FontSize="12" Margin="0" SelectionMode="Multiple" KeyDown="lstMessages_KeyDown">
 				<ListBox.Styles>
 					<Style Selector="ListBoxItem">
-						<Setter Property="Padding" Value="4,1"/>
+						<Setter Property="Padding" Value="0"/>
 						<Setter Property="MinHeight" Value="0"/>
 						<Setter Property="Margin" Value="0"/>
 					</Style>
@@ -38,12 +48,18 @@
 				</ListBox.ContextMenu>
 				<ListBox.ItemTemplate>
 					<DataTemplate>
-						<Border Background="{Binding Background}" CornerRadius="2" Padding="4,1">
-							<TextBlock Text="{Binding Text}" Foreground="{Binding Color}"/>
+						<Border Background="{Binding Background}" Padding="16,2">
+							<Grid ColumnDefinitions="160,80,80,*">
+								<TextBlock Grid.Column="0" Text="{Binding Timestamp}" Foreground="{Binding Color}"/>
+								<TextBlock Grid.Column="1" Text="{Binding LevelText}" Foreground="{Binding Color}"/>
+								<TextBlock Grid.Column="2" Text="{Binding SourceText}" Foreground="{Binding Color}"/>
+								<TextBlock Grid.Column="3" Text="{Binding Message}" Foreground="{Binding Color}" TextTrimming="CharacterEllipsis"/>
+							</Grid>
 						</Border>
 					</DataTemplate>
 				</ListBox.ItemTemplate>
-				</ListBox>
-			</Border>
+			</ListBox>
+		</Grid>
+	</Border>
 
 </UserControl>
