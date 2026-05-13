@@ -211,7 +211,7 @@ namespace Vao.Sample.Controls
          {
             mActiveRtspUrl = url;
             if (txtCurrentRtspUrl != null) txtCurrentRtspUrl.Text = GetMaskedUrl(url);
-            if (txtVideoHeader != null) txtVideoHeader.Text = $"LIVE - Camera {camera.ComponentNumber}";
+            if (txtCameraHeader != null) txtCameraHeader.Text = FormatCameraText(camera, "Live");
             if (brdVideoHeader != null) brdVideoHeader.Background = GetLiveHeaderBrush();
             RtspStreamRequested?.Invoke(this, url);
          }
@@ -233,7 +233,7 @@ namespace Vao.Sample.Controls
          {
             var slot = mSlots[mActiveSlotIndex];
             slot.ActiveRtspUrl = url;
-            if (slot.HeaderText != null) slot.HeaderText.Text = $"PLAYBACK - Camera {cameraNo}";
+            if (slot.HeaderCameraText != null) slot.HeaderCameraText.Text = FormatCameraText(slot.Camera, "Playback");
             if (slot.HeaderBorder != null) slot.HeaderBorder.Background = GetPlaybackHeaderBrush();
             SlotRtspStreamRequested?.Invoke(this, new VideoSlotStreamEventArgs(mActiveSlotIndex, url));
             return;
@@ -241,7 +241,7 @@ namespace Vao.Sample.Controls
 
          mActiveRtspUrl = url;
          if (txtCurrentRtspUrl != null) txtCurrentRtspUrl.Text = GetMaskedUrl(url);
-         if (txtVideoHeader != null) txtVideoHeader.Text = $"PLAYBACK - Camera {cameraNo}";
+         if (txtCameraHeader != null) txtCameraHeader.Text = $"#{cameraNo:D4} (Playback)";
          if (brdVideoHeader != null) brdVideoHeader.Background = GetPlaybackHeaderBrush();
          RtspStreamRequested?.Invoke(this, url);
       }
@@ -255,27 +255,27 @@ namespace Vao.Sample.Controls
          }
 
          RtspStreamRequested?.Invoke(this, null);
-         mActiveRtspUrl = null;
-         if (txtCurrentRtspUrl != null) txtCurrentRtspUrl.Text = string.Empty;
-         if (txtVideoHeader != null) txtVideoHeader.Text = "No Camera Selected";
-         if (brdVideoHeader != null) brdVideoHeader.Background = GetNeutralHeaderBrush();
-      }
+          mActiveRtspUrl = null;
+          if (txtCurrentRtspUrl != null) txtCurrentRtspUrl.Text = string.Empty;
+          if (txtCameraHeader != null) txtCameraHeader.Text = "No Camera Selected";
+          if (brdVideoHeader != null) brdVideoHeader.Background = GetNeutralHeaderBrush();
+       }
 
       public void ResetHeader()
       {
          if (!IsSingleView)
          {
             var slot = mSlots[mActiveSlotIndex];
-            if (slot.HeaderText != null) slot.HeaderText.Text = "No Camera Selected";
+            if (slot.HeaderCameraText != null) slot.HeaderCameraText.Text = "No Camera Selected";
             if (slot.HeaderBorder != null) slot.HeaderBorder.Background = GetNeutralHeaderBrush();
             return;
          }
 
-         if (txtVideoHeader != null) txtVideoHeader.Text = "No Camera Selected";
-         if (brdVideoHeader != null) brdVideoHeader.Background = GetNeutralHeaderBrush();
-      }
+         if (txtCameraHeader != null) txtCameraHeader.Text = "No Camera Selected";
+          if (brdVideoHeader != null) brdVideoHeader.Background = GetNeutralHeaderBrush();
+       }
 
-      public void UpdateSubChannelEnabled(bool enabled)
+       public void UpdateSubChannelEnabled(bool enabled)
        {
           if (tglSubChannel != null) tglSubChannel.IsEnabled = enabled;
           var slotToggle = mSlots[mActiveSlotIndex]?.SubChannelToggle;
@@ -359,20 +359,20 @@ namespace Vao.Sample.Controls
             var slotCamera = slot.Camera;
             if (!isStarted || slotCamera == null)
             {
-               if (slot.HeaderText != null) slot.HeaderText.Text = "No Camera Selected";
-               if (slot.HeaderBorder != null) slot.HeaderBorder.Background = GetNeutralHeaderBrush();
+               if (slot.HeaderCameraText != null) slot.HeaderCameraText.Text = "No Camera Selected";
+                if (slot.HeaderBorder != null) slot.HeaderBorder.Background = GetNeutralHeaderBrush();
                return;
             }
             var cNo = slotCamera.ComponentNumber;
             bool slotPlayback = IsActiveRtspPlayback(slot.ActiveRtspUrl);
             if (slotPlayback || isPlaybackStarted)
             {
-               if (slot.HeaderText != null) slot.HeaderText.Text = $"PLAYBACK - Camera {cNo}";
-               if (slot.HeaderBorder != null) slot.HeaderBorder.Background = GetPlaybackHeaderBrush();
-            }
-            else
-            {
-               if (slot.HeaderText != null) slot.HeaderText.Text = $"LIVE - Camera {cNo}";
+               if (slot.HeaderCameraText != null) slot.HeaderCameraText.Text = FormatCameraText(slotCamera, "Playback");
+                    if (slot.HeaderBorder != null) slot.HeaderBorder.Background = GetPlaybackHeaderBrush();
+                 }
+                 else
+                 {
+                    if (slot.HeaderCameraText != null) slot.HeaderCameraText.Text = FormatCameraText(slotCamera, "Live");
                if (slot.HeaderBorder != null) slot.HeaderBorder.Background = GetLiveHeaderBrush();
             }
             return;
@@ -380,22 +380,22 @@ namespace Vao.Sample.Controls
 
          if (!isStarted || camera == null)
          {
-            if (txtVideoHeader != null) txtVideoHeader.Text = "No Camera Selected";
-            if (brdVideoHeader != null) brdVideoHeader.Background = GetNeutralHeaderBrush();
+            if (txtCameraHeader != null) txtCameraHeader.Text = "No Camera Selected";
+             if (brdVideoHeader != null) brdVideoHeader.Background = GetNeutralHeaderBrush();
             return;
          }
 
          var cameraNo = camera.ComponentNumber;
          if (isPlayback || isPlaybackStarted)
-         {
-            if (txtVideoHeader != null) txtVideoHeader.Text = $"PLAYBACK - Camera {cameraNo}";
-            if (brdVideoHeader != null) brdVideoHeader.Background = GetPlaybackHeaderBrush();
-         }
-         else
-         {
-            if (txtVideoHeader != null) txtVideoHeader.Text = $"LIVE - Camera {cameraNo}";
-            if (brdVideoHeader != null) brdVideoHeader.Background = GetLiveHeaderBrush();
-         }
+           {
+              if (txtCameraHeader != null) txtCameraHeader.Text = FormatCameraText(camera, "Playback");
+              if (brdVideoHeader != null) brdVideoHeader.Background = GetPlaybackHeaderBrush();
+           }
+           else
+           {
+              if (txtCameraHeader != null) txtCameraHeader.Text = FormatCameraText(camera, "Live");
+             if (brdVideoHeader != null) brdVideoHeader.Background = GetLiveHeaderBrush();
+          }
       }
 
       // ── Slot operations ─────────────────────────────────────────────────────
@@ -413,7 +413,7 @@ namespace Vao.Sample.Controls
          if (!string.IsNullOrEmpty(url))
          {
             slot.ActiveRtspUrl = url;
-            if (slot.HeaderText != null) slot.HeaderText.Text = $"LIVE - Camera {camera.ComponentNumber}";
+            if (slot.HeaderCameraText != null) slot.HeaderCameraText.Text = FormatCameraText(camera, "Live");
             if (slot.HeaderBorder != null) slot.HeaderBorder.Background = GetLiveHeaderBrush();
             SlotRtspStreamRequested?.Invoke(this, new VideoSlotStreamEventArgs(slotIndex, url));
          }
@@ -438,7 +438,7 @@ namespace Vao.Sample.Controls
          SlotRtspStreamRequested?.Invoke(this, new VideoSlotStreamEventArgs(slotIndex, null));
          slot.ActiveRtspUrl = null;
          slot.Camera = null;
-         if (slot.HeaderText != null) slot.HeaderText.Text = "No Camera Selected";
+         if (slot.HeaderCameraText != null) slot.HeaderCameraText.Text = "No Camera Selected";
          if (slot.HeaderBorder != null) slot.HeaderBorder.Background = GetNeutralHeaderBrush();
       }
 
@@ -488,16 +488,31 @@ namespace Vao.Sample.Controls
             var slotDef = layout.Slots[i];
             int slotIndex = slotDef.Index;
 
-            var headerText = new TextBlock
-            {
-               Text = "No Camera Selected",
-               FontWeight = FontWeight.SemiBold,
-               FontSize = 12,
-               Foreground = Brushes.White,
-               Margin = new Thickness(8, 4),
-               Opacity = 0.87,
-               VerticalAlignment = VerticalAlignment.Center
-            };
+            var headerViewerText = new TextBlock
+             {
+                Text = $"Viewer {slotIndex + 1}",
+                FontWeight = FontWeight.Bold,
+                FontSize = 11,
+                Foreground = Brushes.White,
+                Opacity = 0.87,
+                TextTrimming = TextTrimming.CharacterEllipsis
+             };
+             var headerCameraText = new TextBlock
+             {
+                Text = "No Camera Selected",
+                FontWeight = FontWeight.Normal,
+                FontSize = 11,
+                Foreground = Brushes.White,
+                Opacity = 0.87,
+                TextTrimming = TextTrimming.CharacterEllipsis
+             };
+             var headerText = new StackPanel
+             {
+                Orientation = Orientation.Vertical,
+                Margin = new Thickness(8, 2),
+                VerticalAlignment = VerticalAlignment.Center,
+                Children = { headerViewerText, headerCameraText }
+             };
 
             var menuIcon = new TextBlock
             {
@@ -557,9 +572,9 @@ namespace Vao.Sample.Controls
                ColumnDefinitions = { new ColumnDefinition(new GridLength(1, GridUnitType.Star)), new ColumnDefinition(GridLength.Auto), new ColumnDefinition(GridLength.Auto) }
             };
             Grid.SetColumn(headerText, 0);
-            Grid.SetColumn(slotToggle, 1);
-            Grid.SetColumn(menuButton, 2);
-            headerGrid.Children.Add(headerText);
+             Grid.SetColumn(slotToggle, 1);
+             Grid.SetColumn(menuButton, 2);
+             headerGrid.Children.Add(headerText);
             headerGrid.Children.Add(slotToggle);
             headerGrid.Children.Add(menuButton);
 
@@ -610,17 +625,18 @@ namespace Vao.Sample.Controls
             if (slotDef.ColumnSpan > 1) Grid.SetColumnSpan(slotBorder, slotDef.ColumnSpan);
             quadGrid.Children.Add(slotBorder);
 
-            mSlots[slotIndex].HeaderText = headerText;
-             mSlots[slotIndex].HeaderBorder = headerBorder;
-             mSlots[slotIndex].VideoPanel = videoPanel;
-             mSlots[slotIndex].SubChannelToggle = slotToggle;
-             mSlotBorders[slotIndex] = slotBorder;
+            mSlots[slotIndex].HeaderViewerText = headerViewerText;
+              mSlots[slotIndex].HeaderCameraText = headerCameraText;
+              mSlots[slotIndex].HeaderBorder = headerBorder;
+              mSlots[slotIndex].VideoPanel = videoPanel;
+              mSlots[slotIndex].SubChannelToggle = slotToggle;
+              mSlotBorders[slotIndex] = slotBorder;
 
-            // Restore header if this slot already has a camera remembered
-            if (mSlots[slotIndex].Camera != null)
-            {
-               headerText.Text = $"Camera {mSlots[slotIndex].Camera.ComponentNumber}";
-            }
+             // Restore header if this slot already has a camera remembered
+             if (mSlots[slotIndex].Camera != null)
+             {
+                headerCameraText.Text = FormatCameraText(mSlots[slotIndex].Camera, null);
+             }
          }
 
          UpdateSlotSelectionBorders();
@@ -794,13 +810,21 @@ namespace Vao.Sample.Controls
       private IBrush GetLiveHeaderBrush()     => GetBrushResource("VideoHeaderLive", "#39B620");
       private IBrush GetPlaybackHeaderBrush() => GetBrushResource("VideoHeaderPlayback", "#CA3C3D");
 
+      private static string FormatCameraText(Camera camera, string mode)
+      {
+         if (mode != null)
+            return $"#{camera.ComponentNumber:D4} {camera.Name} ({mode})";
+         return $"#{camera.ComponentNumber:D4} {camera.Name}";
+      }
+
       // ── Nested types ────────────────────────────────────────────────────────
 
       private class VideoSlotState
       {
          public Camera Camera { get; set; }
          public string ActiveRtspUrl { get; set; }
-         public TextBlock HeaderText { get; set; }
+         public TextBlock HeaderViewerText { get; set; }
+         public TextBlock HeaderCameraText { get; set; }
          public Border HeaderBorder { get; set; }
          public Panel VideoPanel { get; set; }
          public ToggleSwitch SubChannelToggle { get; set; }
@@ -809,7 +833,8 @@ namespace Vao.Sample.Controls
          public void ResetUi()
          {
             ActiveRtspUrl = null;
-            HeaderText = null;
+            HeaderViewerText = null;
+            HeaderCameraText = null;
             HeaderBorder = null;
             VideoPanel = null;
             SubChannelToggle = null;

@@ -8,7 +8,10 @@
 			<Grid RowDefinitions="Auto,*,Auto">
 				<Border Grid.Row="0" x:Name="brdVideoHeader" Background="{DynamicResource VideoHeaderBg}" CornerRadius="4,4,0,0">
 					<Grid ColumnDefinitions="*,Auto">
-						<TextBlock x:Name="txtVideoHeader" Text="No Camera Selected" FontWeight="SemiBold" FontSize="14" Foreground="White" Margin="16,6" Opacity="0.87" VerticalAlignment="Center"/>
+						<StackPanel Margin="16,4" VerticalAlignment="Center">
+							<TextBlock x:Name="txtViewerHeader" Text="Viewer 1" FontWeight="SemiBold" FontSize="14" Foreground="White" Opacity="0.87" TextTrimming="CharacterEllipsis"/>
+							<TextBlock x:Name="txtCameraHeader" Text="No Camera Selected" FontWeight="Normal" FontSize="14" Foreground="White" Opacity="0.87" TextTrimming="CharacterEllipsis"/>
+						</StackPanel>
 						<Grid Grid.Column="1"
 							  ColumnDefinitions="Auto,Auto"
 							  HorizontalAlignment="Right"
