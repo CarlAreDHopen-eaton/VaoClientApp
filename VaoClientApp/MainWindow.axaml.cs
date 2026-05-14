@@ -158,7 +158,7 @@ namespace Vao.Sample
             var slot = HotkeySlotFromPhysicalKey(e.PhysicalKey);
             if (slot >= 0 && mainView.IsStarted)
             {
-               var hotkeys = AppSettings.Default.CameraHotkeys;
+               var hotkeys = ConfigurationManager.Instance.CameraHotkeys;
                if (hotkeys.TryGetValue(slot, out int cameraNo) && cameraNo != 0)
                {
                   mainView.SelectCameraHotkey(cameraNo);
@@ -234,15 +234,15 @@ namespace Vao.Sample
             mMediaPlayer.EnableMouseInput = false;
             mMediaPlayer.EncounteredError += MediaPlayer_EncounteredError;
             mMediaPlayer.Opening += MediaPlayer_Opening;
-            if (AppSettings.Default.UseTcp) media.AddOption(":rtsp-tcp");
+            if (ConfigurationManager.Instance.UseTcp) media.AddOption(":rtsp-tcp");
             if (mVideoControl != null) mVideoControl.MediaPlayer = mMediaPlayer;
             mMediaPlayer.Play();
             mIsVideoStarted = true;
-         }
-         else
-         {
-            var media = new Media(mLibVlc, uri);
-            if (AppSettings.Default.UseTcp) media.AddOption(":rtsp-tcp");
+          }
+          else
+          {
+             var media = new Media(mLibVlc, uri);
+             if (ConfigurationManager.Instance.UseTcp) media.AddOption(":rtsp-tcp");
             mMediaPlayer.Play(media);
             mIsVideoStarted = true;
          }
@@ -465,7 +465,7 @@ namespace Vao.Sample
 
          var uri = new Uri(rtspUrl);
          var media = new Media(mLibVlc, uri);
-         if (AppSettings.Default.UseTcp) media.AddOption(":rtsp-tcp");
+         if (ConfigurationManager.Instance.UseTcp) media.AddOption(":rtsp-tcp");
 
          var mp = new MediaPlayer(media)
          {

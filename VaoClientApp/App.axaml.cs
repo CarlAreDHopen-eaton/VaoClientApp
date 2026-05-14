@@ -131,24 +131,24 @@ namespace Vao.Sample
             return CurrentTheme;
          }
 
-         var currentThemeKey = AppSettings.Default.GetPreferredThemeKey();
-         var currentIndex = themes.FindIndex(theme => string.Equals(theme.Key, currentThemeKey, StringComparison.OrdinalIgnoreCase));
-         var nextIndex = currentIndex < 0 ? 0 : (currentIndex + 1) % themes.Count;
-         var nextTheme = themes[nextIndex];
+         var currentThemeKey = ConfigurationManager.Instance.GetPreferredThemeKey();
+          var currentIndex = themes.FindIndex(theme => string.Equals(theme.Key, currentThemeKey, StringComparison.OrdinalIgnoreCase));
+          var nextIndex = currentIndex < 0 ? 0 : (currentIndex + 1) % themes.Count;
+          var nextTheme = themes[nextIndex];
 
-         ApplyTheme(nextTheme.Key);
-         return nextTheme;
-      }
+          ApplyTheme(nextTheme.Key);
+          return nextTheme;
+       }
 
-      public ThemeDefinition GetNextThemeInCycle()
-      {
-         var catalog = ThemeCatalog.Reload();
-         var themes = catalog.Themes;
+       public ThemeDefinition GetNextThemeInCycle()
+       {
+          var catalog = ThemeCatalog.Reload();
+          var themes = catalog.Themes;
 
-         if (themes == null || themes.Count == 0)
-            return CurrentTheme;
+          if (themes == null || themes.Count == 0)
+             return CurrentTheme;
 
-         var currentThemeKey = AppSettings.Default.GetPreferredThemeKey();
+          var currentThemeKey = ConfigurationManager.Instance.GetPreferredThemeKey();
          var currentIndex = themes.FindIndex(theme => string.Equals(theme.Key, currentThemeKey, StringComparison.OrdinalIgnoreCase));
          var nextIndex = currentIndex < 0 ? 0 : (currentIndex + 1) % themes.Count;
          return themes[nextIndex];

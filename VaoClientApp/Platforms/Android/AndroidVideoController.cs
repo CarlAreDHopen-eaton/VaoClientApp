@@ -315,7 +315,7 @@ internal sealed class AndroidVideoController
 
          var uri   = new Uri(rtspUrl);
          var media = new Media(mLibVlc, uri);
-         if (AppSettings.Default.UseTcp) media.AddOption(":rtsp-tcp");
+         if (ConfigurationManager.Instance.UseTcp) media.AddOption(":rtsp-tcp");
 
          // Most Android devices support only 1–4 simultaneous hardware decode
          // sessions.  Slot 0 keeps hardware decode (lowest latency); additional

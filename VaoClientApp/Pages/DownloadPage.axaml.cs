@@ -63,7 +63,7 @@ namespace Vao.Sample.Pages
             UpdateEnabledDownloadButton();
         }
 
-        private bool IsDownloadPathSet => !string.IsNullOrEmpty(AppSettings.Default.DownloadPath);
+        private bool IsDownloadPathSet => ConfigurationManager.Instance.IsDownloadPathSet;
 
         private bool IsFtpConnected
         {
@@ -155,7 +155,7 @@ namespace Vao.Sample.Pages
 
             if (!IsFtpConnected) return;
 
-            string downloadPath = AppSettings.Default.DownloadPath;
+            string downloadPath = ConfigurationManager.Instance.DownloadPath;
             if (string.IsNullOrEmpty(downloadPath)) downloadPath = "C:\\";
             if (File.Exists($@"{downloadPath}\{downloadName}.{fileType}"))
             {
@@ -254,9 +254,9 @@ namespace Vao.Sample.Pages
 
         private bool ConnectToFtpServer(string recorderAddress)
         {
-            var s = AppSettings.Default;
+            var cfg = ConfigurationManager.Instance;
             var ftpConfig = new FtpConfig { EncryptionMode = FtpEncryptionMode.Explicit, ValidateAnyCertificate = true };
-            mFtpClient = new FtpClient(recorderAddress, s.FTPUser ?? "", s.FTPPassword ?? "", 0, ftpConfig);
+            mFtpClient = new FtpClient(recorderAddress, cfg.FTPUser ?? "", cfg.FTPPassword ?? "", 0, ftpConfig);
             try
             {
                 WriteMessageLog("FTP", $"Connecting to FTP server {recorderAddress}", LogLevel.Notice);
@@ -354,8 +354,7 @@ namespace Vao.Sample.Pages
         {
             var btnDownload = this.FindControl<Button>("btnDownloadRequest");
             if (btnDownload == null) return;
-            var s = AppSettings.Default;
-            btnDownload.IsEnabled = !string.IsNullOrEmpty(s.FTPPassword) && !string.IsNullOrEmpty(s.FTPUser) && IsDownloadPathSet;
+            btnDownload.IsEnabled = ConfigurationManager.Instance.CanDownload();
         }
 
         private void btnBack_Click(object sender, RoutedEventArgs e) => GoBack();

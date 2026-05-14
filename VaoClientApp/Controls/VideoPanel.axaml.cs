@@ -738,7 +738,7 @@ namespace Vao.Sample.Controls
 
       private static int GetCameraHotkeySlot(int cameraNumber)
       {
-         var hotkeys = AppSettings.Default.CameraHotkeys;
+         var hotkeys = ConfigurationManager.Instance.CameraHotkeys;
          if (hotkeys == null) return -1;
          foreach (var kvp in hotkeys)
             if (kvp.Value == cameraNumber) return kvp.Key;
