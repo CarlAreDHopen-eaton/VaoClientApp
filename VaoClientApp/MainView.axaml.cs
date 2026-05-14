@@ -56,39 +56,15 @@ namespace Vao.Sample
       private enum PickerOverlayMode { None, Date, Time }
       private PickerOverlayMode mPickerOverlayMode = PickerOverlayMode.None;
 
-      // ── Public events (desktop subscribes for VLC management) ──────────────
-
-      /// <summary>Fired when an RTSP stream should start (non-null URL) or stop (null).</summary>
-      public event EventHandler<string> RtspStreamRequested;
-
-      /// <summary>Fired when an RTSP stream should start/stop on a specific slot.</summary>
-      public event EventHandler<VideoSlotStreamEventArgs> SlotRtspStreamRequested;
-
-      /// <summary>Fired when any overlay becomes visible (true) or all overlays hide (false).
-      /// Desktop uses this to detach/reattach the native VideoView.</summary>
-      public event EventHandler<bool> AnyOverlayStateChanged;
+      // ── Public events ─────────────────────────────────────────────────────
 
       /// <summary>Fired when the connection state changes (connected or disconnected).</summary>
       public event EventHandler ConnectionStateChanged;
 
-      /// <summary>Fired before the video layout grid is rebuilt.</summary>
-      public event EventHandler<LayoutChangeEventArgs> VideoLayoutChanging;
-
-      /// <summary>Fired when the video layout changes.</summary>
-      public event EventHandler<LayoutChangeEventArgs> VideoLayoutChanged;
-
       // ── Public properties ──────────────────────────────────────────────────
 
-      public Panel VideoSlot => videoPanel.VideoSlot;
-
-      /// <summary>Returns video slots for all active panels based on layout.</summary>
-      public IReadOnlyList<Panel> GetAllActiveVideoSlots() => videoPanel.GetAllActiveVideoSlots();
-
-      /// <summary>Returns the video slot for a specific slot index.</summary>
-      public Panel GetVideoSlot(int slotIndex) => videoPanel.GetVideoSlot(slotIndex);
-
       /// <summary>The current video layout key.</summary>
-      public string CurrentLayoutKey => videoPanel.CurrentLayoutKey;
+      public string CurrentLayoutKey => videoLayoutPanel.CurrentLayoutKey;
 
       public bool IsStarted
       {
@@ -114,7 +90,7 @@ namespace Vao.Sample
          set { mIsCameraSelected = value; UpdateEnabled(); }
       }
 
-      public bool IsPlayback => videoPanel.IsPlayback;
+      public bool IsPlayback => videoLayoutPanel.IsPlayback;
 
       // ── Public methods (called by MainWindow thin shell) ───────────────────
 
@@ -159,7 +135,7 @@ namespace Vao.Sample
       public void SelectCameraHotkey(int cameraNo)
       {
          if (!IsStarted || mFlexApiClient == null) return;
-         int streamNo = videoPanel.GetStreamNo();
+         int streamNo = videoLayoutPanel.GetStreamNo();
          SelectCamera(cameraNo, streamNo);
       }
 
@@ -170,11 +146,11 @@ namespace Vao.Sample
          WriteMessageLog(MessageSource.Config, $"Camera {mCurrentCamera.ComponentNumber} assigned to slot {slot} (Ctrl+{slot})", LogLevel.Notice);
       }
 
-      public int GetSubChannelStreamNo() => videoPanel.GetStreamNo();
+      public int GetSubChannelStreamNo() => videoLayoutPanel.GetStreamNo();
 
-      public void SetActiveVideoSlot(int slotIndex) => videoPanel.SetActiveSlot(slotIndex);
+      public void SetActiveVideoSlot(int slotIndex) => videoLayoutPanel.SetActiveSlot(slotIndex);
 
-      public void HandleSlotDrop(int slotIndex, DragEventArgs e) => videoPanel.HandleSlotDrop(slotIndex, e);
+      public void HandleSlotDrop(int slotIndex, DragEventArgs e) => videoLayoutPanel.HandleSlotDrop(slotIndex, e);
 
       /// <summary>Called by MainWindow once the window is open and sized to restore all saved UI state.</summary>
       public void OnWindowOpened(double windowWidth)
@@ -240,31 +216,25 @@ namespace Vao.Sample
 
       private void WireVideoPanel()
       {
-         videoPanel.RtspStreamRequested += (_, url) => RtspStreamRequested?.Invoke(this, url);
-         videoPanel.SlotRtspStreamRequested += (_, e) => SlotRtspStreamRequested?.Invoke(this, e);
-         videoPanel.SubChannelChanged += (_, isSubChannel) =>
+         videoLayoutPanel.SubChannelChanged += (_, isSubChannel) =>
          {
             if (mIsLoadingSettings) return;
             if (IsStarted && mCurrentCamera != null)
                SelectCamera(mCurrentCamera.ComponentNumber, isSubChannel ? 2 : 1);
          };
-         videoPanel.CameraSelectedFromMenu += (_, cameraNo) => SelectCamera(cameraNo, videoPanel.GetStreamNo());
-         videoPanel.LayoutChanging += (_, args) =>
-         {
-            VideoLayoutChanging?.Invoke(this, args);
-         };
-         videoPanel.LayoutChanged += (_, args) =>
+         videoLayoutPanel.CameraSelectedFromMenu += (_, cameraNo) => SelectCamera(cameraNo, videoLayoutPanel.GetStreamNo());
+         videoLayoutPanel.LayoutChanged += (_, args) =>
          {
             if (!mIsLoadingSettings) SaveSettings();
-            VideoLayoutChanged?.Invoke(this, args);
          };
-         videoPanel.ActiveSlotChanged += (_, slotIndex) =>
+         videoLayoutPanel.ActiveSlotChanged += (_, slotIndex) =>
          {
-            var slotCamera = videoPanel.GetActiveCamera();
+            var slotCamera = videoLayoutPanel.GetActiveCamera();
             if (slotCamera != null)
                CurrentCamera = slotCamera;
          };
-         videoPanel.SetCameraListProvider(
+         videoLayoutPanel.VlcLogGenerated += (_, e) => WriteMessageLog(MessageSource.LibVlc, e.Message, e.Level);
+         videoLayoutPanel.SetCameraListProvider(
             () => mFlexApiClient?.GetCameraList(),
             () => cameraSelectorPanel.Items);
       }
@@ -273,7 +243,7 @@ namespace Vao.Sample
       {
          cameraSelectorPanel.CameraSelected += (_, cameraNo) =>
          {
-            int streamNo = videoPanel.GetStreamNo();
+            int streamNo = videoLayoutPanel.GetStreamNo();
             SelectCamera(cameraNo, streamNo);
          };
          cameraSelectorPanel.LayoutChanged += (_, _) => { if (!mIsLoadingSettings) SaveSettings(); };
@@ -322,7 +292,7 @@ namespace Vao.Sample
          {
             if (string.IsNullOrEmpty(url)) return;
             var cameraNo = mCurrentCamera?.ComponentNumber ?? 0;
-            videoPanel.ShowPlaybackStream(url, cameraNo);
+            videoLayoutPanel.ShowPlaybackStream(url, cameraNo);
             IsPlaybackStarted = true;
             UpdateEnabled();
          };
@@ -330,14 +300,14 @@ namespace Vao.Sample
          {
             IsPlaybackStarted = false;
             if (mCurrentCamera != null)
-               SelectCamera(mCurrentCamera.ComponentNumber, videoPanel.GetStreamNo());
+               SelectCamera(mCurrentCamera.ComponentNumber, videoLayoutPanel.GetStreamNo());
             UpdateEnabled();
          };
          playbackControlPanel.GotoTimeRequested += (_, url) =>
          {
             if (string.IsNullOrEmpty(url)) return;
             var cameraNo = mCurrentCamera?.ComponentNumber ?? 0;
-            videoPanel.ShowPlaybackStream(url, cameraNo);
+            videoLayoutPanel.ShowPlaybackStream(url, cameraNo);
             IsPlaybackStarted = true;
             UpdateEnabled();
          };
@@ -446,7 +416,7 @@ namespace Vao.Sample
             LoadSettings();
             UpdateUserInitial();
             messageLogPanel.RefreshColors();
-            videoPanel.RefreshHeaderState(IsStarted, mCurrentCamera, IsPlayback, IsPlaybackStarted);
+            videoLayoutPanel.RefreshHeaderState(IsStarted, mCurrentCamera, IsPlayback, IsPlaybackStarted);
 
             if (mPendingConnectAfterSettings)
             {
@@ -482,7 +452,10 @@ namespace Vao.Sample
       private void UpdateVideoSurfaceForOverlayState()
       {
          bool anyOverlay = mIsNavigationOverlayVisible || mIsPickerOverlayVisible;
-         AnyOverlayStateChanged?.Invoke(this, anyOverlay);
+         if (anyOverlay)
+            videoLayoutPanel.DetachVideoSurfaces();
+         else
+            videoLayoutPanel.ReattachVideoSurfaces();
       }
 
       // ── Connect / Disconnect ───────────────────────────────────────────────
@@ -505,7 +478,7 @@ namespace Vao.Sample
             return;
          }
 
-         videoPanel.ResetHeader();
+         videoLayoutPanel.ResetHeader();
          mIsConnecting = true;
          UpdateEnabled();
          UpdateUserInitial();
@@ -594,7 +567,7 @@ namespace Vao.Sample
                   if (kvp.Key == 0)
                      SelectCamera(kvp.Value, streamNo);
                   else
-                     videoPanel.RestoreSlotStream(kvp.Key, slotCamera, streamNo);
+                     videoLayoutPanel.RestoreSlotStream(kvp.Key, slotCamera, streamNo);
                }
                if (!anyRestored)
                   WriteMessageLog(MessageSource.Config, "No saved cameras to restore. Select cameras to persist them for next session.", LogLevel.Notice);
@@ -647,7 +620,7 @@ namespace Vao.Sample
          mApiVersion = null;
          mImplementationVersion = null;
 
-         videoPanel.ClearStream();
+         videoLayoutPanel.ClearStream();
          if (txtAppSubtitle != null) txtAppSubtitle.Text = "Not connected";
 
          IsCameraSelected = false;
@@ -694,7 +667,7 @@ namespace Vao.Sample
          if (cameraSelectorPanel != null) cameraSelectorPanel.IsEnabled = canUseConnectedFeatures;
          if (alarmSelectorPanel != null) alarmSelectorPanel.IsEnabled = canUseConnectedFeatures;
 
-         videoPanel.UpdateSubChannelEnabled(canUseConnectedFeatures && !IsPlayback && mCurrentCamera != null && !string.IsNullOrEmpty(mCurrentCamera?.Stream2Resolution));
+         videoLayoutPanel.UpdateSubChannelEnabled(canUseConnectedFeatures && !IsPlayback && mCurrentCamera != null && !string.IsNullOrEmpty(mCurrentCamera?.Stream2Resolution));
 
          if (grpSelectPreset != null) grpSelectPreset.IsEnabled = canUseConnectedFeatures;
          if (playbackControlPanel != null) playbackControlPanel.IsEnabled = canUseConnectedFeatures && ApiSupportsPlayback;
@@ -744,8 +717,8 @@ namespace Vao.Sample
          if (camera == null) return;
 
          CurrentCamera = camera;
-         videoPanel.ShowLiveStream(camera, streamNo);
-         ConfigurationManager.Instance.SlotCameras = videoPanel.GetSlotCameraMap();
+         videoLayoutPanel.ShowLiveStream(camera, streamNo);
+         ConfigurationManager.Instance.SlotCameras = videoLayoutPanel.GetSlotCameraMap();
       }
 
       private void SelectAlarm(int alarmNo)
@@ -1018,7 +991,7 @@ namespace Vao.Sample
       private void LoadSettings()
       {
          var cfg = ConfigurationManager.Instance;
-         videoPanel.SetSubChannelChecked(cfg.PreferSubChannel, suppressEvent: true);
+         videoLayoutPanel.SetSubChannelChecked(cfg.PreferSubChannel, suppressEvent: true);
          UpdateUserInitial();
 
          var filters = new Dictionary<AlarmGeneralStatus, bool>
@@ -1033,7 +1006,7 @@ namespace Vao.Sample
 
          // Restore the saved layout
          if (!string.IsNullOrWhiteSpace(cfg.SelectedLayout))
-            videoPanel.SetLayout(cfg.SelectedLayout);
+            videoLayoutPanel.SetLayout(cfg.SelectedLayout);
       }
 
        private void SaveSettings()
@@ -1056,9 +1029,9 @@ namespace Vao.Sample
          cfg.ShowPassiveAlarms     = alarmFilters.GetValueOrDefault(AlarmGeneralStatus.Inactive, true);
          cfg.ShowDisabledAlarms    = alarmFilters.GetValueOrDefault(AlarmGeneralStatus.Disabled, true);
 
-         cfg.SelectedLayout = videoPanel.CurrentLayoutKey;
+         cfg.SelectedLayout = videoLayoutPanel.CurrentLayoutKey;
          if (IsStarted)
-            cfg.SlotCameras = videoPanel.GetSlotCameraMap();
+            cfg.SlotCameras = videoLayoutPanel.GetSlotCameraMap();
       }
 
       // ── User Profile / Theme ───────────────────────────────────────────────
@@ -1206,7 +1179,7 @@ namespace Vao.Sample
       private void ApplySharedThemeRefresh()
       {
          messageLogPanel.RefreshColors();
-         videoPanel.RefreshHeaderState(IsStarted, mCurrentCamera, IsPlayback, IsPlaybackStarted);
+         videoLayoutPanel.RefreshHeaderState(IsStarted, mCurrentCamera, IsPlayback, IsPlaybackStarted);
          SaveSettings();
          UpdateThemeMenus();
       }
