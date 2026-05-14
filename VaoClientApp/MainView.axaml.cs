@@ -122,7 +122,11 @@ namespace Vao.Sample
 
       public void HandleWindowResize(double width) => ApplyResponsiveSidebarLayout(width);
 
-      public void SaveCurrentSettings() => SaveSettings();
+      public void SaveCurrentSettings()
+      {
+         SaveSettings();
+         ConfigurationManager.Instance.Flush();
+      }
 
       public void StopClient()
       {
@@ -162,8 +166,7 @@ namespace Vao.Sample
       public void AssignCameraHotkey(int slot)
       {
          if (mCurrentCamera == null) return;
-         AppSettings.Default.CameraHotkeys[slot] = mCurrentCamera.ComponentNumber;
-         SaveSettings();
+         ConfigurationManager.Instance.SetCameraHotkey(slot, mCurrentCamera.ComponentNumber);
          WriteMessageLog(MessageSource.Config, $"Camera {mCurrentCamera.ComponentNumber} assigned to slot {slot} (Ctrl+{slot})", LogLevel.Notice);
       }
 
@@ -177,18 +180,28 @@ namespace Vao.Sample
       public void OnWindowOpened(double windowWidth)
       {
          UpdateThemeMenus();
-         var s = AppSettings.Default;
-         expCameraControl.IsExpanded = s.IsCameraControlExpanded;
-         expCameraSelection.IsExpanded = s.IsCameraSelectionExpanded;
-         expPresetSelection.IsExpanded = s.IsPresetSelectionExpanded;
-         expAlarms.IsExpanded = s.IsAlarmsExpanded;
-         expPlaybackSelection.IsExpanded = s.IsPlaybackSelectionExpanded;
-         expDownloadRecording.IsExpanded = s.IsDownloadRecordingExpanded;
+         var cfg = ConfigurationManager.Instance;
+         expCameraControl.IsExpanded = cfg.IsCameraControlExpanded;
+         expCameraSelection.IsExpanded = cfg.IsCameraSelectionExpanded;
+         expPresetSelection.IsExpanded = cfg.IsPresetSelectionExpanded;
+         expAlarms.IsExpanded = cfg.IsAlarmsExpanded;
+         expPlaybackSelection.IsExpanded = cfg.IsPlaybackSelectionExpanded;
+         expDownloadRecording.IsExpanded = cfg.IsDownloadRecordingExpanded;
 
-         SetSidebarCollapsed(s.IsSidebarCollapsed, persistSetting: false);
+         // Save settings whenever an expander is toggled so state persists even if the app is killed
+         foreach (var exp in new[] { expCameraControl, expCameraSelection, expPresetSelection, expAlarms, expPlaybackSelection, expDownloadRecording })
+         {
+            exp.PropertyChanged += (_, e) =>
+            {
+               if (e.Property.Name == nameof(Expander.IsExpanded) && !mIsLoadingSettings)
+                  SaveSettings();
+            };
+         }
+
+         SetSidebarCollapsed(cfg.IsSidebarCollapsed, persistSetting: false);
          ApplyResponsiveSidebarLayout(windowWidth);
 
-         if (s.AutoConnectOnStartup)
+         if (cfg.AutoConnectOnStartup)
             btnConnect_Click(null, null);
       }
 
@@ -242,7 +255,7 @@ namespace Vao.Sample
          };
          videoPanel.LayoutChanged += (_, args) =>
          {
-            SaveSettings();
+            if (!mIsLoadingSettings) SaveSettings();
             VideoLayoutChanged?.Invoke(this, args);
          };
          videoPanel.ActiveSlotChanged += (_, slotIndex) =>
@@ -263,7 +276,7 @@ namespace Vao.Sample
             int streamNo = videoPanel.GetStreamNo();
             SelectCamera(cameraNo, streamNo);
          };
-         cameraSelectorPanel.LayoutChanged += (_, _) => SaveSettings();
+         cameraSelectorPanel.LayoutChanged += (_, _) => { if (!mIsLoadingSettings) SaveSettings(); };
          cameraSelectorPanel.InitializeDragSupport();
       }
 
@@ -276,7 +289,7 @@ namespace Vao.Sample
             var alarmPage = new AlarmActionPage(mCurrentAlarm) { NavigationService = mNavigationService };
             mNavigationService.NavigateTo(alarmPage);
          };
-         alarmSelectorPanel.LayoutChanged += (_, _) => SaveSettings();
+         alarmSelectorPanel.LayoutChanged += (_, _) => { if (!mIsLoadingSettings) SaveSettings(); };
          alarmSelectorPanel.ActiveAlarmStateChanged += (_, _) => UpdateAlarmSidebarIcon();
       }
 
@@ -394,7 +407,7 @@ namespace Vao.Sample
          var defaultHeight = AppConstants.Default.ResizableSidebarMenuDefaultHeight;
          var minHeight = AppConstants.Default.ResizableSidebarMenuMinHeight;
          var maxHeight = AppConstants.Default.ResizableSidebarMenuMaxHeight;
-         var settings = AppSettings.Default;
+         var settings = ConfigurationManager.Instance;
 
          double ResolveTargetHeight(double savedHeight, double currentHeight)
          {
@@ -438,8 +451,8 @@ namespace Vao.Sample
             if (mPendingConnectAfterSettings)
             {
                mPendingConnectAfterSettings = false;
-               var s = AppSettings.Default;
-               if (!IsStarted && s.HasAnyConnectionAlternative() && !string.IsNullOrWhiteSpace(s.User) && !string.IsNullOrWhiteSpace(s.Password))
+               var cfg = ConfigurationManager.Instance;
+               if (!IsStarted && cfg.HasAnyConnectionAlternative() && !string.IsNullOrWhiteSpace(cfg.User) && !string.IsNullOrWhiteSpace(cfg.Password))
                   btnConnect_Click(null, null);
             }
          }
@@ -481,8 +494,8 @@ namespace Vao.Sample
          SaveSettings();
          if (!ValidateCanConnect()) return;
 
-         var s = AppSettings.Default;
-         var endpoints = s.GetConnectionAlternatives()
+         var cfg = ConfigurationManager.Instance;
+         var endpoints = cfg.GetConnectionAlternatives()
             .Where(c => !string.IsNullOrWhiteSpace(c.Host) && !string.IsNullOrWhiteSpace(c.Port))
             .ToList();
 
@@ -511,15 +524,15 @@ namespace Vao.Sample
             foreach (var endpoint in endpoints)
             {
                var candidateClient = new FlexApiClient
-               {
-                  Host = endpoint.Host,
-                  Port = endpoint.Port,
-                  Password = s.Password,
-                  User = s.User,
-                  UseHttps = s.UseHttps,
-                  IgnoreCertificateErrors = true,
-                  ConnectionTimeoutMs = 8000
-               };
+                {
+                   Host = endpoint.Host,
+                   Port = endpoint.Port,
+                   Password = cfg.Password,
+                   User = cfg.User,
+                   UseHttps = cfg.UseHttps,
+                   IgnoreCertificateErrors = true,
+                   ConnectionTimeoutMs = 8000
+                };
                candidateClient.OnMessage += OnFlexApiClientMessage;
 
                WriteMessageLog(MessageSource.FlexApi, $"Trying {endpoint.Host}:{endpoint.Port}...", LogLevel.Notice);
@@ -556,8 +569,8 @@ namespace Vao.Sample
             {
                mFlexApiClient = connectClient;
                mConnectedEndpointDisplay = $"{connectedEndpoint?.Host}:{connectedEndpoint?.Port}";
-               if (connectedEndpoint != null && s.PromoteConnectionAlternativeToTop(connectedEndpoint.Host, connectedEndpoint.Port))
-                  s.Save();
+               if (connectedEndpoint != null)
+                     cfg.PromoteConnectionAlternativeToTop(connectedEndpoint.Host, connectedEndpoint.Port);
 
                IsStarted = true;
                WriteMessageLog(MessageSource.FlexApi, $"Client started on {mConnectedEndpointDisplay}.", LogLevel.Notice);
@@ -569,8 +582,8 @@ namespace Vao.Sample
                ClearPresetDropdown();
                UpdateConnectionStatus(connectedEndpoint?.Host, connectedEndpoint?.Port);
 
-               if (AppSettings.Default.CurrentCamera != 0)
-                  SelectCamera(AppSettings.Default.CurrentCamera, AppSettings.Default.PreferSubChannel ? 2 : 1);
+               if (cfg.CurrentCamera != 0)
+                  SelectCamera(cfg.CurrentCamera, cfg.PreferSubChannel ? 2 : 1);
             }
             else
             {
@@ -598,13 +611,9 @@ namespace Vao.Sample
 
       private bool ValidateCanConnect()
       {
-         var s = AppSettings.Default;
-         if (!s.HasAnyConnectionAlternative())
-         { WriteMessageLog(MessageSource.Config, "Missing host name", LogLevel.Error); return false; }
-         if (string.IsNullOrWhiteSpace(s.Password))
-         { WriteMessageLog(MessageSource.Config, "Missing host password", LogLevel.Error); return false; }
-         if (string.IsNullOrWhiteSpace(s.User))
-         { WriteMessageLog(MessageSource.Config, "Missing user name", LogLevel.Error); return false; }
+         var error = ConfigurationManager.Instance.ValidateConnectionSettings();
+         if (error != null)
+         { WriteMessageLog(MessageSource.Config, error, LogLevel.Error); return false; }
          return true;
       }
 
@@ -700,7 +709,7 @@ namespace Vao.Sample
                FillSelectPresetList();
                if (ApiSupportsPlayback)
                   playbackControlPanel.FillRecordings(mCurrentCamera, mViewerID);
-               AppSettings.Default.CurrentCamera = mCurrentCamera.ComponentNumber;
+               ConfigurationManager.Instance.CurrentCamera = mCurrentCamera.ComponentNumber;
             }
             else
             {
@@ -945,8 +954,7 @@ namespace Vao.Sample
 
          if (persistSetting)
          {
-            AppSettings.Default.IsSidebarCollapsed = collapsed;
-            SaveSettings();
+            ConfigurationManager.Instance.IsSidebarCollapsed = collapsed;
          }
       }
 
@@ -965,7 +973,7 @@ namespace Vao.Sample
             SetSidebarCollapsed(true, persistSetting: false);
             return;
          }
-         SetSidebarCollapsed(AppSettings.Default.IsSidebarCollapsed, persistSetting: false);
+         SetSidebarCollapsed(ConfigurationManager.Instance.IsSidebarCollapsed, persistSetting: false);
       }
 
       private void CollapseAllExpandersExcept(Expander target)
@@ -995,52 +1003,48 @@ namespace Vao.Sample
 
       private void LoadSettings()
       {
-         var s = AppSettings.Default;
-         videoPanel.SetSubChannelChecked(s.PreferSubChannel, suppressEvent: true);
+         var cfg = ConfigurationManager.Instance;
+         videoPanel.SetSubChannelChecked(cfg.PreferSubChannel, suppressEvent: true);
          UpdateUserInitial();
 
          var filters = new Dictionary<AlarmGeneralStatus, bool>
          {
-            { AlarmGeneralStatus.Active, s.ShowActiveAlarms },
-            { AlarmGeneralStatus.Tampered, s.ShowTamperedAlarms },
-            { AlarmGeneralStatus.Acknowledged, s.ShowAcknowledgedAlarms },
-            { AlarmGeneralStatus.Inactive, s.ShowPassiveAlarms },
-            { AlarmGeneralStatus.Disabled, s.ShowDisabledAlarms }
+            { AlarmGeneralStatus.Active, cfg.ShowActiveAlarms },
+            { AlarmGeneralStatus.Tampered, cfg.ShowTamperedAlarms },
+            { AlarmGeneralStatus.Acknowledged, cfg.ShowAcknowledgedAlarms },
+            { AlarmGeneralStatus.Inactive, cfg.ShowPassiveAlarms },
+            { AlarmGeneralStatus.Disabled, cfg.ShowDisabledAlarms }
          };
          alarmSelectorPanel.SetStatusFilters(filters);
 
          // Restore the saved layout
-         if (!string.IsNullOrWhiteSpace(s.SelectedLayout))
-            videoPanel.SetLayout(s.SelectedLayout);
+         if (!string.IsNullOrWhiteSpace(cfg.SelectedLayout))
+            videoPanel.SetLayout(cfg.SelectedLayout);
       }
 
        private void SaveSettings()
       {
-         var s = AppSettings.Default;
-         if (mCurrentCamera != null) s.CurrentCamera = mCurrentCamera.ComponentNumber;
-         if (expCameraControl != null)   s.IsCameraControlExpanded = expCameraControl.IsExpanded;
-         if (expCameraSelection != null) s.IsCameraSelectionExpanded = expCameraSelection.IsExpanded;
-         if (expPresetSelection != null) s.IsPresetSelectionExpanded = expPresetSelection.IsExpanded;
-         if (expAlarms != null)          s.IsAlarmsExpanded = expAlarms.IsExpanded;
-         if (expPlaybackSelection != null) s.IsPlaybackSelectionExpanded = expPlaybackSelection.IsExpanded;
-         if (expDownloadRecording != null) s.IsDownloadRecordingExpanded = expDownloadRecording.IsExpanded;
+         var cfg = ConfigurationManager.Instance;
+         if (mCurrentCamera != null) cfg.CurrentCamera = mCurrentCamera.ComponentNumber;
+         if (expCameraControl != null)   cfg.IsCameraControlExpanded = expCameraControl.IsExpanded;
+         if (expCameraSelection != null) cfg.IsCameraSelectionExpanded = expCameraSelection.IsExpanded;
+         if (expPresetSelection != null) cfg.IsPresetSelectionExpanded = expPresetSelection.IsExpanded;
+         if (expAlarms != null)          cfg.IsAlarmsExpanded = expAlarms.IsExpanded;
+         if (expPlaybackSelection != null) cfg.IsPlaybackSelectionExpanded = expPlaybackSelection.IsExpanded;
+         if (expDownloadRecording != null) cfg.IsDownloadRecordingExpanded = expDownloadRecording.IsExpanded;
 
-         var cameraHeight = cameraSelectorPanel.ListHeight;
-         var alarmHeight = alarmSelectorPanel.ListHeight;
-         if (cameraHeight > 0) s.CameraSidebarMenuHeight = cameraHeight;
-         if (alarmHeight > 0)  s.AlarmSidebarMenuHeight  = alarmHeight;
+         cfg.CameraSidebarMenuHeight = cameraSelectorPanel.ListHeight;
+         cfg.AlarmSidebarMenuHeight = alarmSelectorPanel.ListHeight;
 
          var alarmFilters = alarmSelectorPanel.GetStatusFilters();
-         s.ShowActiveAlarms      = alarmFilters.GetValueOrDefault(AlarmGeneralStatus.Active, true);
-         s.ShowTamperedAlarms    = alarmFilters.GetValueOrDefault(AlarmGeneralStatus.Tampered, true);
-         s.ShowAcknowledgedAlarms = alarmFilters.GetValueOrDefault(AlarmGeneralStatus.Acknowledged, true);
-         s.ShowPassiveAlarms     = alarmFilters.GetValueOrDefault(AlarmGeneralStatus.Inactive, true);
-         s.ShowDisabledAlarms    = alarmFilters.GetValueOrDefault(AlarmGeneralStatus.Disabled, true);
+         cfg.ShowActiveAlarms      = alarmFilters.GetValueOrDefault(AlarmGeneralStatus.Active, true);
+         cfg.ShowTamperedAlarms    = alarmFilters.GetValueOrDefault(AlarmGeneralStatus.Tampered, true);
+         cfg.ShowAcknowledgedAlarms = alarmFilters.GetValueOrDefault(AlarmGeneralStatus.Acknowledged, true);
+         cfg.ShowPassiveAlarms     = alarmFilters.GetValueOrDefault(AlarmGeneralStatus.Inactive, true);
+         cfg.ShowDisabledAlarms    = alarmFilters.GetValueOrDefault(AlarmGeneralStatus.Disabled, true);
 
-         s.SelectedLayout = videoPanel.CurrentLayoutKey;
-         s.SlotCameras = videoPanel.GetSlotCameraMap();
-
-         s.Save();
+         cfg.SelectedLayout = videoPanel.CurrentLayoutKey;
+         cfg.SlotCameras = videoPanel.GetSlotCameraMap();
       }
 
       // ── User Profile / Theme ───────────────────────────────────────────────
@@ -1049,7 +1053,7 @@ namespace Vao.Sample
 
       private void UpdateUserInitial()
       {
-         string username = AppSettings.Default.User?.Trim() ?? "";
+         string username = ConfigurationManager.Instance.User?.Trim() ?? "";
          var txtMenuUsernameCtrl = this.FindControl<TextBlock>("txtMenuUsername");
          var menuItemLoginCtrl   = this.FindControl<MenuItem>("menuItemLogin");
          var menuItemLogoutCtrl  = this.FindControl<MenuItem>("menuItemLogout");
@@ -1078,8 +1082,8 @@ namespace Vao.Sample
 
       private void menuItemLogin_Click(object sender, RoutedEventArgs e)
       {
-         var s = AppSettings.Default;
-         if (!s.HasAnyConnectionAlternative() || string.IsNullOrWhiteSpace(s.User) || string.IsNullOrWhiteSpace(s.Password))
+         var cfg = ConfigurationManager.Instance;
+         if (!cfg.HasAnyConnectionAlternative() || string.IsNullOrWhiteSpace(cfg.User) || string.IsNullOrWhiteSpace(cfg.Password))
          {
             mPendingConnectAfterSettings = true;
             OpenSettingsPage();
@@ -1152,7 +1156,7 @@ namespace Vao.Sample
       private List<object> BuildThemeSelectionMenuItems()
       {
          if (mApp == null) return new List<object>();
-         var selectedKey = AppSettings.Default.GetPreferredThemeKey();
+         var selectedKey = ConfigurationManager.Instance.GetPreferredThemeKey();
          var items = new List<object>();
          foreach (var option in mApp.GetThemeOptions())
          {

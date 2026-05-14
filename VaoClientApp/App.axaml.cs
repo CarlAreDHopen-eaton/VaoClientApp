@@ -24,7 +24,7 @@ namespace Vao.Sample
       public override void Initialize()
       {
          AvaloniaXamlLoader.Load(this);
-         ApplyTheme(AppSettings.Default.GetPreferredThemeKey(), persistSelection: false);
+         ApplyTheme(ConfigurationManager.Instance.GetPreferredThemeKey(), persistSelection: false);
       }
 
       public void ApplyTheme(string themeKey, bool persistSelection = true)
@@ -32,14 +32,13 @@ namespace Vao.Sample
          if (Resources == null)
             return;
 
-         var settings = AppSettings.Default;
          var theme = ThemeCatalog.Reload().GetThemeOrDefault(themeKey, false, true);
 
          mCurrentTheme = theme;
          RequestedThemeVariant = theme.IsDark ? ThemeVariant.Dark : ThemeVariant.Light;
 
          if (persistSelection)
-            settings.SelectedTheme = theme.Key;
+            ConfigurationManager.Instance.SelectedTheme = theme.Key;
 
          ApplyColorResources(theme);
          ApplyLayoutResources(theme);

@@ -186,7 +186,7 @@ namespace Vao.Sample
          return true;
       }
 
-      private void NormalizeConnections()
+      public void NormalizeConnections()
       {
          if (ConnectionAlternatives == null)
             ConnectionAlternatives = new List<ConnectionAlternative>();
