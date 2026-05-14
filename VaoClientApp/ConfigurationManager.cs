@@ -96,12 +96,6 @@ namespace Vao.Sample
 
       // ── Camera / Video ──────────────────────────────────────────────────────
 
-      public int CurrentCamera
-      {
-         get => Settings.CurrentCamera;
-         set { Settings.CurrentCamera = value; MarkDirty(); }
-      }
-
       public bool PreferSubChannel
       {
          get => Settings.PreferSubChannel;

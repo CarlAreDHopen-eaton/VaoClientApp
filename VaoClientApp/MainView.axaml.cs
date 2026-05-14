@@ -582,8 +582,22 @@ namespace Vao.Sample
                ClearPresetDropdown();
                UpdateConnectionStatus(connectedEndpoint?.Host, connectedEndpoint?.Port);
 
-               if (cfg.CurrentCamera != 0)
-                  SelectCamera(cfg.CurrentCamera, cfg.PreferSubChannel ? 2 : 1);
+               var slotCameras = cfg.SlotCameras;
+               int streamNo = cfg.PreferSubChannel ? 2 : 1;
+               bool anyRestored = false;
+               foreach (var kvp in slotCameras)
+               {
+                  if (kvp.Value == 0) continue;
+                  var slotCamera = cameraList?.FirstOrDefault(c => c.ComponentNumber == kvp.Value);
+                  if (slotCamera == null) continue;
+                  anyRestored = true;
+                  if (kvp.Key == 0)
+                     SelectCamera(kvp.Value, streamNo);
+                  else
+                     videoPanel.RestoreSlotStream(kvp.Key, slotCamera, streamNo);
+               }
+               if (!anyRestored)
+                  WriteMessageLog(MessageSource.Config, "No saved cameras to restore. Select cameras to persist them for next session.", LogLevel.Notice);
             }
             else
             {
@@ -709,7 +723,6 @@ namespace Vao.Sample
                FillSelectPresetList();
                if (ApiSupportsPlayback)
                   playbackControlPanel.FillRecordings(mCurrentCamera, mViewerID);
-               ConfigurationManager.Instance.CurrentCamera = mCurrentCamera.ComponentNumber;
             }
             else
             {
@@ -732,6 +745,7 @@ namespace Vao.Sample
 
          CurrentCamera = camera;
          videoPanel.ShowLiveStream(camera, streamNo);
+         ConfigurationManager.Instance.SlotCameras = videoPanel.GetSlotCameraMap();
       }
 
       private void SelectAlarm(int alarmNo)
@@ -1025,7 +1039,6 @@ namespace Vao.Sample
        private void SaveSettings()
       {
          var cfg = ConfigurationManager.Instance;
-         if (mCurrentCamera != null) cfg.CurrentCamera = mCurrentCamera.ComponentNumber;
          if (expCameraControl != null)   cfg.IsCameraControlExpanded = expCameraControl.IsExpanded;
          if (expCameraSelection != null) cfg.IsCameraSelectionExpanded = expCameraSelection.IsExpanded;
          if (expPresetSelection != null) cfg.IsPresetSelectionExpanded = expPresetSelection.IsExpanded;
@@ -1044,7 +1057,8 @@ namespace Vao.Sample
          cfg.ShowDisabledAlarms    = alarmFilters.GetValueOrDefault(AlarmGeneralStatus.Disabled, true);
 
          cfg.SelectedLayout = videoPanel.CurrentLayoutKey;
-         cfg.SlotCameras = videoPanel.GetSlotCameraMap();
+         if (IsStarted)
+            cfg.SlotCameras = videoPanel.GetSlotCameraMap();
       }
 
       // ── User Profile / Theme ───────────────────────────────────────────────
