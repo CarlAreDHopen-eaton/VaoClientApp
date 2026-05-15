@@ -28,113 +28,76 @@ namespace Vao.Sample.Pages
 
         public override void OnNavigatedTo()
         {
-            mOriginalThemeKey = AppSettings.Default.GetPreferredThemeKey();
+            mOriginalThemeKey = ConfigurationManager.Instance.GetPreferredThemeKey();
             LoadSettings();
         }
 
         private void LoadSettings()
         {
-            var s = AppSettings.Default;
-            var txtSystemName = this.FindControl<TextBox>("txtSystemName");
-            var txtUser = this.FindControl<TextBox>("txtUser");
-            var txtPassword = this.FindControl<TextBox>("txtPassword");
-            var chkSecure = this.FindControl<CheckBox>("chkSecure");
-            var chkUseTcp = this.FindControl<CheckBox>("chkUseTcp");
-            var chkPreferSubChannel = this.FindControl<CheckBox>("chkPreferSubChannel");
-            var cmbTheme = this.FindControl<ComboBox>("cmbTheme");
-            var chkAutoConnect = this.FindControl<CheckBox>("chkAutoConnect");
-            var txtFTPUser = this.FindControl<TextBox>("txtFTPUser");
-            var txtFTPPassword = this.FindControl<TextBox>("txtFTPPassword");
-            var txtDownloadPath = this.FindControl<TextBox>("txtDownloadPath");
+            var cfg = ConfigurationManager.Instance;
             var app = (App)Application.Current;
             var themeOptions = app.GetThemeOptions();
-            var selectedThemeKey = s.GetPreferredThemeKey();
+            var selectedThemeKey = cfg.GetPreferredThemeKey();
 
-            mConnectionAlternatives = s.GetConnectionAlternatives()
-                .Select(c => new ConnectionAlternative
-                {
-                    Host = c.Host,
-                    Port = c.Port
-                })
+            mConnectionAlternatives = cfg.GetConnectionAlternatives()
+                .Select(c => new ConnectionAlternative { Host = c.Host, Port = c.Port })
                 .ToList();
 
-            if (txtSystemName != null) txtSystemName.Text = s.SystemName;
-            if (txtUser != null) txtUser.Text = s.User;
-            if (txtPassword != null) txtPassword.Text = s.Password;
-            if (chkSecure != null) chkSecure.IsChecked = s.UseHttps;
-            if (chkUseTcp != null) chkUseTcp.IsChecked = s.UseTcp;
-            if (chkPreferSubChannel != null) chkPreferSubChannel.IsChecked = s.PreferSubChannel;
-            if (chkAutoConnect != null) chkAutoConnect.IsChecked = s.AutoConnectOnStartup;
-            if (txtFTPUser != null) txtFTPUser.Text = s.FTPUser;
-            if (txtFTPPassword != null) txtFTPPassword.Text = s.FTPPassword;
-            if (txtDownloadPath != null) txtDownloadPath.Text = s.DownloadPath;
+            ConfigurationManager.SetTextBoxValue(this, "txtSystemName", cfg.SystemName);
+            ConfigurationManager.SetTextBoxValue(this, "txtUser", cfg.User);
+            ConfigurationManager.SetTextBoxValue(this, "txtPassword", cfg.Password);
+            ConfigurationManager.SetTextBoxValue(this, "txtFTPUser", cfg.FTPUser);
+            ConfigurationManager.SetTextBoxValue(this, "txtFTPPassword", cfg.FTPPassword);
+            ConfigurationManager.SetTextBoxValue(this, "txtDownloadPath", cfg.DownloadPath);
+            ConfigurationManager.SetCheckBoxValue(this, "chkSecure", cfg.UseHttps);
+            ConfigurationManager.SetCheckBoxValue(this, "chkUseTcp", cfg.UseTcp);
+            ConfigurationManager.SetCheckBoxValue(this, "chkPreferSubChannel", cfg.PreferSubChannel);
+            ConfigurationManager.SetCheckBoxValue(this, "chkAutoConnect", cfg.AutoConnectOnStartup);
+            ConfigurationManager.SetCheckBoxValue(this, "chkShowActiveAlarms", cfg.ShowActiveAlarms);
+            ConfigurationManager.SetCheckBoxValue(this, "chkShowTamperedAlarms", cfg.ShowTamperedAlarms);
+            ConfigurationManager.SetCheckBoxValue(this, "chkShowAcknowledgedAlarms", cfg.ShowAcknowledgedAlarms);
+            ConfigurationManager.SetCheckBoxValue(this, "chkShowPassiveAlarms", cfg.ShowPassiveAlarms);
+            ConfigurationManager.SetCheckBoxValue(this, "chkShowDisabledAlarms", cfg.ShowDisabledAlarms);
+
+            var cmbTheme = this.FindControl<ComboBox>("cmbTheme");
             if (cmbTheme != null)
             {
                 cmbTheme.ItemsSource = themeOptions;
                 cmbTheme.SelectedItem = themeOptions.FirstOrDefault(option => option.Key == selectedThemeKey);
             }
 
-            RefreshConnectionList(s.SelectedConnectionIndex);
-
-            var chkShowActiveAlarms = this.FindControl<CheckBox>("chkShowActiveAlarms");
-            var chkShowTamperedAlarms = this.FindControl<CheckBox>("chkShowTamperedAlarms");
-            var chkShowAcknowledgedAlarms = this.FindControl<CheckBox>("chkShowAcknowledgedAlarms");
-            var chkShowPassiveAlarms = this.FindControl<CheckBox>("chkShowPassiveAlarms");
-            var chkShowDisabledAlarms = this.FindControl<CheckBox>("chkShowDisabledAlarms");
-            if (chkShowActiveAlarms != null) chkShowActiveAlarms.IsChecked = s.ShowActiveAlarms;
-            if (chkShowTamperedAlarms != null) chkShowTamperedAlarms.IsChecked = s.ShowTamperedAlarms;
-            if (chkShowAcknowledgedAlarms != null) chkShowAcknowledgedAlarms.IsChecked = s.ShowAcknowledgedAlarms;
-            if (chkShowPassiveAlarms != null) chkShowPassiveAlarms.IsChecked = s.ShowPassiveAlarms;
-            if (chkShowDisabledAlarms != null) chkShowDisabledAlarms.IsChecked = s.ShowDisabledAlarms;
+            RefreshConnectionList(cfg.SelectedConnectionIndex);
         }
 
         private void SaveSettings()
         {
-            var s = AppSettings.Default;
-            var txtSystemName = this.FindControl<TextBox>("txtSystemName");
-            var txtUser = this.FindControl<TextBox>("txtUser");
-            var txtPassword = this.FindControl<TextBox>("txtPassword");
-            var chkSecure = this.FindControl<CheckBox>("chkSecure");
-            var chkUseTcp = this.FindControl<CheckBox>("chkUseTcp");
-            var chkPreferSubChannel = this.FindControl<CheckBox>("chkPreferSubChannel");
-            var cmbTheme = this.FindControl<ComboBox>("cmbTheme");
-            var lstConnections = this.FindControl<ListBox>("lstConnections");
-            var chkAutoConnect = this.FindControl<CheckBox>("chkAutoConnect");
-            var txtFTPUser = this.FindControl<TextBox>("txtFTPUser");
-            var txtFTPPassword = this.FindControl<TextBox>("txtFTPPassword");
-            var txtDownloadPath = this.FindControl<TextBox>("txtDownloadPath");
-            var selectedTheme = cmbTheme?.SelectedItem as ThemeOption;
-            var selectedConnectionIndex = lstConnections?.SelectedIndex ?? 0;
+            var cfg = ConfigurationManager.Instance;
 
-            s.SystemName = txtSystemName?.Text?.Trim() ?? "";
-            s.User = txtUser?.Text ?? "";
-            s.Password = txtPassword?.Text ?? "";
-            s.UseHttps = chkSecure?.IsChecked == true;
-            s.UseTcp = chkUseTcp?.IsChecked == true;
-            s.PreferSubChannel = chkPreferSubChannel?.IsChecked == true;
-            s.SelectedTheme = selectedTheme?.Key ?? s.GetPreferredThemeKey();
-            s.AutoConnectOnStartup = chkAutoConnect?.IsChecked == true;
-            s.FTPUser = txtFTPUser?.Text ?? "";
-            s.FTPPassword = txtFTPPassword?.Text ?? "";
-            s.DownloadPath = txtDownloadPath?.Text ?? "";
-            s.SetConnectionAlternatives(mConnectionAlternatives, selectedConnectionIndex);
+            cfg.SystemName = ConfigurationManager.GetTextBoxValue(this, "txtSystemName");
+            cfg.User = ConfigurationManager.GetTextBoxValue(this, "txtUser");
+            cfg.Password = ConfigurationManager.GetTextBoxValue(this, "txtPassword");
+            cfg.FTPUser = ConfigurationManager.GetTextBoxValue(this, "txtFTPUser");
+            cfg.FTPPassword = ConfigurationManager.GetTextBoxValue(this, "txtFTPPassword");
+            cfg.DownloadPath = ConfigurationManager.GetTextBoxValue(this, "txtDownloadPath");
+            cfg.UseHttps = ConfigurationManager.GetCheckBoxValue(this, "chkSecure");
+            cfg.UseTcp = ConfigurationManager.GetCheckBoxValue(this, "chkUseTcp");
+            cfg.PreferSubChannel = ConfigurationManager.GetCheckBoxValue(this, "chkPreferSubChannel");
+            cfg.AutoConnectOnStartup = ConfigurationManager.GetCheckBoxValue(this, "chkAutoConnect");
+            cfg.ShowActiveAlarms = ConfigurationManager.GetCheckBoxValue(this, "chkShowActiveAlarms");
+            cfg.ShowTamperedAlarms = ConfigurationManager.GetCheckBoxValue(this, "chkShowTamperedAlarms");
+            cfg.ShowAcknowledgedAlarms = ConfigurationManager.GetCheckBoxValue(this, "chkShowAcknowledgedAlarms");
+            cfg.ShowPassiveAlarms = ConfigurationManager.GetCheckBoxValue(this, "chkShowPassiveAlarms");
+            cfg.ShowDisabledAlarms = ConfigurationManager.GetCheckBoxValue(this, "chkShowDisabledAlarms");
 
-            var chkShowActiveAlarms = this.FindControl<CheckBox>("chkShowActiveAlarms");
-            var chkShowTamperedAlarms = this.FindControl<CheckBox>("chkShowTamperedAlarms");
-            var chkShowAcknowledgedAlarms = this.FindControl<CheckBox>("chkShowAcknowledgedAlarms");
-            var chkShowPassiveAlarms = this.FindControl<CheckBox>("chkShowPassiveAlarms");
-            var chkShowDisabledAlarms = this.FindControl<CheckBox>("chkShowDisabledAlarms");
-            s.ShowActiveAlarms = chkShowActiveAlarms?.IsChecked == true;
-            s.ShowTamperedAlarms = chkShowTamperedAlarms?.IsChecked == true;
-            s.ShowAcknowledgedAlarms = chkShowAcknowledgedAlarms?.IsChecked == true;
-            s.ShowPassiveAlarms = chkShowPassiveAlarms?.IsChecked == true;
-            s.ShowDisabledAlarms = chkShowDisabledAlarms?.IsChecked == true;
+            var selectedTheme = this.FindControl<ComboBox>("cmbTheme")?.SelectedItem as ThemeOption;
+            cfg.SelectedTheme = selectedTheme?.Key ?? cfg.GetPreferredThemeKey();
+            cfg.SetConnectionAlternatives(mConnectionAlternatives, ConfigurationManager.GetListBoxSelectedIndex(this, "lstConnections"));
 
-            s.Save();
-            mOriginalThemeKey = s.SelectedTheme;
-            
+            cfg.Flush();
+            mOriginalThemeKey = cfg.SelectedTheme;
+
             // Apply the theme to ensure it's fully applied with persistence
-            ((App)Application.Current).ApplyTheme(s.SelectedTheme, persistSelection: true);
+            ((App)Application.Current).ApplyTheme(cfg.SelectedTheme, persistSelection: true);
             mSettingsSaved = true;
         }
 

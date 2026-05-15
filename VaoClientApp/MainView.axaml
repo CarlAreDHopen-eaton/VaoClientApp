@@ -239,7 +239,7 @@
                 </Button>
 
                 <!-- Video area -->
-                <controls:VideoPanel x:Name="videoPanel"/>
+                <controls:VideoLayoutPanel x:Name="videoLayoutPanel"/>
             </Grid>
 
             <!-- Picker overlay (date/time) -->

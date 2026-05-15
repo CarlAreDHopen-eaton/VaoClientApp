@@ -351,6 +351,13 @@ namespace Vao.Sample.Controls
          mSlots[slotIndex].Camera = camera;
       }
 
+      /// <summary>Restores a live stream to a specific slot at startup without changing the active slot selection.</summary>
+      public void RestoreSlotStream(int slotIndex, Camera camera, int streamNo)
+      {
+         if (slotIndex < 0 || slotIndex >= C_MAX_SLOT_COUNT) return;
+         ShowLiveStreamOnSlot(slotIndex, camera, streamNo);
+      }
+
       public void RefreshHeaderState(bool isStarted, Camera camera, bool isPlayback, bool isPlaybackStarted)
       {
          if (!IsSingleView)
@@ -754,7 +761,7 @@ namespace Vao.Sample.Controls
 
       private static int GetCameraHotkeySlot(int cameraNumber)
       {
-         var hotkeys = AppSettings.Default.CameraHotkeys;
+         var hotkeys = ConfigurationManager.Instance.CameraHotkeys;
          if (hotkeys == null) return -1;
          foreach (var kvp in hotkeys)
             if (kvp.Value == cameraNumber) return kvp.Key;

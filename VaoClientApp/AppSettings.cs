@@ -36,7 +36,6 @@ namespace Vao.Sample
       public string DownloadPath { get; set; } = "";
       public string FTPUser { get; set; } = "";
       public string FTPPassword { get; set; } = "";
-      public int CurrentCamera { get; set; } = 0;
       public bool UseTcp { get; set; } = false;
       public bool AutoConnectOnStartup { get; set; } = false;
       public bool PreferSubChannel { get; set; } = true;
@@ -186,7 +185,7 @@ namespace Vao.Sample
          return true;
       }
 
-      private void NormalizeConnections()
+      public void NormalizeConnections()
       {
          if (ConnectionAlternatives == null)
             ConnectionAlternatives = new List<ConnectionAlternative>();

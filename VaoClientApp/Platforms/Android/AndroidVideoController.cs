@@ -106,10 +106,20 @@ internal sealed class AndroidVideoController
       // Capture slotIndex in closures.
       int capturedIndex = slotIndex;
       state.MediaPlayer.EncounteredError += (s, e) =>
+      {
          mMainView.WriteMessageLog(MessageSource.LibVlc,
             $"LibVLC error on slot {capturedIndex} ({state.ActiveRtspUrl ?? "no url"}) — " +
             $"if other slots play fine this slot may have exceeded the hardware decoder limit.",
             LogLevel.Error);
+         ScheduleReconnect(capturedIndex, state);
+      };
+      state.MediaPlayer.EndReached += (s, e) =>
+      {
+         mMainView.WriteMessageLog(MessageSource.LibVlc,
+            $"LibVLC stream ended on slot {capturedIndex} — reconnecting",
+            LogLevel.Notice);
+         ScheduleReconnect(capturedIndex, state);
+      };
       state.MediaPlayer.Opening += (s, e) =>
          mMainView.WriteMessageLog(MessageSource.LibVlc,
             $"LibVLC opening {state.MediaPlayer?.Media?.Mrl ?? ""} (slot {capturedIndex})", LogLevel.Notice);
@@ -315,7 +325,7 @@ internal sealed class AndroidVideoController
 
          var uri   = new Uri(rtspUrl);
          var media = new Media(mLibVlc, uri);
-         if (AppSettings.Default.UseTcp) media.AddOption(":rtsp-tcp");
+         if (ConfigurationManager.Instance.UseTcp) media.AddOption(":rtsp-tcp");
 
          // Most Android devices support only 1–4 simultaneous hardware decode
          // sessions.  Slot 0 keeps hardware decode (lowest latency); additional
@@ -414,6 +424,25 @@ internal sealed class AndroidVideoController
             state.IsVideoTemporarilyDetached = false;
             ShowVideoView(state);
          }
+      });
+   }
+
+   // ── Reconnect ────────────────────────────────────────────────────────────
+
+   /// <summary>
+   /// Schedules a stream restart after a short delay.  Only fires if playback
+   /// was not intentionally stopped (IsVideoStarted still true).
+   /// </summary>
+   private void ScheduleReconnect(int slotIndex, SlotVideoState state)
+   {
+      Task.Delay(2000).ContinueWith(_ =>
+      {
+         if (!state.IsVideoStarted || state.ActiveRtspUrl == null) return;
+         var url = state.ActiveRtspUrl;
+         mMainView.WriteMessageLog(MessageSource.LibVlc,
+            $"Reconnecting slot {slotIndex}: {url}",
+            LogLevel.Notice);
+         StartRtspStream(slotIndex, url);
       });
    }
 

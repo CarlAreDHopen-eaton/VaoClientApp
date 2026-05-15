@@ -24,7 +24,7 @@ namespace Vao.Sample
       public override void Initialize()
       {
          AvaloniaXamlLoader.Load(this);
-         ApplyTheme(AppSettings.Default.GetPreferredThemeKey(), persistSelection: false);
+         ApplyTheme(ConfigurationManager.Instance.GetPreferredThemeKey(), persistSelection: false);
       }
 
       public void ApplyTheme(string themeKey, bool persistSelection = true)
@@ -32,14 +32,13 @@ namespace Vao.Sample
          if (Resources == null)
             return;
 
-         var settings = AppSettings.Default;
          var theme = ThemeCatalog.Reload().GetThemeOrDefault(themeKey, false, true);
 
          mCurrentTheme = theme;
          RequestedThemeVariant = theme.IsDark ? ThemeVariant.Dark : ThemeVariant.Light;
 
          if (persistSelection)
-            settings.SelectedTheme = theme.Key;
+            ConfigurationManager.Instance.SelectedTheme = theme.Key;
 
          ApplyColorResources(theme);
          ApplyLayoutResources(theme);
@@ -132,24 +131,24 @@ namespace Vao.Sample
             return CurrentTheme;
          }
 
-         var currentThemeKey = AppSettings.Default.GetPreferredThemeKey();
-         var currentIndex = themes.FindIndex(theme => string.Equals(theme.Key, currentThemeKey, StringComparison.OrdinalIgnoreCase));
-         var nextIndex = currentIndex < 0 ? 0 : (currentIndex + 1) % themes.Count;
-         var nextTheme = themes[nextIndex];
+         var currentThemeKey = ConfigurationManager.Instance.GetPreferredThemeKey();
+          var currentIndex = themes.FindIndex(theme => string.Equals(theme.Key, currentThemeKey, StringComparison.OrdinalIgnoreCase));
+          var nextIndex = currentIndex < 0 ? 0 : (currentIndex + 1) % themes.Count;
+          var nextTheme = themes[nextIndex];
 
-         ApplyTheme(nextTheme.Key);
-         return nextTheme;
-      }
+          ApplyTheme(nextTheme.Key);
+          return nextTheme;
+       }
 
-      public ThemeDefinition GetNextThemeInCycle()
-      {
-         var catalog = ThemeCatalog.Reload();
-         var themes = catalog.Themes;
+       public ThemeDefinition GetNextThemeInCycle()
+       {
+          var catalog = ThemeCatalog.Reload();
+          var themes = catalog.Themes;
 
-         if (themes == null || themes.Count == 0)
-            return CurrentTheme;
+          if (themes == null || themes.Count == 0)
+             return CurrentTheme;
 
-         var currentThemeKey = AppSettings.Default.GetPreferredThemeKey();
+          var currentThemeKey = ConfigurationManager.Instance.GetPreferredThemeKey();
          var currentIndex = themes.FindIndex(theme => string.Equals(theme.Key, currentThemeKey, StringComparison.OrdinalIgnoreCase));
          var nextIndex = currentIndex < 0 ? 0 : (currentIndex + 1) % themes.Count;
          return themes[nextIndex];
