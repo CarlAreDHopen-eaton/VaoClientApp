@@ -30,7 +30,6 @@ namespace Vao.Sample
       private bool mIsPlaybackStarted;
       private bool mApiSupportsPlayback;
       private ApiVersion mApiVersion;
-      private ImplementationVersion mImplementationVersion;
       private FlexApiClient mFlexApiClient;
       private Guid mViewerID = Guid.NewGuid();
       private Camera mCurrentCamera;
@@ -618,7 +617,6 @@ namespace Vao.Sample
 
          mConnectedEndpointDisplay = string.Empty;
          mApiVersion = null;
-         mImplementationVersion = null;
 
          videoLayoutPanel.ClearStream();
          if (txtAppSubtitle != null) txtAppSubtitle.Text = "Not connected";
@@ -822,9 +820,6 @@ namespace Vao.Sample
             if (version >= new Version(1, 1))
                ApiSupportsPlayback = true;
          }
-
-         try { mImplementationVersion = mFlexApiClient?.GetImplementationVersion(); }
-         catch { mImplementationVersion = null; }
 
          UpdateEnabled();
       }
@@ -1057,7 +1052,7 @@ namespace Vao.Sample
             tip += $"\n{status}";
             if (IsStarted && !string.IsNullOrEmpty(mConnectedEndpointDisplay)) tip += $"\nServer: {mConnectedEndpointDisplay}";
             if (IsStarted && mApiVersion != null) tip += $"\nAPI: v{mApiVersion.MajorVersion}.{mApiVersion.MinorVersion}";
-            if (IsStarted && mImplementationVersion != null) tip += $"\n{mImplementationVersion.Name}: {mImplementationVersion.Version}";
+            if (IsStarted) tip += $"\n{mFlexApiClient.SystemName}: {mFlexApiClient.SystemVersion}";
             ToolTip.SetTip(btnUserProfile, tip);
             btnUserProfile.Background = IsStarted
                ? GetBrushResource("UserProfileConnectedBackground", "#006BA1")

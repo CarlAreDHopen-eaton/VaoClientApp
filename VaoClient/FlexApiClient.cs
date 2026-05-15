@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
+using System.IO.Enumeration;
 using System.Threading;
 using RestSharp;
 using RestSharp.Authenticators;
@@ -197,6 +197,10 @@ namespace Vao.Client
          if (statusTime != null)
          {
             CurrentUser = GetLoggedInUserInfo();
+
+            // Update the system information.
+            GetSystemInformation();
+
             return true;
          }
          return false;
@@ -227,14 +231,29 @@ namespace Vao.Client
       /// Gets the system implementation version (name and version string).
       /// </summary>
       /// <returns></returns>
-      public ImplementationVersion GetImplementationVersion()
+      public SystemInformation GetSystemInformation()
       {
-         return this.ExecuteGetImplementationVersion();
+         SystemInformation systemInfo =  this.ExecuteGetImplementationVersion();
+         if (systemInfo != null)
+         {
+            SystemName = systemInfo.SystemName ?? "HERNIS FLEX System";
+            SystemId = systemInfo.SystemId ?? "";
+            SystemVersion = systemInfo.Version ?? "";
+            SystemType = systemInfo.Name ?? "";
+         }
+
+         return systemInfo;
       }
+
+      public string SystemName { get; set; }
+      public string SystemId { get; set; }
+      public string SystemVersion { get; set; }
+      public string SystemType { get; set; }
 
       /// <summary>
       /// Stops  the client.
       /// </summary>
+      /// <seealso cref="StartClient"/>
       public void StopClient()
       {
          mStopLoadData.Set();
@@ -244,6 +263,11 @@ namespace Vao.Client
             mFeedbackHandler.Stop();
             mFeedbackHandler = null;
          }
+
+         SystemVersion = "";
+         SystemId = "";
+         SystemName = "";
+         SystemType = "";
 
          mDataManager.ClearDataManager();
 

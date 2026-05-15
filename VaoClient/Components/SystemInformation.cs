@@ -2,7 +2,7 @@ using Vao.Client.Contracts;
 
 namespace Vao.Client.Components
 {
-   public class ImplementationVersion : BaseComponent
+   public class SystemInformation : BaseComponent
    {
       #region Private Members
 
@@ -10,16 +10,19 @@ namespace Vao.Client.Components
 
       private string mName;
       private string mVersion;
-
+      private string mSystemName;
+      private string mSystemId;
       #endregion
 
       #region Constructor
 
-      internal ImplementationVersion(JsonImplementationVersion jsonObject, FlexApiClient flexApiClient)
+      internal SystemInformation(JsonImplementationVersion jsonObject, FlexApiClient flexApiClient)
          : base(flexApiClient, mCurrentComponentNumber)
       {
          mName = jsonObject.name;
          mVersion = jsonObject.version;
+         mSystemName = jsonObject.systemName;
+         mSystemId = jsonObject.systemId;
       }
 
       #endregion
@@ -27,7 +30,7 @@ namespace Vao.Client.Components
       #region Public Properties
 
       /// <summary>
-      /// Name of the implementation (e.g. "Hernis")
+      /// Name of the implementation (e.g. "HERNIS FLEX System")
       /// </summary>
       public string Name
       {
@@ -40,6 +43,22 @@ namespace Vao.Client.Components
       public string Version
       {
          get { return mVersion; }
+      }
+
+      /// <summary>
+      /// Gets the name of the system.
+      /// </summary>
+      public string SystemName
+      {
+         get { return mSystemName; }
+      }
+
+      /// <summary>
+      /// Gets the unique identifier for the system.
+      /// </summary>
+      public string SystemId
+      {
+         get { return mSystemId; }
       }
 
       #endregion

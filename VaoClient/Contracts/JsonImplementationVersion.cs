@@ -12,5 +12,7 @@ namespace Vao.Client.Contracts
 
       public string name { get; set; }
       public string version { get; set; }
+      public string systemName { get; set; }
+      public string systemId { get; set; }
    }
 }

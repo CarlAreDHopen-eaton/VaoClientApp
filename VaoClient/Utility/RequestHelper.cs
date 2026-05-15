@@ -206,7 +206,7 @@ namespace Vao.Client.Utility
          return apiVersion;
       }
 
-      internal static ImplementationVersion ExecuteGetImplementationVersion(this FlexApiClient flexApiClient)
+      internal static SystemInformation ExecuteGetImplementationVersion(this FlexApiClient flexApiClient)
       {
          RestClient client = flexApiClient.GetRestClient();
          RestRequest request = new RestRequest("version/implementation", Method.Options);
@@ -219,7 +219,7 @@ namespace Vao.Client.Utility
             return null;
          }
 
-         ImplementationVersion implVersion = JsonParser.ParseImplementationVersion(strResponse, flexApiClient);
+         SystemInformation implVersion = JsonParser.ParseImplementationVersion(strResponse, flexApiClient);
          return implVersion;
       }
 

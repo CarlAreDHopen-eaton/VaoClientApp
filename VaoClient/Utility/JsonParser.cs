@@ -189,12 +189,12 @@ namespace Vao.Client.Utility
          return null;
       }
 
-      internal static ImplementationVersion ParseImplementationVersion(string strJson, FlexApiClient flexApiClient)
+      internal static SystemInformation ParseImplementationVersion(string strJson, FlexApiClient flexApiClient)
       {
          if (!string.IsNullOrEmpty(strJson))
          {
             JsonImplementationVersion implVersion = JsonConvert.DeserializeObject<JsonImplementationVersion>(strJson);
-            return new ImplementationVersion(implVersion, flexApiClient);
+            return new SystemInformation(implVersion, flexApiClient);
          }
 
          return null;
