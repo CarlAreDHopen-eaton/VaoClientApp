@@ -216,13 +216,27 @@ namespace Vao.Sample.Utility
       public double CameraSidebarMenuHeight
       {
          get => Settings.CameraSidebarMenuHeight;
-         set { if (value > 0) { Settings.CameraSidebarMenuHeight = value; MarkDirty(); } }
+         set
+         {
+            if (value > 0)
+            {
+               Settings.CameraSidebarMenuHeight = value;
+               MarkDirty();
+            }
+         }
       }
 
       public double AlarmSidebarMenuHeight
       {
          get => Settings.AlarmSidebarMenuHeight;
-         set { if (value > 0) { Settings.AlarmSidebarMenuHeight = value; MarkDirty(); } }
+         set
+         {
+            if (value > 0)
+            {
+               Settings.AlarmSidebarMenuHeight = value;
+               MarkDirty();
+            }
+         }
       }
 
       // ── Alarm Filters ───────────────────────────────────────────────────────

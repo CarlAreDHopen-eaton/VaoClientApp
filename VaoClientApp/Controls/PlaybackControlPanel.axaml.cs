@@ -63,13 +63,21 @@ namespace Vao.Sample.Controls
       public string DateText
       {
          get => txtDatePlayback?.Text;
-         set { if (txtDatePlayback != null) txtDatePlayback.Text = value; }
+         set
+         {
+            if (txtDatePlayback != null)
+               txtDatePlayback.Text = value;
+         }
       }
 
       public string TimeText
       {
          get => txtTimePlayback?.Text;
-         set { if (txtTimePlayback != null) txtTimePlayback.Text = value; }
+         set
+         {
+            if (txtTimePlayback != null)
+               txtTimePlayback.Text = value;
+         }
       }
 
       // ── Event handlers ─────────────────────────────────────────────────────

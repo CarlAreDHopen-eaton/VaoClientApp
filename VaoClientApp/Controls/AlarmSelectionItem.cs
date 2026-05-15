@@ -26,13 +26,24 @@ namespace Vao.Sample.Controls
       public IBrush StatusBrush
       {
          get => mStatusBrush;
-         set { if (ReferenceEquals(mStatusBrush, value)) return; mStatusBrush = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StatusBrush))); }
+         set
+         {
+            if (ReferenceEquals(mStatusBrush, value)) return;
+            mStatusBrush = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StatusBrush)));
+         }
       }
 
       public string StatusText
       {
          get => mStatusText;
-         set { if (mStatusText == value) return; mStatusText = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StatusText))); PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TooltipText))); }
+         set
+         {
+            if (mStatusText == value) return;
+            mStatusText = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StatusText)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TooltipText)));
+         }
       }
 
       public string TooltipText => $"{AlarmNumberText} {AlarmName} {StatusText}".Trim();
@@ -40,7 +51,12 @@ namespace Vao.Sample.Controls
       public string AlarmIcon
       {
          get => mAlarmIcon;
-         set { if (mAlarmIcon == value) return; mAlarmIcon = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AlarmIcon))); }
+         set
+         {
+            if (mAlarmIcon == value) return;
+            mAlarmIcon = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AlarmIcon)));
+         }
       }
 
       public bool Matches(string query)

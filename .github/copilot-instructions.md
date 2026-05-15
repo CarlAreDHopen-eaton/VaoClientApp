@@ -1,7 +1,9 @@
 # Copilot Instructions
 
-When writing or modifying C# code in this repository:
+## General Guidelines
+- When writing or modifying C# code in this repository, follow the naming conventions and formatting rules outlined below.
 
+## Code Style
 - Private fields (including `readonly`): prefix with `m` and use PascalCase after the prefix.
 - Private field examples: `mVariableName`, `mApiClient`, `mCurrentUser`.
 - Method and function parameters: use `camelCase`, for example `variableName`.
@@ -20,5 +22,7 @@ When writing or modifying C# code in this repository:
 - Boolean members, properties, and variables should use clear prefixes when appropriate: `Is`, `Has`, `Can`, `Should`.
 - Async methods should end with `Async`.
 - Avoid abbreviations unless they are well-known and clear (for example `Http`, `Uri`).
+- When writing C# property setters (or any block with multiple statements), always expand them onto separate lines. Never collapse multiple statements into a single line within braces.
 
-Do not use underscore-prefixed private fields (for example `_variableName`) unless existing code in the same file already requires it for compatibility.
+## Compatibility
+- Do not use underscore-prefixed private fields (for example `_variableName`) unless existing code in the same file already requires it for compatibility.
