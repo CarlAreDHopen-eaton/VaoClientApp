@@ -57,9 +57,15 @@ namespace Vao.Sample.Controls
 
       // ── Public API ─────────────────────────────────────────────────────────
 
-      public Grid SelectionPanel => pnlAlarmsSelection;
+      public Grid SelectionPanel
+      {
+         get { return pnlAlarmsSelection; }
+      }
 
-      public bool HasActiveAlarm => mAlarmSelectionItems.Any(item => item.Alarm?.Status == AlarmGeneralStatus.Active);
+      public bool HasActiveAlarm
+      {
+         get { return mAlarmSelectionItems.Any(item => item.Alarm?.Status == AlarmGeneralStatus.Active); }
+      }
 
       public void Fill(List<Alarm> alarmList, Func<AlarmGeneralStatus, IBrush> brushResolver)
       {
@@ -127,7 +133,10 @@ namespace Vao.Sample.Controls
          lstAlarmSelection.Height = height;
       }
 
-      public double ListHeight => lstAlarmSelection?.Height ?? 0;
+      public double ListHeight
+      {
+         get { return lstAlarmSelection?.Height ?? 0; }
+      }
 
       public void SetStatusFilters(Dictionary<AlarmGeneralStatus, bool> filters)
       {

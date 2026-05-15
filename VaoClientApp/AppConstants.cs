@@ -11,7 +11,10 @@ namespace Vao.Sample
 #endif
 
       private static AppConstants mDefault;
-      public static AppConstants Default => mDefault ??= Load();
+      public static AppConstants Default
+      {
+         get { return mDefault ??= Load(); }
+      }
 
       public double ResizableSidebarMenuMinHeight { get; set; } = 180.0;
       public double ResizableSidebarMenuDefaultHeight { get; set; } = 360.0;

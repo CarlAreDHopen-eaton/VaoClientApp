@@ -61,23 +61,44 @@ namespace Vao.Sample.Controls
 
       // ── Public API ─────────────────────────────────────────────────────────
 
-      public VideoPanel InnerVideoPanel => videoPanel;
+      public VideoPanel InnerVideoPanel
+      {
+         get { return videoPanel; }
+      }
 
-      public Panel VideoSlot => videoPanel.VideoSlot;
+      public Panel VideoSlot
+      {
+         get { return videoPanel.VideoSlot; }
+      }
 
       public Panel GetVideoSlot(int slotIndex) => videoPanel.GetVideoSlot(slotIndex);
 
       public IReadOnlyList<Panel> GetAllActiveVideoSlots() => videoPanel.GetAllActiveVideoSlots();
 
-      public string CurrentLayoutKey => videoPanel.CurrentLayoutKey;
+      public string CurrentLayoutKey
+      {
+         get { return videoPanel.CurrentLayoutKey; }
+      }
 
-      public VideoLayoutDefinition CurrentLayout => videoPanel.CurrentLayout;
+      public VideoLayoutDefinition CurrentLayout
+      {
+         get { return videoPanel.CurrentLayout; }
+      }
 
-      public bool IsSingleView => videoPanel.IsSingleView;
+      public bool IsSingleView
+      {
+         get { return videoPanel.IsSingleView; }
+      }
 
-      public int ActiveSlotIndex => videoPanel.ActiveSlotIndex;
+      public int ActiveSlotIndex
+      {
+         get { return videoPanel.ActiveSlotIndex; }
+      }
 
-      public bool IsPlayback => videoPanel.IsPlayback;
+      public bool IsPlayback
+      {
+         get { return videoPanel.IsPlayback; }
+      }
 
       public void SetLayout(string layoutKey) => videoPanel.SetLayout(layoutKey);
 

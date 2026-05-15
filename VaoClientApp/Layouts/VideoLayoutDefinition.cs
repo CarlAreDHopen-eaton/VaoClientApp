@@ -12,10 +12,16 @@ namespace Vao.Sample.Layouts
       public List<VideoSlotDefinition> Slots { get; set; } = new();
 
       [JsonIgnore]
-      public int SlotCount => Slots?.Count ?? 0;
+      public int SlotCount
+      {
+         get { return Slots?.Count ?? 0; }
+      }
 
       [JsonIgnore]
-      public bool IsSingleView => SlotCount <= 1;
+      public bool IsSingleView
+      {
+         get { return SlotCount <= 1; }
+      }
    }
 
    public class VideoSlotDefinition

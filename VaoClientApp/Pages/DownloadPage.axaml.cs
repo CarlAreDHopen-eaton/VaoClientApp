@@ -64,11 +64,14 @@ namespace Vao.Sample.Pages
             UpdateEnabledDownloadButton();
         }
 
-        private bool IsDownloadPathSet => ConfigurationManager.Instance.IsDownloadPathSet;
+        private bool IsDownloadPathSet
+        {
+            get { return ConfigurationManager.Instance.IsDownloadPathSet; }
+        }
 
         private bool IsFtpConnected
         {
-            get => mIsFtpConnected;
+            get { return mIsFtpConnected; }
             set { mIsFtpConnected = value; UpdateEnabled(); }
         }
 

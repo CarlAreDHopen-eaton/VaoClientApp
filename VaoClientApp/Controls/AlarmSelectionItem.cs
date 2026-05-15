@@ -20,12 +20,19 @@ namespace Vao.Sample.Controls
       }
 
       public Alarm Alarm { get; }
-      public string AlarmName       => Alarm?.Name ?? string.Empty;
-      public string AlarmNumberText => Alarm == null ? string.Empty : $"#{Alarm.ComponentNumber:D4}";
+      public string AlarmName
+      {
+         get { return Alarm?.Name ?? string.Empty; }
+      }
+
+      public string AlarmNumberText
+      {
+         get { return Alarm == null ? string.Empty : $"#{Alarm.ComponentNumber:D4}"; }
+      }
 
       public IBrush StatusBrush
       {
-         get => mStatusBrush;
+         get { return mStatusBrush; }
          set
          {
             if (ReferenceEquals(mStatusBrush, value)) return;
@@ -36,7 +43,7 @@ namespace Vao.Sample.Controls
 
       public string StatusText
       {
-         get => mStatusText;
+         get { return mStatusText; }
          set
          {
             if (mStatusText == value) return;
@@ -46,11 +53,14 @@ namespace Vao.Sample.Controls
          }
       }
 
-      public string TooltipText => $"{AlarmNumberText} {AlarmName} {StatusText}".Trim();
+      public string TooltipText
+      {
+         get { return $"{AlarmNumberText} {AlarmName} {StatusText}".Trim(); }
+      }
 
       public string AlarmIcon
       {
-         get => mAlarmIcon;
+         get { return mAlarmIcon; }
          set
          {
             if (mAlarmIcon == value) return;

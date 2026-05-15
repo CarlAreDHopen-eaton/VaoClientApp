@@ -27,7 +27,10 @@ namespace Vao.Sample.Controls
 
       // ── Public API ─────────────────────────────────────────────────────────
 
-      public StackPanel ControlGroup => grpCameraControl;
+      public StackPanel ControlGroup
+      {
+         get { return grpCameraControl; }
+      }
 
       public void SetCamera(Camera camera)
       {

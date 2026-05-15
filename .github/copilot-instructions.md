@@ -41,6 +41,7 @@
 - Async methods must end with the `Async` suffix.
 - Avoid abbreviations unless they are well-known and clear (for example `Http`, `Uri`, `Ptz`).
 - Use `nameof` instead of string literals when referring to member names (e.g., `nameof(PropertyName)` in argument exceptions, `OnPropertyChanged`, etc.).
+- Prefer block body for properties. Use `get { return …; }` instead of expression-bodied (`=>`) property syntax.
 - When writing C# property setters (or any block with multiple statements), always expand them onto separate lines. Never collapse multiple statements into a single line within braces.
 - Use `#region` / `#endregion` blocks consistent with the existing codebase. Order class members as follows:
 

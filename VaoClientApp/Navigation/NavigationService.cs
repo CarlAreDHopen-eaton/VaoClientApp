@@ -107,12 +107,18 @@ namespace Vao.Sample.Navigation
         /// <summary>
         /// Check if navigation back is possible
         /// </summary>
-        public bool CanGoBack => mNavigationStack.Count > 0;
+        public bool CanGoBack
+        {
+            get { return mNavigationStack.Count > 0; }
+        }
 
-        /// <summary>
-        /// Get the current number of pages in the back stack
-        /// </summary>
-        public int NavigationStackDepth => mNavigationStack.Count;
+         /// <summary>
+         /// Get the current number of pages in the back stack
+         /// </summary>
+        public int NavigationStackDepth
+        {
+            get { return mNavigationStack.Count; }
+        }
     }
 
     public class NavigationChangedEventArgs : EventArgs

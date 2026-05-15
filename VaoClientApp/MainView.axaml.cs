@@ -65,33 +65,39 @@ namespace Vao.Sample
       // ── Public properties ──────────────────────────────────────────────────
 
       /// <summary>The current video layout key.</summary>
-      public string CurrentLayoutKey => videoLayoutPanel.CurrentLayoutKey;
+      public string CurrentLayoutKey
+      {
+         get { return videoLayoutPanel.CurrentLayoutKey; }
+      }
 
       public bool IsStarted
       {
-         get => mIsStarted;
+         get { return mIsStarted; }
          set { mIsStarted = value; UpdateEnabled(); ConnectionStateChanged?.Invoke(this, EventArgs.Empty); }
       }
 
       public bool ApiSupportsPlayback
       {
-         get => mApiSupportsPlayback;
+         get { return mApiSupportsPlayback; }
          set { mApiSupportsPlayback = value; UpdateEnabled(); }
       }
 
       public bool IsPlaybackStarted
       {
-         get => mIsPlaybackStarted;
+         get { return mIsPlaybackStarted; }
          set { mIsPlaybackStarted = value; UpdateEnabled(); }
       }
 
       public bool IsCameraSelected
       {
-         get => mIsCameraSelected;
+         get { return mIsCameraSelected; }
          set { mIsCameraSelected = value; UpdateEnabled(); }
       }
 
-      public bool IsPlayback => videoLayoutPanel.IsPlayback;
+      public bool IsPlayback
+      {
+         get { return videoLayoutPanel.IsPlayback; }
+      }
 
       // ── Public methods (called by MainWindow thin shell) ───────────────────
 
@@ -683,7 +689,7 @@ namespace Vao.Sample
 
       private Camera CurrentCamera
       {
-         get => mCurrentCamera;
+         get { return mCurrentCamera; }
          set
          {
             mCurrentCamera = value;
@@ -707,8 +713,17 @@ namespace Vao.Sample
          }
       }
 
-      private Alarm CurrentAlarm { get => mCurrentAlarm; set { mCurrentAlarm = value; UpdateEnabled(); } }
-      private User CurrentLoggedInUser { get => mCurrentLoggedInUser; set { mCurrentLoggedInUser = value; UpdateEnabled(); } }
+      private Alarm CurrentAlarm
+      {
+         get { return mCurrentAlarm; }
+         set { mCurrentAlarm = value; UpdateEnabled(); }
+      }
+
+      private User CurrentLoggedInUser
+      {
+         get { return mCurrentLoggedInUser; }
+         set { mCurrentLoggedInUser = value; UpdateEnabled(); }
+      }
 
       private void SelectCamera(int cameraNo, int streamNo)
       {
@@ -1033,7 +1048,10 @@ namespace Vao.Sample
 
       // ── User Profile / Theme ───────────────────────────────────────────────
 
-      private bool IsDarkMode => mApp?.CurrentTheme?.IsDark ?? true;
+      private bool IsDarkMode
+      {
+         get { return mApp?.CurrentTheme?.IsDark ?? true; }
+      }
 
       private void UpdateUserInitial()
       {

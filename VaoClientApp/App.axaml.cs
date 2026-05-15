@@ -19,7 +19,10 @@ namespace Vao.Sample
       public MainView AndroidMainView { get; private set; }
 #endif
 
-      public ThemeDefinition CurrentTheme => mCurrentTheme;
+      public ThemeDefinition CurrentTheme
+      {
+         get { return mCurrentTheme; }
+      }
 
       public event Action<ThemeDefinition> ThemeApplied;
 

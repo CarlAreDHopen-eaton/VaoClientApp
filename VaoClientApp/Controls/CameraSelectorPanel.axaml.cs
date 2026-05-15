@@ -37,7 +37,10 @@ namespace Vao.Sample.Controls
 
       // ── Public API ─────────────────────────────────────────────────────────
 
-      public ListBox CameraList => lstCameraSelection;
+      public ListBox CameraList
+      {
+         get { return lstCameraSelection; }
+      }
 
       public void Fill(List<Camera> cameraList)
       {
@@ -75,7 +78,10 @@ namespace Vao.Sample.Controls
 
       public void RefreshFilter() => ApplySearchFilter();
 
-      public IEnumerable<CameraSelectionItem> Items => mCameraSelectionItems;
+      public IEnumerable<CameraSelectionItem> Items
+      {
+         get { return mCameraSelectionItems; }
+      }
 
       public void InitializeHeight(double height, double minHeight, double maxHeight)
       {
@@ -85,7 +91,10 @@ namespace Vao.Sample.Controls
          lstCameraSelection.Height = height;
       }
 
-      public double ListHeight => lstCameraSelection?.Height ?? 0;
+      public double ListHeight
+      {
+         get { return lstCameraSelection?.Height ?? 0; }
+      }
 
       public void HandleRename(UserPrivilege privilege)
       {

@@ -30,7 +30,10 @@ namespace Vao.Sample.Controls
 
       // ── Public API ─────────────────────────────────────────────────────────
 
-      public StackPanel PlaybackGroup => grpSelectPlayback;
+      public StackPanel PlaybackGroup
+      {
+         get { return grpSelectPlayback; }
+      }
 
       public void FillRecordings(Camera camera, Guid viewerId)
       {
@@ -62,7 +65,7 @@ namespace Vao.Sample.Controls
 
       public string DateText
       {
-         get => txtDatePlayback?.Text;
+         get { return txtDatePlayback?.Text; }
          set
          {
             if (txtDatePlayback != null)
@@ -72,7 +75,7 @@ namespace Vao.Sample.Controls
 
       public string TimeText
       {
-         get => txtTimePlayback?.Text;
+         get { return txtTimePlayback?.Text; }
          set
          {
             if (txtTimePlayback != null)

@@ -16,7 +16,10 @@ namespace Vao.Sample.Themes
 #endif
 
       private static ThemeCatalog mDefault;
-      public static ThemeCatalog Default => mDefault ??= Load();
+      public static ThemeCatalog Default
+      {
+         get { return mDefault ??= Load(); }
+      }
 
       public List<ThemeDefinition> Themes { get; set; } = new();
 
@@ -139,10 +142,16 @@ namespace Vao.Sample.Themes
       public ThemeComponents Components { get; set; } = new();
 
       [JsonIgnore]
-      public bool IsDark => string.Equals(Variant, "Dark", StringComparison.OrdinalIgnoreCase);
+      public bool IsDark
+      {
+         get { return string.Equals(Variant, "Dark", StringComparison.OrdinalIgnoreCase); }
+      }
 
       [JsonIgnore]
-      public bool IsTablet => string.Equals(FormFactor, "Tablet", StringComparison.OrdinalIgnoreCase);
+      public bool IsTablet
+      {
+         get { return string.Equals(FormFactor, "Tablet", StringComparison.OrdinalIgnoreCase); }
+      }
 
       public static ThemeDefinition CreateDefault(string key, string displayName, bool isDark, bool isTablet)
       {

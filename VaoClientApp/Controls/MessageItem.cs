@@ -16,7 +16,7 @@ namespace Vao.Sample.Controls
 
       public string Text
       {
-         get => mText;
+         get { return mText; }
          set
          {
             if (mText == value) return;
@@ -27,7 +27,7 @@ namespace Vao.Sample.Controls
 
       public string Timestamp
       {
-         get => mTimestamp;
+         get { return mTimestamp; }
          set
          {
             if (mTimestamp == value) return;
@@ -38,7 +38,7 @@ namespace Vao.Sample.Controls
 
       public string LevelText
       {
-         get => mLevelText;
+         get { return mLevelText; }
          set
          {
             if (mLevelText == value) return;
@@ -49,7 +49,7 @@ namespace Vao.Sample.Controls
 
       public string SourceText
       {
-         get => mSourceText;
+         get { return mSourceText; }
          set
          {
             if (mSourceText == value) return;
@@ -60,7 +60,7 @@ namespace Vao.Sample.Controls
 
       public string Message
       {
-         get => mMessage;
+         get { return mMessage; }
          set
          {
             if (mMessage == value) return;
@@ -71,7 +71,7 @@ namespace Vao.Sample.Controls
 
       public IBrush Color
       {
-         get => mColor;
+         get { return mColor; }
          set
          {
             if (ReferenceEquals(mColor, value)) return;
@@ -82,7 +82,7 @@ namespace Vao.Sample.Controls
 
       public IBrush Background
       {
-         get => mBackground;
+         get { return mBackground; }
          set
          {
             if (ReferenceEquals(mBackground, value)) return;

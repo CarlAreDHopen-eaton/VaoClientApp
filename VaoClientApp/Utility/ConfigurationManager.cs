@@ -18,7 +18,10 @@ namespace Vao.Sample.Utility
       private const string C_DEFAULT_THEME = "dark-tablet";
 
       private static ConfigurationManager mInstance;
-      public static ConfigurationManager Instance => mInstance ??= new ConfigurationManager();
+      public static ConfigurationManager Instance
+      {
+         get { return mInstance ??= new ConfigurationManager(); }
+      }
 
       private readonly object mLock = new();
       private Timer mDebounceTimer;
@@ -32,43 +35,43 @@ namespace Vao.Sample.Utility
 
       public string SystemName
       {
-         get => Settings.SystemName;
+         get { return Settings.SystemName; }
          set { Settings.SystemName = value?.Trim() ?? ""; MarkDirty(); }
       }
 
       public bool UseHttps
       {
-         get => Settings.UseHttps;
+         get { return Settings.UseHttps; }
          set { Settings.UseHttps = value; MarkDirty(); }
       }
 
       public bool UseTcp
       {
-         get => Settings.UseTcp;
+         get { return Settings.UseTcp; }
          set { Settings.UseTcp = value; MarkDirty(); }
       }
 
       public string User
       {
-         get => Settings.User;
+         get { return Settings.User; }
          set { Settings.User = value ?? ""; MarkDirty(); }
       }
 
       public string Password
       {
-         get => Settings.Password;
+         get { return Settings.Password; }
          set { Settings.Password = value ?? ""; MarkDirty(); }
       }
 
       public bool AutoConnectOnStartup
       {
-         get => Settings.AutoConnectOnStartup;
+         get { return Settings.AutoConnectOnStartup; }
          set { Settings.AutoConnectOnStartup = value; MarkDirty(); }
       }
 
       public int SelectedConnectionIndex
       {
-         get => Settings.SelectedConnectionIndex;
+         get { return Settings.SelectedConnectionIndex; }
          set { Settings.SelectedConnectionIndex = value; MarkDirty(); }
       }
 
@@ -76,47 +79,50 @@ namespace Vao.Sample.Utility
 
       public string FTPUser
       {
-         get => Settings.FTPUser;
+         get { return Settings.FTPUser; }
          set { Settings.FTPUser = value ?? ""; MarkDirty(); }
       }
 
       public string FTPPassword
       {
-         get => Settings.FTPPassword;
+         get { return Settings.FTPPassword; }
          set { Settings.FTPPassword = value ?? ""; MarkDirty(); }
       }
 
       public string DownloadPath
       {
-         get => Settings.DownloadPath;
+         get { return Settings.DownloadPath; }
          set { Settings.DownloadPath = value ?? ""; MarkDirty(); }
       }
 
-      public bool IsDownloadPathSet => !string.IsNullOrEmpty(Settings.DownloadPath);
+      public bool IsDownloadPathSet
+      {
+         get { return !string.IsNullOrEmpty(Settings.DownloadPath); }
+      }
 
       // ── Camera / Video ──────────────────────────────────────────────────────
 
       public bool PreferSubChannel
       {
-         get => Settings.PreferSubChannel;
+         get { return Settings.PreferSubChannel; }
          set { Settings.PreferSubChannel = value; MarkDirty(); }
       }
 
       public string SelectedLayout
       {
-         get => Settings.SelectedLayout;
+         get { return Settings.SelectedLayout; }
          set { Settings.SelectedLayout = value ?? "single"; MarkDirty(); }
       }
 
       public Dictionary<int, int> SlotCameras
       {
-         get => Settings.SlotCameras;
+         get { return Settings.SlotCameras; }
          set { Settings.SlotCameras = value ?? new Dictionary<int, int>(); MarkDirty(); }
       }
 
       public Dictionary<int, int> CameraHotkeys
       {
-         get => Settings.CameraHotkeys;
+         get { return Settings.CameraHotkeys; }
          set { Settings.CameraHotkeys = value ?? new Dictionary<int, int>(); MarkDirty(); }
       }
 
@@ -130,7 +136,7 @@ namespace Vao.Sample.Utility
 
       public string SelectedTheme
       {
-         get => Settings.SelectedTheme;
+         get { return Settings.SelectedTheme; }
          set { Settings.SelectedTheme = value ?? C_DEFAULT_THEME; MarkDirty(); }
       }
 
@@ -143,79 +149,79 @@ namespace Vao.Sample.Utility
 
       public bool IsSidebarCollapsed
       {
-         get => Settings.IsSidebarCollapsed;
+         get { return Settings.IsSidebarCollapsed; }
          set { Settings.IsSidebarCollapsed = value; MarkDirty(); }
       }
 
       public bool IsConnectionExpanded
       {
-         get => Settings.IsConnectionExpanded;
+         get { return Settings.IsConnectionExpanded; }
          set { Settings.IsConnectionExpanded = value; MarkDirty(); }
       }
 
       public bool IsCameraControlExpanded
       {
-         get => Settings.IsCameraControlExpanded;
+         get { return Settings.IsCameraControlExpanded; }
          set { Settings.IsCameraControlExpanded = value; MarkDirty(); }
       }
 
       public bool IsCameraSelectionExpanded
       {
-         get => Settings.IsCameraSelectionExpanded;
+         get { return Settings.IsCameraSelectionExpanded; }
          set { Settings.IsCameraSelectionExpanded = value; MarkDirty(); }
       }
 
       public bool IsPresetSelectionExpanded
       {
-         get => Settings.IsPresetSelectionExpanded;
+         get { return Settings.IsPresetSelectionExpanded; }
          set { Settings.IsPresetSelectionExpanded = value; MarkDirty(); }
       }
 
       public bool IsAlarmsExpanded
       {
-         get => Settings.IsAlarmsExpanded;
+         get { return Settings.IsAlarmsExpanded; }
          set { Settings.IsAlarmsExpanded = value; MarkDirty(); }
       }
 
       public bool IsPlaybackSelectionExpanded
       {
-         get => Settings.IsPlaybackSelectionExpanded;
+         get { return Settings.IsPlaybackSelectionExpanded; }
          set { Settings.IsPlaybackSelectionExpanded = value; MarkDirty(); }
       }
 
       public bool IsDownloadRecordingExpanded
       {
-         get => Settings.IsDownloadRecordingExpanded;
+         get { return Settings.IsDownloadRecordingExpanded; }
          set { Settings.IsDownloadRecordingExpanded = value; MarkDirty(); }
       }
 
       public bool IsSettingsExpanded
       {
-         get => Settings.IsSettingsExpanded;
+         get { return Settings.IsSettingsExpanded; }
          set { Settings.IsSettingsExpanded = value; MarkDirty(); }
       }
 
       public bool IsMessagesCollapsed
       {
-         get => Settings.IsMessagesCollapsed;
+         get { return Settings.IsMessagesCollapsed; }
          set { Settings.IsMessagesCollapsed = value; MarkDirty(); }
       }
 
       public double MessagesSplitVideoStars
       {
-         get => Settings.MessagesSplitVideoStars;
+         get { return Settings.MessagesSplitVideoStars; }
          set { Settings.MessagesSplitVideoStars = value; MarkDirty(); }
       }
 
       public double MessagesSplitMessagesStars
       {
-         get => Settings.MessagesSplitMessagesStars;
+         get { return Settings.MessagesSplitMessagesStars; }
          set { Settings.MessagesSplitMessagesStars = value; MarkDirty(); }
       }
 
       public double CameraSidebarMenuHeight
       {
-         get => Settings.CameraSidebarMenuHeight;
+         get { return Settings.CameraSidebarMenuHeight; }
          set
          {
             if (value > 0)
@@ -228,7 +234,7 @@ namespace Vao.Sample.Utility
 
       public double AlarmSidebarMenuHeight
       {
-         get => Settings.AlarmSidebarMenuHeight;
+         get { return Settings.AlarmSidebarMenuHeight; }
          set
          {
             if (value > 0)
@@ -243,31 +249,31 @@ namespace Vao.Sample.Utility
 
       public bool ShowActiveAlarms
       {
-         get => Settings.ShowActiveAlarms;
+         get { return Settings.ShowActiveAlarms; }
          set { Settings.ShowActiveAlarms = value; MarkDirty(); }
       }
 
       public bool ShowTamperedAlarms
       {
-         get => Settings.ShowTamperedAlarms;
+         get { return Settings.ShowTamperedAlarms; }
          set { Settings.ShowTamperedAlarms = value; MarkDirty(); }
       }
 
       public bool ShowAcknowledgedAlarms
       {
-         get => Settings.ShowAcknowledgedAlarms;
+         get { return Settings.ShowAcknowledgedAlarms; }
          set { Settings.ShowAcknowledgedAlarms = value; MarkDirty(); }
       }
 
       public bool ShowPassiveAlarms
       {
-         get => Settings.ShowPassiveAlarms;
+         get { return Settings.ShowPassiveAlarms; }
          set { Settings.ShowPassiveAlarms = value; MarkDirty(); }
       }
 
       public bool ShowDisabledAlarms
       {
-         get => Settings.ShowDisabledAlarms;
+         get { return Settings.ShowDisabledAlarms; }
          set { Settings.ShowDisabledAlarms = value; MarkDirty(); }
       }
 
@@ -381,7 +387,10 @@ namespace Vao.Sample.Utility
       // ── Persistence ─────────────────────────────────────────────────────────
 
       /// <summary>The underlying settings data for serialization.</summary>
-      public AppSettings Settings => AppSettings.Default;
+      public AppSettings Settings
+      {
+         get { return AppSettings.Default; }
+      }
 
       /// <summary>Marks the configuration as changed and schedules a debounced save.</summary>
       public void MarkDirty()

@@ -1,7 +1,5 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 
 namespace Vao.Sample.Navigation
 {
@@ -48,6 +46,9 @@ namespace Vao.Sample.Navigation
         /// <summary>
         /// Check if we can go back
         /// </summary>
-        protected bool CanGoBack => NavigationService?.CanGoBack ?? false;
+        protected bool CanGoBack
+        {
+            get { return NavigationService?.CanGoBack ?? false; }
+        }
     }
 }

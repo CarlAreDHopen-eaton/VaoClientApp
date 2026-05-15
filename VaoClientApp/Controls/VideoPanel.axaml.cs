@@ -71,13 +71,30 @@ namespace Vao.Sample.Controls
 
       // ── Public API ─────────────────────────────────────────────────────────
 
-      public VideoLayoutDefinition CurrentLayout => mCurrentLayout;
-      public string CurrentLayoutKey => mCurrentLayout?.Key ?? "single";
-      public int ActiveSlotIndex => mActiveSlotIndex;
+      public VideoLayoutDefinition CurrentLayout
+      {
+         get { return mCurrentLayout; }
+      }
 
-      public bool IsSingleView => mCurrentLayout?.IsSingleView ?? true;
+      public string CurrentLayoutKey
+      {
+         get { return mCurrentLayout?.Key ?? "single"; }
+      }
 
-      public Panel VideoSlot => IsSingleView ? pnlVideo : mSlots[mActiveSlotIndex].VideoPanel;
+      public int ActiveSlotIndex
+      {
+         get { return mActiveSlotIndex; }
+      }
+
+      public bool IsSingleView
+      {
+         get { return mCurrentLayout?.IsSingleView ?? true; }
+      }
+
+      public Panel VideoSlot
+      {
+         get { return IsSingleView ? pnlVideo : mSlots[mActiveSlotIndex].VideoPanel; }
+      }
 
       /// <summary>Returns the video panel for a specific slot index.</summary>
       public Panel GetVideoSlot(int slotIndex)
@@ -317,7 +334,10 @@ namespace Vao.Sample.Controls
          }
       }
 
-      public bool IsPlayback => IsActiveRtspPlayback(ActiveRtspUrl);
+      public bool IsPlayback
+      {
+         get { return IsActiveRtspPlayback(ActiveRtspUrl); }
+      }
 
       /// <summary>Returns the camera assigned to a specific slot, or null.</summary>
       public Camera GetSlotCamera(int slotIndex)

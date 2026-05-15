@@ -13,7 +13,10 @@ namespace Vao.Sample.Layouts
 #endif
 
       private static VideoLayoutCatalog mDefault;
-      public static VideoLayoutCatalog Default => mDefault ??= Load();
+      public static VideoLayoutCatalog Default
+      {
+         get { return mDefault ??= Load(); }
+      }
 
       public List<VideoLayoutDefinition> Layouts { get; set; } = new();
 

@@ -12,7 +12,10 @@ namespace Vao.Sample.Utility
       public string Port { get; set; } = "444";
 
       [JsonIgnore]
-      public string DisplayName => string.IsNullOrWhiteSpace(Host) ? "(empty host)" : $"{Host}:{Port}";
+      public string DisplayName
+      {
+         get { return string.IsNullOrWhiteSpace(Host) ? "(empty host)" : $"{Host}:{Port}"; }
+      }
    }
 
    public class AppSettings
@@ -22,7 +25,10 @@ namespace Vao.Sample.Utility
          "VaoClientApp", "settings.json");
 
       private static AppSettings mDefault;
-      public static AppSettings Default => mDefault ??= Load();
+      public static AppSettings Default
+      {
+         get { return mDefault ??= Load(); }
+      }
 
       public string Host1 { get; set; } = "";
       public string Host2 { get; set; } = "";
