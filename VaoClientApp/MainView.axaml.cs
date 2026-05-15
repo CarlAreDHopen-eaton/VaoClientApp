@@ -198,6 +198,7 @@ namespace Vao.Sample
          WireVideoPanel();
          WireCameraSelectorPanel();
          WireAlarmSelectorPanel();
+         WirePresetSelectorPanel();
          WirePtzControlPanel();
          WirePlaybackControlPanel();
 
@@ -268,6 +269,12 @@ namespace Vao.Sample
          };
          alarmSelectorPanel.LayoutChanged += (_, _) => { if (!mIsLoadingSettings) SaveSettings(); };
          alarmSelectorPanel.ActiveAlarmStateChanged += (_, _) => UpdateAlarmSidebarIcon();
+      }
+
+      private void WirePresetSelectorPanel()
+      {
+         presetSelectorPanel.PresetActivated += (_, preset) => preset?.GotoPreset();
+         presetSelectorPanel.LayoutChanged += (_, _) => { if (!mIsLoadingSettings) SaveSettings(); };
       }
 
       private void WirePtzControlPanel()
@@ -395,9 +402,11 @@ namespace Vao.Sample
 
          var cameraTarget = ResolveTargetHeight(settings.CameraSidebarMenuHeight, cameraSelectorPanel.ListHeight);
          var alarmTarget = ResolveTargetHeight(settings.AlarmSidebarMenuHeight, alarmSelectorPanel.ListHeight);
+         var presetTarget = ResolveTargetHeight(settings.PresetSidebarMenuHeight, presetSelectorPanel.ListHeight);
 
          cameraSelectorPanel.InitializeHeight(cameraTarget, minHeight, maxHeight);
          alarmSelectorPanel.InitializeHeight(alarmTarget, minHeight, maxHeight);
+         presetSelectorPanel.InitializeHeight(presetTarget, minHeight, maxHeight);
       }
 
       // ── Navigation service ─────────────────────────────────────────────────
@@ -675,7 +684,7 @@ namespace Vao.Sample
 
          videoLayoutPanel.UpdateSubChannelEnabled(canUseConnectedFeatures && !IsPlayback && mCurrentCamera != null && !string.IsNullOrEmpty(mCurrentCamera?.Stream2Resolution));
 
-         if (grpSelectPreset != null) grpSelectPreset.IsEnabled = canUseConnectedFeatures;
+         if (presetSelectorPanel != null) presetSelectorPanel.IsEnabled = canUseConnectedFeatures;
          if (playbackControlPanel != null) playbackControlPanel.IsEnabled = canUseConnectedFeatures && ApiSupportsPlayback;
          if (ptzControlPanel != null) ptzControlPanel.ControlGroup.IsEnabled = canUseConnectedFeatures && mCurrentCamera != null;
 
@@ -770,32 +779,13 @@ namespace Vao.Sample
       private void FillSelectPresetList()
       {
          var presets = mCurrentCamera?.PresetList;
-         if (presets != null && presets.Count > 0)
-         {
-            selPreset.ItemsSource = presets;
-            selPreset.SelectedIndex = presets.Count > 1 ? 1 : 0;
-         }
-         else
-         {
-            selPreset.ItemsSource = new List<string> { "No Presets" };
-            selPreset.SelectedIndex = 0;
-         }
+         presetSelectorPanel.Fill(presets);
       }
 
       private void ClearPresetDropdown()
       {
          ptzControlPanel.ClearLabel();
-         if (selPreset != null)
-         {
-            selPreset.ItemsSource = null;
-            selPreset.ItemsSource = new List<string> { "No camera selected" };
-            selPreset.SelectedIndex = 0;
-         }
-      }
-
-      private void btnGotoPreset_Click(object sender, RoutedEventArgs e)
-      {
-         if (selPreset?.SelectedItem is Preset preset) preset.GotoPreset();
+         presetSelectorPanel.Clear();
       }
 
       // ── Alarm icon ─────────────────────────────────────────────────────────
@@ -1033,6 +1023,7 @@ namespace Vao.Sample
 
          cfg.CameraSidebarMenuHeight = cameraSelectorPanel.ListHeight;
          cfg.AlarmSidebarMenuHeight = alarmSelectorPanel.ListHeight;
+         cfg.PresetSidebarMenuHeight = presetSelectorPanel.ListHeight;
 
          var alarmFilters = alarmSelectorPanel.GetStatusFilters();
          cfg.ShowActiveAlarms      = alarmFilters.GetValueOrDefault(AlarmGeneralStatus.Active, true);

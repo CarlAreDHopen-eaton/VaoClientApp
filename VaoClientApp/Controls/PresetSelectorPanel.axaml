@@ -1,0 +1,57 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 x:Class="Vao.Sample.Controls.PresetSelectorPanel">
+
+	<Grid x:Name="pnlPresetSelection" Margin="0" RowDefinitions="Auto,Auto,Auto">
+		<TextBox Grid.Row="0"
+				 x:Name="txtPresetSearch"
+				 Watermark="Search by number or name"
+				 Classes="borderless"
+				 MinHeight="{DynamicResource SidebarMenuSearchHeight}"
+				 TextChanged="txtPresetSearch_TextChanged"/>
+		<ListBox Grid.Row="1"
+				 x:Name="lstPresetSelection"
+				 SelectionChanged="lstPresetSelection_SelectionChanged"
+				 DoubleTapped="lstPresetSelection_DoubleTapped"
+				 ScrollViewer.VerticalScrollBarVisibility="Auto"
+				 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+				 Background="Transparent"
+				 BorderBrush="{DynamicResource Divider}"
+				 BorderThickness="1"
+				 CornerRadius="4"
+				 Padding="0"
+				 Margin="0">
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<Grid ColumnDefinitions="Auto,Auto,*" Margin="0">
+						<TextBlock Grid.Column="0"
+								   Text="&#xE55E;"
+								   Classes="ms-icon"
+								   FontSize="16"
+								   Foreground="{DynamicResource LabelFg}"
+								   VerticalAlignment="Center"/>
+						<TextBlock Grid.Column="1"
+								   Text="{Binding PresetNumberText}"
+								   Margin="6,0,6,0"
+								   FontWeight="SemiBold"
+								   Foreground="{DynamicResource LabelFg}"
+								   VerticalAlignment="Center"/>
+						<TextBlock Grid.Column="2"
+								   Text="{Binding PresetName}"
+								   TextTrimming="CharacterEllipsis"
+								   ToolTip.Tip="{Binding PresetName}"
+								   VerticalAlignment="Center"/>
+					</Grid>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+		<Border Grid.Row="2"
+				Classes="sidebar-menu-resize-handle"
+				Tag="preset"
+				PointerPressed="ResizeHandle_PointerPressed"
+				PointerMoved="ResizeHandle_PointerMoved"
+				PointerReleased="ResizeHandle_PointerReleased"
+				PointerCaptureLost="ResizeHandle_PointerCaptureLost"/>
+	</Grid>
+
+</UserControl>

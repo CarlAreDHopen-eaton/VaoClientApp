@@ -245,6 +245,19 @@ namespace Vao.Sample.Utility
          }
       }
 
+      public double PresetSidebarMenuHeight
+      {
+         get { return Settings.PresetSidebarMenuHeight; }
+         set
+         {
+            if (value > 0)
+            {
+               Settings.PresetSidebarMenuHeight = value;
+               MarkDirty();
+            }
+         }
+      }
+
       // ── Alarm Filters ───────────────────────────────────────────────────────
 
       public bool ShowActiveAlarms

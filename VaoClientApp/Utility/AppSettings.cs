@@ -61,6 +61,7 @@ namespace Vao.Sample.Utility
       public double MessagesSplitMessagesStars { get; set; } = 1.0;
       public double CameraSidebarMenuHeight { get; set; } = 240.0;
       public double AlarmSidebarMenuHeight { get; set; } = 240.0;
+      public double PresetSidebarMenuHeight { get; set; } = 180.0;
 
       /// <summary>Camera hotkey slots 0-9, value is camera component number (0 = unassigned).</summary>
       public Dictionary<int, int> CameraHotkeys { get; set; } = new Dictionary<int, int>();
