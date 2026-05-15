@@ -4,7 +4,7 @@ using System.Globalization;
 using Avalonia.Media;
 using Vao.Client.Components;
 
-namespace Vao.Sample
+namespace Vao.Sample.Controls
 {
    public class AlarmSelectionItem : INotifyPropertyChanged
    {

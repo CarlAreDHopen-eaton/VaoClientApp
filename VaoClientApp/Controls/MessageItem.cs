@@ -2,7 +2,7 @@ using System.ComponentModel;
 using Avalonia.Media;
 using LibVLCSharp.Shared;
 
-namespace Vao.Sample
+namespace Vao.Sample.Controls
 {
    public class MessageItem : INotifyPropertyChanged
    {

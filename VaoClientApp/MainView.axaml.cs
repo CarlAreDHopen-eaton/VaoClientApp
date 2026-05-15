@@ -18,6 +18,7 @@ using Vao.Client.Enum;
 using Vao.Sample.Controls;
 using Vao.Sample.Navigation;
 using Vao.Sample.Pages;
+using Vao.Sample.Themes;
 
 namespace Vao.Sample
 {

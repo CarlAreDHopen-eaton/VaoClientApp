@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using Vao.Client.Components;
 
-namespace Vao.Sample
+namespace Vao.Sample.Controls
 {
    // ── Support types ──────────────────────────────────────────────────────────
 

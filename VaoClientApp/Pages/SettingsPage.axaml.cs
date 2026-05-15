@@ -7,6 +7,7 @@ using Vao.Sample.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Vao.Sample.Themes;
 
 namespace Vao.Sample.Pages
 {

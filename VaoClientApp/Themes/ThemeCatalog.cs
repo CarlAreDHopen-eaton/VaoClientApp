@@ -7,7 +7,7 @@ using Avalonia.Controls;
 using Avalonia.Media;
 using Newtonsoft.Json;
 
-namespace Vao.Sample
+namespace Vao.Sample.Themes
 {
    public sealed class ThemeCatalog
    {
