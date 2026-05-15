@@ -5,6 +5,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Vao.Sample.Controls;
 using Vao.Sample.Themes;
+using Vao.Sample.Utility;
 
 namespace Vao.Sample
 {

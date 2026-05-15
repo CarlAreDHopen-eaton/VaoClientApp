@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 
-namespace Vao.Sample
+namespace Vao.Sample.Utility
 {
    public class ConnectionAlternative
    {

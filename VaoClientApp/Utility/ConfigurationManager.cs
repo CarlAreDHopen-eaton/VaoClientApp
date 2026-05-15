@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using Avalonia.Controls;
 
-namespace Vao.Sample
+namespace Vao.Sample.Utility
 {
    /// <summary>
    /// Manages application configuration with automatic debounced persistence.

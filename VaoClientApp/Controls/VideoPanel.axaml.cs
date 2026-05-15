@@ -9,6 +9,7 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using Vao.Client.Components;
 using Vao.Sample.Layouts;
+using Vao.Sample.Utility;
 
 namespace Vao.Sample.Controls
 {

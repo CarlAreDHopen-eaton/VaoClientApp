@@ -8,6 +8,7 @@ using Avalonia.Media;
 using Avalonia.Styling;
 using Avalonia.Threading;
 using Vao.Sample.Themes;
+using Vao.Sample.Utility;
 
 namespace Vao.Sample
 {

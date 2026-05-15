@@ -15,6 +15,7 @@ using Vao.Client;
 using Vao.Client.Components;
 using Vao.Client.Utility;
 using Vao.Sample.Navigation;
+using Vao.Sample.Utility;
 
 namespace Vao.Sample.Pages
 {

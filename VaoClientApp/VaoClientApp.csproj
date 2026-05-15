@@ -120,9 +120,7 @@
   -->
 
   <!-- Inner RID build: prevent the double-"Avalonia/Avalonia/" redirect -->
-  <Target Name="_FixAvaloniaDoubleRedirect"
-          AfterTargets="InjectAvaloniaXamlOutput"
-          Condition="'$(_OuterIntermediateAssembly)' != '' and '$(_ComputeFilesToPublishForRuntimeIdentifiers)' == 'true'">
+  <Target Name="_FixAvaloniaDoubleRedirect" AfterTargets="InjectAvaloniaXamlOutput" Condition="'$(_OuterIntermediateAssembly)' != '' and '$(_ComputeFilesToPublishForRuntimeIdentifiers)' == 'true'">
     <ItemGroup>
       <IntermediateAssembly Remove="@(IntermediateAssembly)" />
       <IntermediateAssembly Include="$(_OuterIntermediateAssembly)" />
@@ -130,10 +128,7 @@
   </Target>
 
   <!-- Outer build: ensure _GenerateJavaStubs scans VaoClientApp.dll for the [Activity] ACW -->
-  <Target Name="_EnsureAppDllForJavaStubs"
-          AfterTargets="_PrepareAssemblies"
-          BeforeTargets="_GenerateJavaStubs"
-          Condition="'$(TargetFramework)' == 'net8.0-android'">
+  <Target Name="_EnsureAppDllForJavaStubs" AfterTargets="_PrepareAssemblies" BeforeTargets="_GenerateJavaStubs" Condition="'$(TargetFramework)' == 'net8.0-android'">
     <PropertyGroup>
       <_AssetsAppDll>$(MonoAndroidIntermediateAssemblyDir)$(MSBuildProjectName).dll</_AssetsAppDll>
     </PropertyGroup>

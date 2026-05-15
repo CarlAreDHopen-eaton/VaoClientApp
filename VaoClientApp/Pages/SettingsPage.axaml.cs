@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Vao.Sample.Themes;
+using Vao.Sample.Utility;
 
 namespace Vao.Sample.Pages
 {

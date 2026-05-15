@@ -8,6 +8,7 @@ using LibVLCSharp.Avalonia;
 using LibVLCSharp.Shared;
 using Vao.Client.Components;
 using Vao.Sample.Layouts;
+using Vao.Sample.Utility;
 
 namespace Vao.Sample.Controls
 {
