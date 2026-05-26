@@ -225,6 +225,10 @@ namespace Vao.Sample.Themes
          yield return Brush("CameraLockAlarmForeground", Components.CameraLock.AlarmLockedForeground);
          yield return Brush("CameraLockManualForeground", Components.CameraLock.UserLockedForeground);
 
+         // Camera selection
+         yield return Brush("CameraSelectedBackground", Components.CameraSelection.SelectedBackground);
+         yield return Brush("CameraSelectedHoverBackground", Components.CameraSelection.SelectedHoverBackground);
+
          // Alarm status
          yield return Brush("AlarmStatusActive", Components.AlarmStatus.Active);
          yield return Brush("AlarmStatusInactive", Components.AlarmStatus.Inactive);
@@ -432,6 +436,7 @@ namespace Vao.Sample.Themes
       public ThemeMessageLogComponent MessageLog { get; set; } = new();
       public ThemeUserProfileComponent UserProfile { get; set; } = new();
       public ThemeCameraLockComponent CameraLock { get; set; } = new();
+      public ThemeCameraSelectionComponent CameraSelection { get; set; } = new();
       public ThemeAlarmStatusComponent AlarmStatus { get; set; } = new();
 
       public static ThemeComponents CreateDefaults(bool isDark, bool isTablet)
@@ -476,6 +481,11 @@ namespace Vao.Sample.Themes
                },
             UserProfile = new ThemeUserProfileComponent { ConnectedBackground = "#FF006BA1", DisconnectedBackground = "#FF808080" },
             CameraLock = new ThemeCameraLockComponent { AlarmLockedForeground = "#FFCA3C3D", UserLockedForeground = "#FFF0AA1F" },
+            CameraSelection = new ThemeCameraSelectionComponent
+            {
+               SelectedBackground = isDark ? "#FFDAA520" : "#FFDAA520",
+               SelectedHoverBackground = isDark ? "#FFB8860B" : "#FFB8860B"
+            },
             AlarmStatus = new ThemeAlarmStatusComponent { Active = "#FFFF0000", Inactive = "#FF808080", Acknowledged = "#FFFFA500", Tampered = "#FFFF8C00", Default = "#78808080" }
          };
       }
@@ -538,6 +548,12 @@ namespace Vao.Sample.Themes
    {
       public string AlarmLockedForeground { get; set; } = string.Empty;
       public string UserLockedForeground { get; set; } = string.Empty;
+   }
+
+   public sealed class ThemeCameraSelectionComponent
+   {
+      public string SelectedBackground { get; set; } = "#FFDAA520";
+      public string SelectedHoverBackground { get; set; } = "#FFB8860B";
    }
 
    public sealed class ThemeAlarmStatusComponent

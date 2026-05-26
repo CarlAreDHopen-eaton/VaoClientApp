@@ -381,14 +381,14 @@
 
         <!-- Camera selection button (selected state) -->
         <Style Selector="Button.camera-selected">
-            <Setter Property="Background" Value="Goldenrod"/>
+            <Setter Property="Background" Value="{DynamicResource CameraSelectedBackground}"/>
             <Setter Property="Foreground" Value="{DynamicResource PrimaryHeaderFg}"/>
         </Style>
         <Style Selector="Button.camera-selected:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="DarkGoldenrod"/>
+            <Setter Property="Background" Value="{DynamicResource CameraSelectedHoverBackground}"/>
         </Style>
         <Style Selector="Button.camera-selected /template/ ContentPresenter">
-            <Setter Property="Background" Value="Goldenrod"/>
+            <Setter Property="Background" Value="{DynamicResource CameraSelectedBackground}"/>
         </Style>
 
         <!-- Camera selection list (supports long names and touch-friendly rows) -->
@@ -425,6 +425,42 @@
             <Setter Property="Foreground" Value="{DynamicResource PrimaryHeaderFg}"/>
         </Style>
         <Style Selector="ListBox#lstAlarmSelection ListBoxItem:pointerover">
+            <Setter Property="Background" Value="{DynamicResource Surface3}"/>
+        </Style>
+
+        <Style Selector="ListBox#lstSplitSelection ListBoxItem">
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="MinHeight" Value="{DynamicResource SidebarMenuItemHeight}"/>
+            <Setter Property="Height" Value="{DynamicResource SidebarMenuItemHeight}"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="CornerRadius" Value="4"/>
+        </Style>
+        <Style Selector="ListBox#lstSplitSelection ListBoxItem /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+        <Style Selector="ListBox#lstSplitSelection ListBoxItem:selected">
+            <Setter Property="Background" Value="{DynamicResource Primary}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryHeaderFg}"/>
+        </Style>
+        <Style Selector="ListBox#lstSplitSelection ListBoxItem:pointerover">
+            <Setter Property="Background" Value="{DynamicResource Surface3}"/>
+        </Style>
+
+        <Style Selector="ListBox#lstPresetSelection ListBoxItem">
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="MinHeight" Value="{DynamicResource SidebarMenuItemHeight}"/>
+            <Setter Property="Height" Value="{DynamicResource SidebarMenuItemHeight}"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="CornerRadius" Value="4"/>
+        </Style>
+        <Style Selector="ListBox#lstPresetSelection ListBoxItem /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+        <Style Selector="ListBox#lstPresetSelection ListBoxItem:selected">
+            <Setter Property="Background" Value="{DynamicResource Primary}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryHeaderFg}"/>
+        </Style>
+        <Style Selector="ListBox#lstPresetSelection ListBoxItem:pointerover">
             <Setter Property="Background" Value="{DynamicResource Surface3}"/>
         </Style>
 
@@ -688,10 +724,14 @@
                     <SolidColorBrush x:Key="Warning" Color="#F0AA1F" />
                     <SolidColorBrush x:Key="Error" Color="#CA3C3D" />
                     <SolidColorBrush x:Key="Info" Color="#007BC1" />
+
+                    <!-- Camera Selection -->
+                    <SolidColorBrush x:Key="CameraSelectedBackground" Color="#DAA520" />
+                    <SolidColorBrush x:Key="CameraSelectedHoverBackground" Color="#B8860B" />
                 </ResourceDictionary>
 
                 <!-- ===========================================
-                     LIGHT THEME - Brightlayer UI Colors
+                     LIGHT THEME
                      =========================================== -->
                 <ResourceDictionary x:Key="Light">
                     <!-- Background Colors -->
@@ -725,6 +765,10 @@
                     <SolidColorBrush x:Key="Warning" Color="#F0AA1F" />
                     <SolidColorBrush x:Key="Error" Color="#CA3C3D" />
                     <SolidColorBrush x:Key="Info" Color="#007BC1" />
+
+                    <!-- Camera Selection -->
+                    <SolidColorBrush x:Key="CameraSelectedBackground" Color="#DAA520" />
+                    <SolidColorBrush x:Key="CameraSelectedHoverBackground" Color="#B8860B" />
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>

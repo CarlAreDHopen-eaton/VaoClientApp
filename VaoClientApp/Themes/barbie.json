@@ -108,6 +108,10 @@
       "AlarmLockedForeground": "#FFE64980",
       "UserLockedForeground": "#FFFFB347"
     },
+    "CameraSelection": {
+      "SelectedBackground": "#FFFF69B4",
+      "SelectedHoverBackground": "#FFFF1493"
+    },
     "AlarmStatus": {
       "Active": "#FFE64980",
       "Inactive": "#FFB9A0AE",

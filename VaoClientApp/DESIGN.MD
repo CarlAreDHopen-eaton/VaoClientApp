@@ -122,6 +122,13 @@ This application **strictly adheres** to the Brightlayer UI design system. All c
 | `CameraLockAlarmForeground` | Alarm-locked camera indicator |
 | `CameraLockManualForeground` | User-locked camera indicator |
 
+### Camera Selection Colors
+
+| Token | Usage |
+|-------|-------|
+| `CameraSelectedBackground` | Selected camera button background |
+| `CameraSelectedHoverBackground` | Selected camera button hover state |
+
 ### Alarm Status Colors
 
 | Token | Usage |
@@ -175,7 +182,7 @@ Consolas, Monaco, Courier New, monospace
 | `BrightlayerFont` | avares://VaoClientApp/Assets/Fonts#Open Sans, Segoe UI, San Francisco, Roboto, Helvetica Neue, Arial, sans-serif |
 | `MonospaceFont` | Consolas, Monaco, Courier New, monospace |
 | `MaterialSymbolsFont` | avares://VaoClientApp/Assets/Fonts#Material Symbols Outlined |
-| `BrightlayerIconFont` | avares://VaoClientApp/Assets/Fonts#Brightlayer UI Icons |
+| `BrightlayerIconFont` | avares://VaoClientApp/Assets/Fonts#BrightlayerUIIcons |
 
 ### Type Scale (Brightlayer UI)
 
@@ -183,7 +190,7 @@ Consolas, Monaco, Courier New, monospace
 
 | Class | Weight | Usage |
 |-------|--------|-------|
-| App Title | Medium (500) | App bar title (`PageHeaderTitleFontSize`) |
+| App Title | SemiBold (600) | App bar title (`PageHeaderTitleFontSize`) |
 | Subtitle | Regular (400) | App bar subtitle, opacity 0.7 (`PageHeaderSubtitleFontSize`) |
 | `.section-header` | SemiBold (600) | Section headings (`SectionHeaderFontSize`) |
 | `.subtitle1` | SemiBold (600) | Emphasized subtitles |
@@ -194,7 +201,7 @@ Consolas, Monaco, Courier New, monospace
 | `.caption` | Regular (400) | Captions, hints |
 | `.overline` | SemiBold (600) | Overline text, uppercase |
 | `.monospace` | Regular (400) | Code, logs |
-| Button | SemiBold (600) | Button text |
+| Button | SemiBold (600) | Button text, all button classes |
 
 ### Font Weights
 
@@ -370,7 +377,7 @@ This application uses **font-based icons** from the Brightlayer UI icon packages
 MinHeight: {DynamicResource ButtonMinHeight}
 Padding: {DynamicResource ButtonPadding}
 CornerRadius: 4px
-FontWeight: Medium (500)
+FontWeight: SemiBold (600)
 ```
 
 #### Button States
