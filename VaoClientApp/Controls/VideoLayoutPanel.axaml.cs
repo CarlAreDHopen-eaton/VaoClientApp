@@ -335,6 +335,23 @@ namespace Vao.Sample.Controls
                pnlVideo.Children.Add(videoView);
          }
 
+         // Reconnect slots that have a remembered camera but no active stream
+         int slotCount = e.NewLayout?.SlotCount ?? 0;
+         for (int i = 0; i < slotCount; i++)
+         {
+            int idx = e.NewLayout.Slots[i].Index;
+            if (e.SurvivingSlotIndices.Contains(idx)) continue;
+            var camera = videoPanel.GetSlotCamera(idx);
+            if (camera != null && !mSlotIsStarted[idx])
+            {
+               string url = camera.GetCameraLiveStreamUrl(1);
+               if (!string.IsNullOrEmpty(url))
+               {
+                  videoPanel.RestoreSlotStream(idx, camera, 1);
+               }
+            }
+         }
+
          LayoutChanged?.Invoke(this, e);
       }
 

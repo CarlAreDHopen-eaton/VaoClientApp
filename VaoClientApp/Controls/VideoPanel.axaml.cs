@@ -142,10 +142,7 @@ namespace Vao.Sample.Controls
             for (int i = 0; i < previousLayout.SlotCount; i++)
             {
                int idx = previousLayout.Slots[i].Index;
-               if (removedIndices.Contains(idx))
-                  mSlots[idx].ResetAll();
-               else
-                  mSlots[idx].ResetUi();
+               mSlots[idx].ResetUi();
             }
             layoutGrid.IsVisible = false;
             layoutGrid.Children.Clear();
@@ -523,7 +520,16 @@ namespace Vao.Sample.Controls
              // Restore header if this slot already has a camera remembered
              if (mSlots[slotIndex].Camera != null)
              {
-                headerCameraText.Text = FormatCameraText(mSlots[slotIndex].Camera, null);
+                bool slotPlayback = IsActiveRtspPlayback(mSlots[slotIndex].ActiveRtspUrl);
+                if (!string.IsNullOrEmpty(mSlots[slotIndex].ActiveRtspUrl))
+                {
+                   headerCameraText.Text = FormatCameraText(mSlots[slotIndex].Camera, slotPlayback ? "Playback" : "Live");
+                   headerBorder.Background = slotPlayback ? GetPlaybackHeaderBrush() : GetLiveHeaderBrush();
+                }
+                else
+                {
+                   headerCameraText.Text = FormatCameraText(mSlots[slotIndex].Camera, null);
+                }
              }
          }
 
@@ -699,10 +705,9 @@ namespace Vao.Sample.Controls
          public Panel VideoPanel { get; set; }
          public ToggleSwitch SubChannelToggle { get; set; }
 
-         /// <summary>Resets UI elements but preserves the Camera reference so it can be remembered across layout switches.</summary>
+         /// <summary>Resets UI elements but preserves the Camera and ActiveRtspUrl so they can be remembered across layout switches.</summary>
          public void ResetUi()
          {
-            ActiveRtspUrl = null;
             HeaderViewerText = null;
             HeaderCameraText = null;
             HeaderBorder = null;
@@ -710,11 +715,6 @@ namespace Vao.Sample.Controls
             SubChannelToggle = null;
          }
 
-         public void ResetAll()
-         {
-            Camera = null;
-            ResetUi();
-         }
       }
    }
 
