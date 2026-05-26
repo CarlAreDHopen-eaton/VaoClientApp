@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Avalonia;
@@ -7,6 +8,7 @@ using Avalonia.Controls.Shapes;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Vao.Sample.Layouts;
+using Vao.Sample.Themes;
 
 namespace Vao.Sample.Controls;
 
@@ -16,6 +18,7 @@ public partial class SplitSelectorPanel : UserControl
    #region Private Members
 
    private readonly ObservableCollection<SplitSelectionItem> mSplitItems = new();
+   private readonly List<(Canvas Canvas, SplitSelectionItem Item)> mIconCanvases = new();
    private bool mIsUpdatingSelection;
 
    #endregion
@@ -33,6 +36,26 @@ public partial class SplitSelectorPanel : UserControl
    {
       InitializeComponent();
       lstSplitSelection.ItemsSource = mSplitItems;
+   }
+
+   #endregion
+
+   #region Internal Methods
+
+   /// <inheritdoc/>
+   protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+   {
+      base.OnAttachedToVisualTree(e);
+      if (Application.Current is App app)
+         app.ThemeApplied += OnThemeApplied;
+   }
+
+   /// <inheritdoc/>
+   protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+   {
+      base.OnDetachedFromVisualTree(e);
+      if (Application.Current is App app)
+         app.ThemeApplied -= OnThemeApplied;
    }
 
    #endregion
@@ -72,13 +95,19 @@ public partial class SplitSelectorPanel : UserControl
       }
    }
 
+   private void OnThemeApplied(ThemeDefinition theme)
+   {
+      foreach ((Canvas canvas, SplitSelectionItem item) in mIconCanvases)
+         DrawSplitIcon(canvas, item.Layout);
+   }
+
    private void SplitIconCanvas_Loaded(object sender, RoutedEventArgs e)
    {
       if (sender is not Canvas canvas) return;
-
-      // Walk up to find the DataContext (SplitSelectionItem)
       if (canvas.DataContext is not SplitSelectionItem item) return;
 
+      mIconCanvases.RemoveAll(entry => ReferenceEquals(entry.Item, item));
+      mIconCanvases.Add((canvas, item));
       DrawSplitIcon(canvas, item.Layout);
    }
 
@@ -87,41 +116,56 @@ public partial class SplitSelectorPanel : UserControl
    {
       canvas.Children.Clear();
 
-      double canvasWidth = 22;
-      double canvasHeight = 22;
-      double gap = 1;
+      const double strokeThickness = 0.75;
+      const double padding = 1.0;
+      double canvasWidth = canvas.Width;
+      double canvasHeight = canvas.Height;
+      double drawWidth = canvasWidth - 2 * padding;
+      double drawHeight = canvasHeight - 2 * padding;
+      double gap = 2;
       int rows = Math.Max(1, layout.Rows);
       int columns = Math.Max(1, layout.Columns);
 
-      double cellWidth = (canvasWidth - gap * (columns - 1)) / columns;
-      double cellHeight = (canvasHeight - gap * (rows - 1)) / rows;
+      double cellWidth = (drawWidth - gap * (columns - 1)) / columns;
+      double cellHeight = (drawHeight - gap * (rows - 1)) / rows;
 
-      IBrush fillBrush = new SolidColorBrush(Color.FromArgb(180, 100, 149, 237)); // cornflower blue
-      IBrush strokeBrush = new SolidColorBrush(Color.FromArgb(220, 70, 130, 180));
+      IBrush fillBrush;
+      IBrush strokeBrush;
+      if (canvas.TryFindResource("Primary", out var primaryRes) && primaryRes is SolidColorBrush primaryBrush)
+      {
+         var c = primaryBrush.Color;
+         fillBrush = new SolidColorBrush(Color.FromArgb(80, c.R, c.G, c.B));
+         strokeBrush = new SolidColorBrush(Color.FromArgb(220, c.R, c.G, c.B));
+      }
+      else
+      {
+         fillBrush = new SolidColorBrush(Color.FromArgb(80, 0, 123, 193));
+         strokeBrush = new SolidColorBrush(Color.FromArgb(220, 0, 123, 193));
+      }
 
       if (layout.Slots == null || layout.Slots.Count == 0)
       {
          // Fallback: draw a single rectangle
          var rect = new Rectangle
          {
-            Width = canvasWidth - 2,
-            Height = canvasHeight - 2,
+            Width = drawWidth,
+            Height = drawHeight,
             Fill = fillBrush,
             Stroke = strokeBrush,
-            StrokeThickness = 0.5,
+            StrokeThickness = strokeThickness,
             RadiusX = 1,
             RadiusY = 1
          };
-         Canvas.SetLeft(rect, 1);
-         Canvas.SetTop(rect, 1);
+         Canvas.SetLeft(rect, padding);
+         Canvas.SetTop(rect, padding);
          canvas.Children.Add(rect);
          return;
       }
 
       foreach (VideoSlotDefinition slot in layout.Slots)
       {
-         double x = slot.Column * (cellWidth + gap);
-         double y = slot.Row * (cellHeight + gap);
+         double x = padding + slot.Column * (cellWidth + gap);
+         double y = padding + slot.Row * (cellHeight + gap);
          double w = slot.ColumnSpan * cellWidth + (slot.ColumnSpan - 1) * gap;
          double h = slot.RowSpan * cellHeight + (slot.RowSpan - 1) * gap;
 
@@ -131,7 +175,7 @@ public partial class SplitSelectorPanel : UserControl
             Height = Math.Max(1, h),
             Fill = fillBrush,
             Stroke = strokeBrush,
-            StrokeThickness = 0.5,
+            StrokeThickness = strokeThickness,
             RadiusX = 1,
             RadiusY = 1
          };
