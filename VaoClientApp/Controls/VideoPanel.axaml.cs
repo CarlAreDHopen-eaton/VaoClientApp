@@ -17,8 +17,6 @@ namespace Vao.Sample.Controls
    {
       private const int C_MAX_SLOT_COUNT = 16;
 
-      private Camera mCurrentCamera;
-      private string mActiveRtspUrl;
       private bool mIsLoadingSettings;
       private ContextMenu mVideoContextMenu;
       private Func<List<Camera>> mGetCameraList;
@@ -32,9 +30,6 @@ namespace Vao.Sample.Controls
 
       /// <summary>Fired when an RTSP stream should start (non-null URL) or stop (null) on a specific slot index.</summary>
       public event EventHandler<VideoSlotStreamEventArgs> SlotRtspStreamRequested;
-
-      /// <summary>Fired when an RTSP stream should start (non-null URL) or stop (null). Used for single-view backward compat.</summary>
-      public event EventHandler<string> RtspStreamRequested;
 
       /// <summary>Fired when the sub-channel toggle changes.</summary>
       public event EventHandler<bool> SubChannelChanged;
@@ -59,14 +54,13 @@ namespace Vao.Sample.Controls
             mSlots[i] = new VideoSlotState();
          mCurrentLayout = VideoLayoutCatalog.Default.GetDefaultLayout();
 
-         // Enable drop on single-view video area
-         DragDrop.SetAllowDrop(pnlVideo, true);
-         pnlVideo.AddHandler(DragDrop.DropEvent, SingleView_Drop);
-         pnlVideo.AddHandler(DragDrop.DragOverEvent, Video_DragOver);
+         // Hide the legacy single-view control; all layouts use the dynamic grid
+         grpVideoControl.IsVisible = false;
 
-         DragDrop.SetAllowDrop(grpVideoControl, true);
-         grpVideoControl.AddHandler(DragDrop.DropEvent, SingleView_Drop);
-         grpVideoControl.AddHandler(DragDrop.DragOverEvent, Video_DragOver);
+         // Build the initial layout grid
+         BuildLayoutGrid(mCurrentLayout);
+         quadGrid.IsVisible = true;
+         SetActiveSlot(0);
       }
 
       // ── Public API ─────────────────────────────────────────────────────────
@@ -88,26 +82,24 @@ namespace Vao.Sample.Controls
 
       public bool IsSingleView
       {
-         get { return mCurrentLayout?.IsSingleView ?? true; }
+         get { return mCurrentLayout?.SlotCount <= 1; }
       }
 
       public Panel VideoSlot
       {
-         get { return IsSingleView ? pnlVideo : mSlots[mActiveSlotIndex].VideoPanel; }
+         get { return mSlots[mActiveSlotIndex].VideoPanel; }
       }
 
       /// <summary>Returns the video panel for a specific slot index.</summary>
       public Panel GetVideoSlot(int slotIndex)
       {
-         if (slotIndex < 0 || slotIndex >= C_MAX_SLOT_COUNT) return pnlVideo;
-         return IsSingleView ? pnlVideo : mSlots[slotIndex].VideoPanel;
+         if (slotIndex < 0 || slotIndex >= C_MAX_SLOT_COUNT) return mSlots[0].VideoPanel;
+         return mSlots[slotIndex].VideoPanel;
       }
 
       /// <summary>Returns all active video slot panels based on the current layout.</summary>
       public IReadOnlyList<Panel> GetAllActiveVideoSlots()
       {
-         if (IsSingleView)
-            return new[] { pnlVideo };
          int count = mCurrentLayout.SlotCount;
          return mSlots.Take(count).Select(s => s.VideoPanel).Where(p => p != null).ToArray();
       }
@@ -126,24 +118,15 @@ namespace Vao.Sample.Controls
 
          var previousLayout = mCurrentLayout;
 
-         // Determine which slot indices survive the transition (only multi↔multi preserves streams)
+         // Determine which slot indices survive the transition
          var previousSlotIndices = new HashSet<int>();
          var newSlotIndices = new HashSet<int>();
-         bool isMultiToMulti = previousLayout != null && !previousLayout.IsSingleView && !layout.IsSingleView;
 
-         if (isMultiToMulti)
-         {
-            foreach (var s in previousLayout.Slots) previousSlotIndices.Add(s.Index);
-            foreach (var s in layout.Slots) newSlotIndices.Add(s.Index);
-         }
-         else if (previousLayout != null && !previousLayout.IsSingleView)
+         if (previousLayout != null)
          {
             foreach (var s in previousLayout.Slots) previousSlotIndices.Add(s.Index);
          }
-         else if (!layout.IsSingleView)
-         {
-            foreach (var s in layout.Slots) newSlotIndices.Add(s.Index);
-         }
+         foreach (var s in layout.Slots) newSlotIndices.Add(s.Index);
 
          var survivingIndices = new HashSet<int>(previousSlotIndices);
          survivingIndices.IntersectWith(newSlotIndices);
@@ -156,8 +139,8 @@ namespace Vao.Sample.Controls
          // Notify subscribers to detach video surfaces before we rebuild
          LayoutChanging?.Invoke(this, changeArgs);
 
-         // Tear down previous multi-slot UI (but do NOT stop surviving streams)
-         if (previousLayout != null && !previousLayout.IsSingleView)
+         // Tear down previous layout UI (but do NOT stop surviving streams)
+         if (previousLayout != null)
          {
             for (int i = 0; i < previousLayout.SlotCount; i++)
             {
@@ -173,33 +156,10 @@ namespace Vao.Sample.Controls
 
          mCurrentLayout = layout;
 
-         if (layout.IsSingleView)
-         {
-            // Transition to single: removed slots will be stopped by MainWindow
-            foreach (int idx in removedIndices)
-               mSlots[idx].ResetAll();
-
-            grpVideoControl.IsVisible = true;
-            mActiveSlotIndex = 0;
-
-            var slot0Camera = mSlots[0].Camera;
-            if (slot0Camera != null)
-               mCurrentCamera = slot0Camera;
-         }
-         else
-         {
-            // Transition from single: always stop the single stream (different VLC player instance)
-            if (previousLayout != null && previousLayout.IsSingleView && mActiveRtspUrl != null)
-            {
-               RtspStreamRequested?.Invoke(this, null);
-               mActiveRtspUrl = null;
-            }
-
-            grpVideoControl.IsVisible = false;
-            BuildLayoutGrid(layout);
-            quadGrid.IsVisible = true;
-            SetActiveSlot(0);
-         }
+         grpVideoControl.IsVisible = false;
+         BuildLayoutGrid(layout);
+         quadGrid.IsVisible = true;
+         SetActiveSlot(0);
 
          LayoutChanged?.Invoke(this, changeArgs);
       }
@@ -212,91 +172,34 @@ namespace Vao.Sample.Controls
 
       public void ShowLiveStream(Camera camera, int streamNo)
       {
-         if (!IsSingleView)
-         {
-            ShowLiveStreamOnSlot(mActiveSlotIndex, camera, streamNo);
-            return;
-         }
-
-         mCurrentCamera = camera;
-         mSlots[0].Camera = camera;
-         if (camera == null) return;
-
-         string url = camera.GetCameraLiveStreamUrl(streamNo);
-         bool hasSubChannel = !string.IsNullOrEmpty(camera.Stream2Resolution);
-         if (streamNo == 2 && !hasSubChannel) streamNo = 1;
-
-         if (!string.IsNullOrEmpty(url))
-         {
-            mActiveRtspUrl = url;
-            if (txtCurrentRtspUrl != null) txtCurrentRtspUrl.Text = GetMaskedUrl(url);
-            if (txtCameraHeader != null) txtCameraHeader.Text = FormatCameraText(camera, "Live");
-            if (brdVideoHeader != null) brdVideoHeader.Background = GetLiveHeaderBrush();
-            RtspStreamRequested?.Invoke(this, url);
-         }
-
-         mIsLoadingSettings = true;
-         if (tglSubChannel != null)
-         {
-            tglSubChannel.IsChecked = (streamNo == 2);
-            tglSubChannel.IsEnabled = hasSubChannel && !IsActiveRtspPlayback(mActiveRtspUrl);
-         }
-         mIsLoadingSettings = false;
+         ShowLiveStreamOnSlot(mActiveSlotIndex, camera, streamNo);
       }
 
       public void ShowPlaybackStream(string url, int cameraNo)
       {
          if (string.IsNullOrEmpty(url)) return;
 
-         if (!IsSingleView)
-         {
-            var slot = mSlots[mActiveSlotIndex];
-            slot.ActiveRtspUrl = url;
-            if (slot.HeaderCameraText != null) slot.HeaderCameraText.Text = FormatCameraText(slot.Camera, "Playback");
-            if (slot.HeaderBorder != null) slot.HeaderBorder.Background = GetPlaybackHeaderBrush();
-            SlotRtspStreamRequested?.Invoke(this, new VideoSlotStreamEventArgs(mActiveSlotIndex, url));
-            return;
-         }
-
-         mActiveRtspUrl = url;
-         if (txtCurrentRtspUrl != null) txtCurrentRtspUrl.Text = GetMaskedUrl(url);
-         if (txtCameraHeader != null) txtCameraHeader.Text = $"#{cameraNo:D4} (Playback)";
-         if (brdVideoHeader != null) brdVideoHeader.Background = GetPlaybackHeaderBrush();
-         RtspStreamRequested?.Invoke(this, url);
+         var slot = mSlots[mActiveSlotIndex];
+         slot.ActiveRtspUrl = url;
+         if (slot.HeaderCameraText != null) slot.HeaderCameraText.Text = FormatCameraText(slot.Camera, "Playback");
+         if (slot.HeaderBorder != null) slot.HeaderBorder.Background = GetPlaybackHeaderBrush();
+         SlotRtspStreamRequested?.Invoke(this, new VideoSlotStreamEventArgs(mActiveSlotIndex, url));
       }
 
       public void ClearStream()
       {
-         if (!IsSingleView)
-         {
-            ClearSlotStream(mActiveSlotIndex);
-            return;
-         }
-
-         RtspStreamRequested?.Invoke(this, null);
-          mActiveRtspUrl = null;
-          if (txtCurrentRtspUrl != null) txtCurrentRtspUrl.Text = string.Empty;
-          if (txtCameraHeader != null) txtCameraHeader.Text = "No Camera Selected";
-          if (brdVideoHeader != null) brdVideoHeader.Background = GetNeutralHeaderBrush();
-       }
+         ClearSlotStream(mActiveSlotIndex);
+      }
 
       public void ResetHeader()
       {
-         if (!IsSingleView)
-         {
-            var slot = mSlots[mActiveSlotIndex];
-            if (slot.HeaderCameraText != null) slot.HeaderCameraText.Text = "No Camera Selected";
-            if (slot.HeaderBorder != null) slot.HeaderBorder.Background = GetNeutralHeaderBrush();
-            return;
-         }
-
-         if (txtCameraHeader != null) txtCameraHeader.Text = "No Camera Selected";
-          if (brdVideoHeader != null) brdVideoHeader.Background = GetNeutralHeaderBrush();
-       }
+         var slot = mSlots[mActiveSlotIndex];
+         if (slot.HeaderCameraText != null) slot.HeaderCameraText.Text = "No Camera Selected";
+         if (slot.HeaderBorder != null) slot.HeaderBorder.Background = GetNeutralHeaderBrush();
+      }
 
        public void UpdateSubChannelEnabled(bool enabled)
        {
-          if (tglSubChannel != null) tglSubChannel.IsEnabled = enabled;
           var slotToggle = mSlots[mActiveSlotIndex]?.SubChannelToggle;
           if (slotToggle != null) slotToggle.IsEnabled = enabled;
        }
@@ -305,12 +208,9 @@ namespace Vao.Sample.Controls
        {
           get
           {
-             if (!IsSingleView)
-             {
-                var slotToggle = mSlots[mActiveSlotIndex]?.SubChannelToggle;
-                if (slotToggle != null) return slotToggle.IsChecked == true;
-             }
-             return tglSubChannel?.IsChecked == true;
+             var slotToggle = mSlots[mActiveSlotIndex]?.SubChannelToggle;
+             if (slotToggle != null) return slotToggle.IsChecked == true;
+             return false;
           }
        }
        public int GetStreamNo() => IsSubChannel ? 2 : 1;
@@ -318,7 +218,6 @@ namespace Vao.Sample.Controls
        public void SetSubChannelChecked(bool isChecked, bool suppressEvent = false)
        {
           if (suppressEvent) mIsLoadingSettings = true;
-          if (tglSubChannel != null) tglSubChannel.IsChecked = isChecked;
           var slotToggle = mSlots[mActiveSlotIndex]?.SubChannelToggle;
           if (slotToggle != null) slotToggle.IsChecked = isChecked;
           if (suppressEvent) mIsLoadingSettings = false;
@@ -328,9 +227,7 @@ namespace Vao.Sample.Controls
       {
          get
          {
-            if (!IsSingleView)
-               return mSlots[mActiveSlotIndex].ActiveRtspUrl;
-            return mActiveRtspUrl;
+            return mSlots[mActiveSlotIndex].ActiveRtspUrl;
          }
       }
 
@@ -349,9 +246,7 @@ namespace Vao.Sample.Controls
       /// <summary>Returns the camera for the currently active slot.</summary>
       public Camera GetActiveCamera()
       {
-         if (!IsSingleView)
-            return mSlots[mActiveSlotIndex].Camera;
-         return mCurrentCamera;
+         return mSlots[mActiveSlotIndex].Camera;
       }
 
       /// <summary>Returns a dictionary of slot index → camera component number for all slots that have a camera.</summary>
@@ -382,49 +277,25 @@ namespace Vao.Sample.Controls
 
       public void RefreshHeaderState(bool isStarted, Camera camera, bool isPlayback, bool isPlaybackStarted)
       {
-         if (!IsSingleView)
+         var slot = mSlots[mActiveSlotIndex];
+         var slotCamera = slot.Camera;
+         if (!isStarted || slotCamera == null)
          {
-            var slot = mSlots[mActiveSlotIndex];
-            var slotCamera = slot.Camera;
-            if (!isStarted || slotCamera == null)
-            {
-               if (slot.HeaderCameraText != null) slot.HeaderCameraText.Text = "No Camera Selected";
-                if (slot.HeaderBorder != null) slot.HeaderBorder.Background = GetNeutralHeaderBrush();
-               return;
-            }
-            var cNo = slotCamera.ComponentNumber;
-            bool slotPlayback = IsActiveRtspPlayback(slot.ActiveRtspUrl);
-            if (slotPlayback || isPlaybackStarted)
-            {
-               if (slot.HeaderCameraText != null) slot.HeaderCameraText.Text = FormatCameraText(slotCamera, "Playback");
-                    if (slot.HeaderBorder != null) slot.HeaderBorder.Background = GetPlaybackHeaderBrush();
-                 }
-                 else
-                 {
-                    if (slot.HeaderCameraText != null) slot.HeaderCameraText.Text = FormatCameraText(slotCamera, "Live");
-               if (slot.HeaderBorder != null) slot.HeaderBorder.Background = GetLiveHeaderBrush();
-            }
+            if (slot.HeaderCameraText != null) slot.HeaderCameraText.Text = "No Camera Selected";
+            if (slot.HeaderBorder != null) slot.HeaderBorder.Background = GetNeutralHeaderBrush();
             return;
          }
-
-         if (!isStarted || camera == null)
+         bool slotPlayback = IsActiveRtspPlayback(slot.ActiveRtspUrl);
+         if (slotPlayback || isPlaybackStarted)
          {
-            if (txtCameraHeader != null) txtCameraHeader.Text = "No Camera Selected";
-             if (brdVideoHeader != null) brdVideoHeader.Background = GetNeutralHeaderBrush();
-            return;
+            if (slot.HeaderCameraText != null) slot.HeaderCameraText.Text = FormatCameraText(slotCamera, "Playback");
+            if (slot.HeaderBorder != null) slot.HeaderBorder.Background = GetPlaybackHeaderBrush();
          }
-
-         var cameraNo = camera.ComponentNumber;
-         if (isPlayback || isPlaybackStarted)
-           {
-              if (txtCameraHeader != null) txtCameraHeader.Text = FormatCameraText(camera, "Playback");
-              if (brdVideoHeader != null) brdVideoHeader.Background = GetPlaybackHeaderBrush();
-           }
-           else
-           {
-              if (txtCameraHeader != null) txtCameraHeader.Text = FormatCameraText(camera, "Live");
-             if (brdVideoHeader != null) brdVideoHeader.Background = GetLiveHeaderBrush();
-          }
+         else
+         {
+            if (slot.HeaderCameraText != null) slot.HeaderCameraText.Text = FormatCameraText(slotCamera, "Live");
+            if (slot.HeaderBorder != null) slot.HeaderBorder.Background = GetLiveHeaderBrush();
+         }
       }
 
       // ── Slot operations ─────────────────────────────────────────────────────
@@ -453,11 +324,6 @@ namespace Vao.Sample.Controls
             slot.SubChannelToggle.IsChecked = (streamNo == 2);
             slot.SubChannelToggle.IsEnabled = hasSubChannel && !IsActiveRtspPlayback(slot.ActiveRtspUrl);
          }
-         if (slotIndex == mActiveSlotIndex && tglSubChannel != null)
-         {
-            tglSubChannel.IsChecked = (streamNo == 2);
-            tglSubChannel.IsEnabled = hasSubChannel && !IsActiveRtspPlayback(slot.ActiveRtspUrl);
-         }
          mIsLoadingSettings = false;
       }
 
@@ -477,9 +343,6 @@ namespace Vao.Sample.Controls
          if (slotIndex < 0 || slotIndex >= slotCount) return;
          mActiveSlotIndex = slotIndex;
          UpdateSlotSelectionBorders();
-
-         var slot = mSlots[slotIndex];
-         mCurrentCamera = slot.Camera;
 
          ActiveSlotChanged?.Invoke(this, slotIndex);
       }
@@ -685,7 +548,7 @@ namespace Vao.Sample.Controls
          {
             EnsureVideoContextMenu();
             mVideoContextMenu.ItemsSource = BuildVideoContextMenuItems();
-            var target = sender as Control ?? brdVideoHeader;
+            var target = sender as Control ?? mSlotBorders[mActiveSlotIndex] as Control;
             target.ContextMenu = mVideoContextMenu;
             mVideoContextMenu.PlacementTarget = target;
             target.ContextMenu.Open();
@@ -773,7 +636,7 @@ namespace Vao.Sample.Controls
             header = labelText;
          }
 
-         var currentCam = !IsSingleView ? mSlots[mActiveSlotIndex].Camera : mCurrentCamera;
+         var currentCam = mSlots[mActiveSlotIndex].Camera;
          var item = new MenuItem { Header = header, Tag = camera };
          if (currentCam == camera)
             item.Icon = new CheckBox { IsChecked = true, IsHitTestVisible = false };
@@ -798,12 +661,6 @@ namespace Vao.Sample.Controls
             e.DragEffects = DragDropEffects.Copy;
          else
             e.DragEffects = DragDropEffects.None;
-      }
-
-      private void SingleView_Drop(object sender, DragEventArgs e)
-      {
-         if (e.Data.Get("CameraComponentNumber") is int cameraNo)
-            CameraSelectedFromMenu?.Invoke(this, cameraNo);
       }
 
       private void SlotBorder_Drop(object sender, DragEventArgs e, int slotIndex)

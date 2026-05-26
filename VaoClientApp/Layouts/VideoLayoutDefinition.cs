@@ -20,7 +20,7 @@ namespace Vao.Sample.Layouts
       [JsonIgnore]
       public bool IsSingleView
       {
-         get { return SlotCount <= 1; }
+         get { return false; }
       }
    }
 

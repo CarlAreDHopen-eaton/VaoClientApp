@@ -18,13 +18,6 @@ namespace Vao.Sample.Controls
 
       private LibVLC mLibVlc;
 
-      // ── Single mode VLC state ──────────────────────────────────────────────
-      private MediaPlayer mMediaPlayer;
-      private VideoView mVideoControl;
-      private string mActiveRtspUrl;
-      private bool mIsVideoStarted;
-      private bool mIsVideoTemporarilyDetached;
-
       // ── Multi-slot VLC state ───────────────────────────────────────────────
       private readonly MediaPlayer[] mSlotMediaPlayers = new MediaPlayer[C_MAX_SLOT_COUNT];
       private readonly VideoView[] mSlotVideoControls = new VideoView[C_MAX_SLOT_COUNT];
@@ -138,55 +131,6 @@ namespace Vao.Sample.Controls
 
       // ── Stream control ─────────────────────────────────────────────────────
 
-      public void StartStream(string rtspUrl)
-      {
-         mActiveRtspUrl = rtspUrl;
-         if (mIsVideoStarted) StopStream();
-
-         InitVideoControl();
-         var uri = new Uri(rtspUrl);
-         if (mMediaPlayer == null)
-         {
-            var media = new Media(mLibVlc, uri);
-            mMediaPlayer = new MediaPlayer(media);
-            mMediaPlayer.EnableKeyInput = false;
-            mMediaPlayer.EnableMouseInput = false;
-            mMediaPlayer.EncounteredError += MediaPlayer_EncounteredError;
-            mMediaPlayer.Opening += MediaPlayer_Opening;
-            if (ConfigurationManager.Instance.UseTcp) media.AddOption(":rtsp-tcp");
-            if (mVideoControl != null) mVideoControl.MediaPlayer = mMediaPlayer;
-            mMediaPlayer.Play();
-            mIsVideoStarted = true;
-         }
-         else
-         {
-            var media = new Media(mLibVlc, uri);
-            if (ConfigurationManager.Instance.UseTcp) media.AddOption(":rtsp-tcp");
-            mMediaPlayer.Play(media);
-            mIsVideoStarted = true;
-         }
-      }
-
-      public void StopStream()
-      {
-         if (mMediaPlayer != null)
-         {
-            var mp = mMediaPlayer;
-            mMediaPlayer = null;
-            var pnlVideo = videoPanel.VideoSlot;
-            if (mVideoControl != null)
-            {
-               mVideoControl.MediaPlayer = null;
-               if (pnlVideo != null && pnlVideo.Children.Contains(mVideoControl))
-                  pnlVideo.Children.Remove(mVideoControl);
-               mVideoControl = null;
-            }
-            mIsVideoStarted = false;
-            mIsVideoTemporarilyDetached = false;
-            DisposeMediaPlayerAsync(mp);
-         }
-      }
-
       public void StartSlotStream(int slotIndex, string rtspUrl)
       {
          mSlotRtspUrls[slotIndex] = rtspUrl;
@@ -244,16 +188,6 @@ namespace Vao.Sample.Controls
       /// <summary>Detach all video surfaces (call before showing overlays).</summary>
       public void DetachVideoSurfaces()
       {
-         // Detach single-view
-         var pnlVideo = videoPanel.VideoSlot;
-         if (pnlVideo != null && mVideoControl != null && pnlVideo.Children.Contains(mVideoControl))
-         {
-            if (mMediaPlayer != null) mVideoControl.MediaPlayer = null;
-            pnlVideo.Children.Remove(mVideoControl);
-            mIsVideoTemporarilyDetached = true;
-         }
-
-         // Detach slot views
          for (int i = 0; i < C_MAX_SLOT_COUNT; i++)
          {
             var slotView = mSlotVideoControls[i];
@@ -267,41 +201,6 @@ namespace Vao.Sample.Controls
       /// <summary>Reattach all video surfaces (call after hiding overlays).</summary>
       public void ReattachVideoSurfaces()
       {
-         // Reattach single-view
-         var pnlVideo = videoPanel.VideoSlot;
-         if (pnlVideo != null)
-         {
-            bool shouldAttach = mIsVideoTemporarilyDetached ||
-               (mIsVideoStarted && mMediaPlayer != null &&
-                (mVideoControl == null || !pnlVideo.Children.Contains(mVideoControl)));
-            if (shouldAttach)
-            {
-               if (mVideoControl != null && pnlVideo.Children.Contains(mVideoControl))
-                  pnlVideo.Children.Remove(mVideoControl);
-
-               mVideoControl = new VideoView();
-               mVideoControl.Focusable = false;
-               pnlVideo.Children.Add(mVideoControl);
-
-               if (mMediaPlayer != null)
-               {
-                  mVideoControl.MediaPlayer = null;
-                  mVideoControl.MediaPlayer = mMediaPlayer;
-
-                  if (mIsVideoStarted && !string.IsNullOrWhiteSpace(mActiveRtspUrl))
-                  {
-                     Dispatcher.UIThread.Post(() =>
-                     {
-                        if (mIsVideoStarted) StartStream(mActiveRtspUrl);
-                     }, DispatcherPriority.Background);
-                  }
-               }
-
-               mIsVideoTemporarilyDetached = false;
-            }
-         }
-
-         // Reattach slot views
          for (int i = 0; i < C_MAX_SLOT_COUNT; i++)
          {
             var slotView = mSlotVideoControls[i];
@@ -327,7 +226,6 @@ namespace Vao.Sample.Controls
 
       public void Dispose()
       {
-         StopStream();
          for (int i = 0; i < C_MAX_SLOT_COUNT; i++)
             StopSlotStream(i);
 
@@ -360,19 +258,6 @@ namespace Vao.Sample.Controls
       private void OnVlcLog(string message, LogLevel level)
       {
          VlcLogGenerated?.Invoke(this, new VlcLogEventArgs(message, level));
-      }
-
-      private void InitVideoControl()
-      {
-         var pnlVideo = videoPanel.VideoSlot;
-         if (mVideoControl == null)
-         {
-            mVideoControl = new VideoView();
-            mVideoControl.Focusable = false;
-         }
-         if (!pnlVideo.Children.Contains(mVideoControl))
-            pnlVideo.Children.Add(mVideoControl);
-         mIsVideoTemporarilyDetached = false;
       }
 
       private VideoView CreateSlotVideoView(int slotIndex)
@@ -408,13 +293,6 @@ namespace Vao.Sample.Controls
 
       private void WireVideoPanel()
       {
-         videoPanel.RtspStreamRequested += (_, url) =>
-         {
-            if (string.IsNullOrEmpty(url))
-               StopStream();
-            else
-               StartStream(url);
-         };
          videoPanel.SlotRtspStreamRequested += (_, e) =>
          {
             if (string.IsNullOrEmpty(e.Url))
@@ -459,12 +337,6 @@ namespace Vao.Sample.Controls
 
          LayoutChanged?.Invoke(this, e);
       }
-
-      private void MediaPlayer_EncounteredError(object sender, EventArgs e)
-         => OnVlcLog("LibVLC error encountered.", LogLevel.Error);
-
-      private void MediaPlayer_Opening(object sender, EventArgs e)
-         => OnVlcLog($"LibVLC opening {mMediaPlayer?.Media?.Mrl ?? ""}", LogLevel.Notice);
 
       private static void DisposeMediaPlayerAsync(MediaPlayer mp)
       {

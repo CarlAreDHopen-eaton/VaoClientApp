@@ -251,12 +251,11 @@ internal sealed class AndroidVideoController
          DestroySlot(idx);
       }
 
-      // When transitioning from single-view → multi-view the slot-0 panel
-      // reference will change (pnlVideo → quadGrid cell), so untrack it now;
-      // OnVideoLayoutChanged will re-track the new panel.
-      if (e.PreviousLayout != null && e.PreviousLayout.IsSingleView && !e.NewLayout.IsSingleView)
-         UntrackSlotPanel(0);
-   }
+         // When transitioning layouts the slot-0 panel reference may change, so untrack it now;
+         // OnVideoLayoutChanged will re-track the new panel.
+         if (e.PreviousLayout != null)
+            UntrackSlotPanel(0);
+      }
 
    private void OnVideoLayoutChanged(object sender, LayoutChangeEventArgs e)
    {
@@ -264,7 +263,7 @@ internal sealed class AndroidVideoController
          $"OnVideoLayoutChanged: isSingleView={e.NewLayout.IsSingleView} slots=[{string.Join(",", e.NewLayout.Slots?.Select(s => s.Index) ?? Enumerable.Empty<int>())}] knownSlots=[{string.Join(",", mSlotStates.Keys)}] pending=[{string.Join(",", mPendingStreams.Keys)}]",
          LogLevel.Debug);
 
-      if (e.NewLayout.IsSingleView)
+      if (e.NewLayout.SlotCount == 1)
       {
          if (!mSlotStates.ContainsKey(0))
             InitializeSlot(0);

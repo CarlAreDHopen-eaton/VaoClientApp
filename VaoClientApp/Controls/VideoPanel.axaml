@@ -4,7 +4,7 @@
 
 	<Grid x:Name="rootGrid">
 		<!-- Single view (default) -->
-		<Border x:Name="grpVideoControl" Background="{DynamicResource Surface1}" CornerRadius="4">
+		<Border x:Name="grpVideoControl" Background="{DynamicResource Surface1}" CornerRadius="4" IsVisible="False">
 			<Grid RowDefinitions="Auto,*,Auto">
 				<Border Grid.Row="0" x:Name="brdVideoHeader" Background="{DynamicResource VideoHeaderBg}" CornerRadius="4,4,0,0">
 					<Grid ColumnDefinitions="*,Auto">

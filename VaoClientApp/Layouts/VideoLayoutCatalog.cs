@@ -38,7 +38,7 @@ namespace Vao.Sample.Layouts
 
       public VideoLayoutDefinition GetDefaultLayout()
       {
-         return Layouts.FirstOrDefault(l => l.IsSingleView)
+         return Layouts.FirstOrDefault(l => l.SlotCount == 1)
                 ?? Layouts.FirstOrDefault()
                 ?? CreateFallbackSingle();
       }
