@@ -65,6 +65,28 @@ namespace Vao.Sample.Controls
       {
          base.OnAttachedToVisualTree(e);
          RefreshSlotBrushes();
+
+         if (Application.Current != null)
+         {
+            Application.Current.ResourcesChanged -= OnApplicationResourcesChanged;
+            Application.Current.ResourcesChanged += OnApplicationResourcesChanged;
+         }
+      }
+
+      /// <inheritdoc/>
+      protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+      {
+         if (Application.Current != null)
+         {
+            Application.Current.ResourcesChanged -= OnApplicationResourcesChanged;
+         }
+
+         base.OnDetachedFromVisualTree(e);
+      }
+
+      private void OnApplicationResourcesChanged(object sender, ResourcesChangedEventArgs e)
+      {
+         RefreshSlotBrushes();
       }
 
       /// <summary>
@@ -73,6 +95,8 @@ namespace Vao.Sample.Controls
       private void RefreshSlotBrushes()
       {
          int slotCount = mCurrentLayout?.SlotCount ?? 0;
+         var headerFg = GetBrushResource("PrimaryHeaderFg", "#DEFFFFFF");
+
          for (int i = 0; i < slotCount; i++)
          {
             if (mSlotBorders[i] != null)
@@ -88,6 +112,21 @@ namespace Vao.Sample.Controls
             if (mSlots[i].HeaderBorder != null && mSlots[i].Camera == null)
             {
                mSlots[i].HeaderBorder.Background = GetNeutralHeaderBrush();
+            }
+
+            if (mSlots[i].HeaderViewerText != null)
+            {
+               mSlots[i].HeaderViewerText.Foreground = headerFg;
+            }
+
+            if (mSlots[i].HeaderCameraText != null)
+            {
+               mSlots[i].HeaderCameraText.Foreground = headerFg;
+            }
+
+            if (mSlots[i].SubChannelToggle != null)
+            {
+               mSlots[i].SubChannelToggle.Foreground = headerFg;
             }
          }
 
