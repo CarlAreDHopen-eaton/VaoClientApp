@@ -190,12 +190,18 @@ namespace Vao.Sample.Utility
       }
 
       public bool IsDownloadRecordingExpanded
-      {
-         get { return Settings.IsDownloadRecordingExpanded; }
-         set { Settings.IsDownloadRecordingExpanded = value; MarkDirty(); }
-      }
+       {
+          get { return Settings.IsDownloadRecordingExpanded; }
+          set { Settings.IsDownloadRecordingExpanded = value; MarkDirty(); }
+       }
 
-      public bool IsSettingsExpanded
+       public bool IsVideoSplitsExpanded
+       {
+          get { return Settings.IsVideoSplitsExpanded; }
+          set { Settings.IsVideoSplitsExpanded = value; MarkDirty(); }
+       }
+
+       public bool IsSettingsExpanded
       {
          get { return Settings.IsSettingsExpanded; }
          set { Settings.IsSettingsExpanded = value; MarkDirty(); }

@@ -184,6 +184,18 @@
             <Setter Property="Padding" Value="0"/>
             <Setter Property="Margin" Value="0"/>
         </Style>
+        <Style Selector="Expander.split-selection-menu /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+        <Style Selector="Expander.split-selection-menu /template/ ContentPresenter">
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+        <Style Selector="Expander.split-selection-menu /template/ Border">
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="0"/>
+        </Style>
 
         <!-- Expander Template Border Overrides -->
         <Style Selector="Expander /template/ ToggleButton /template/ Border">

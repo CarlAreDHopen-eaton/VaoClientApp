@@ -1,0 +1,41 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+          x:Class="Vao.Sample.Controls.SplitSelectorPanel">
+
+   <ListBox x:Name="lstSplitSelection"
+          SelectionChanged="lstSplitSelection_SelectionChanged"
+          ScrollViewer.VerticalScrollBarVisibility="Auto"
+          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+          Background="Transparent"
+          BorderThickness="0"
+          Padding="0"
+          Margin="0">
+      <ListBox.Styles>
+         <Style Selector="ListBoxItem">
+            <Setter Property="Padding" Value="4,6"/>
+            <Setter Property="MinHeight" Value="0"/>
+         </Style>
+      </ListBox.Styles>
+      <ListBox.ItemTemplate>
+         <DataTemplate>
+            <Grid ColumnDefinitions="Auto,*" Margin="0">
+               <Border Grid.Column="0"
+                     Width="22" Height="22"
+                     Background="{DynamicResource Surface1}"
+                     CornerRadius="3"
+                     Margin="0,0,6,0"
+                     ClipToBounds="True">
+                  <Canvas x:Name="splitIconCanvas"
+                        Width="22" Height="22"
+                        Loaded="SplitIconCanvas_Loaded"/>
+               </Border>
+               <TextBlock Grid.Column="1"
+                        Text="{Binding DisplayName}"
+                        VerticalAlignment="Center"
+                        Foreground="{DynamicResource SidebarHeaderFg}"/>
+            </Grid>
+         </DataTemplate>
+      </ListBox.ItemTemplate>
+   </ListBox>
+
+</UserControl>

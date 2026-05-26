@@ -55,7 +55,8 @@ namespace Vao.Sample.Utility
       public bool IsAlarmsExpanded { get; set; } = true;
       public bool IsPlaybackSelectionExpanded { get; set; } = true;
       public bool IsDownloadRecordingExpanded { get; set; } = true;
-      public bool IsSettingsExpanded { get; set; } = false;
+       public bool IsVideoSplitsExpanded { get; set; } = true;
+       public bool IsSettingsExpanded { get; set; } = false;
       public bool IsMessagesCollapsed { get; set; } = false;
       public double MessagesSplitVideoStars { get; set; } = 3.0;
       public double MessagesSplitMessagesStars { get; set; } = 1.0;

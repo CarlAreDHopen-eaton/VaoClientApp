@@ -165,14 +165,15 @@ namespace Vao.Sample
          UpdateThemeMenus();
          var cfg = ConfigurationManager.Instance;
          expCameraControl.IsExpanded = cfg.IsCameraControlExpanded;
-         expCameraSelection.IsExpanded = cfg.IsCameraSelectionExpanded;
-         expPresetSelection.IsExpanded = cfg.IsPresetSelectionExpanded;
-         expAlarms.IsExpanded = cfg.IsAlarmsExpanded;
-         expPlaybackSelection.IsExpanded = cfg.IsPlaybackSelectionExpanded;
-         expDownloadRecording.IsExpanded = cfg.IsDownloadRecordingExpanded;
+          expCameraSelection.IsExpanded = cfg.IsCameraSelectionExpanded;
+          expPresetSelection.IsExpanded = cfg.IsPresetSelectionExpanded;
+          expAlarms.IsExpanded = cfg.IsAlarmsExpanded;
+          expPlaybackSelection.IsExpanded = cfg.IsPlaybackSelectionExpanded;
+          expDownloadRecording.IsExpanded = cfg.IsDownloadRecordingExpanded;
+          expVideoSplits.IsExpanded = cfg.IsVideoSplitsExpanded;
 
-         // Save settings whenever an expander is toggled so state persists even if the app is killed
-         foreach (var exp in new[] { expCameraControl, expCameraSelection, expPresetSelection, expAlarms, expPlaybackSelection, expDownloadRecording })
+          // Save settings whenever an expander is toggled so state persists even if the app is killed
+          foreach (var exp in new[] { expCameraControl, expCameraSelection, expPresetSelection, expAlarms, expPlaybackSelection, expDownloadRecording, expVideoSplits })
          {
             exp.PropertyChanged += (_, e) =>
             {
@@ -195,12 +196,13 @@ namespace Vao.Sample
          InitializeComponent();
 
          // Wire child control events
-         WireVideoPanel();
-         WireCameraSelectorPanel();
-         WireAlarmSelectorPanel();
-         WirePresetSelectorPanel();
-         WirePtzControlPanel();
-         WirePlaybackControlPanel();
+          WireVideoPanel();
+          WireCameraSelectorPanel();
+          WireAlarmSelectorPanel();
+          WirePresetSelectorPanel();
+          WirePtzControlPanel();
+          WirePlaybackControlPanel();
+          WireSplitSelectorPanel();
 
          ClearPresetDropdown();
          playbackControlPanel.ClearRecordings(false);
@@ -232,9 +234,10 @@ namespace Vao.Sample
          };
          videoLayoutPanel.CameraSelectedFromMenu += (_, cameraNo) => SelectCamera(cameraNo, videoLayoutPanel.GetStreamNo());
          videoLayoutPanel.LayoutChanged += (_, args) =>
-         {
-            if (!mIsLoadingSettings) SaveSettings();
-         };
+          {
+             if (!mIsLoadingSettings) SaveSettings();
+             splitSelectorPanel.SyncSelection(videoLayoutPanel.CurrentLayoutKey);
+          };
          videoLayoutPanel.ActiveSlotChanged += (_, slotIndex) =>
          {
             var slotCamera = videoLayoutPanel.GetActiveCamera();
@@ -326,10 +329,20 @@ namespace Vao.Sample
             UpdateEnabled();
          };
          playbackControlPanel.PickDateRequested += (_, _) => OpenDatePicker();
-         playbackControlPanel.PickTimeRequested += (_, _) => OpenTimePicker();
-      }
+          playbackControlPanel.PickTimeRequested += (_, _) => OpenTimePicker();
+       }
 
-      // ── Theme applied ──────────────────────────────────────────────────────
+       private void WireSplitSelectorPanel()
+       {
+          splitSelectorPanel.Fill();
+          splitSelectorPanel.LayoutSelected += (_, layoutKey) =>
+          {
+             videoLayoutPanel.SetLayout(layoutKey);
+             if (!mIsLoadingSettings) SaveSettings();
+          };
+       }
+
+       // ── Theme applied
 
       private void OnThemeApplied(ThemeDefinition theme)
       {
@@ -979,6 +992,7 @@ namespace Vao.Sample
       private void btnExpandAlarms_Click(object sender, RoutedEventArgs e)           { SetSidebarCollapsed(false, persistSetting: true); CollapseAllExpandersExcept(expAlarms); }
       private void btnExpandPlayback_Click(object sender, RoutedEventArgs e)         { SetSidebarCollapsed(false, persistSetting: true); CollapseAllExpandersExcept(expPlaybackSelection); }
       private void btnExpandDownload_Click(object sender, RoutedEventArgs e)         { SetSidebarCollapsed(false, persistSetting: true); CollapseAllExpandersExcept(expDownloadRecording); }
+      private void btnExpandVideoSplits_Click(object sender, RoutedEventArgs e)      { SetSidebarCollapsed(false, persistSetting: true); CollapseAllExpandersExcept(expVideoSplits); }
 
       public bool IsTextInputFocused()
       {
@@ -1007,9 +1021,11 @@ namespace Vao.Sample
          alarmSelectorPanel.SetStatusFilters(filters);
 
          // Restore the saved layout
-         if (!string.IsNullOrWhiteSpace(cfg.SelectedLayout))
-            videoLayoutPanel.SetLayout(cfg.SelectedLayout);
-      }
+          if (!string.IsNullOrWhiteSpace(cfg.SelectedLayout))
+             videoLayoutPanel.SetLayout(cfg.SelectedLayout);
+
+          splitSelectorPanel.SyncSelection(videoLayoutPanel.CurrentLayoutKey);
+       }
 
        private void SaveSettings()
       {
@@ -1020,6 +1036,7 @@ namespace Vao.Sample
          if (expAlarms != null)          cfg.IsAlarmsExpanded = expAlarms.IsExpanded;
          if (expPlaybackSelection != null) cfg.IsPlaybackSelectionExpanded = expPlaybackSelection.IsExpanded;
          if (expDownloadRecording != null) cfg.IsDownloadRecordingExpanded = expDownloadRecording.IsExpanded;
+          if (expVideoSplits != null)      cfg.IsVideoSplitsExpanded = expVideoSplits.IsExpanded;
 
          cfg.CameraSidebarMenuHeight = cameraSelectorPanel.ListHeight;
          cfg.AlarmSidebarMenuHeight = alarmSelectorPanel.ListHeight;
