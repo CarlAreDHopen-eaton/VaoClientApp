@@ -68,9 +68,12 @@ This application **strictly adheres** to the Brightlayer UI design system. All c
 
 | Token | Usage |
 |-------|-------|
-| `SidebarHeaderFg` | High emphasis text |
-| `LabelFg` | Medium emphasis text |
+| `TextPrimary` | High emphasis text (list item names, primary content) |
+| `SidebarHeaderFg` | Section header text |
+| `LabelFg` | Medium emphasis text (labels, secondary content) |
 | `TextSecondary` | Disabled/hint text |
+| `ListItemIconFg` | List item icons (camera type, preset, split icons) |
+| `ListItemNumberFg` | List item number/ID text (#0001, #001) |
 
 ### Border Colors
 
