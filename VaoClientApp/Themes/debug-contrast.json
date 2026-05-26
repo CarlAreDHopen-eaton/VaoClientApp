@@ -1,0 +1,125 @@
+{
+  "Key": "debug-contrast",
+  "DisplayName": "Debug Contrast",
+  "Variant": "Dark",
+  "FormFactor": "Desktop",
+
+  "Colors": {
+    "Accent": {
+      "Default": "#00FF00",
+      "Hover": "#33FF33",
+      "Pressed": "#009900"
+    },
+    "Status": {
+      "Success": "#FF00FF",
+      "Warning": "#00FFFF",
+      "Error": "#FFFF00",
+      "Info": "#FF8800"
+    },
+    "Background": {
+      "App": "#1A0033",
+      "Raised": "#2B004D",
+      "Elevated": "#3D0066",
+      "Overlay": "#4F0080"
+    },
+    "Foreground": {
+      "Primary": "#00FF00",
+      "Secondary": "#00CCCC",
+      "Hint": "#FF6600",
+      "ListItemIcon": "#FF00FF",
+      "ListItemNumber": "#FFFF00"
+    },
+    "Border": {
+      "Default": "#FF0000",
+      "Secondary": "#FF00FF"
+    }
+  },
+
+  "Sizing": {
+    "Page": {
+      "MarginHorizontal": 40.0,
+      "MarginVertical": 40.0
+    },
+    "Typography": {
+      "PageTitle": 28.0,
+      "PageSubtitle": 9.0,
+      "SectionHeader": 22.0
+    },
+    "Icon": {
+      "Default": 32.0,
+      "Small": 24.0
+    },
+    "Button": {
+      "MinHeight": 50.0,
+      "PaddingHorizontal": 20.0,
+      "PaddingVertical": 12.0
+    },
+    "Input": {
+      "MinHeight": 50.0,
+      "PaddingHorizontal": 18.0,
+      "PaddingVertical": 12.0
+    },
+    "ListItem": {
+      "MinHeight": 56.0
+    },
+    "Avatar": {
+      "Size": 52.0,
+      "CornerRadius": 8.0
+    }
+  },
+
+  "Components": {
+    "AppBar": {
+      "Height": 80.0
+    },
+    "Sidebar": {
+      "Width": 320.0,
+      "SidebarMenuHeaderFontSize": 18.0,
+      "SidebarMenuHeaderMinHeight": 64.0,
+      "SidebarMenuHeaderPaddingVertical": 20.0,
+      "SidebarMenuItemHeight": 44.0,
+      "SidebarMenuSearchHeight": 44.0,
+      "Colors": {
+        "Background": "#0D001A",
+        "CardBackground": "#1A0033",
+        "Border": "#FF0000",
+        "HeaderForeground": "#00FF00"
+      }
+    },
+    "VideoPanel": {
+      "Colors": {
+        "Background": "#330066",
+        "HeaderBackground": "#00FF00",
+        "HeaderIdle": "#FF00FF00",
+        "HeaderLive": "#FFFF00FF",
+        "HeaderPlayback": "#FF00FFFF"
+      }
+    },
+    "MessageLog": {
+      "Background": "#00000000",
+      "ErrorForeground": "#FFFFFF00",
+      "WarningForeground": "#FF00FFFF",
+      "DebugForeground": "#FFFF8800",
+      "DefaultForeground": "#FF00FF00"
+    },
+    "UserProfile": {
+      "ConnectedBackground": "#FF00FF00",
+      "DisconnectedBackground": "#FFFF0000"
+    },
+    "CameraLock": {
+      "AlarmLockedForeground": "#FFFFFF00",
+      "UserLockedForeground": "#FF00FFFF"
+    },
+    "CameraSelection": {
+      "SelectedBackground": "#FFFF00FF",
+      "SelectedHoverBackground": "#FF8800FF"
+    },
+    "AlarmStatus": {
+      "Active": "#FFFFFF00",
+      "Inactive": "#FF666666",
+      "Acknowledged": "#FF00FFFF",
+      "Tampered": "#FFFF8800",
+      "Default": "#CCFF00FF"
+    }
+  }
+}

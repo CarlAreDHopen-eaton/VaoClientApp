@@ -185,8 +185,11 @@ namespace Vao.Sample.Themes
          yield return Brush("Surface3", Colors.Background.Overlay);
 
          // Foreground
+         yield return Brush("TextPrimary", Colors.Foreground.Primary);
          yield return Brush("LabelFg", Colors.Foreground.Secondary);
          yield return Brush("TextSecondary", Colors.Foreground.Hint);
+         yield return Brush("ListItemIconFg", Colors.Foreground.ListItemIcon ?? Colors.Foreground.Secondary);
+         yield return Brush("ListItemNumberFg", Colors.Foreground.ListItemNumber ?? Colors.Foreground.Secondary);
 
          // Border
          yield return Brush("Divider", Colors.Border.Default);
@@ -336,6 +339,8 @@ namespace Vao.Sample.Themes
       public string Primary { get; set; } = "#DEFFFFFF";
       public string Secondary { get; set; } = "#99FFFFFF";
       public string Hint { get; set; } = "#61FFFFFF";
+      public string ListItemIcon { get; set; }
+      public string ListItemNumber { get; set; }
    }
 
    public sealed class ThemeBorderColors

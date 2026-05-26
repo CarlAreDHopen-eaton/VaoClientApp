@@ -25,22 +25,23 @@
 				<DataTemplate>
 					<Grid ColumnDefinitions="Auto,Auto,*" Margin="0">
 						<TextBlock Grid.Column="0"
-								   Text="&#xE55E;"
-								   Classes="ms-icon"
-								   FontSize="16"
-								   Foreground="{DynamicResource LabelFg}"
-								   VerticalAlignment="Center"/>
-						<TextBlock Grid.Column="1"
-								   Text="{Binding PresetNumberText}"
-								   Margin="6,0,6,0"
-								   FontWeight="SemiBold"
-								   Foreground="{DynamicResource LabelFg}"
-								   VerticalAlignment="Center"/>
+												   Text="&#xE55E;"
+												   Classes="ms-icon"
+												   FontSize="16"
+												   Foreground="{DynamicResource ListItemIconFg}"
+												   VerticalAlignment="Center"/>
+												<TextBlock Grid.Column="1"
+												   Text="{Binding PresetNumberText}"
+												   Margin="6,0,6,0"
+												   FontWeight="SemiBold"
+												   Foreground="{DynamicResource ListItemNumberFg}"
+												   VerticalAlignment="Center"/>
 						<TextBlock Grid.Column="2"
-								   Text="{Binding PresetName}"
-								   TextTrimming="CharacterEllipsis"
-								   ToolTip.Tip="{Binding PresetName}"
-								   VerticalAlignment="Center"/>
+												   Text="{Binding PresetName}"
+												   TextTrimming="CharacterEllipsis"
+												   ToolTip.Tip="{Binding PresetName}"
+												   Foreground="{DynamicResource TextPrimary}"
+												   VerticalAlignment="Center"/>
 					</Grid>
 				</DataTemplate>
 			</ListBox.ItemTemplate>

@@ -29,7 +29,7 @@
                <TextBlock Grid.Column="1"
                         Text="{Binding DisplayName}"
                         VerticalAlignment="Center"
-                        Foreground="{DynamicResource SidebarHeaderFg}"/>
+                        Foreground="{DynamicResource TextPrimary}"/>
             </Grid>
          </DataTemplate>
       </ListBox.ItemTemplate>

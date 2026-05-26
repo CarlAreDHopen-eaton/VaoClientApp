@@ -131,7 +131,13 @@ public partial class SplitSelectorPanel : UserControl
 
       IBrush fillBrush;
       IBrush strokeBrush;
-      if (canvas.TryFindResource("Primary", out var primaryRes) && primaryRes is SolidColorBrush primaryBrush)
+      if (canvas.TryFindResource("ListItemIconFg", out var iconRes) && iconRes is SolidColorBrush iconBrush)
+      {
+         var c = iconBrush.Color;
+         fillBrush = new SolidColorBrush(Color.FromArgb(80, c.R, c.G, c.B));
+         strokeBrush = new SolidColorBrush(Color.FromArgb(220, c.R, c.G, c.B));
+      }
+      else if (canvas.TryFindResource("Primary", out var primaryRes) && primaryRes is SolidColorBrush primaryBrush)
       {
          var c = primaryBrush.Color;
          fillBrush = new SolidColorBrush(Color.FromArgb(80, c.R, c.G, c.B));

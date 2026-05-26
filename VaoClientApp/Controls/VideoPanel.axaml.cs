@@ -60,6 +60,40 @@ namespace Vao.Sample.Controls
          SetActiveSlot(0);
       }
 
+      /// <inheritdoc/>
+      protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+      {
+         base.OnAttachedToVisualTree(e);
+         RefreshSlotBrushes();
+      }
+
+      /// <summary>
+      /// Re-applies theme-dependent brushes to slot elements that were created before resources were available.
+      /// </summary>
+      private void RefreshSlotBrushes()
+      {
+         int slotCount = mCurrentLayout?.SlotCount ?? 0;
+         for (int i = 0; i < slotCount; i++)
+         {
+            if (mSlotBorders[i] != null)
+            {
+               mSlotBorders[i].Background = GetBrushResource("Surface1", "#1E1E1E");
+            }
+
+            if (mSlots[i].VideoPanel != null)
+            {
+               mSlots[i].VideoPanel.Background = GetBrushResource("VideoBg", "#000000");
+            }
+
+            if (mSlots[i].HeaderBorder != null && mSlots[i].Camera == null)
+            {
+               mSlots[i].HeaderBorder.Background = GetNeutralHeaderBrush();
+            }
+         }
+
+         UpdateSlotSelectionBorders();
+      }
+
       // ── Public API ─────────────────────────────────────────────────────────
 
       public VideoLayoutDefinition CurrentLayout
@@ -349,7 +383,7 @@ namespace Vao.Sample.Controls
             {
                mSlotBorders[i].BorderBrush = i == mActiveSlotIndex
                   ? GetBrushResource("Primary", "#0066CC")
-                  : new SolidColorBrush(Color.Parse("#555555"));
+                  : GetBrushResource("Divider", "#555555");
                mSlotBorders[i].BorderThickness = new Thickness(2);
             }
          }
@@ -373,13 +407,13 @@ namespace Vao.Sample.Controls
             var slotDef = layout.Slots[i];
             int slotIndex = slotDef.Index;
 
+            var headerFg = GetBrushResource("PrimaryHeaderFg", "#DEFFFFFF");
             var headerViewerText = new TextBlock
              {
                 Text = $"Viewer {slotIndex + 1}",
                 FontWeight = FontWeight.Bold,
                 FontSize = 11,
-                Foreground = Brushes.White,
-                Opacity = 0.87,
+                Foreground = headerFg,
                 TextTrimming = TextTrimming.CharacterEllipsis
              };
              var headerCameraText = new TextBlock
@@ -387,8 +421,7 @@ namespace Vao.Sample.Controls
                 Text = "No Camera Selected",
                 FontWeight = FontWeight.Normal,
                 FontSize = 11,
-                Foreground = Brushes.White,
-                Opacity = 0.87,
+                Foreground = headerFg,
                 TextTrimming = TextTrimming.CharacterEllipsis
              };
              var headerText = new StackPanel
@@ -403,7 +436,7 @@ namespace Vao.Sample.Controls
             {
                Text = "\uE5D4",
                FontSize = 16,
-               Foreground = Brushes.White,
+               Foreground = GetBrushResource("PrimaryHeaderFg", "#DEFFFFFF"),
                HorizontalAlignment = HorizontalAlignment.Center,
                VerticalAlignment = VerticalAlignment.Center
             };
@@ -441,7 +474,7 @@ namespace Vao.Sample.Controls
                Padding = new Thickness(0),
                Margin = new Thickness(0, 0, 4, 0),
                MinHeight = 0,
-               Foreground = Brushes.White,
+               Foreground = GetBrushResource("PrimaryHeaderFg", "#DEFFFFFF"),
                IsEnabled = false
             };
             int toggleSlotIndex = slotIndex;
