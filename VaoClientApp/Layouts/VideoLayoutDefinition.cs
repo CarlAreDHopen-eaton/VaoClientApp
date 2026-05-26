@@ -16,12 +16,6 @@ namespace Vao.Sample.Layouts
       {
          get { return Slots?.Count ?? 0; }
       }
-
-      [JsonIgnore]
-      public bool IsSingleView
-      {
-         get { return false; }
-      }
    }
 
    public class VideoSlotDefinition

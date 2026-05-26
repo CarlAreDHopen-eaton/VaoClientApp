@@ -54,12 +54,9 @@ namespace Vao.Sample.Controls
             mSlots[i] = new VideoSlotState();
          mCurrentLayout = VideoLayoutCatalog.Default.GetDefaultLayout();
 
-         // Hide the legacy single-view control; all layouts use the dynamic grid
-         grpVideoControl.IsVisible = false;
-
          // Build the initial layout grid
          BuildLayoutGrid(mCurrentLayout);
-         quadGrid.IsVisible = true;
+         layoutGrid.IsVisible = true;
          SetActiveSlot(0);
       }
 
@@ -150,15 +147,14 @@ namespace Vao.Sample.Controls
                else
                   mSlots[idx].ResetUi();
             }
-            quadGrid.IsVisible = false;
-            quadGrid.Children.Clear();
+            layoutGrid.IsVisible = false;
+            layoutGrid.Children.Clear();
          }
 
          mCurrentLayout = layout;
 
-         grpVideoControl.IsVisible = false;
          BuildLayoutGrid(layout);
-         quadGrid.IsVisible = true;
+         layoutGrid.IsVisible = true;
          SetActiveSlot(0);
 
          LayoutChanged?.Invoke(this, changeArgs);
@@ -366,14 +362,14 @@ namespace Vao.Sample.Controls
 
       private void BuildLayoutGrid(VideoLayoutDefinition layout)
       {
-         quadGrid.Children.Clear();
-         quadGrid.RowDefinitions.Clear();
-         quadGrid.ColumnDefinitions.Clear();
+         layoutGrid.Children.Clear();
+         layoutGrid.RowDefinitions.Clear();
+         layoutGrid.ColumnDefinitions.Clear();
 
          for (int r = 0; r < layout.Rows; r++)
-            quadGrid.RowDefinitions.Add(new RowDefinition(new GridLength(1, GridUnitType.Star)));
+            layoutGrid.RowDefinitions.Add(new RowDefinition(new GridLength(1, GridUnitType.Star)));
          for (int c = 0; c < layout.Columns; c++)
-            quadGrid.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(1, GridUnitType.Star)));
+            layoutGrid.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(1, GridUnitType.Star)));
 
          for (int i = 0; i < layout.Slots.Count; i++)
          {
@@ -515,7 +511,7 @@ namespace Vao.Sample.Controls
             Grid.SetColumn(slotBorder, slotDef.Column);
             if (slotDef.RowSpan > 1) Grid.SetRowSpan(slotBorder, slotDef.RowSpan);
             if (slotDef.ColumnSpan > 1) Grid.SetColumnSpan(slotBorder, slotDef.ColumnSpan);
-            quadGrid.Children.Add(slotBorder);
+            layoutGrid.Children.Add(slotBorder);
 
             mSlots[slotIndex].HeaderViewerText = headerViewerText;
               mSlots[slotIndex].HeaderCameraText = headerCameraText;
@@ -535,12 +531,6 @@ namespace Vao.Sample.Controls
       }
 
       // ── Event handlers ─────────────────────────────────────────────────────
-
-      private void tglSubChannel_CheckedChanged(object sender, RoutedEventArgs e)
-      {
-         if (mIsLoadingSettings) return;
-         SubChannelChanged?.Invoke(this, tglSubChannel.IsChecked == true);
-      }
 
       private void VideoMenuButton_Click(object sender, RoutedEventArgs e)
       {
@@ -678,12 +668,6 @@ namespace Vao.Sample.Controls
       }
 
       private static bool IsActiveRtspPlayback(string url) => url != null && url.Contains("playback");
-
-      private static string GetMaskedUrl(string url)
-      {
-         try { return new UriBuilder(url) { Password = "******", UserName = "******" }.ToString(); }
-         catch { return url ?? string.Empty; }
-      }
 
       private IBrush GetBrushResource(string key, string fallback)
       {

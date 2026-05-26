@@ -55,7 +55,6 @@ internal sealed class AndroidVideoController
       mMainView = mainView;
       mActivity = activity;
 
-      mMainView.RtspStreamRequested     += OnRtspStreamRequested;
       mMainView.SlotRtspStreamRequested += OnSlotRtspStreamRequested;
       mMainView.AnyOverlayStateChanged  += OnAnyOverlayStateChanged;
       mMainView.VideoLayoutChanging     += OnVideoLayoutChanging;
@@ -66,7 +65,7 @@ internal sealed class AndroidVideoController
       // StartRtspStream call.
       InitializeVlc();
 
-      // Create slot 0 for the default (single-view) layout.
+      // Create slot 0 for the default layout.
       InitializeSlot(0);
       TrackSlotPanel(0);
    }
@@ -217,15 +216,6 @@ internal sealed class AndroidVideoController
 
    // ── Event handlers ──────────────────────────────────────────────────────
 
-   private void OnRtspStreamRequested(object sender, string url)
-   {
-      // Single-view path — always slot 0.
-      if (string.IsNullOrEmpty(url))
-         StopRtspStream(0);
-      else
-         StartRtspStream(0, url);
-   }
-
    private void OnSlotRtspStreamRequested(object sender, VideoSlotStreamEventArgs e)
    {
       if (string.IsNullOrEmpty(e.Url))
@@ -260,23 +250,14 @@ internal sealed class AndroidVideoController
    private void OnVideoLayoutChanged(object sender, LayoutChangeEventArgs e)
    {
       mMainView.WriteMessageLog(MessageSource.LibVlc,
-         $"OnVideoLayoutChanged: isSingleView={e.NewLayout.IsSingleView} slots=[{string.Join(",", e.NewLayout.Slots?.Select(s => s.Index) ?? Enumerable.Empty<int>())}] knownSlots=[{string.Join(",", mSlotStates.Keys)}] pending=[{string.Join(",", mPendingStreams.Keys)}]",
+         $"OnVideoLayoutChanged: slotCount={e.NewLayout.SlotCount} slots=[{string.Join(",", e.NewLayout.Slots?.Select(s => s.Index) ?? Enumerable.Empty<int>())}] knownSlots=[{string.Join(",", mSlotStates.Keys)}] pending=[{string.Join(",", mPendingStreams.Keys)}]",
          LogLevel.Debug);
 
-      if (e.NewLayout.SlotCount == 1)
+      foreach (var slotDef in e.NewLayout.Slots)
       {
-         if (!mSlotStates.ContainsKey(0))
-            InitializeSlot(0);
-         TrackSlotPanel(0);
-      }
-      else
-      {
-         foreach (var slotDef in e.NewLayout.Slots)
-         {
-            if (!mSlotStates.ContainsKey(slotDef.Index))
-               InitializeSlot(slotDef.Index);
-            TrackSlotPanel(slotDef.Index);
-         }
+         if (!mSlotStates.ContainsKey(slotDef.Index))
+            InitializeSlot(slotDef.Index);
+         TrackSlotPanel(slotDef.Index);
       }
    }
 
