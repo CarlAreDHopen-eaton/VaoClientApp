@@ -47,6 +47,7 @@ namespace Vao.Sample
 
          ApplyColorResources(theme);
          ApplyLayoutResources(theme);
+         ApplyFontResources(theme);
          RefreshAllStyles();
          if (Dispatcher.UIThread.CheckAccess())
             ThemeApplied?.Invoke(theme);
@@ -70,6 +71,12 @@ namespace Vao.Sample
       private void ApplyLayoutResources(ThemeDefinition theme)
       {
          theme.ApplyLayoutResources(Resources);
+      }
+
+      private void ApplyFontResources(ThemeDefinition theme)
+      {
+         if (!string.IsNullOrWhiteSpace(theme.FontFamily))
+            Resources["AppFontFamily"] = new FontFamily(theme.FontFamily);
       }
 
       private void ApplyColorResources(ThemeDefinition theme)

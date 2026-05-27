@@ -18,36 +18,36 @@
              Using embedded fonts via avares:// URI
              =========================================== -->
         <Style Selector="Window">
-            <Setter Property="FontFamily" Value="avares://VaoClientApp/Assets/Fonts#Open Sans, Segoe UI, San Francisco, Roboto, Helvetica Neue, Arial, sans-serif"/>
+            <Setter Property="FontFamily" Value="{DynamicResource AppFontFamily}"/>
             <Setter Property="FontSize" Value="14"/>
         </Style>
 
         <Style Selector="TextBlock">
-            <Setter Property="FontFamily" Value="avares://VaoClientApp/Assets/Fonts#Open Sans, Segoe UI, San Francisco, Roboto, Helvetica Neue, Arial, sans-serif"/>
+            <Setter Property="FontFamily" Value="{DynamicResource AppFontFamily}"/>
         </Style>
 
         <Style Selector="Button">
-            <Setter Property="FontFamily" Value="avares://VaoClientApp/Assets/Fonts#Open Sans, Segoe UI, San Francisco, Roboto, Helvetica Neue, Arial, sans-serif"/>
+            <Setter Property="FontFamily" Value="{DynamicResource AppFontFamily}"/>
         </Style>
 
         <Style Selector="TextBox">
-            <Setter Property="FontFamily" Value="avares://VaoClientApp/Assets/Fonts#Open Sans, Segoe UI, San Francisco, Roboto, Helvetica Neue, Arial, sans-serif"/>
+            <Setter Property="FontFamily" Value="{DynamicResource AppFontFamily}"/>
         </Style>
 
         <Style Selector="ComboBox">
-            <Setter Property="FontFamily" Value="avares://VaoClientApp/Assets/Fonts#Open Sans, Segoe UI, San Francisco, Roboto, Helvetica Neue, Arial, sans-serif"/>
+            <Setter Property="FontFamily" Value="{DynamicResource AppFontFamily}"/>
         </Style>
 
         <Style Selector="CheckBox">
-            <Setter Property="FontFamily" Value="avares://VaoClientApp/Assets/Fonts#Open Sans, Segoe UI, San Francisco, Roboto, Helvetica Neue, Arial, sans-serif"/>
+            <Setter Property="FontFamily" Value="{DynamicResource AppFontFamily}"/>
         </Style>
 
         <Style Selector="MenuItem">
-            <Setter Property="FontFamily" Value="avares://VaoClientApp/Assets/Fonts#Open Sans, Segoe UI, San Francisco, Roboto, Helvetica Neue, Arial, sans-serif"/>
+            <Setter Property="FontFamily" Value="{DynamicResource AppFontFamily}"/>
         </Style>
 
         <Style Selector="Label">
-            <Setter Property="FontFamily" Value="avares://VaoClientApp/Assets/Fonts#Open Sans, Segoe UI, San Francisco, Roboto, Helvetica Neue, Arial, sans-serif"/>
+            <Setter Property="FontFamily" Value="{DynamicResource AppFontFamily}"/>
         </Style>
 
         <!-- Monospace font for code/messages -->
@@ -647,6 +647,7 @@
                  Primary: Open Sans (Embedded)
                  Monospace: Consolas
                  =========================================== -->
+            <FontFamily x:Key="AppFontFamily">avares://VaoClientApp/Assets/Fonts#Open Sans, Segoe UI, San Francisco, Roboto, Helvetica Neue, Arial, sans-serif</FontFamily>
             <FontFamily x:Key="BrightlayerFont">avares://VaoClientApp/Assets/Fonts#Open Sans, Segoe UI, San Francisco, Roboto, Helvetica Neue, Arial, sans-serif</FontFamily>
             <FontFamily x:Key="MonospaceFont">Consolas, Monaco, Courier New, monospace</FontFamily>
             <FontFamily x:Key="MaterialSymbolsFont">avares://VaoClientApp/Assets/Fonts#Material Symbols Outlined</FontFamily>

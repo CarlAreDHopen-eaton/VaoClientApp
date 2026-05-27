@@ -137,6 +137,7 @@ namespace Vao.Sample.Themes
       public string DisplayName { get; set; } = string.Empty;
       public string Variant { get; set; } = "Dark";
       public string FormFactor { get; set; } = "Desktop";
+      public string FontFamily { get; set; }
       public ThemeColors Colors { get; set; } = new();
       public ThemeSizing Sizing { get; set; } = new();
       public ThemeComponents Components { get; set; } = new();

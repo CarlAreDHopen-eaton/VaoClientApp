@@ -3,6 +3,7 @@
   "DisplayName": "Debug Contrast",
   "Variant": "Dark",
   "FormFactor": "Desktop",
+  "FontFamily": "Comic Sans MS, Papyrus, Impact, fantasy",
 
   "Colors": {
     "Accent": {

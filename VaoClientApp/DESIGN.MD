@@ -170,6 +170,8 @@ The application uses the following font stack with system fallbacks:
 avares://VaoClientApp/Assets/Fonts#Open Sans, Segoe UI, San Francisco, Roboto, Helvetica Neue, Arial, sans-serif
 ```
 
+> **Theme Font Override:** The font family can be overridden per theme by setting the optional `FontFamily` field in the theme JSON file. When specified, it replaces the default Open Sans font stack for the entire application. See [`Themes/THEMES.MD`](Themes/THEMES.MD) for details.
+
 **Monospace Font: Consolas**
 
 For code, logs, and technical data:

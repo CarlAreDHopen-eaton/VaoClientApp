@@ -10,6 +10,7 @@ Each theme is a single JSON file in the `Themes/` directory. The application loa
 | `DisplayName` | string | Human-readable name shown in the UI |
 | `Variant` | `"Dark"` or `"Light"` | Controls dark/light mode logic |
 | `FormFactor` | `"Desktop"` or `"Tablet"` | Controls touch-target and density adjustments |
+| `FontFamily` | string (optional) | Overrides the application font. When omitted, the default Open Sans font stack is used. Value is any valid Avalonia font family string, e.g. `"Segoe UI, Arial, sans-serif"` |
 
 ---
 
