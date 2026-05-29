@@ -80,6 +80,7 @@
       "SidebarMenuHeaderPaddingVertical": 20.0,
       "SidebarMenuItemHeight": 44.0,
       "SidebarMenuSearchHeight": 44.0,
+      "ResizeHandleHeight": 4.0,
       "Colors": {
         "Background": "#0D001A",
         "CardBackground": "#1A0033",

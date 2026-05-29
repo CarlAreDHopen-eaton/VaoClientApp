@@ -465,7 +465,7 @@
         </Style>
 
         <Style Selector="Border.sidebar-menu-resize-handle">
-            <Setter Property="Height" Value="8"/>
+            <Setter Property="Height" Value="{DynamicResource ResizeHandleHeight}"/>
             <Setter Property="Background" Value="{DynamicResource Divider}"/>
             <Setter Property="Opacity" Value="0.55"/>
             <Setter Property="Margin" Value="0,2,0,0"/>

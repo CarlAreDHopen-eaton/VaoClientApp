@@ -260,6 +260,7 @@ namespace Vao.Sample.Themes
          resources["AvatarCornerRadius"] = new CornerRadius(Sizing.Avatar.CornerRadius);
          resources["SidebarMenuItemHeight"] = Components.Sidebar.SidebarMenuItemHeight;
          resources["SidebarMenuSearchHeight"] = Components.Sidebar.SidebarMenuSearchHeight;
+         resources["ResizeHandleHeight"] = Components.Sidebar.ResizeHandleHeight;
 
          resources["IconSize"] = Sizing.Icon.Default;
          resources["IconSizeSmall"] = Sizing.Icon.Small;
@@ -510,6 +511,7 @@ namespace Vao.Sample.Themes
       public double SidebarMenuHeaderPaddingVertical { get; set; }
       public double SidebarMenuItemHeight { get; set; } = 34;
       public double SidebarMenuSearchHeight { get; set; } = 30;
+      public double ResizeHandleHeight { get; set; } = 8;
       public ThemeSidebarColors Colors { get; set; } = new();
    }
 
