@@ -77,6 +77,8 @@ namespace Vao.Sample
       {
          if (!string.IsNullOrWhiteSpace(theme.FontFamily))
             Resources["AppFontFamily"] = new FontFamily(theme.FontFamily);
+         else
+            Resources["AppFontFamily"] = FontFamily.Default;
       }
 
       private void ApplyColorResources(ThemeDefinition theme)
