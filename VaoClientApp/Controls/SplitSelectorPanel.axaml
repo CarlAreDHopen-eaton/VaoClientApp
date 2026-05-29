@@ -2,16 +2,18 @@
           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
           x:Class="Vao.Sample.Controls.SplitSelectorPanel">
 
-   <ListBox x:Name="lstSplitSelection"
-          SelectionChanged="lstSplitSelection_SelectionChanged"
-          ScrollViewer.VerticalScrollBarVisibility="Auto"
-          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-          Background="Transparent"
-          BorderBrush="{DynamicResource Divider}"
-          BorderThickness="1"
-          CornerRadius="4"
-          Padding="0"
-          Margin="0">
+   <Grid RowDefinitions="Auto,Auto">
+      <ListBox Grid.Row="0"
+            x:Name="lstSplitSelection"
+            SelectionChanged="lstSplitSelection_SelectionChanged"
+            ScrollViewer.VerticalScrollBarVisibility="Auto"
+            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+            Background="Transparent"
+            BorderBrush="{DynamicResource Divider}"
+            BorderThickness="1"
+            CornerRadius="4"
+            Padding="0"
+            Margin="0">
       <ListBox.ItemTemplate>
          <DataTemplate>
             <Grid ColumnDefinitions="Auto,*" Margin="0">
@@ -33,6 +35,14 @@
             </Grid>
          </DataTemplate>
       </ListBox.ItemTemplate>
-   </ListBox>
+         </ListBox>
+         <Border Grid.Row="1"
+               Classes="sidebar-menu-resize-handle"
+               Tag="split"
+               PointerPressed="ResizeHandle_PointerPressed"
+               PointerMoved="ResizeHandle_PointerMoved"
+               PointerReleased="ResizeHandle_PointerReleased"
+               PointerCaptureLost="ResizeHandle_PointerCaptureLost"/>
+      </Grid>
 
-</UserControl>
+   </UserControl>

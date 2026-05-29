@@ -16,7 +16,7 @@ namespace Vao.Sample
          get { return mDefault ??= Load(); }
       }
 
-      public double ResizableSidebarMenuMinHeight { get; set; } = 180.0;
+      public double ResizableSidebarMenuMinHeight { get; set; } = 32.0;
       public double ResizableSidebarMenuDefaultHeight { get; set; } = 360.0;
       public double ResizableSidebarMenuMaxHeight { get; set; } = 800.0;
 

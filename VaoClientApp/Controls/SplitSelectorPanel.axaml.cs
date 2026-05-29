@@ -5,6 +5,7 @@ using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Shapes;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Vao.Sample.Layouts;
@@ -20,6 +21,9 @@ public partial class SplitSelectorPanel : UserControl
    private readonly ObservableCollection<SplitSelectionItem> mSplitItems = new();
    private readonly List<(Canvas Canvas, SplitSelectionItem Item)> mIconCanvases = new();
    private bool mIsUpdatingSelection;
+   private bool mIsResizing;
+   private double mResizeStartHeight;
+   private Point mResizeStartPoint;
 
    #endregion
 
@@ -27,6 +31,9 @@ public partial class SplitSelectorPanel : UserControl
 
    /// <summary>Fired when the user selects a layout. EventArgs contains the layout key.</summary>
    public event EventHandler<string> LayoutSelected;
+
+   /// <summary>Fired when the panel is resized by the user.</summary>
+   public event EventHandler LayoutChanged;
 
    #endregion
 
@@ -192,4 +199,35 @@ public partial class SplitSelectorPanel : UserControl
    }
 
    #endregion
+
+   // ── Resize ─────────────────────────────────────────────────────────────
+
+   private void ResizeHandle_PointerPressed(object sender, PointerPressedEventArgs e)
+   {
+      if (lstSplitSelection == null) return;
+      mIsResizing = true;
+      mResizeStartPoint = e.GetPosition(this);
+      mResizeStartHeight = lstSplitSelection.Height > 0 ? lstSplitSelection.Height : lstSplitSelection.Bounds.Height;
+      if (sender is InputElement ie) e.Pointer.Capture(ie);
+   }
+
+   private void ResizeHandle_PointerMoved(object sender, PointerEventArgs e)
+   {
+      if (!mIsResizing || lstSplitSelection == null) return;
+      double minH = AppConstants.Default.ResizableSidebarMenuMinHeight;
+      double maxH = AppConstants.Default.ResizableSidebarMenuMaxHeight;
+      double delta = e.GetPosition(this).Y - mResizeStartPoint.Y;
+      lstSplitSelection.Height = Math.Clamp(mResizeStartHeight + delta, minH, maxH);
+   }
+
+   private void ResizeHandle_PointerReleased(object sender, PointerReleasedEventArgs e) => EndResize(e.Pointer);
+   private void ResizeHandle_PointerCaptureLost(object sender, PointerCaptureLostEventArgs e) => EndResize(null);
+
+   private void EndResize(IPointer pointer)
+   {
+      if (!mIsResizing) return;
+      mIsResizing = false;
+      pointer?.Capture(null);
+      LayoutChanged?.Invoke(this, EventArgs.Empty);
+   }
 }
