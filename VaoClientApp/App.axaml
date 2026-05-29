@@ -196,7 +196,11 @@
             <Setter Property="Padding" Value="0"/>
             <Setter Property="Margin" Value="0"/>
         </Style>
-
+        <Style Selector="Expander.sidebar-menu /template/ Border">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="0"/>
+        </Style>
         <!-- Expander Template Border Overrides -->
         <Style Selector="Expander /template/ ToggleButton /template/ Border">
             <Setter Property="MinHeight" Value="0"/>
