@@ -89,6 +89,11 @@ public partial class MainWindow : Window
          mainView.HandleRenameCameraKey();
          e.Handled = true;
       }
+      else if (e.Key == Key.F1)
+      {
+         mainView.OpenAboutFromKeyboard();
+         e.Handled = true;
+      }
       else if (e.Key == Key.F9)
       {
          mainView.ToggleSidebar();

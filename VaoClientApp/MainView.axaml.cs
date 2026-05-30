@@ -129,6 +129,8 @@ namespace Vao.Sample
 
       public void OpenSettingsFromKeyboard() => OpenSettingsPage();
 
+      public void OpenAboutFromKeyboard() => OpenAboutPage();
+
       public void OpenMessageLogFromKeyboard() => OpenMessageLogPage();
 
       public void HandleEscapeKey() => HandleEscapeNavigation();
@@ -1111,7 +1113,16 @@ namespace Vao.Sample
 
       private void menuItemSettings_Click(object sender, RoutedEventArgs e) => OpenSettingsPage();
 
+      private void menuItemAbout_Click(object sender, RoutedEventArgs e) => OpenAboutPage();
+
       private void menuItemMessageLog_Click(object sender, RoutedEventArgs e) => OpenMessageLogPage();
+
+      private void OpenAboutPage()
+      {
+         if (navigationHost?.Content is AboutPage) return;
+         var page = new AboutPage { NavigationService = mNavigationService };
+         mNavigationService.NavigateTo(page);
+      }
 
       private void OpenMessageLogPage()
       {

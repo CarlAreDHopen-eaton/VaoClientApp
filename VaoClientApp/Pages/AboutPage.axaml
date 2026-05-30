@@ -1,0 +1,107 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 x:Class="Vao.Sample.Pages.AboutPage"
+			 Background="{DynamicResource AppBg}">
+
+	<Grid RowDefinitions="Auto,*">
+		<Border Grid.Row="0" Height="{DynamicResource AppBarHeight}" Background="{DynamicResource Primary}" BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1" Padding="16,0" ClipToBounds="True">
+			<Grid ColumnDefinitions="Auto,*">
+				<Button Grid.Column="0"
+						x:Name="btnBack"
+						Click="btnBack_Click"
+						ToolTip.Tip="Go Back"
+						Width="40" Height="40"
+						Padding="0"
+						Background="Transparent"
+						BorderThickness="0">
+					<TextBlock Text="&#xE5C4;" Classes="ms-icon" FontSize="20" Foreground="{DynamicResource PrimaryHeaderFg}"/>
+				</Button>
+
+				<StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="12,0,0,0" Spacing="2">
+					<TextBlock Text="About"
+							   Classes="page-header-title"
+							   FontWeight="SemiBold"
+							   Foreground="{DynamicResource PrimaryHeaderFg}"/>
+					<TextBlock Text="Application information"
+							   Classes="page-header-subtitle"
+							   Foreground="{DynamicResource PrimaryHeaderFg}"
+							   Opacity="0.7"/>
+				</StackPanel>
+			</Grid>
+		</Border>
+
+		<ScrollViewer Grid.Row="1" Padding="32">
+			<StackPanel Spacing="24" MaxWidth="700">
+				<TextBlock Text="HERNIS FLEX VAO Demo Application"
+						   FontSize="22" FontWeight="Bold"
+						   Foreground="{DynamicResource OnSurface}"/>
+
+				<TextBlock TextWrapping="Wrap"
+						   Foreground="{DynamicResource OnSurface}"
+						   Text="This is a demo application designed to showcase some of the capabilities of the HERNIS FLEX VAO REST API. It demonstrates how to connect to a FLEX VMS system, control cameras, view live video streams, handle alarms, and download recorded video."/>
+
+				<TextBlock TextWrapping="Wrap"
+						   Foreground="{DynamicResource OnSurface}"
+						   Text="The application is built with Avalonia UI and runs on Windows, Linux, and Android."/>
+
+				<TextBlock Text="Links"
+						   FontSize="16" FontWeight="SemiBold"
+						   Foreground="{DynamicResource OnSurface}"
+						   Margin="0,8,0,0"/>
+
+				<StackPanel Spacing="8">
+					<Button Content="FLEX API Documentation"
+							Classes="hyperlink"
+							Tag="https://flexapi.docs.apiary.io"
+							Click="Hyperlink_Click"
+							Background="Transparent" BorderThickness="0" Padding="0"
+							Foreground="{DynamicResource Primary}" Cursor="Hand"/>
+					<Button Content="GitHub Repository"
+							Classes="hyperlink"
+							Tag="https://github.com/CarlAreDHopen-eaton/VaoClientApp"
+							Click="Hyperlink_Click"
+							Background="Transparent" BorderThickness="0" Padding="0"
+							Foreground="{DynamicResource Primary}" Cursor="Hand"/>
+				</StackPanel>
+
+				<TextBlock Text="Open Source Libraries"
+						   FontSize="16" FontWeight="SemiBold"
+						   Foreground="{DynamicResource OnSurface}"
+						   Margin="0,8,0,0"/>
+
+				<StackPanel Spacing="8">
+					<Button Content="Avalonia — Cross-platform UI framework"
+							Classes="hyperlink"
+							Tag="https://github.com/AvaloniaUI/Avalonia"
+							Click="Hyperlink_Click"
+							Background="Transparent" BorderThickness="0" Padding="0"
+							Foreground="{DynamicResource Primary}" Cursor="Hand"/>
+					<Button Content="RestSharp — REST API communication"
+							Classes="hyperlink"
+							Tag="https://github.com/restsharp/RestSharp"
+							Click="Hyperlink_Click"
+							Background="Transparent" BorderThickness="0" Padding="0"
+							Foreground="{DynamicResource Primary}" Cursor="Hand"/>
+					<Button Content="LibVLCSharp — RTSP video playback"
+							Classes="hyperlink"
+							Tag="https://github.com/videolan/libvlcsharp"
+							Click="Hyperlink_Click"
+							Background="Transparent" BorderThickness="0" Padding="0"
+							Foreground="{DynamicResource Primary}" Cursor="Hand"/>
+					<Button Content="FluentFTP — FTP-based video downloads"
+							Classes="hyperlink"
+							Tag="https://github.com/robinrodricks/FluentFTP"
+							Click="Hyperlink_Click"
+							Background="Transparent" BorderThickness="0" Padding="0"
+							Foreground="{DynamicResource Primary}" Cursor="Hand"/>
+					<Button Content="Newtonsoft.Json — JSON serialization"
+							Classes="hyperlink"
+							Tag="https://github.com/JamesNK/Newtonsoft.Json"
+							Click="Hyperlink_Click"
+							Background="Transparent" BorderThickness="0" Padding="0"
+							Foreground="{DynamicResource Primary}" Cursor="Hand"/>
+				</StackPanel>
+			</StackPanel>
+		</ScrollViewer>
+	</Grid>
+</UserControl>
