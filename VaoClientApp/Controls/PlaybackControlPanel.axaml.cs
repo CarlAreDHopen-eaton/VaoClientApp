@@ -41,7 +41,13 @@ namespace Vao.Sample.Controls
          if (list != null && list.Count > 0)
             selPlayback.ItemsSource = list;
          else
-            ClearRecordings(false);
+         {
+            if (selPlayback != null)
+            {
+               selPlayback.ItemsSource = new List<object> { "No recordings found" };
+               selPlayback.SelectedIndex = 0;
+            }
+         }
       }
 
       public void ClearRecordings(bool apiSupportsPlayback)
