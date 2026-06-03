@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -23,6 +24,9 @@ namespace Vao.Sample.Controls
       private readonly VideoView[] mSlotVideoControls = new VideoView[C_MAX_SLOT_COUNT];
       private readonly string[] mSlotRtspUrls = new string[C_MAX_SLOT_COUNT];
       private readonly bool[] mSlotIsStarted = new bool[C_MAX_SLOT_COUNT];
+      private readonly TextBlock[] mSlotStatsTextBlocks = new TextBlock[C_MAX_SLOT_COUNT];
+      private readonly DispatcherTimer mStatsTimer;
+      private bool mIsStatsForNerdsVisible;
 
       // ── Events (bubbled from inner VideoPanel) ─────────────────────────────
 
@@ -50,6 +54,13 @@ namespace Vao.Sample.Controls
 
          StartInitializeVlc();
          WireVideoPanel();
+
+         mStatsTimer = new DispatcherTimer
+         {
+            Interval = TimeSpan.FromSeconds(1)
+         };
+         mStatsTimer.Tick += (_, _) => UpdateAllStatsOverlays();
+         mStatsTimer.Start();
       }
 
       // ── Public API ─────────────────────────────────────────────────────────
@@ -86,6 +97,16 @@ namespace Vao.Sample.Controls
       public int ActiveSlotIndex
       {
          get { return videoPanel.ActiveSlotIndex; }
+      }
+
+      public bool IsStatsForNerdsVisible
+      {
+         get { return mIsStatsForNerdsVisible; }
+      }
+
+      public void SetStatsForNerdsVisible(bool visible)
+      {
+         videoPanel.SetStatsForNerdsVisible(visible);
       }
 
       public bool IsPlayback
@@ -158,6 +179,8 @@ namespace Vao.Sample.Controls
             OnVlcLog($"LibVLC error on slot {slotIndex}.", LogLevel.Error);
          mp.Opening += (_, _) =>
             OnVlcLog($"LibVLC opening slot {slotIndex}: {mp.Media?.Mrl ?? ""}", LogLevel.Notice);
+         mp.Playing += (_, _) => Dispatcher.UIThread.Post(() => UpdateSlotStatsOverlay(slotIndex));
+         mp.Stopped += (_, _) => Dispatcher.UIThread.Post(() => ClearSlotStatsOverlay(slotIndex));
 
          mSlotMediaPlayers[slotIndex] = mp;
          videoView.MediaPlayer = mp;
@@ -182,6 +205,7 @@ namespace Vao.Sample.Controls
          }
          mSlotIsStarted[slotIndex] = false;
          mSlotRtspUrls[slotIndex] = null;
+         ClearSlotStatsOverlay(slotIndex);
          DisposeMediaPlayerAsync(mp);
       }
 
@@ -226,6 +250,8 @@ namespace Vao.Sample.Controls
 
       public void Dispose()
       {
+         mStatsTimer.Stop();
+
          for (int i = 0; i < C_MAX_SLOT_COUNT; i++)
             StopSlotStream(i);
 
@@ -287,7 +313,33 @@ namespace Vao.Sample.Controls
             videoPanel.HandleSlotDrop(capturedSlotIndex, e);
          });
 
-         videoView.Content = overlay;
+         var statsText = new TextBlock
+         {
+            FontSize = 11,
+            Foreground = Avalonia.Media.Brushes.White,
+            TextWrapping = Avalonia.Media.TextWrapping.Wrap,
+            Text = ""
+         };
+         var statsBorder = new Avalonia.Controls.Border
+         {
+            Background = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.FromArgb(176, 0, 0, 0)),
+            CornerRadius = new Avalonia.CornerRadius(4),
+            Padding = new Avalonia.Thickness(6, 4),
+            Margin = new Avalonia.Thickness(8),
+            HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Left,
+            VerticalAlignment = Avalonia.Layout.VerticalAlignment.Top,
+            IsHitTestVisible = false,
+            IsVisible = mIsStatsForNerdsVisible,
+            Child = statsText
+         };
+
+         mSlotStatsTextBlocks[slotIndex] = statsText;
+
+         var contentGrid = new Avalonia.Controls.Grid();
+         contentGrid.Children.Add(overlay);
+         contentGrid.Children.Add(statsBorder);
+
+         videoView.Content = contentGrid;
          return videoView;
       }
 
@@ -303,6 +355,13 @@ namespace Vao.Sample.Controls
          videoPanel.SubChannelChanged += (_, isSubChannel) => SubChannelChanged?.Invoke(this, isSubChannel);
          videoPanel.CameraSelectedFromMenu += (_, cameraNo) => CameraSelectedFromMenu?.Invoke(this, cameraNo);
          videoPanel.ActiveSlotChanged += (_, slotIndex) => ActiveSlotChanged?.Invoke(this, slotIndex);
+         videoPanel.StatsForNerdsVisibilityChanged += (_, isVisible) =>
+         {
+            mIsStatsForNerdsVisible = isVisible;
+            ApplyStatsOverlayVisibility();
+            if (isVisible)
+               UpdateAllStatsOverlays();
+         };
          videoPanel.LayoutChanging += OnVideoLayoutChanging;
          videoPanel.LayoutChanged += OnVideoLayoutChanged;
       }
@@ -353,6 +412,106 @@ namespace Vao.Sample.Controls
          }
 
          LayoutChanged?.Invoke(this, e);
+      }
+
+      private void ApplyStatsOverlayVisibility()
+      {
+         for (int i = 0; i < C_MAX_SLOT_COUNT; i++)
+         {
+            VideoView slotView = mSlotVideoControls[i];
+            if (slotView?.Content is Avalonia.Controls.Grid grid && grid.Children.Count > 1 && grid.Children[1] is Avalonia.Controls.Border statsBorder)
+            {
+               statsBorder.IsVisible = mIsStatsForNerdsVisible;
+            }
+         }
+      }
+
+      private void ClearSlotStatsOverlay(int slotIndex)
+      {
+         TextBlock statsText = mSlotStatsTextBlocks[slotIndex];
+         if (statsText != null)
+            statsText.Text = string.Empty;
+      }
+
+      private void UpdateAllStatsOverlays()
+      {
+         if (!mIsStatsForNerdsVisible) return;
+
+         for (int i = 0; i < C_MAX_SLOT_COUNT; i++)
+            UpdateSlotStatsOverlay(i);
+      }
+
+      private void UpdateSlotStatsOverlay(int slotIndex)
+      {
+         TextBlock statsText = mSlotStatsTextBlocks[slotIndex];
+         MediaPlayer mediaPlayer = mSlotMediaPlayers[slotIndex];
+
+         if (statsText == null || mediaPlayer?.Media == null || !mSlotIsStarted[slotIndex])
+         {
+            ClearSlotStatsOverlay(slotIndex);
+            return;
+         }
+
+         Media media = mediaPlayer.Media;
+         MediaStats? stats = media.Statistics;
+         MediaTrack[] tracks = media.Tracks;
+
+         string videoCodec = "unknown";
+         string resolution = "-";
+         string mediaFps = "-";
+         ulong videoBitrate = 0;
+
+         if (tracks != null)
+         {
+            foreach (MediaTrack track in tracks)
+            {
+               if (track.TrackType != TrackType.Video)
+                  continue;
+
+               string codecDescription = media.CodecDescription(track.TrackType, track.Codec);
+               videoCodec = string.IsNullOrWhiteSpace(codecDescription) ? $"0x{track.Codec:X}" : codecDescription;
+               videoBitrate = track.Bitrate;
+
+               VideoTrack videoData = track.Data.Video;
+               resolution = $"{videoData.Width}x{videoData.Height}";
+               if (videoData.FrameRateDen > 0)
+               {
+                  double fpsFromTrack = (double)videoData.FrameRateNum / videoData.FrameRateDen;
+                  mediaFps = fpsFromTrack.ToString("0.00");
+               }
+               break;
+            }
+         }
+
+         string playerFps = mediaPlayer.Fps.ToString("0.00");
+
+         StringBuilder builder = new StringBuilder();
+         builder.AppendLine($"Slot: {slotIndex + 1}");
+         builder.AppendLine($"Codec: {videoCodec}");
+         builder.AppendLine($"Resolution: {resolution}");
+         builder.AppendLine($"FPS: {playerFps} (track {mediaFps})");
+         builder.AppendLine($"Track bitrate: {FormatBitsPerSecond(videoBitrate)}");
+
+         if (stats.HasValue)
+         {
+            MediaStats statValue = stats.Value;
+            builder.AppendLine($"Input bitrate: {statValue.InputBitrate:0.00} kb/s");
+            builder.AppendLine($"Demux bitrate: {statValue.DemuxBitrate:0.00} kb/s");
+            builder.AppendLine($"Read bytes: {statValue.ReadBytes:N0}");
+            builder.AppendLine($"Decoded video: {statValue.DecodedVideo:N0}");
+            builder.AppendLine($"Displayed frames: {statValue.DisplayedPictures:N0}");
+            builder.AppendLine($"Lost frames: {statValue.LostPictures:N0}");
+         }
+
+         statsText.Text = builder.ToString().TrimEnd();
+      }
+
+      private static string FormatBitsPerSecond(ulong bitsPerSecond)
+      {
+         if (bitsPerSecond == 0) return "0 bps";
+         if (bitsPerSecond >= 1_000_000) return $"{bitsPerSecond / 1_000_000d:0.00} Mbps";
+         if (bitsPerSecond >= 1_000) return $"{bitsPerSecond / 1_000d:0.00} kbps";
+         return $"{bitsPerSecond} bps";
       }
 
       private static void DisposeMediaPlayerAsync(MediaPlayer mp)

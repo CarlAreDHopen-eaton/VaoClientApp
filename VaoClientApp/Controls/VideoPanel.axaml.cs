@@ -21,6 +21,7 @@ namespace Vao.Sample.Controls
       private ContextMenu mVideoContextMenu;
       private Func<List<Camera>> mGetCameraList;
       private Func<IEnumerable<CameraSelectionItem>> mGetCameraSelectionItems;
+      private bool mIsStatsForNerdsVisible;
 
       // ── Layout state ────────────────────────────────────────────────────────
       private VideoLayoutDefinition mCurrentLayout;
@@ -45,6 +46,9 @@ namespace Vao.Sample.Controls
 
       /// <summary>Fired when the active slot changes.</summary>
       public event EventHandler<int> ActiveSlotChanged;
+
+      /// <summary>Fired when the stats overlay visibility changes.</summary>
+      public event EventHandler<bool> StatsForNerdsVisibilityChanged;
 
       public VideoPanel()
       {
@@ -300,6 +304,18 @@ namespace Vao.Sample.Controls
       public bool IsPlayback
       {
          get { return IsActiveRtspPlayback(ActiveRtspUrl); }
+      }
+
+      public bool IsStatsForNerdsVisible
+      {
+         get { return mIsStatsForNerdsVisible; }
+      }
+
+      public void SetStatsForNerdsVisible(bool visible)
+      {
+         if (mIsStatsForNerdsVisible == visible) return;
+         mIsStatsForNerdsVisible = visible;
+         StatsForNerdsVisibilityChanged?.Invoke(this, visible);
       }
 
       /// <summary>Returns the camera assigned to a specific slot, or null.</summary>
@@ -650,6 +666,13 @@ namespace Vao.Sample.Controls
          }
          layoutMenu.ItemsSource = layoutItems;
          rootItems.Add(layoutMenu);
+
+         var statsMenuItem = new MenuItem { Header = "Stats for Nerds" };
+         if (mIsStatsForNerdsVisible)
+            statsMenuItem.Icon = new CheckBox { IsChecked = true, IsHitTestVisible = false };
+         statsMenuItem.Click += (_, _) => SetStatsForNerdsVisible(!mIsStatsForNerdsVisible);
+         rootItems.Add(statsMenuItem);
+
          rootItems.Add(new Separator());
 
          // Camera list
