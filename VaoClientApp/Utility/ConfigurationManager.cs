@@ -132,6 +132,48 @@ namespace Vao.Sample.Utility
          set { Settings.CameraHotkeys = value ?? new Dictionary<int, int>(); MarkDirty(); }
       }
 
+      public bool VideoReconnectEnabled
+      {
+         get { return Settings.VideoReconnectEnabled; }
+         set { Settings.VideoReconnectEnabled = value; MarkDirty(); }
+      }
+
+      public int VideoStallThresholdSeconds
+      {
+         get { return Settings.VideoStallThresholdSeconds; }
+         set { Settings.VideoStallThresholdSeconds = Math.Max(1, value); MarkDirty(); }
+      }
+
+      public int VideoReconnectQuickAttempts
+      {
+         get { return Settings.VideoReconnectQuickAttempts; }
+         set { Settings.VideoReconnectQuickAttempts = Math.Max(1, value); MarkDirty(); }
+      }
+
+      public int VideoReconnectQuickIntervalSeconds
+      {
+         get { return Settings.VideoReconnectQuickIntervalSeconds; }
+         set { Settings.VideoReconnectQuickIntervalSeconds = Math.Max(1, value); MarkDirty(); }
+      }
+
+      public int VideoReconnectSteadyIntervalSeconds
+      {
+         get { return Settings.VideoReconnectSteadyIntervalSeconds; }
+         set { Settings.VideoReconnectSteadyIntervalSeconds = Math.Max(1, value); MarkDirty(); }
+      }
+
+      public int VideoReconnectStableResetSeconds
+      {
+         get { return Settings.VideoReconnectStableResetSeconds; }
+         set { Settings.VideoReconnectStableResetSeconds = Math.Max(1, value); MarkDirty(); }
+      }
+
+      public int VideoReconnectRestartDelayMs
+      {
+         get { return Settings.VideoReconnectRestartDelayMs; }
+         set { Settings.VideoReconnectRestartDelayMs = Math.Max(0, value); MarkDirty(); }
+      }
+
       public void SetCameraHotkey(int slot, int cameraComponentNumber)
       {
          Settings.CameraHotkeys[slot] = cameraComponentNumber;

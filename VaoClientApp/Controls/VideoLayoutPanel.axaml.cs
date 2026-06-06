@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -24,8 +25,14 @@ namespace Vao.Sample.Controls
       private readonly MediaPlayer[] mSlotMediaPlayers = new MediaPlayer[C_MAX_SLOT_COUNT];
       private readonly Grid[] mSlotVideoContainers = new Grid[C_MAX_SLOT_COUNT];
       private readonly VideoView[] mSlotVideoControls = new VideoView[C_MAX_SLOT_COUNT];
+      private readonly SlotReconnectState[] mSlotReconnectStates = new SlotReconnectState[C_MAX_SLOT_COUNT];
       private readonly string[] mSlotRtspUrls = new string[C_MAX_SLOT_COUNT];
       private readonly bool[] mSlotIsStarted = new bool[C_MAX_SLOT_COUNT];
+      private readonly DateTime[] mSlotLastFrameProgressUtc = new DateTime[C_MAX_SLOT_COUNT];
+      private readonly DateTime[] mSlotStableSinceUtc = new DateTime[C_MAX_SLOT_COUNT];
+      private readonly DateTime[] mSlotStartedUtc = new DateTime[C_MAX_SLOT_COUNT];
+      private readonly long[] mSlotLastDisplayedPictures = new long[C_MAX_SLOT_COUNT];
+      private readonly TextBlock[] mSlotReconnectTextBlocks = new TextBlock[C_MAX_SLOT_COUNT];
       private readonly TextBlock[] mSlotStatsTextBlocks = new TextBlock[C_MAX_SLOT_COUNT];
       private readonly DispatcherTimer mStatsTimer;
       private bool mIsStatsForNerdsVisible;
@@ -57,6 +64,12 @@ namespace Vao.Sample.Controls
       public VideoLayoutPanel()
       {
          InitializeComponent();
+
+         for (int i = 0; i < C_MAX_SLOT_COUNT; i++)
+         {
+            mSlotReconnectStates[i] = new SlotReconnectState();
+            ResetSlotFrameTracking(i);
+         }
 
          StartInitializeVlc();
          WireVideoPanel();
@@ -170,8 +183,23 @@ namespace Vao.Sample.Controls
 
       public void StartSlotStream(int slotIndex, string rtspUrl)
       {
+         StartSlotStreamInternal(slotIndex, rtspUrl, false);
+      }
+
+      public void StopSlotStream(int slotIndex)
+      {
+         StopSlotStreamInternal(slotIndex, true, true);
+      }
+
+      private void StartSlotStreamInternal(int slotIndex, string rtspUrl, bool isRetryRestart)
+      {
          mSlotRtspUrls[slotIndex] = rtspUrl;
-         if (mSlotIsStarted[slotIndex]) StopSlotStream(slotIndex);
+
+         if (!isRetryRestart)
+            ResetSlotReconnectState(slotIndex, true, true);
+
+         if (mSlotIsStarted[slotIndex])
+            StopSlotStreamInternal(slotIndex, !isRetryRestart, !isRetryRestart);
 
          var pnlVideo = videoPanel.GetVideoSlot(slotIndex);
          if (pnlVideo == null) return;
@@ -198,9 +226,16 @@ namespace Vao.Sample.Controls
          mp.Playing += (_, _) => Dispatcher.UIThread.Post(() =>
          {
             ApplyVideoDisplayMode(slotIndex, mp);
+            mSlotStartedUtc[slotIndex] = DateTime.UtcNow;
+            ResetSlotFrameTracking(slotIndex);
             UpdateSlotStatsOverlay(slotIndex);
          });
-         mp.Stopped += (_, _) => Dispatcher.UIThread.Post(() => ClearSlotStatsOverlay(slotIndex));
+         mp.Stopped += (_, _) => Dispatcher.UIThread.Post(() =>
+         {
+            ClearSlotStatsOverlay(slotIndex);
+            if (IsSlotLiveStream(slotIndex) && mSlotIsStarted[slotIndex])
+               EnsureReconnectActive(slotIndex, "Stream stopped unexpectedly.");
+         });
 
          ApplyVideoDisplayMode(slotIndex, mp);
 
@@ -208,9 +243,11 @@ namespace Vao.Sample.Controls
          videoView.MediaPlayer = mp;
          mp.Play();
          mSlotIsStarted[slotIndex] = true;
+         mSlotStartedUtc[slotIndex] = DateTime.UtcNow;
+         ResetSlotFrameTracking(slotIndex);
       }
 
-      public void StopSlotStream(int slotIndex)
+      private void StopSlotStreamInternal(int slotIndex, bool clearUrl, bool clearReconnectState)
       {
          var mp = mSlotMediaPlayers[slotIndex];
          if (mp == null) return;
@@ -228,7 +265,11 @@ namespace Vao.Sample.Controls
             mSlotVideoControls[slotIndex] = null;
          }
          mSlotIsStarted[slotIndex] = false;
-         mSlotRtspUrls[slotIndex] = null;
+         if (clearUrl)
+            mSlotRtspUrls[slotIndex] = null;
+         if (clearReconnectState)
+            ResetSlotReconnectState(slotIndex, true, true);
+         ResetSlotFrameTracking(slotIndex);
          ClearSlotStatsOverlay(slotIndex);
          DisposeMediaPlayerAsync(mp);
       }
@@ -271,7 +312,10 @@ namespace Vao.Sample.Controls
          mStatsTimer.Stop();
 
          for (int i = 0; i < C_MAX_SLOT_COUNT; i++)
+         {
+            ResetSlotReconnectState(i, true, true);
             StopSlotStream(i);
+         }
 
          if (mLibVlc != null)
          {
@@ -360,7 +404,31 @@ namespace Vao.Sample.Controls
             Child = statsText
          };
 
+         var reconnectText = new TextBlock
+         {
+            FontSize = 14,
+            FontWeight = Avalonia.Media.FontWeight.SemiBold,
+            Foreground = Avalonia.Media.Brushes.White,
+            TextAlignment = Avalonia.Media.TextAlignment.Center,
+            TextWrapping = Avalonia.Media.TextWrapping.Wrap,
+            Text = string.Empty
+         };
+         var reconnectBorder = new Avalonia.Controls.Border
+         {
+            Background = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.FromArgb(216, 0, 0, 0)),
+            CornerRadius = new Avalonia.CornerRadius(8),
+            Padding = new Avalonia.Thickness(14, 10),
+            MaxWidth = 260,
+            HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
+            VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+            IsHitTestVisible = false,
+            IsVisible = false,
+            Child = reconnectText
+         };
+
          mSlotStatsTextBlocks[slotIndex] = statsText;
+         mSlotReconnectTextBlocks[slotIndex] = reconnectText;
+         mSlotReconnectStates[slotIndex].OverlayBorder = reconnectBorder;
 
          var contentGrid = new Avalonia.Controls.Grid
          {
@@ -368,6 +436,7 @@ namespace Vao.Sample.Controls
          };
          contentGrid.Children.Add(videoView);
          contentGrid.Children.Add(overlay);
+         contentGrid.Children.Add(reconnectBorder);
          contentGrid.Children.Add(statsBorder);
 
          mSlotVideoContainers[slotIndex] = contentGrid;
@@ -419,7 +488,10 @@ namespace Vao.Sample.Controls
       {
          // Stop streams for removed slots
          foreach (int idx in e.RemovedSlotIndices)
+         {
+            ResetSlotReconnectState(idx, true, true);
             StopSlotStream(idx);
+         }
 
          // Reattach surviving slot VideoViews to their new panels
          foreach (int idx in e.SurvivingSlotIndices)
@@ -472,10 +544,244 @@ namespace Vao.Sample.Controls
 
       private void UpdateAllStatsOverlays()
       {
-         if (!mIsStatsForNerdsVisible) return;
-
          for (int i = 0; i < C_MAX_SLOT_COUNT; i++)
-            UpdateSlotStatsOverlay(i);
+         {
+            EvaluateSlotRuntime(i);
+            UpdateReconnectOverlay(i);
+            if (mIsStatsForNerdsVisible)
+               UpdateSlotStatsOverlay(i);
+            else
+               ClearSlotStatsOverlay(i);
+         }
+      }
+
+      private void EvaluateSlotRuntime(int slotIndex)
+      {
+         if (!mSlotIsStarted[slotIndex] || !IsSlotLiveStream(slotIndex))
+         {
+            mSlotStableSinceUtc[slotIndex] = DateTime.MinValue;
+            if (!mSlotIsStarted[slotIndex])
+               ResetSlotFrameTracking(slotIndex);
+            return;
+         }
+
+         MediaPlayer mediaPlayer = mSlotMediaPlayers[slotIndex];
+         Media media = mediaPlayer?.Media;
+         MediaStats? stats = media?.Statistics;
+         if (!stats.HasValue)
+            return;
+
+         DateTime now = DateTime.UtcNow;
+         long displayedPictures = stats.Value.DisplayedPictures;
+         if (displayedPictures > mSlotLastDisplayedPictures[slotIndex])
+         {
+            mSlotLastDisplayedPictures[slotIndex] = displayedPictures;
+            mSlotLastFrameProgressUtc[slotIndex] = now;
+
+            if (mSlotStableSinceUtc[slotIndex] == DateTime.MinValue)
+               mSlotStableSinceUtc[slotIndex] = now;
+
+            SlotReconnectState reconnectState = mSlotReconnectStates[slotIndex];
+            if (reconnectState.IsActive)
+               reconnectState.IsActive = false;
+
+            int stableResetWindow = Math.Max(1, ConfigurationManager.Instance.VideoReconnectStableResetSeconds);
+            if (reconnectState.AttemptCount > 0 &&
+                (now - mSlotStableSinceUtc[slotIndex]).TotalSeconds >= stableResetWindow)
+            {
+               reconnectState.AttemptCount = 0;
+               OnVlcLog($"Slot {slotIndex}: stable stream for {stableResetWindow}s, reset reconnect counters.", LogLevel.Notice);
+            }
+            return;
+         }
+
+         mSlotStableSinceUtc[slotIndex] = DateTime.MinValue;
+
+         int stallThreshold = Math.Max(1, ConfigurationManager.Instance.VideoStallThresholdSeconds);
+         DateTime stallSince = mSlotLastFrameProgressUtc[slotIndex] > DateTime.MinValue
+            ? mSlotLastFrameProgressUtc[slotIndex]
+            : mSlotStartedUtc[slotIndex];
+
+         if (stallSince == DateTime.MinValue)
+            stallSince = now;
+
+         if ((now - stallSince).TotalSeconds >= stallThreshold)
+            EnsureReconnectActive(slotIndex, "No new video frames detected.");
+
+         ProcessReconnectTimer(slotIndex, now);
+      }
+
+      private void EnsureReconnectActive(int slotIndex, string reason)
+      {
+         if (!ConfigurationManager.Instance.VideoReconnectEnabled)
+            return;
+         if (!mSlotIsStarted[slotIndex] || !IsSlotLiveStream(slotIndex))
+            return;
+
+         SlotReconnectState reconnectState = mSlotReconnectStates[slotIndex];
+         if (reconnectState.IsActive)
+            return;
+
+         reconnectState.CancellationTokenSource?.Cancel();
+         reconnectState.CancellationTokenSource?.Dispose();
+         reconnectState.CancellationTokenSource = new CancellationTokenSource();
+         reconnectState.IsActive = true;
+         reconnectState.IsAttemptRunning = false;
+         reconnectState.Reason = reason ?? string.Empty;
+         reconnectState.NextRetryUtc = DateTime.UtcNow.AddSeconds(GetRetryIntervalSeconds(slotIndex, reconnectState.AttemptCount + 1));
+      }
+
+      private void ProcessReconnectTimer(int slotIndex, DateTime now)
+      {
+         SlotReconnectState reconnectState = mSlotReconnectStates[slotIndex];
+         if (!reconnectState.IsActive || reconnectState.IsAttemptRunning)
+            return;
+
+         if (now < reconnectState.NextRetryUtc)
+            return;
+
+         CancellationToken cancellationToken = reconnectState.CancellationTokenSource?.Token ?? CancellationToken.None;
+         _ = ExecuteReconnectAttemptAsync(slotIndex, cancellationToken);
+      }
+
+      private async Task ExecuteReconnectAttemptAsync(int slotIndex, CancellationToken cancellationToken)
+      {
+         SlotReconnectState reconnectState = mSlotReconnectStates[slotIndex];
+         if (!reconnectState.IsActive || reconnectState.IsAttemptRunning)
+            return;
+
+         string url = mSlotRtspUrls[slotIndex];
+         if (string.IsNullOrWhiteSpace(url) || !mSlotIsStarted[slotIndex])
+         {
+            reconnectState.IsActive = false;
+            return;
+         }
+
+         reconnectState.IsAttemptRunning = true;
+         reconnectState.AttemptCount++;
+         int retryInterval = GetRetryIntervalSeconds(slotIndex, reconnectState.AttemptCount + 1);
+         bool isSteadyMode = reconnectState.AttemptCount > Math.Max(1, ConfigurationManager.Instance.VideoReconnectQuickAttempts);
+
+         if (!isSteadyMode || (DateTime.UtcNow - reconnectState.LastSteadyLogUtc).TotalSeconds >= 30)
+         {
+            OnVlcLog($"Slot {slotIndex}: reconnect attempt {reconnectState.AttemptCount}, next retry interval {retryInterval}s.", LogLevel.Warning);
+            if (isSteadyMode)
+               reconnectState.LastSteadyLogUtc = DateTime.UtcNow;
+         }
+
+         try
+         {
+            await Dispatcher.UIThread.InvokeAsync(() => StopSlotStreamInternal(slotIndex, false, false));
+
+            int restartDelayMs = Math.Max(0, ConfigurationManager.Instance.VideoReconnectRestartDelayMs);
+            if (restartDelayMs > 0)
+               await Task.Delay(restartDelayMs, cancellationToken);
+
+            if (cancellationToken.IsCancellationRequested)
+               return;
+
+            await Dispatcher.UIThread.InvokeAsync(() => StartSlotStreamInternal(slotIndex, url, true));
+         }
+         catch (OperationCanceledException)
+         {
+         }
+         finally
+         {
+            reconnectState.IsAttemptRunning = false;
+            if (reconnectState.IsActive)
+               reconnectState.NextRetryUtc = DateTime.UtcNow.AddSeconds(GetRetryIntervalSeconds(slotIndex, reconnectState.AttemptCount + 1));
+         }
+      }
+
+      private void UpdateReconnectOverlay(int slotIndex)
+      {
+         SlotReconnectState reconnectState = mSlotReconnectStates[slotIndex];
+         TextBlock reconnectText = mSlotReconnectTextBlocks[slotIndex];
+         Avalonia.Controls.Border reconnectBorder = reconnectState.OverlayBorder;
+         if (reconnectText == null || reconnectBorder == null)
+            return;
+
+         if (!reconnectState.IsActive)
+         {
+            reconnectBorder.IsVisible = false;
+            reconnectText.Text = string.Empty;
+            return;
+         }
+
+         DateTime now = DateTime.UtcNow;
+         int secondsRemaining = (int)Math.Ceiling((reconnectState.NextRetryUtc - now).TotalSeconds);
+         if (secondsRemaining < 0)
+            secondsRemaining = 0;
+
+         int nextAttemptNumber = reconnectState.IsAttemptRunning
+            ? reconnectState.AttemptCount
+            : reconnectState.AttemptCount + 1;
+
+         reconnectText.Text = reconnectState.IsAttemptRunning
+            ? $"Reconnecting camera...{Environment.NewLine}Try {reconnectState.AttemptCount}{Environment.NewLine}Restarting now"
+            : $"Reconnecting camera...{Environment.NewLine}Try {nextAttemptNumber}{Environment.NewLine}Next attempt in {secondsRemaining}s";
+         reconnectBorder.IsVisible = true;
+      }
+
+      private int GetRetryIntervalSeconds(int slotIndex, int attemptNumber)
+      {
+         int quickAttempts = Math.Max(1, ConfigurationManager.Instance.VideoReconnectQuickAttempts);
+         int quickInterval = Math.Max(1, ConfigurationManager.Instance.VideoReconnectQuickIntervalSeconds);
+         int steadyInterval = Math.Max(1, ConfigurationManager.Instance.VideoReconnectSteadyIntervalSeconds);
+         if (attemptNumber <= quickAttempts)
+            return quickInterval;
+         return steadyInterval;
+      }
+
+      private void ResetSlotFrameTracking(int slotIndex)
+      {
+         DateTime now = DateTime.UtcNow;
+         mSlotLastDisplayedPictures[slotIndex] = -1;
+         mSlotLastFrameProgressUtc[slotIndex] = now;
+         mSlotStableSinceUtc[slotIndex] = DateTime.MinValue;
+         if (mSlotStartedUtc[slotIndex] == DateTime.MinValue)
+            mSlotStartedUtc[slotIndex] = now;
+      }
+
+      private void ResetSlotReconnectState(int slotIndex, bool resetCounters, bool hideOverlay)
+      {
+         SlotReconnectState reconnectState = mSlotReconnectStates[slotIndex];
+         reconnectState.IsActive = false;
+         reconnectState.IsAttemptRunning = false;
+         reconnectState.Reason = string.Empty;
+         reconnectState.NextRetryUtc = DateTime.MinValue;
+         reconnectState.CancellationTokenSource?.Cancel();
+         reconnectState.CancellationTokenSource?.Dispose();
+         reconnectState.CancellationTokenSource = null;
+
+         if (resetCounters)
+         {
+            reconnectState.AttemptCount = 0;
+            reconnectState.LastSteadyLogUtc = DateTime.MinValue;
+         }
+
+         if (hideOverlay)
+         {
+            TextBlock reconnectText = mSlotReconnectTextBlocks[slotIndex];
+            Avalonia.Controls.Border reconnectBorder = reconnectState.OverlayBorder;
+            if (reconnectText != null)
+               reconnectText.Text = string.Empty;
+            if (reconnectBorder != null)
+               reconnectBorder.IsVisible = false;
+         }
+      }
+
+      private bool IsSlotLiveStream(int slotIndex)
+      {
+         string rtspUrl = mSlotRtspUrls[slotIndex];
+         if (string.IsNullOrWhiteSpace(rtspUrl))
+            return false;
+         return !IsPlaybackUrl(rtspUrl);
+      }
+
+      private static bool IsPlaybackUrl(string rtspUrl)
+      {
+         return rtspUrl != null && rtspUrl.IndexOf("playback", StringComparison.OrdinalIgnoreCase) >= 0;
       }
 
       private void UpdateSlotStatsOverlay(int slotIndex)
@@ -607,6 +913,18 @@ namespace Vao.Sample.Controls
       {
          if (mp == null) return;
          Task.Run(() => { if (mp.IsPlaying) mp.Stop(); mp.Dispose(); });
+      }
+
+      private sealed class SlotReconnectState
+      {
+         public int AttemptCount;
+         public bool IsActive;
+         public bool IsAttemptRunning;
+         public DateTime LastSteadyLogUtc;
+         public DateTime NextRetryUtc;
+         public string Reason = string.Empty;
+         public Avalonia.Controls.Border OverlayBorder;
+         public CancellationTokenSource CancellationTokenSource;
       }
    }
 

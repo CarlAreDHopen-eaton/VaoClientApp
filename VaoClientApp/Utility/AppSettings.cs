@@ -82,6 +82,27 @@ namespace Vao.Sample.Utility
       /// <summary>Last selected camera per video slot index (slot index → camera component number, 0 = none).</summary>
       public Dictionary<int, int> SlotCameras { get; set; } = new Dictionary<int, int>();
 
+      /// <summary>Enable automatic reconnect attempts when live video stalls.</summary>
+      public bool VideoReconnectEnabled { get; set; } = true;
+
+      /// <summary>Seconds without frame progress before a stream is considered stalled.</summary>
+      public int VideoStallThresholdSeconds { get; set; } = 5;
+
+      /// <summary>Number of quick reconnect attempts before switching to steady retry cadence.</summary>
+      public int VideoReconnectQuickAttempts { get; set; } = 5;
+
+      /// <summary>Quick retry interval in seconds for the initial reconnect phase.</summary>
+      public int VideoReconnectQuickIntervalSeconds { get; set; } = 2;
+
+      /// <summary>Steady retry interval in seconds after quick attempts are exhausted.</summary>
+      public int VideoReconnectSteadyIntervalSeconds { get; set; } = 5;
+
+      /// <summary>Seconds of continuous healthy frames before reconnect counters reset.</summary>
+      public int VideoReconnectStableResetSeconds { get; set; } = 10;
+
+      /// <summary>Delay in milliseconds between stop and restart during reconnect attempts.</summary>
+      public int VideoReconnectRestartDelayMs { get; set; } = 200;
+
       public void Save()
       {
          NormalizeConnections();
