@@ -22,6 +22,7 @@ namespace Vao.Sample.Controls
       private Func<List<Camera>> mGetCameraList;
       private Func<IEnumerable<CameraSelectionItem>> mGetCameraSelectionItems;
       private bool mIsStatsForNerdsVisible;
+      private VideoDisplayMode mVideoDisplayMode = VideoDisplayMode.Fit;
 
       // ── Layout state ────────────────────────────────────────────────────────
       private VideoLayoutDefinition mCurrentLayout;
@@ -49,6 +50,9 @@ namespace Vao.Sample.Controls
 
       /// <summary>Fired when the stats overlay visibility changes.</summary>
       public event EventHandler<bool> StatsForNerdsVisibilityChanged;
+
+      /// <summary>Fired when the video display mode changes.</summary>
+      public event EventHandler<VideoDisplayMode> VideoDisplayModeChanged;
 
       public VideoPanel()
       {
@@ -311,11 +315,23 @@ namespace Vao.Sample.Controls
          get { return mIsStatsForNerdsVisible; }
       }
 
+      public VideoDisplayMode VideoDisplayMode
+      {
+         get { return mVideoDisplayMode; }
+      }
+
       public void SetStatsForNerdsVisible(bool visible)
       {
          if (mIsStatsForNerdsVisible == visible) return;
          mIsStatsForNerdsVisible = visible;
          StatsForNerdsVisibilityChanged?.Invoke(this, visible);
+      }
+
+      public void SetVideoDisplayMode(VideoDisplayMode displayMode)
+      {
+         if (mVideoDisplayMode == displayMode) return;
+         mVideoDisplayMode = displayMode;
+         VideoDisplayModeChanged?.Invoke(this, displayMode);
       }
 
       /// <summary>Returns the camera assigned to a specific slot, or null.</summary>
@@ -667,6 +683,14 @@ namespace Vao.Sample.Controls
          layoutMenu.ItemsSource = layoutItems;
          rootItems.Add(layoutMenu);
 
+         var displayMenu = new MenuItem { Header = "Video Display" };
+         displayMenu.ItemsSource = new List<object>
+         {
+            CreateVideoDisplayModeItem(VideoDisplayMode.Fit, "Fit"),
+            CreateVideoDisplayModeItem(VideoDisplayMode.StretchToFill, "Stretch to Fill")
+         };
+         rootItems.Add(displayMenu);
+
          var statsMenuItem = new MenuItem { Header = "Stats for Nerds" };
          if (mIsStatsForNerdsVisible)
             statsMenuItem.Icon = new CheckBox { IsChecked = true, IsHitTestVisible = false };
@@ -732,6 +756,15 @@ namespace Vao.Sample.Controls
          if (currentCam == camera)
             item.Icon = new CheckBox { IsChecked = true, IsHitTestVisible = false };
          item.Click += (s, e) => CameraSelectedFromMenu?.Invoke(this, camera.ComponentNumber);
+         return item;
+      }
+
+      private MenuItem CreateVideoDisplayModeItem(VideoDisplayMode displayMode, string header)
+      {
+         var item = new MenuItem { Header = header };
+         if (mVideoDisplayMode == displayMode)
+            item.Icon = new CheckBox { IsChecked = true, IsHitTestVisible = false };
+         item.Click += (_, _) => SetVideoDisplayMode(displayMode);
          return item;
       }
 
@@ -823,6 +856,12 @@ namespace Vao.Sample.Controls
          SlotIndex = slotIndex;
          Url = url;
       }
+   }
+
+   public enum VideoDisplayMode
+   {
+      Fit,
+      StretchToFill
    }
 
    public class LayoutChangeEventArgs : EventArgs

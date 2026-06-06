@@ -76,6 +76,9 @@ namespace Vao.Sample.Utility
       /// <summary>Key of the currently selected video layout (from Layouts/*.json).</summary>
       public string SelectedLayout { get; set; } = "single";
 
+      /// <summary>Selected global video display mode (Fit, StretchToFill).</summary>
+      public string VideoDisplayMode { get; set; } = "Fit";
+
       /// <summary>Last selected camera per video slot index (slot index → camera component number, 0 = none).</summary>
       public Dictionary<int, int> SlotCameras { get; set; } = new Dictionary<int, int>();
 

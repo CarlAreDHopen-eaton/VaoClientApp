@@ -114,6 +114,12 @@ namespace Vao.Sample.Utility
          set { Settings.SelectedLayout = value ?? "single"; MarkDirty(); }
       }
 
+      public string VideoDisplayMode
+      {
+         get { return Settings.VideoDisplayMode; }
+         set { Settings.VideoDisplayMode = value ?? "Fit"; MarkDirty(); }
+      }
+
       public Dictionary<int, int> SlotCameras
       {
          get { return Settings.SlotCameras; }

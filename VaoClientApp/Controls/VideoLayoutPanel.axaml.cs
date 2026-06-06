@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Layout;
 using Avalonia.Threading;
 using LibVLCSharp.Avalonia;
 using LibVLCSharp.Shared;
@@ -21,12 +22,14 @@ namespace Vao.Sample.Controls
 
       // ── Multi-slot VLC state ───────────────────────────────────────────────
       private readonly MediaPlayer[] mSlotMediaPlayers = new MediaPlayer[C_MAX_SLOT_COUNT];
+      private readonly Grid[] mSlotVideoContainers = new Grid[C_MAX_SLOT_COUNT];
       private readonly VideoView[] mSlotVideoControls = new VideoView[C_MAX_SLOT_COUNT];
       private readonly string[] mSlotRtspUrls = new string[C_MAX_SLOT_COUNT];
       private readonly bool[] mSlotIsStarted = new bool[C_MAX_SLOT_COUNT];
       private readonly TextBlock[] mSlotStatsTextBlocks = new TextBlock[C_MAX_SLOT_COUNT];
       private readonly DispatcherTimer mStatsTimer;
       private bool mIsStatsForNerdsVisible;
+      private VideoDisplayMode mVideoDisplayMode = VideoDisplayMode.Fit;
 
       // ── Events (bubbled from inner VideoPanel) ─────────────────────────────
 
@@ -47,6 +50,9 @@ namespace Vao.Sample.Controls
 
       /// <summary>Fired when a VLC log message is generated.</summary>
       public event EventHandler<VlcLogEventArgs> VlcLogGenerated;
+
+      /// <summary>Fired when the global video display mode changes.</summary>
+      public event EventHandler<VideoDisplayMode> VideoDisplayModeChanged;
 
       public VideoLayoutPanel()
       {
@@ -104,9 +110,19 @@ namespace Vao.Sample.Controls
          get { return mIsStatsForNerdsVisible; }
       }
 
+      public VideoDisplayMode VideoDisplayMode
+      {
+         get { return mVideoDisplayMode; }
+      }
+
       public void SetStatsForNerdsVisible(bool visible)
       {
          videoPanel.SetStatsForNerdsVisible(visible);
+      }
+
+      public void SetVideoDisplayMode(VideoDisplayMode displayMode)
+      {
+         videoPanel.SetVideoDisplayMode(displayMode);
       }
 
       public bool IsPlayback
@@ -160,11 +176,11 @@ namespace Vao.Sample.Controls
          var pnlVideo = videoPanel.GetVideoSlot(slotIndex);
          if (pnlVideo == null) return;
 
-         var videoView = CreateSlotVideoView(slotIndex);
-         mSlotVideoControls[slotIndex] = videoView;
+         var slotContainer = CreateSlotVideoContainer(slotIndex);
+         var videoView = mSlotVideoControls[slotIndex];
 
-         if (!pnlVideo.Children.Contains(videoView))
-            pnlVideo.Children.Add(videoView);
+         if (!pnlVideo.Children.Contains(slotContainer))
+            pnlVideo.Children.Add(slotContainer);
 
          var uri = new Uri(rtspUrl);
          var media = new Media(mLibVlc, uri);
@@ -179,8 +195,14 @@ namespace Vao.Sample.Controls
             OnVlcLog($"LibVLC error on slot {slotIndex}.", LogLevel.Error);
          mp.Opening += (_, _) =>
             OnVlcLog($"LibVLC opening slot {slotIndex}: {mp.Media?.Mrl ?? ""}", LogLevel.Notice);
-         mp.Playing += (_, _) => Dispatcher.UIThread.Post(() => UpdateSlotStatsOverlay(slotIndex));
+         mp.Playing += (_, _) => Dispatcher.UIThread.Post(() =>
+         {
+            ApplyVideoDisplayMode(slotIndex, mp);
+            UpdateSlotStatsOverlay(slotIndex);
+         });
          mp.Stopped += (_, _) => Dispatcher.UIThread.Post(() => ClearSlotStatsOverlay(slotIndex));
+
+         ApplyVideoDisplayMode(slotIndex, mp);
 
          mSlotMediaPlayers[slotIndex] = mp;
          videoView.MediaPlayer = mp;
@@ -196,11 +218,13 @@ namespace Vao.Sample.Controls
          mSlotMediaPlayers[slotIndex] = null;
          var pnlVideo = videoPanel.GetVideoSlot(slotIndex);
          var videoView = mSlotVideoControls[slotIndex];
+         var slotContainer = mSlotVideoContainers[slotIndex];
          if (videoView != null)
          {
             videoView.MediaPlayer = null;
-            if (pnlVideo != null && pnlVideo.Children.Contains(videoView))
-               pnlVideo.Children.Remove(videoView);
+            if (pnlVideo != null && slotContainer != null && pnlVideo.Children.Contains(slotContainer))
+               pnlVideo.Children.Remove(slotContainer);
+            mSlotVideoContainers[slotIndex] = null;
             mSlotVideoControls[slotIndex] = null;
          }
          mSlotIsStarted[slotIndex] = false;
@@ -215,10 +239,11 @@ namespace Vao.Sample.Controls
          for (int i = 0; i < C_MAX_SLOT_COUNT; i++)
          {
             var slotView = mSlotVideoControls[i];
-            if (slotView == null) continue;
+            var slotContainer = mSlotVideoContainers[i];
+            if (slotView == null || slotContainer == null) continue;
             if (mSlotMediaPlayers[i] != null) slotView.MediaPlayer = null;
-            var parent = slotView.Parent as Panel;
-            parent?.Children.Remove(slotView);
+            var parent = slotContainer.Parent as Panel;
+            parent?.Children.Remove(slotContainer);
          }
       }
 
@@ -228,23 +253,16 @@ namespace Vao.Sample.Controls
          for (int i = 0; i < C_MAX_SLOT_COUNT; i++)
          {
             var slotView = mSlotVideoControls[i];
-            if (slotView == null || !mSlotIsStarted[i]) continue;
+            var slotContainer = mSlotVideoContainers[i];
+            if (slotView == null || slotContainer == null || !mSlotIsStarted[i]) continue;
             var slotPanel = videoPanel.GetVideoSlot(i);
             if (slotPanel == null) continue;
 
-            var newView = CreateSlotVideoView(i);
-            mSlotVideoControls[i] = newView;
-            slotPanel.Children.Add(newView);
-            newView.MediaPlayer = mSlotMediaPlayers[i];
+            if (!slotPanel.Children.Contains(slotContainer))
+               slotPanel.Children.Add(slotContainer);
 
-            if (!string.IsNullOrWhiteSpace(mSlotRtspUrls[i]))
-            {
-               int idx = i;
-               Dispatcher.UIThread.Post(() =>
-               {
-                  if (mSlotIsStarted[idx]) StartSlotStream(idx, mSlotRtspUrls[idx]);
-               }, DispatcherPriority.Background);
-            }
+            slotView.MediaPlayer = mSlotMediaPlayers[i];
+            ApplyVideoDisplayMode(i, mSlotMediaPlayers[i]);
          }
       }
 
@@ -286,9 +304,10 @@ namespace Vao.Sample.Controls
          VlcLogGenerated?.Invoke(this, new VlcLogEventArgs(message, level));
       }
 
-      private VideoView CreateSlotVideoView(int slotIndex)
+      private Grid CreateSlotVideoContainer(int slotIndex)
       {
          var videoView = new VideoView { Focusable = false };
+         mSlotVideoControls[slotIndex] = videoView;
          int capturedSlotIndex = slotIndex;
          var overlay = new Avalonia.Controls.Border
          {
@@ -312,6 +331,14 @@ namespace Vao.Sample.Controls
             videoPanel.SetActiveSlot(capturedSlotIndex);
             videoPanel.HandleSlotDrop(capturedSlotIndex, e);
          });
+         overlay.SizeChanged += (_, _) =>
+         {
+            if (mVideoDisplayMode == VideoDisplayMode.StretchToFill)
+            {
+               MediaPlayer mediaPlayer = mSlotMediaPlayers[capturedSlotIndex];
+               ApplyVideoDisplayMode(capturedSlotIndex, mediaPlayer);
+            }
+         };
 
          var statsText = new TextBlock
          {
@@ -335,12 +362,16 @@ namespace Vao.Sample.Controls
 
          mSlotStatsTextBlocks[slotIndex] = statsText;
 
-         var contentGrid = new Avalonia.Controls.Grid();
+         var contentGrid = new Avalonia.Controls.Grid
+         {
+            ClipToBounds = true
+         };
+         contentGrid.Children.Add(videoView);
          contentGrid.Children.Add(overlay);
          contentGrid.Children.Add(statsBorder);
 
-         videoView.Content = contentGrid;
-         return videoView;
+         mSlotVideoContainers[slotIndex] = contentGrid;
+         return contentGrid;
       }
 
       private void WireVideoPanel()
@@ -362,6 +393,12 @@ namespace Vao.Sample.Controls
             if (isVisible)
                UpdateAllStatsOverlays();
          };
+         videoPanel.VideoDisplayModeChanged += (_, displayMode) =>
+         {
+            mVideoDisplayMode = displayMode;
+            ApplyVideoDisplayModeToAllPlayers();
+            VideoDisplayModeChanged?.Invoke(this, displayMode);
+         };
          videoPanel.LayoutChanging += OnVideoLayoutChanging;
          videoPanel.LayoutChanged += OnVideoLayoutChanged;
       }
@@ -371,10 +408,10 @@ namespace Vao.Sample.Controls
          // Detach surviving slot VideoViews from old panels (without disposing)
          foreach (int idx in e.SurvivingSlotIndices)
          {
-            var videoView = mSlotVideoControls[idx];
-            if (videoView == null) continue;
-            var parent = videoView.Parent as Panel;
-            parent?.Children.Remove(videoView);
+            var slotContainer = mSlotVideoContainers[idx];
+            if (slotContainer == null) continue;
+            var parent = slotContainer.Parent as Panel;
+            parent?.Children.Remove(slotContainer);
          }
       }
 
@@ -387,11 +424,11 @@ namespace Vao.Sample.Controls
          // Reattach surviving slot VideoViews to their new panels
          foreach (int idx in e.SurvivingSlotIndices)
          {
-            var videoView = mSlotVideoControls[idx];
-            if (videoView == null) continue;
+            var slotContainer = mSlotVideoContainers[idx];
+            if (slotContainer == null) continue;
             var pnlVideo = videoPanel.GetVideoSlot(idx);
-            if (pnlVideo != null && !pnlVideo.Children.Contains(videoView))
-               pnlVideo.Children.Add(videoView);
+            if (pnlVideo != null && !pnlVideo.Children.Contains(slotContainer))
+               pnlVideo.Children.Add(slotContainer);
          }
 
          // Reconnect slots that have a remembered camera but no active stream
@@ -418,8 +455,8 @@ namespace Vao.Sample.Controls
       {
          for (int i = 0; i < C_MAX_SLOT_COUNT; i++)
          {
-            VideoView slotView = mSlotVideoControls[i];
-            if (slotView?.Content is Avalonia.Controls.Grid grid && grid.Children.Count > 1 && grid.Children[1] is Avalonia.Controls.Border statsBorder)
+            TextBlock statsText = mSlotStatsTextBlocks[i];
+            if (statsText?.Parent is Avalonia.Controls.Border statsBorder)
             {
                statsBorder.IsVisible = mIsStatsForNerdsVisible;
             }
@@ -514,6 +551,58 @@ namespace Vao.Sample.Controls
          return $"{bitsPerSecond} bps";
       }
 
+      private void ApplyVideoDisplayMode(int slotIndex, MediaPlayer mediaPlayer)
+      {
+         if (mediaPlayer == null) return;
+
+         mediaPlayer.AspectRatio = null;
+         mediaPlayer.CropGeometry = string.Empty;
+         ApplyVideoViewLayout(slotIndex);
+
+         switch (mVideoDisplayMode)
+         {
+            case VideoDisplayMode.StretchToFill:
+               mediaPlayer.Scale = 0.0f;
+               mediaPlayer.AspectRatio = BuildStretchAspectRatio(slotIndex);
+               break;
+            default:
+               mediaPlayer.Scale = 0.0f;
+               break;
+         }
+      }
+
+      private void ApplyVideoDisplayModeToAllPlayers()
+      {
+         for (int i = 0; i < C_MAX_SLOT_COUNT; i++)
+            ApplyVideoDisplayMode(i, mSlotMediaPlayers[i]);
+      }
+
+      private void ApplyVideoViewLayout(int slotIndex)
+      {
+         VideoView videoView = mSlotVideoControls[slotIndex];
+         if (videoView == null) return;
+
+         videoView.Width = double.NaN;
+         videoView.Height = double.NaN;
+         videoView.Margin = new Avalonia.Thickness(0);
+         videoView.HorizontalAlignment = HorizontalAlignment.Stretch;
+         videoView.VerticalAlignment = VerticalAlignment.Stretch;
+      }
+
+      private string BuildStretchAspectRatio(int slotIndex)
+      {
+         Panel slotPanel = videoPanel.GetVideoSlot(slotIndex);
+         if (slotPanel == null) return "16:9";
+
+         double width = slotPanel.Bounds.Width;
+         double height = slotPanel.Bounds.Height;
+         if (width <= 1 || height <= 1) return "16:9";
+
+         int aspectWidth = Math.Max(1, (int)Math.Round(width));
+         int aspectHeight = Math.Max(1, (int)Math.Round(height));
+         return $"{aspectWidth}:{aspectHeight}";
+      }
+
       private static void DisposeMediaPlayerAsync(MediaPlayer mp)
       {
          if (mp == null) return;
@@ -534,4 +623,5 @@ namespace Vao.Sample.Controls
          Level = level;
       }
    }
+
 }

@@ -246,6 +246,11 @@ namespace Vao.Sample
             if (slotCamera != null)
                CurrentCamera = slotCamera;
          };
+         videoLayoutPanel.VideoDisplayModeChanged += (_, _) =>
+         {
+            if (!mIsLoadingSettings)
+               SaveSettings();
+         };
          videoLayoutPanel.VlcLogGenerated += (_, e) => WriteMessageLog(MessageSource.LibVlc, e.Message, e.Level);
          videoLayoutPanel.SetCameraListProvider(
             () => mFlexApiClient?.GetCameraList(),
@@ -1026,6 +1031,12 @@ namespace Vao.Sample
           if (!string.IsNullOrWhiteSpace(cfg.SelectedLayout))
              videoLayoutPanel.SetLayout(cfg.SelectedLayout);
 
+         if (!string.IsNullOrWhiteSpace(cfg.VideoDisplayMode)
+            && Enum.TryParse(cfg.VideoDisplayMode, true, out VideoDisplayMode videoDisplayMode))
+         {
+            videoLayoutPanel.SetVideoDisplayMode(videoDisplayMode);
+         }
+
           splitSelectorPanel.SyncSelection(videoLayoutPanel.CurrentLayoutKey);
        }
 
@@ -1052,6 +1063,7 @@ namespace Vao.Sample
          cfg.ShowDisabledAlarms    = alarmFilters.GetValueOrDefault(AlarmGeneralStatus.Disabled, true);
 
          cfg.SelectedLayout = videoLayoutPanel.CurrentLayoutKey;
+            cfg.VideoDisplayMode = videoLayoutPanel.VideoDisplayMode.ToString();
          if (IsStarted)
             cfg.SlotCameras = videoLayoutPanel.GetSlotCameraMap();
       }
